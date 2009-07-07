@@ -1,5 +1,4 @@
 #' Convert a HMDP model stored in binary format to a hmp (xml) file.
-#'
 #' The function simply parse the binary files and create hmp files using
 #' the \link{hmpMDPWriter}.
 #'
@@ -7,6 +6,7 @@
 #' convertBinary2HMP(binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 #' "actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin")
 #' ,out='r_convert.hmp', duration=1)
+#'
 #' @param binNames A character vector of length 7 giving the names of the binary files storing the model.
 #' @param out The name of the hmp file (e.g. mdp.hmp).
 #' @param duration Weight number storing the duration.

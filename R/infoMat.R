@@ -39,6 +39,7 @@
 #'          transPrFile="transProb.bin", labels="actionIdxLbl.bin")\cr
 #'      actionWeightMat(file="actionWeight.bin",labels="actionWeightLbl.bin")\cr
 #' @aliases stateIdxMat stateIdxDf actionIdxMat actionIdxDf actionCostMat transProbMat
+#' @param prefix A character string with the prefix added to til file(s).
 #' @param file The HMDP binary file containing the description under consideration.
 #' @param labels The HMDP binary file containing the labels under consideration.
 #' @param costFile The HMDP binary file containing the action costs.
@@ -55,7 +56,8 @@
 #'  transProbMat()
 #'  a<-actionInfo()
 #'  a[order(a$sId),]
-stateIdxMat<-function(file="stateIdx.bin") {
+stateIdxMat<-function(prefix="", file="stateIdx.bin") {
+	file<-paste(prefix,file,sep="")
 	tmp<-readBin(file, integer(),n=file.info(file)$size/4)
 	rows<-length(tmp[tmp==-1])
 	cols<-max(rle(tmp!=-1)$length)
@@ -63,14 +65,16 @@ stateIdxMat<-function(file="stateIdx.bin") {
 	idx<-c(0,which(tmp== -1))
 	for (i in 1:(length(idx)-1)) mat[i,1:(idx[i+1]-idx[i]-1)+1]<-tmp[(idx[i]+1):(idx[i+1]-1)]
 	levels<-cols %/% 3 + 1
-	colnames(mat)<-c("sId",paste(c("d","s","a"),rep(0:(levels-2),each=3),sep=""),paste(c("d","s"),levels-1,sep=""))
+	if (levels==1) colnames(mat)<-c("sId",paste(c("d","s"),levels-1,sep=""))
+	if (levels>1) colnames(mat)<-c("sId",paste(c("d","s","a"),rep(0:(levels-2),each=3),sep=""),paste(c("d","s"),levels-1,sep=""))
 	mat[,1]<-1:nrow(mat)-1
 	return(mat)
 }
 
-#' @noRd
-stateIdxDf<-function(file="stateIdx.bin", labels="stateIdxLbl.bin") {
-	mat<-stateIdxMat(file)
+
+stateIdxDf<-function(prefix="", file="stateIdx.bin", labels="stateIdxLbl.bin") {
+	labels<-paste(prefix,labels,sep="")
+	mat<-stateIdxMat(prefix, file)
 	tmp<-readBin(labels, character(),n=file.info(labels)$size)
 	tmp<-as.data.frame(matrix(tmp,ncol=2,byrow=T),stringsAsFactors = F)
 	colnames(tmp)<-c("sId","label")
@@ -79,7 +83,8 @@ stateIdxDf<-function(file="stateIdx.bin", labels="stateIdxLbl.bin") {
 }
 
 
-transProbMat<-function(file="transProb.bin") {
+transProbMat<-function(prefix="", file="transProb.bin") {
+	file<-paste(prefix,file,sep="")
 	tmp<-readBin(file, numeric(),n=file.info(file)$size/8)
 	rows<-length(tmp[tmp==-1])
 	cols<-max(rle(tmp!=-1)$length)
@@ -92,7 +97,8 @@ transProbMat<-function(file="transProb.bin") {
 }
 
 
-actionIdxMat<-function(file="actionIdx.bin") {
+actionIdxMat<-function(prefix="", file="actionIdx.bin") {
+	file<-paste(prefix,file,sep="")
 	tmp<-readBin(file, integer(),n=file.info(file)$size/4)
 	rows<-length(tmp[tmp==-1])
 	cols<-max(rle(tmp!=-1)$length)
@@ -105,8 +111,9 @@ actionIdxMat<-function(file="actionIdx.bin") {
 }
 
 
-actionIdxDf<-function(file="actionIdx.bin", labels="actionIdxLbl.bin") {
-	mat<-actionIdxMat(file)
+actionIdxDf<-function(prefix="", file="actionIdx.bin", labels="actionIdxLbl.bin") {
+	labels<-paste(prefix,labels,sep="")
+	mat<-actionIdxMat(prefix, file)
 	tmp<-readBin(labels, character(),n=file.info(labels)$size)
 	tmp<-as.data.frame(matrix(tmp,ncol=2,byrow=T),stringsAsFactors = F)
 	colnames(tmp)<-c("aId","label")
@@ -117,11 +124,12 @@ actionIdxDf<-function(file="actionIdx.bin", labels="actionIdxLbl.bin") {
 }
 
 
-actionInfo<-function(file="actionIdx.bin" , weightFile="actionWeight.bin", transPrFile="transProb.bin", labels="actionIdxLbl.bin") {
-	mat<-actionIdxMat(file)
-	mat1<-actionWeightMat(weightFile)
+actionInfo<-function(prefix="", file="actionIdx.bin" , weightFile="actionWeight.bin", transPrFile="transProb.bin", labels="actionIdxLbl.bin") {
+	labels<-paste(prefix,labels,sep="")
+	mat<-actionIdxMat(prefix, file)
+	mat1<-actionWeightMat(prefix, weightFile)
 	mat<-merge(mat,mat1,all.x=T)
-	mat2<-transProbMat(transPrFile)
+	mat2<-transProbMat(prefix, transPrFile)
 	mat<-merge(mat,mat2,all.x=T)
 	i<-(ncol(mat)-2-ncol(mat1)+1)/3     # number of idx used for (scp, idx, pr) triple
 	mat<-mat[,c("aId","sId",colnames(mat1[,2:ncol(mat1)]),paste(c("scp","idx","pr"),rep(1:i-1,each=3),sep=""))]
@@ -137,7 +145,9 @@ actionInfo<-function(file="actionIdx.bin" , weightFile="actionWeight.bin", trans
 }
 
 
-actionWeightMat<-function(file="actionWeight.bin",labels="actionWeightLbl.bin") {
+actionWeightMat<-function(prefix="", file="actionWeight.bin",labels="actionWeightLbl.bin") {
+	file<-paste(prefix,file,sep="")
+	labels<-paste(prefix,labels,sep="")
 	tmp<-readBin(file, numeric(),n=file.info(file)$size/8)
 	colNames<-readBin(labels, character(),n=file.info(labels)$size)
 	cols<-length(colNames)
@@ -155,7 +165,8 @@ actionWeightMat<-function(file="actionWeight.bin",labels="actionWeightLbl.bin") 
 #' @param labels The HMDP binary file containing the weight labels.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @return Vector of weight names.
-weightNames<-function(labels="actionWeightLbl.bin") {
+weightNames<-function(prefix="", labels="actionWeightLbl.bin") {
+	labels<-paste(prefix,labels,sep="")
 	colNames<-readBin(labels, character(),n=file.info(labels)$size)
 	return(colNames)
 }

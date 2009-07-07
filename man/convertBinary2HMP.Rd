@@ -4,8 +4,8 @@
 \usage{convertBinary2HMP(binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 "actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin")
 ,out='r_convert.hmp', duration=1)}
-\description{Convert a HMDP model stored in binary format to a hmp (xml) file.}
-\details{The function simply parse the binary files and create hmp files using
+\description{Convert a HMDP model stored in binary format to a hmp (xml) file.
+The function simply parse the binary files and create hmp files using
 the \link{hmpMDPWriter}.}
 \value{NULL (invisible).}
 \author{Lars Relund \email{lars@relund.dk}}

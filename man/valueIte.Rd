@@ -1,9 +1,11 @@
 \name{valueIte}
 \alias{valueIte}
 \title{Perform value iteration on the MDP.}
-\usage{valueIte(mdp, iW, iDur, rate=0.1, rateBase=365, times=10, eps=1e-05)}
+\usage{valueIte(mdp, iW, iDur, rate=0.1, rateBase=365, times=10, eps=1e-05,
+    iniValues)}
 \description{Perform value iteration on the MDP.}
-\details{If the MDP has a finite time-horizon then arguments \code{times} and \code{eps}.}
+\details{If the MDP has a finite time-horizon then arguments \code{times} and \code{eps}
+are ignored.}
 \value{NULL (invisible)}
 \author{Lars Relund \email{lars@relund.dk}}
 \references{[1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.}

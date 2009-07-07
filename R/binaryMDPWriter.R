@@ -39,7 +39,7 @@
 #' process. Finally, if scope = 3 then a transition to a state specified by it's state sIdx
 #' is given. That is, if scope=3 and idx=5 then
 #' we have a transition to the state specified at line 6 in stateIdxLbl.bin.
-#' This is use full when considering shared child processes.}
+#' This is usefull when considering shared child processes.}
 #' \item{actionIdxLbl.bin: }{File of characters in the format "aIdx label aIdx label ..." Here
 #' aIdx corresponds to the index/line number in actionIdx.bin (index starts from 0).
 #' Note no delimiter is used.}
@@ -52,129 +52,17 @@
 #' "p1 p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -1 is
 #' used to indicate that a new action is considered (new line).}
 #'
+#' @usage binaryMDPWriter(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
+#'    "actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"))
+#'
+#' @param prefix A character string with the prefix added to \code{binNames}.
 #' @param binNames A character vector of length 7 giving the names of the binary
 #'     files storing the model.
 #' @return A list of functions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @callGraph
-#' @examples
-#'
-#' # Create a small HMDP with two levels
-#' w<-binaryMDPWriter()
-#' w$setWeights(c("Duration","Net reward","Items"))
-#' w$process()
-#'     w$stage()
-#'         w$state(label="M0")
-#'             w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
-#'                 w$process()
-#'                     w$stage()
-#'                         w$state(label="D")
-#'                             w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                             w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                             w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                 w$endProcess()
-#'             w$endAction()
-#'             w$action(label="A1",weights=c(0,0,0),prob=c(2,0,1))
-#'                 w$process()
-#'                     w$stage()
-#'                         w$state(label="D")
-#'                             w$action(label="A0",weights=c(0,0,1),prob=c(1,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                             w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                             w$action(label="A1",weights=c(0,10,5),prob=c(0,0,0.5,0,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                 w$endProcess()
-#'             w$endAction()
-#'         w$endState()
-#'         w$state(label="M1")
-#'             w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
-#'                 w$process()
-#'                     w$stage()
-#'                         w$state(label="D")
-#'                             w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                 w$endProcess()
-#'             w$endAction()
-#'         w$endState()
-#'     w$endStage()
-#' w$endProcess()
-#' w$closeWriter()
-#'
-#' stateIdxDf()
-#' actionIdxDf()
-#' actionWeightMat()
-#' transProbMat()
-#' a<-actionInfo()
-#' a                   # ordered by action id
-#' a[order(a$sId),]    # ordered by state id
-binaryMDPWriter<-function(binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
+#' @example pkg/tests/binaryMDPWriter.Rex
+binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"))
 {
 	setWeights<-function(labels,...){
@@ -285,6 +173,7 @@ binaryMDPWriter<-function(binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx
 		invisible(NULL)
 	}
 
+	binNames<-paste(prefix,binNames,sep="")
 	fS <- file(binNames[1], "wb")
 	fSLbl <- file(binNames[2], "wb")
 	fA <- file(binNames[3], "wb")

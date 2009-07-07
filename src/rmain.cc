@@ -70,17 +70,21 @@ SEXP MDP_BuildHMDP(SEXP ptr)
 
 /** Perform value iteration on an infinite time MDP. */
 SEXP MDP_ValueIteInfDiscount(SEXP ptr, SEXP times, SEXP eps, SEXP idxW,
-	SEXP idxDur, SEXP rate, SEXP rateBase)
+	SEXP idxDur, SEXP rate, SEXP rateBase, SEXP iniValues)
 {
 	CHECK_PTR(ptr);
 	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
 	if (p == NULL) error("pointer is NULL");
+	vector<flt> ini;
+	ini.assign(NUMERIC_POINTER(iniValues),
+        NUMERIC_POINTER(iniValues)+GET_LENGTH(iniValues));
 	p->ValueIteInfDiscount(INTEGER_POINTER(times)[0],
 		NUMERIC_POINTER(eps)[0],
 		INTEGER_POINTER(idxW)[0],
 		INTEGER_POINTER(idxDur)[0],
 		NUMERIC_POINTER(rate)[0],
-		NUMERIC_POINTER(rateBase)[0]);
+		NUMERIC_POINTER(rateBase)[0],
+		ini);
 	return R_NilValue;
 }
 
@@ -111,15 +115,23 @@ SEXP MDP_GetTimeHorizon(SEXP ptr)
 	return sexp;
 }
 
-/** Get number of states. */
+/** Get number of states.
+    \return A vector of size 2 with (states at level 0, states total).
+    States total does include dummy states at the founder level when infinite
+    time-horizon.
+ */
 SEXP MDP_GetStates(SEXP ptr)
 {
 	CHECK_PTR(ptr);
 	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
 	if (p == NULL) error("pointer is NULL");
 	SEXP sexp;
-	PROTECT(sexp = NEW_INTEGER(1));
-	INTEGER_POINTER(sexp)[0] = (int)(p->states.size());
+	PROTECT(sexp = NEW_INTEGER(2));
+	if (p->timeHorizon<INFINT)
+        INTEGER_POINTER(sexp)[0] = (int)(p->CountStates(ToString((p->timeHorizon)-1)));
+    else
+        INTEGER_POINTER(sexp)[0] = (int)(p->CountStates("0"));
+	INTEGER_POINTER(sexp)[1] = (int)(p->states.size());
 	UNPROTECT(1);
 	return sexp;
 }

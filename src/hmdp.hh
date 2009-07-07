@@ -372,6 +372,20 @@ public:
     void ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
         const flt &rate, const flt &rateBase);
 
+    /** Value iteration algorithm for discounted expected reward (infinite
+     * time-horizon).
+     * \param times The max number of times value iteration is performed on an
+     * infinite time-horizon HMDP.
+     * \param epsilon If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e
+     * the policy becomes epsilon optimal (see Puterman p161).
+     * \param idxW Index of the weight used.
+     * \param idxDur Index of duration such that discount rates can be calculated.
+     * \param iniValues Initial values used at founder level (the values of the dummy nodes).
+     * \post Use \code GetLog to see the optimization log.
+     */
+    void ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
+        const flt &rate, const flt &rateBase, vector<flt> & iniValues);
+
 
     /** Value iteration algorithm for discounted expected reward (finite
      * time-horizon).
@@ -381,6 +395,16 @@ public:
      */
     void ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
         const flt &rateBase);
+
+    /** Value iteration algorithm for discounted expected reward (finite
+     * time-horizon).
+     * \param idxW Index of the weight used.
+     * \param idxDur Index of duration such that discount rates can be calculated.
+     * \param iniValues Initial values used at founder level.
+     * \post Use \code GetLog to see the optimization log.
+     */
+    void ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
+        const flt &rateBase, vector<flt> & iniValues);
 
 
     /** Policy iteration algorithm (infinite time-horizon).
@@ -559,6 +583,13 @@ public:
         return stages.count(str);
     }
 
+    /** Count the number of states in the stage.
+     * \param stage The string of the stage, e.g. "0,1,2,1".
+     */
+    idx CountStates(string stage) {
+        return stages.count(stage);
+    }
+
     /** Return string with optimal policy using indicies. */
     string PolicyInfoIdx(idx idxW);
 
@@ -729,7 +760,7 @@ private:
 public:
     vector<HMDPState> states;       ///< States in the HMDP.
     int levels;                     ///< Number of levels in the HMDP, i.e. the levels are 0, ..., levels-1.
-    uInt timeHorizon;               ///< INFINT if consider an infinite time horizon;
+    uInt timeHorizon;               ///< INFINT if consider an infinite time horizon; otherwise the number of stages at the founder level.
     vector<string> weightNames;     ///< Names of the weights/quantities stored from index 1 in \code w (of a (hyper)arc in the hypergraph).
     //flt rate;                       ///< Intrest rate used to calc discount rates.
     //flt rateBase;                   ///< The time-horizon the rate is valid over. That is, the discout rate for duration $d$ is $\exp(-rate/rateBase*d)$.

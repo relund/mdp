@@ -46,7 +46,8 @@ not are NULL then a data frame are returned with a label column too.}
 \alias{transProbMat}
 \author{Lars Relund \email{lars@relund.dk}}
 \value{Matrix or data frame.}
-\arguments{\item{file}{The HMDP binary file containing the description under consideration.}
+\arguments{\item{prefix}{A character string with the prefix added to til file(s).}
+\item{file}{The HMDP binary file containing the description under consideration.}
 \item{labels}{The HMDP binary file containing the labels under consideration.}
 \item{costFile}{The HMDP binary file containing the action costs.}
 \item{transPrFile}{The HMDP binary file containing the transition probabilities.}}
