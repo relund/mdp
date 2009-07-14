@@ -410,6 +410,7 @@ flt HMDP::MaxDiffFounder(const idx &idxW,
 void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 	const flt &rate, const flt &rateBase)
 {
+    idx i;
 	log.str("");
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
@@ -417,9 +418,9 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 
 	log << "Run value iteration with epsilon = " << epsilon  << " at most "
 		<< times << " time(s)" << endl << "using quantity '" <<
-		weightNames[idxW] << "' under discounting criterion \nwith '" <<
+		weightNames[idxW] << "' under expected discounted reward criterion \nwith '" <<
 		weightNames[idxDur] << "' as duration using interest rate " << rate <<
-		" and rate basis equal " << rateBase << ". \nIteration(s):";
+		" and rate basis equal " << rateBase << ". \nIterations:";
 	cpuTime.Reset(0); cpuTime.StartTime(0);
 	H.ResetPred();
 	// find founder states at stage zero and last stage
@@ -428,8 +429,7 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 	for (ite=pairLast.first; ite!=pairLast.second; ++ite) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(idxW,0);
 
-	for (uInt i=0; i<times; ++i) {
-		log << " " << i+1;
+	for (i=0; i<times; ++i) {
 		HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 		if(MaxDiffFounder(idxW,pairZero,pairLast)<epsilon) break;
 		if (i<times-1) {    // set next stage to stage zero values
@@ -437,11 +437,12 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 				H.itsNodes[(ite->second)+1].SetW(idxW,H.itsNodes[(iteZ->second)+1].w[idxW]);
 		}
 	}
+	log << " " << i+1;
 	vector<idx> vW = WeightIdx(idxW, idxDur);
 	// TODO LRE: May have idxPred as argument or use the same idx as idxW.
 	HT.CalcOptW(H,vW,idxPred,idxMult);
 	cpuTime.StopTime(0);
-	log << ". Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;
+	log << ". Running time " << cpuTime.TimeDiff(0) << "s." << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -449,6 +450,7 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 	const flt &rate, const flt &rateBase, vector<flt> & iniValues)
 {
+    idx i;
 	log.str("");
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
@@ -457,9 +459,9 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 
 	log << "Run value iteration with epsilon = " << epsilon  << " at most "
 		<< times << " time(s)" << endl << "using quantity '" <<
-		weightNames[idxW] << "' under discounting criterion \nwith '" <<
+		weightNames[idxW] << "' under expected discounted reward criterion \nwith '" <<
 		weightNames[idxDur] << "' as duration using interest rate " << rate <<
-		" and rate basis equal " << rateBase << ". \nIteration(s):";
+		" and rate basis equal " << rateBase << ". \nIterations:";
 	cpuTime.Reset(0); cpuTime.StartTime(0);
 	H.ResetPred();
 	// find founder states at stage zero and last stage
@@ -470,8 +472,7 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 	for (ite=pairLast.first, iteV=iniValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(idxW,*(iteV));
 
-	for (uInt i=0; i<times; ++i) {
-		log << " " << i+1;
+	for (i=0; i<times; ++i) {
 		HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 		if(MaxDiffFounder(idxW,pairZero,pairLast)<epsilon) break;
 		if (i<times-1) {    // set next stage to stage zero values
@@ -479,11 +480,12 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 				H.itsNodes[(ite->second)+1].SetW(idxW,H.itsNodes[(iteZ->second)+1].w[idxW]);
 		}
 	}
+	log << " " << i+1;
 	vector<idx> vW = WeightIdx(idxW, idxDur);
 	// TODO LRE: May have idxPred as argument or use the same idx as idxW.
 	HT.CalcOptW(H,vW,idxPred,idxMult);
 	cpuTime.StopTime(0);
-	log << ". Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;
+	log << ". Running time " << cpuTime.TimeDiff(0) << "s." << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -497,7 +499,7 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 
 	log.str("");
 	log << "Run value iteration using quantity '" <<
-		weightNames[idxW] << "' under discounting criterion \nwith '" <<
+		weightNames[idxW] << "' under expected discounted reward criterion \nwith '" <<
 		weightNames[idxDur] << "' as duration. using interest rate " << rate <<
 		" and rate basis equal " << rateBase << ". ";
 	cpuTime.Reset(0); cpuTime.StartTime(0);
@@ -526,7 +528,7 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 
 	log.str("");
 	log << "Run value iteration using quantity '" <<
-		weightNames[idxW] << "' under discounting criterion \nwith '" <<
+		weightNames[idxW] << "' under expected discounted reward criterion \nwith '" <<
 		weightNames[idxDur] << "' as duration. using interest rate " << rate <<
 		" and rate basis equal " << rateBase << ". ";
 	cpuTime.Reset(0); cpuTime.StartTime(0);
@@ -540,6 +542,34 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 		H.itsNodes[(ite->second)+1].SetW(*(iteV));
 	HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 	vector<idx> vW = WeightIdx(idxW, idxDur);
+	HT.CalcOptW(H,vW,idxPred,idxMult);
+	cpuTime.StopTime(0);
+	log << "Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;
+}
+
+// ----------------------------------------------------------------------------
+
+void HMDP::ValueIteFinite(idx idxW, vector<flt> & iniValues)
+{
+	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
+	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
+	multimap<string, int >::iterator ite, iteZ;
+	vector<flt>::iterator iteV;
+
+	log.str("");
+	log << "Run value iteration using quantity '" <<
+		weightNames[idxW] << "' under expected reward criterion. ";
+	cpuTime.Reset(0); cpuTime.StartTime(0);
+	H.ResetPred();
+	// find founder states at stage zero and last stage
+	pairZero = stages.equal_range("0");
+	pairLast = stages.equal_range(ToString(timeHorizon-1));
+	if (iniValues.size()!=stages.count(ToString(timeHorizon-1)))
+        log << "Error initial values vector does not have the same size as the states that must be assigned the values!\n";
+	for (ite=pairLast.first, iteV=iniValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
+		H.itsNodes[(ite->second)+1].SetW(*(iteV));
+	HT.CalcHTacyclic(H,idxW,idxPred,idxMult);
+	vector<idx> vW = WeightIdx(idxW, weightNames.size()+1); // hack so idxDur is just greater than the index
 	HT.CalcOptW(H,vW,idxPred,idxMult);
 	cpuTime.StopTime(0);
 	log << "Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;

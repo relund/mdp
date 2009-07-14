@@ -406,6 +406,14 @@ public:
     void ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
         const flt &rateBase, vector<flt> & iniValues);
 
+    /** Value iteration algorithm for expected reward (finite
+     * time-horizon).
+     * \param idxW Index of the weight used.
+     * \param iniValues Initial values used at founder level.
+     * \post Use \code GetLog to see the optimization log.
+     */
+    void ValueIteFinite(idx idxW, vector<flt> & iniValues);
+
 
     /** Policy iteration algorithm (infinite time-horizon).
      * \param idxW Index of the weight used.

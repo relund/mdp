@@ -65,8 +65,8 @@ stateIdxMat<-function(prefix="", file="stateIdx.bin") {
 	idx<-c(0,which(tmp== -1))
 	for (i in 1:(length(idx)-1)) mat[i,1:(idx[i+1]-idx[i]-1)+1]<-tmp[(idx[i]+1):(idx[i+1]-1)]
 	levels<-cols %/% 3 + 1
-	if (levels==1) colnames(mat)<-c("sId",paste(c("d","s"),levels-1,sep=""))
-	if (levels>1) colnames(mat)<-c("sId",paste(c("d","s","a"),rep(0:(levels-2),each=3),sep=""),paste(c("d","s"),levels-1,sep=""))
+	if (levels==1) colnames(mat)<-c("sId",paste(c("n","s"),levels-1,sep=""))
+	if (levels>1) colnames(mat)<-c("sId",paste(c("n","s","a"),rep(0:(levels-2),each=3),sep=""),paste(c("n","s"),levels-1,sep=""))
 	mat[,1]<-1:nrow(mat)-1
 	return(mat)
 }
@@ -153,7 +153,7 @@ actionWeightMat<-function(prefix="", file="actionWeight.bin",labels="actionWeigh
 	cols<-length(colNames)
 	rows<-length(tmp)/cols
 	mat<-matrix(NA,nrow=rows,ncol=cols+1)
-	for (i in 1:rows) mat[i,1:cols+1]<-tmp[(3*(i-1)+1):(3*i)]
+	for (i in 1:rows) mat[i,1:cols+1]<-tmp[(cols*(i-1)+1):(cols*i)]
 	#colnames(mat)<-c("aId",paste("w",1:(ncol(mat)-1)-1,sep=""))
 	colnames(mat)<-c("aId",colNames)
 	mat[,1]<-1:nrow(mat)-1

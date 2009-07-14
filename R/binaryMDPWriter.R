@@ -103,7 +103,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		invisible(NULL)
 	}
 
-	state<-function(label=NULL){
+	state<-function(label=NULL, end=FALSE){
 		#cat("(",label,") ",sep="")
 		sCtr<<-sCtr+1
 		aCtr<<- -1  # reset action ctr
@@ -113,6 +113,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		sIdx[length(sIdx)]<<-sRowId
 		#cat(paste("s:(",paste(c(idx),collapse=","),")",sRowId,"|",sep=""))
 		if (!is.null(label)) writeBin(c(as.character(sRowId),label), fSLbl)   # sRowId added before label
+		if (end) endState()
 		invisible(sRowId)
 	}
 
@@ -122,7 +123,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		invisible(NULL)
 	}
 
-	action<-function(label=NULL,weights,prob,...){     # prop contain tripeles (scope,idx,prob)
+	action<-function(label=NULL, weights, prob, end=FALSE, ...){     # prop contain tripeles (scope,idx,prob)
 		#cat("action:\n")
 		#print(weights)
 		#print(prob)
@@ -148,6 +149,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		writeBin(as.numeric(c(probs,-1)), fTransP)
 		writeBin(as.numeric(weights), fACost)
 		#cat("end action\n")
+		if (end) endAction()
 		invisible(NULL)
 	}
 

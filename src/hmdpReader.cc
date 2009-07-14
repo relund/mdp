@@ -20,7 +20,7 @@ idx HMDPReader::ReadBinary(string fileName, T *&p) {
 	file.seekg (0, ios::beg);   // set pointer to start of file
 	file.read((char *)p,fileSize);
 	file.close();
-	/*for(idx i=0; i<fileSize/sizeof(T); i++) { 
+	/*for(idx i=0; i<fileSize/sizeof(T); i++) {
 		cout << p[i] << " ";
 	}
 	cout << endl << endl;*/
@@ -68,7 +68,7 @@ void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile) {
 	for (uInt s=1;;++s) {
 		if (pHMDP->stages.find(ToString(s)) == pHMDP->stages.end()) {  // if stage s not found
 			if (s==1) pHMDP->timeHorizon = INFINT;
-			else pHMDP->timeHorizon = s-1;
+			else pHMDP->timeHorizon = s;    // since idx start from 0 the set of decision epochs is s
 			break;
 		}
 	}

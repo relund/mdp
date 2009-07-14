@@ -69,12 +69,14 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 #' @name checkWDurIdx
 .checkWDurIdx<-function(iW, iDur, wLth) {
 	if (length(iW)!=1) stop("Index iW must be of length one!",call. = FALSE)
-	if (length(iDur)!=1) stop("Index iDur must be of length one!",call. = FALSE)
-	if (iW==iDur) stop("Indices iW and iDur must not be the same!",call. = FALSE)
 	if (iW>wLth-1) stop("Index iW must be less than ",wLth,"!",call. = FALSE)
-	if (iDur>wLth-1) stop("Index iDur must be less than ",wLth,"!",call. = FALSE)
 	if (iW<0) stop("Index iW must be greater or equal zero!",call. = FALSE)
-	if (iDur<0) stop("Index iDur must be greater or equal zero!",call. = FALSE)
+	if (!is.null(iDur)) {
+		if (length(iDur)!=1) stop("Index iDur must be of length one!",call. = FALSE)
+		if (iW==iDur) stop("Indices iW and iDur must not be the same!",call. = FALSE)
+		if (iDur>wLth-1) stop("Index iDur must be less than ",wLth,"!",call. = FALSE)
+		if (iDur<0) stop("Index iDur must be greater or equal zero!",call. = FALSE)
+	}
 	invisible()
 }
 
@@ -107,17 +109,24 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 #' @param rateBase The time-horizon the rate is valid over.
 #' @param times The max number of times value iteration is performed.
 #' @param eps Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see [1] p161).
+#' @param termValues The terminal values used (values of the last states in the MDP.
 #' @return NULL (invisible)
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
-valueIte<-function(mdp, iW, iDur, rate = 0.1, rateBase = 365, times = 10, eps = 0.00001, iniValues=NULL) {
+valueIte<-function(mdp, iW, iDur = NULL, rate = 0.1, rateBase = 365, times = 10, eps = 0.00001,
+	termValues = NULL) {
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
-	if (is.null(iniValues)) iniValues<-rep(0,mdp$founderStatesLast)
-	if (mdp$timeHorizon>=Inf) .Call("MDP_ValueIteInfDiscount", mdp$ptr, as.integer(times),
-		as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(rate),
-		as.numeric(rateBase), as.numeric(iniValues))
-	else .Call("MDP_ValueIteFiniteDiscount", mdp$ptr, as.integer(iW),
-		as.integer(iDur), as.numeric(rate), as.numeric(rateBase), as.numeric(iniValues))
+	if (is.null(termValues)) termValues<-rep(0,mdp$founderStatesLast)
+	if (mdp$timeHorizon>=Inf) {
+		if (is.null(iDur)) stop("A duration index must be specified under infinite time-horizon!")
+		.Call("MDP_ValueIteInfDiscount", mdp$ptr, as.integer(times),
+			as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(rate),
+			as.numeric(rateBase), as.numeric(termValues))
+	} else {
+		if (!is.null(iDur)) .Call("MDP_ValueIteFiniteDiscount", mdp$ptr, as.integer(iW),
+			as.integer(iDur), as.numeric(rate), as.numeric(rateBase), as.numeric(termValues))
+		if (is.null(iDur)) .Call("MDP_ValueIteFinite", mdp$ptr, as.integer(iW), as.numeric(termValues))
+	}
 	cat(.Call("MDP_GetLog",mdp$ptr))
 	invisible(NULL)
 }

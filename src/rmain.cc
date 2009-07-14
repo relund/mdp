@@ -90,15 +90,32 @@ SEXP MDP_ValueIteInfDiscount(SEXP ptr, SEXP times, SEXP eps, SEXP idxW,
 
 /** Perform value iteration on an finite time MDP. */
 SEXP MDP_ValueIteFiniteDiscount(SEXP ptr, SEXP idxW, SEXP idxDur, SEXP rate,
-	SEXP rateBase)
+	SEXP rateBase, SEXP iniValues)
 {
 	CHECK_PTR(ptr);
 	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
 	if (p == NULL) error("pointer is NULL");
+	vector<flt> ini;
+	ini.assign(NUMERIC_POINTER(iniValues),
+        NUMERIC_POINTER(iniValues)+GET_LENGTH(iniValues));
 	p->ValueIteFiniteDiscount(INTEGER_POINTER(idxW)[0],
 		INTEGER_POINTER(idxDur)[0],
 		NUMERIC_POINTER(rate)[0],
-		NUMERIC_POINTER(rateBase)[0]);
+		NUMERIC_POINTER(rateBase)[0],
+		ini);
+	return R_NilValue;
+}
+
+/** Perform value iteration on an finite time MDP. */
+SEXP MDP_ValueIteFinite(SEXP ptr, SEXP idxW, SEXP iniValues)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	vector<flt> ini;
+	ini.assign(NUMERIC_POINTER(iniValues),
+        NUMERIC_POINTER(iniValues)+GET_LENGTH(iniValues));
+	p->ValueIteFinite(INTEGER_POINTER(idxW)[0], ini);
 	return R_NilValue;
 }
 
