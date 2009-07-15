@@ -400,19 +400,19 @@ public:
      * time-horizon).
      * \param idxW Index of the weight used.
      * \param idxDur Index of duration such that discount rates can be calculated.
-     * \param iniValues Initial values used at founder level.
+     * \param termValues Terminal values used at founder level.
      * \post Use \code GetLog to see the optimization log.
      */
     void ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
-        const flt &rateBase, vector<flt> & iniValues);
+        const flt &rateBase, vector<flt> & termValues);
 
     /** Value iteration algorithm for expected reward (finite
      * time-horizon).
      * \param idxW Index of the weight used.
-     * \param iniValues Initial values used at founder level.
+     * \param termValues Terminal values used at founder level.
      * \post Use \code GetLog to see the optimization log.
      */
-    void ValueIteFinite(idx idxW, vector<flt> & iniValues);
+    void ValueIteFinite(idx idxW, vector<flt> & termValues);
 
 
     /** Policy iteration algorithm (infinite time-horizon).
@@ -433,12 +433,21 @@ public:
     flt PolicyIteAve(const idx idxW, const idx idxD);
 
 
+    /** Set the terminal values, i.e. the weights of the states at the last stage at for founder level.
+     * \param idxW Index of the weight considered.
+     * \param termValues Terminal values of the last stage at founder level.
+     */
+    void SetTerminalValues(idx idxW, vector<flt> & termValues);
+
+
     /** Calculate weights based on current policy. Normally run
      * after an optimal policy has been found.
      * \pre Assume that the policy are stored in idxPred.
      * \param idxW The index of weights to calculate.
+     * \param termValues Terminal values of the last stage at founder level.
      */
-    void CalcWeights(idx idxW) {
+    void CalcWeightsFinite(idx idxW, vector<flt> & termValues) {
+        SetTerminalValues(idxW, termValues);
         HT.CalcOptW(H,idxW,idxPred,idxMult);
     }
 
@@ -448,18 +457,109 @@ public:
      * \pre Assume that the policy are stored in idxPred.
      * \param idxW The index of weights to calculate.
      */
-    void CalcWeightsDiscount(vector<idx> vW, idx idxDur, flt rate, flt rateBase) {
-        HT.CalcOptWDiscount(H, vW, idxPred, idxMult, idxDur, rate, rateBase);
+    void CalcWeightsFiniteDiscount(idx idxW, idx idxDur, flt rate, flt rateBase,
+        vector<flt> & termValues)
+    {
+        SetTerminalValues(idxW, termValues);
+        HT.CalcOptWDiscount(H, idxW, idxPred, idxMult, idxDur, rate, rateBase);
     }
+
+
+    /** Calculate weights based on current policy (discount criterion). Normally run
+     * after an optimal policy has been found.
+     * \pre Assume that the policy are stored in idxPred.
+     * \param idxW The index of weights to calculate.
+     */
+    void CalcWeightsInfDiscount(idx idxW, idx idxDur, flt rate, flt rateBase)
+    {
+        log.str("");
+        if (timeHorizon<INFINT) {
+            log << "Error in method CalcWeightsInfDiscount you consider a finite time-horizon HMDP!" << endl;
+            return;
+        }
+        MatAlg matAlg;  // Matrix routines
+        pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
+        pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
+        multimap<string, int >::iterator ite;
+        log << "Calculate discounted weights using quantity '" <<
+            weightNames[idxW] << "' with '" <<
+            weightNames[idxDur] << "' as duration using interest rate " << rate <<
+            " and a rate basis equal " << rateBase << ".";
+
+        int rows = stages.count("0");
+        pairZero = stages.equal_range("0");
+        pairLast = stages.equal_range("1");
+        MatDouble r(rows,1),   // Matrix of founder rewards of action
+                       w(rows,1),   // Matrix of weights (the unknown)
+                       P(rows,rows);    // Matrix of prob values
+        MatDouble I(rows,true); // identity
+        idx i;
+
+        FounderRewardDiscount(r, idxW, idxDur, rate, rateBase, pairZero, pairLast);
+        FounderPrDiscount(P,idxW,idxDur,rate,rateBase,pairZero,pairLast);
+        // Now solve equations w = r + Pw -> (I-P)w = r
+        matAlg.IMinusP(P);
+        matAlg.LASolve(P,w,r);
+        // Set pairLast to optimal values
+        for (ite=pairLast.first, i=0; ite!=pairLast.second; ++ite, ++i) // set last to w values
+            H.itsNodes[(ite->second)+1].SetW(idxW,w(i,0));
+        // calc optimal values for the rest of the process
+        HT.CalcOptWDiscount(H, idxW, idxPred, idxMult, idxDur, rate, rateBase);
+        log << " finished." << endl;
+    }
+
 
     /** Calculate weights based on current policy (average criterion). Normally run
      * after an optimal policy has been found.
      * \pre Assume that the policy are stored in idxPred.
      * \param idxW The index of weights to calculate.
      */
-    void CalcWeightsAve(vector<idx> vW, idx idxDur, flt g) {
-        HT.CalcOptWAve(H, vW, idxPred, idxMult, idxDur, g);
+    flt CalcWeightsInfAve(idx idxW, idx idxD) {
+        log.str("");
+        if (timeHorizon<INFINT) {
+            log << "Error in method CalcWeightsAve you consider a finite time-horizon HMDP!" << endl;
+            return INF;
+        }
+        log << "Calculate weights using average reward criterion with \nreward '" <<
+            weightNames[idxW] << "' over '" <<
+            weightNames[idxD] << "'. g = ";
+
+        MatAlg matAlg; // Matrix routines
+        pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
+        pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
+        multimap<string, int >::iterator ite, iteZ;
+        int rows = stages.count("0");
+        pairZero = stages.equal_range("0");
+        pairLast = stages.equal_range("1");
+        MatDouble r(rows,1),   // Matrix of founder rewards
+                       w(rows,1),   // Matrix of weights (the unknown)
+                       d(rows,1),    // Matrix of denominator values
+                       P(rows,rows);    // Matrix of prob values
+        MatDouble I(rows,true); // identity
+        idx i;
+        flt g = 0;
+
+        FounderW(r, idxW, pairZero, pairLast);
+        FounderPr(P,idxW,pairZero,pairLast);
+        FounderW(d,idxD,pairZero,pairLast);
+        // Now solve equations h = r - dg + Ph where r, d and P have been
+        // calculated for the founder. This is equvivalent to solving
+        // (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equvivalent to
+        // solving Qw = r (equation (8.6.8) in Puterman) where last col in
+        // (I-P) replaced with d.
+        matAlg.IMinusP(P);  // Set P := I-P
+        for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
+        matAlg.LASolve(P,w,r);
+        g = w(rows-1,0);
+        // set last to w values
+        for (ite=pairLast.first, i=0; ite!=pairLast.second; ++ite, ++i) {
+            if (i<(idx)rows-1) H.itsNodes[(ite->second)+1].SetW(idxW,w(i,0));   // last state always has value zero
+        }
+        HT.CalcOptWAve(H, idxW, idxPred, idxMult, idxD, g);
+        log << g << " finished." << endl;
+        return g;
     }
+
 
     /** Find the h(arc) corresponding to an action.
      * \param iS The index of the state we consider in \code states.

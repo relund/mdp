@@ -368,40 +368,55 @@ SEXP MDP_CalcRPOAve(SEXP ptr, SEXP idxW, SEXP idxA, SEXP sId, SEXP idxD,
 
 
 /** Calc weights for idxW. */
-SEXP MDP_CalcWeights(SEXP ptr, SEXP idxW)
+SEXP MDP_CalcWeightsFinite(SEXP ptr, SEXP idxW, SEXP termValues)
 {
 	CHECK_PTR(ptr);
 	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
 	if (p == NULL) error("pointer is NULL");
-	p->CalcWeights(INTEGER_POINTER(idxW)[0]);
+	vector<flt> term;
+	term.assign(NUMERIC_POINTER(termValues),
+        NUMERIC_POINTER(termValues)+GET_LENGTH(termValues));
+	p->CalcWeightsFinite(INTEGER_POINTER(idxW)[0], term);
 	return R_NilValue;
 }
 
 
 /** Calc weights for idxW (discount criterion). */
-SEXP MDP_CalcWeightsDiscount(SEXP ptr, SEXP idxW, SEXP idxD,
+SEXP MDP_CalcWeightsFiniteDiscount(SEXP ptr, SEXP idxW, SEXP idxD,
+	SEXP rate, SEXP rateBase, SEXP termValues)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	vector<flt> term;
+	term.assign(NUMERIC_POINTER(termValues),
+        NUMERIC_POINTER(termValues)+GET_LENGTH(termValues));
+	p->CalcWeightsFiniteDiscount(INTEGER_POINTER(idxW)[0], INTEGER_POINTER(idxD)[0],
+        NUMERIC_POINTER(rate)[0], NUMERIC_POINTER(rateBase)[0], term);
+	return R_NilValue;
+}
+
+
+/** Calc weights for idxW (discount criterion). */
+SEXP MDP_CalcWeightsInfDiscount(SEXP ptr, SEXP idxW, SEXP idxD,
 	SEXP rate, SEXP rateBase)
 {
 	CHECK_PTR(ptr);
 	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
 	if (p == NULL) error("pointer is NULL");
-	vector<idx> vW(GET_LENGTH(idxW),0);
-	for (idx i=0;i<(idx)GET_LENGTH(idxW);i++) vW[i] = INTEGER_POINTER(idxW)[i];
-	p->CalcWeightsDiscount(vW, INTEGER_POINTER(idxD)[0],
+	p->CalcWeightsInfDiscount(INTEGER_POINTER(idxW)[0], INTEGER_POINTER(idxD)[0],
         NUMERIC_POINTER(rate)[0], NUMERIC_POINTER(rateBase)[0]);
 	return R_NilValue;
 }
 
 
 /** Calc weights for idxW (ave criterion). */
-SEXP MDP_CalcWeightsAve(SEXP ptr, SEXP idxW, SEXP idxD, SEXP g)
+SEXP MDP_CalcWeightsInfAve(SEXP ptr, SEXP idxW, SEXP idxD)
 {
 	CHECK_PTR(ptr);
 	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
 	if (p == NULL) error("pointer is NULL");
-	vector<idx> vW(GET_LENGTH(idxW),0);
-	for (idx i=0;i<(idx)GET_LENGTH(idxW);i++) vW[i] = INTEGER_POINTER(idxW)[i];
-	p->CalcWeightsAve(vW, INTEGER_POINTER(idxD)[0], NUMERIC_POINTER(g)[0]);
+	p->CalcWeightsInfAve(INTEGER_POINTER(idxW)[0], INTEGER_POINTER(idxD)[0]);
 	return R_NilValue;
 }
 

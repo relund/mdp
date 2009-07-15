@@ -258,13 +258,18 @@ calcRPO<-function(mdp, iW, iA, sId = 1:mdp$states-1, criterion="expected", iDur 
 #' @param g The optimal gain (g) calculated (used if \code{criterion = "average"}).
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
-calcWeights<-function(mdp, iW, criterion="expected", iDur = 0, rate = 0.1, rateBase = 365, g = 0) {
+calcWeights<-function(mdp, iW, criterion="expected", iDur = 0, rate = 0.1, rateBase = 365, termValues=NULL) {
 	.checkWIdx(iW,length(mdp$weightNames))
-	if (criterion=="expected") .Call("MDP_CalcWeights", mdp$ptr, as.integer(iW))
-	if (criterion=="discount") .Call("MDP_CalcWeightsDiscount", mdp$ptr, as.integer(iW), as.integer(iDur),
-		as.numeric(rate), as.numeric(rateBase))
-	if (criterion=="average") .Call("MDP_CalcWeightsAve", mdp$ptr, as.integer(iW), as.integer(iDur),
-		as.numeric(g))
+	if (mdp$timeHorizon<Inf) {
+		if (is.null(termValues)) stop("Terminal values must be specified under finite time-horizon!")
+		if (criterion=="expected") .Call("MDP_CalcWeightsFinite", mdp$ptr, as.integer(iW), as.numeric(termValues))
+		if (criterion=="discount") .Call("MDP_CalcWeightsFiniteDiscount", mdp$ptr, as.integer(iW), as.integer(iDur),
+			as.numeric(rate), as.numeric(rateBase), as.numeric(termValues))
+	} else {
+		if (criterion=="discount") .Call("MDP_CalcWeightsInfDiscount", mdp$ptr, as.integer(iW), as.integer(iDur),
+			as.numeric(rate), as.numeric(rateBase))
+		if (criterion=="average") .Call("MDP_CalcWeightsInfAve", mdp$ptr, as.integer(iW), as.integer(iDur))
+	}
 	invisible(NULL)
 }
 

@@ -519,7 +519,7 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 // ----------------------------------------------------------------------------
 
 void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
-	const flt &rateBase, vector<flt> & iniValues)
+	const flt &rateBase, vector<flt> & termValues)
 {
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
@@ -536,9 +536,9 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 	// find founder states at stage zero and last stage
 	pairZero = stages.equal_range("0");
 	pairLast = stages.equal_range(ToString(timeHorizon-1));
-	if (iniValues.size()!=stages.count(ToString(timeHorizon-1)))
+	if (termValues.size()!=stages.count(ToString(timeHorizon-1)))
         log << "Error initial values vector does not have the same size as the states that must be assigned the values!\n";
-	for (ite=pairLast.first, iteV=iniValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
+	for (ite=pairLast.first, iteV=termValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(*(iteV));
 	HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 	vector<idx> vW = WeightIdx(idxW, idxDur);
@@ -549,7 +549,7 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 
 // ----------------------------------------------------------------------------
 
-void HMDP::ValueIteFinite(idx idxW, vector<flt> & iniValues)
+void HMDP::ValueIteFinite(idx idxW, vector<flt> & termValues)
 {
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
@@ -564,9 +564,9 @@ void HMDP::ValueIteFinite(idx idxW, vector<flt> & iniValues)
 	// find founder states at stage zero and last stage
 	pairZero = stages.equal_range("0");
 	pairLast = stages.equal_range(ToString(timeHorizon-1));
-	if (iniValues.size()!=stages.count(ToString(timeHorizon-1)))
+	if (termValues.size()!=stages.count(ToString(timeHorizon-1)))
         log << "Error initial values vector does not have the same size as the states that must be assigned the values!\n";
-	for (ite=pairLast.first, iteV=iniValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
+	for (ite=pairLast.first, iteV=termValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(*(iteV));
 	HT.CalcHTacyclic(H,idxW,idxPred,idxMult);
 	vector<idx> vW = WeightIdx(idxW, weightNames.size()+1); // hack so idxDur is just greater than the index
@@ -599,8 +599,7 @@ void HMDP::FounderRewardDiscount(MatDouble &r, const idx &idxW, const idx &idxDu
 
 	for (ite=pairLast.first; ite!=pairLast.second; ++ite) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(idxW,0);
-	vector<idx> vW(1,idxW);
-	HT.CalcOptWDiscount(H,vW,idxPred,idxMult,idxDur,rate,rateBase);
+	HT.CalcOptWDiscount(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 	SetR(r,idxW,pairZero);
 }
 
@@ -613,8 +612,7 @@ void HMDP::FounderW(MatDouble &w, const idx &idxW,
 	multimap<string, int >::iterator ite;
 	for (ite=pairOne.first; ite!=pairOne.second; ++ite) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(idxW,0);
-	vector<idx> vW(1,idxW);
-	HT.CalcOptW(H,vW,idxPred,idxMult);
+	HT.CalcOptW(H,idxW,idxPred,idxMult);
 	SetR(w,idxW,pairZero);
 }
 
@@ -883,6 +881,26 @@ int HMDP::FindAction(idx iS, idx idxA)
 
 // ----------------------------------------------------------------------------
 
+void HMDP::SetTerminalValues(idx idxW, vector<flt> & termValues) {
+    pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
+    multimap<string, int >::iterator ite;
+    vector<flt>::iterator iteV;
+    bool error=false;
 
+    if (timeHorizon<INFINT) {
+        pairLast = stages.equal_range(ToString(timeHorizon-1));
+        if (termValues.size()!=stages.count(ToString(timeHorizon-1))) error=true;
+    }
+    else {
+        pairLast = stages.equal_range("1");
+        if (termValues.size()!=stages.count("1")) error=true;
+    }
+    if (error) {
+        log << "Error initial values vector does not have the same size as the states that must be assigned the values!\n";
+        return;
+    }
+    for (ite=pairLast.first, iteV=termValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
+        H.itsNodes[(ite->second)+1].SetW(idxW,*(iteV));
+}
 
 // ----------------------------------------------------------------------------

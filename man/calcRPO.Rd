@@ -1,8 +1,8 @@
 \name{calcRPO}
 \alias{calcRPO}
 \title{Calculate the rentention payoff (RPO) for some states.}
-\usage{calcRPO(mdp, iW, iA, sId=1:mdp$states - 1, criterion=expected, iDur=0,
-    rate=0.1, rateBase=365, g=0)}
+\usage{calcRPO(mdp, iW, iA, sId=1:mdp$states - 1, criterion="expected",
+    iDur=0, rate=0.1, rateBase=365, g=0)}
 \description{Calculate the rentention payoff (RPO) for some states.}
 \details{The RPO is defined as the difference between
 the weight of the state when using action \code{iA} and the maximum

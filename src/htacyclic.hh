@@ -211,7 +211,7 @@ public:
      * \param rate The interest rate.
      * \param rateBase The time-horizon the rate is valid over.
      */
-    void CalcOptWDiscount(Hypergraph& H, vector<idx> vW, idx idxPred, idx idxMult,
+    void CalcOptWDiscount(Hypergraph& H, idx idxW, idx idxPred, idx idxMult,
         idx idxDur, flt rate, flt rateBase);
 
     /** Calculates weights based on optimal predecessor. Use average criterion.
@@ -228,7 +228,7 @@ public:
      * \param rateBase The time-horizon the rate is valid over.
      * \param g The average gain.
      */
-    void CalcOptWAve(Hypergraph& H, vector<idx> vW, idx idxPred, idx idxMult,
+    void CalcOptWAve(Hypergraph& H, idx idxW, idx idxPred, idx idxMult,
         idx idxDur, flt g);
 
 

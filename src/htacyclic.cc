@@ -308,7 +308,7 @@ void HTAcyclic::CalcOptW(Hypergraph& H,vector<idx> vW, idx idxPred, idx idxMult)
 
 //-----------------------------------------------------------------------------
 
-void HTAcyclic::CalcOptWDiscount(Hypergraph& H,vector<idx> vW, idx idxPred,
+void HTAcyclic::CalcOptWDiscount(Hypergraph& H,idx idxW, idx idxPred,
 					idx idxMult, idx idxDur, flt rate, flt rateBase) {
 	NodePtr pHnode;     // pointer to node we are examing BS of
 	TailPtr pTailNow,pTailLast;
@@ -322,29 +322,25 @@ void HTAcyclic::CalcOptWDiscount(Hypergraph& H,vector<idx> vW, idx idxPred,
 		pHnode = H.GetNodesPtr()+validOdr[i];
 		if (pHnode->pred[idxPred]<0) { // arc
 			pArc = H.GetArcsPtr()-pHnode->pred[idxPred];
-			for(idx j=0; j<vW.size(); j++) {
-				pHnode->w[vW[j]] = pArc->pTail->w[vW[j]]*pow(dB,pArc->w[idxDur])+pArc->w[vW[j]];
-			}
+            pHnode->w[idxW] = pArc->pTail->w[idxW]*pow(dB,pArc->w[idxDur])+pArc->w[idxW];
 		}
 		if (pHnode->pred[idxPred] > 0) { // hyperarc
 			pHNow = H.GetHArcsPtr() + pHnode->pred[idxPred];
-			for(idx j=0; j<vW.size(); j++) {
-				weightTmp=0;
-				// compute weighting function: scan tails
-				for (pTailNow=pHNow->pTail,pTailLast=(pHNow+1)->pTail;
-						pTailNow!=pTailLast;pTailNow++ ) {
-					weightTmp += ((pTailNow->pTail)->w[vW[j]])
-								 *(pTailNow->m[idxMult]);
-				}
-				pHnode->w[vW[j]] = weightTmp*pow(dB,pHNow->w[idxDur]) + pHNow->w[vW[j]];
-			}
+            weightTmp=0;
+            // compute weighting function: scan tails
+            for (pTailNow=pHNow->pTail,pTailLast=(pHNow+1)->pTail;
+                    pTailNow!=pTailLast;pTailNow++ ) {
+                weightTmp += ((pTailNow->pTail)->w[idxW])
+                             *(pTailNow->m[idxMult]);
+            }
+            pHnode->w[idxW] = weightTmp*pow(dB,pHNow->w[idxDur]) + pHNow->w[idxW];
 		}
 	}
 }
 
 //-----------------------------------------------------------------------------
 
-void HTAcyclic::CalcOptWAve(Hypergraph& H,vector<idx> vW, idx idxPred,
+void HTAcyclic::CalcOptWAve(Hypergraph& H,idx idxW, idx idxPred,
         idx idxMult, idx idxDur, flt g) {
 	NodePtr pHnode;     // pointer to node we are examing BS of
 	TailPtr pTailNow,pTailLast;
@@ -357,22 +353,18 @@ void HTAcyclic::CalcOptWAve(Hypergraph& H,vector<idx> vW, idx idxPred,
 		pHnode = H.GetNodesPtr()+validOdr[i];
 		if (pHnode->pred[idxPred]<0) { // arc
 			pArc = H.GetArcsPtr()-pHnode->pred[idxPred];
-			for(idx j=0; j<vW.size(); j++) {
-				pHnode->w[vW[j]] = pArc->pTail->w[vW[j]]+pArc->w[vW[j]]- pArc->w[idxDur]*g;
-			}
+            pHnode->w[idxW] = pArc->pTail->w[idxW]+pArc->w[idxW]- pArc->w[idxDur]*g;
 		}
 		if (pHnode->pred[idxPred] > 0) { // hyperarc
 			pHNow = H.GetHArcsPtr() + pHnode->pred[idxPred];
-			for(idx j=0; j<vW.size(); j++) {
-				weightTmp=0;
-				// compute weighting function: scan tails
-				for (pTailNow=pHNow->pTail,pTailLast=(pHNow+1)->pTail;
-						pTailNow!=pTailLast;pTailNow++ ) {
-					weightTmp += ((pTailNow->pTail)->w[vW[j]])
-								 *(pTailNow->m[idxMult]);
-				}
-				pHnode->w[vW[j]] = weightTmp + pHNow->w[vW[j]] - pHNow->w[idxDur]*g;
-			}
+            weightTmp=0;
+            // compute weighting function: scan tails
+            for (pTailNow=pHNow->pTail,pTailLast=(pHNow+1)->pTail;
+                    pTailNow!=pTailLast;pTailNow++ ) {
+                weightTmp += ((pTailNow->pTail)->w[idxW])
+                             *(pTailNow->m[idxMult]);
+            }
+            pHnode->w[idxW] = weightTmp + pHNow->w[idxW] - pHNow->w[idxDur]*g;
 		}
 	}
 }

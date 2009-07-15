@@ -2,7 +2,7 @@
 \alias{valueIte}
 \title{Perform value iteration on the MDP.}
 \usage{valueIte(mdp, iW, iDur, rate=0.1, rateBase=365, times=10, eps=1e-05,
-    iniValues)}
+    termValues)}
 \description{Perform value iteration on the MDP.}
 \details{If the MDP has a finite time-horizon then arguments \code{times} and \code{eps}
 are ignored.}
@@ -15,4 +15,5 @@ are ignored.}
 \item{rate}{Interest rate.}
 \item{rateBase}{The time-horizon the rate is valid over.}
 \item{times}{The max number of times value iteration is performed.}
-\item{eps}{Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see [1] p161).}}
+\item{eps}{Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see [1] p161).}
+\item{termValues}{The terminal values used (values of the last states in the MDP.}}

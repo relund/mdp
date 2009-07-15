@@ -19,9 +19,9 @@
 #' convertHMP2Binary("mdp.hmp")
 #' stateIdxDf()
 #' actionInfo()
-convertBinary2HMP<-function(binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
+convertBinary2HMP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
-	out='r_convert.hmp', duration=1) {
+	out=paste(prefix,'converted.hmp',sep=""), duration=1) {
 
 	process<-function(mat) {
 		#cat("process\n"); print(mat)
@@ -88,15 +88,15 @@ convertBinary2HMP<-function(binNames=c("stateIdx.bin","stateIdxLbl.bin","actionI
 	}
 
 	ptm <- proc.time()
-	sIdx<-stateIdxMat(binNames[1])
-	sLabels<-stateIdxDf(binNames[1])
+	sIdx<-stateIdxMat(prefix,binNames[1])
+	sLabels<-stateIdxDf(prefix,binNames[1])
 	sLabels<-sLabels[,c(1,ncol(sLabels))]
-	aIdx<-actionIdxMat(binNames[3])
-	aLabels<-actionIdxDf(binNames[3])
+	aIdx<-actionIdxMat(prefix,binNames[3])
+	aLabels<-actionIdxDf(prefix,binNames[3])
 	aLabels<-aLabels[,c(1,ncol(aLabels))]
-	aW<-actionWeightMat(binNames[5],binNames[6])
-	prMat<-transProbMat(binNames[7])
-	wNames<-weightNames(binNames[6])
+	aW<-actionWeightMat(prefix,binNames[5],binNames[6])
+	prMat<-transProbMat(prefix,binNames[7])
+	wNames<-weightNames(prefix,binNames[6])
 	wLth<-length(wNames)
 	# level<-sum(!is.na(sIdx[i,2:cols])) %/% 3
 	w<-hmpMDPWriter(file=out,desc="HMP file created by converting binary files")
