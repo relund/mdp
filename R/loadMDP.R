@@ -268,7 +268,7 @@ calcWeights<-function(mdp, iW, criterion="expected", iDur = 0, rate = 0.1, rateB
 	} else {
 		if (criterion=="discount") .Call("MDP_CalcWeightsInfDiscount", mdp$ptr, as.integer(iW), as.integer(iDur),
 			as.numeric(rate), as.numeric(rateBase))
-		if (criterion=="average") .Call("MDP_CalcWeightsInfAve", mdp$ptr, as.integer(iW), as.integer(iDur))
+		if (criterion=="average") return(.Call("MDP_CalcWeightsInfAve", mdp$ptr, as.integer(iW), as.integer(iDur)))
 	}
 	invisible(NULL)
 }
@@ -309,11 +309,10 @@ removeAction<-function(mdp, sId, iA) {
 #' Reset the actions of a state.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param sId The state id of the state we want to reset the actions for.
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{resetActions}}, \code{\link{fixAction}}.
-resetActions<-function(mdp, sId) {
+resetActions<-function(mdp) {
 	.Call("MDP_ResetActions", mdp$ptr)
 	invisible(NULL)
 }
@@ -332,6 +331,19 @@ setPolicyAction<-function(mdp, sId, iA) {
 }
 
 
+#' Set the current policy.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param policy A matrix with sId in the first column and action index in the second
+#' @return Nothing.
+#' @author Lars Relund \email{lars@@relund.dk}
+setPolicy<-function(mdp, policy) {
+	if (ncol(policy)!=2) stop("The policy must be a matrix with 2 columns!")
+	.Call("MDP_SetPolicy", mdp$ptr, as.integer(policy))
+	invisible(NULL)
+}
+
+
 #' Set the weight of a state.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
@@ -342,6 +354,19 @@ setPolicyAction<-function(mdp, sId, iA) {
 #' @author Lars Relund \email{lars@@relund.dk}
 setStateWeight<-function(mdp, w, sId, iW) {
 	.Call("MDP_SetStateW", mdp$ptr, as.numeric(w), as.integer(sId), as.integer(iW))
+	invisible(NULL)
+}
+
+#' Set the weight of an action.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param w The weight.
+#' @param sId The state id of the state.
+#' @param iW Weight index where set the weight.
+#' @return Nothing.
+#' @author Lars Relund \email{lars@@relund.dk}
+setActionWeight<-function(mdp, w, sId, iA, iW) {
+	.Call("MDP_SetActionW", mdp$ptr, as.numeric(w), as.integer(sId), as.integer(iA), as.integer(iW))
 	invisible(NULL)
 }
 

@@ -299,7 +299,7 @@ SEXP MDP_PolicyIteAve(SEXP ptr, SEXP idxW, SEXP idxDur)
 	CHECK_PTR(ptr);
 	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
 	if (p == NULL) error("pointer is NULL");
-	flt g = p->PolicyIteAve(INTEGER_POINTER(idxW)[0],
+	double g = p->PolicyIteAve(INTEGER_POINTER(idxW)[0],
 		INTEGER_POINTER(idxDur)[0]);
 	SEXP gR;
 	PROTECT(gR = NEW_NUMERIC(1));
@@ -416,8 +416,12 @@ SEXP MDP_CalcWeightsInfAve(SEXP ptr, SEXP idxW, SEXP idxD)
 	CHECK_PTR(ptr);
 	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
 	if (p == NULL) error("pointer is NULL");
-	p->CalcWeightsInfAve(INTEGER_POINTER(idxW)[0], INTEGER_POINTER(idxD)[0]);
-	return R_NilValue;
+	double g = p->CalcWeightsInfAve(INTEGER_POINTER(idxW)[0], INTEGER_POINTER(idxD)[0]);
+	SEXP gR;
+	PROTECT(gR = NEW_NUMERIC(1));
+	NUMERIC_POINTER(gR)[0] = g;
+	UNPROTECT(1);
+	return gR;
 }
 
 
@@ -465,6 +469,26 @@ SEXP MDP_SetPolicyAction(SEXP ptr, SEXP iS, SEXP iA)
 }
 
 
+/** Set the policy.
+ \param policy a vector with sId and iA converted columnwise from a matrix.
+ */
+SEXP MDP_SetPolicy(SEXP ptr, SEXP policy)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	int iS,iA;
+	int * pP = INTEGER_POINTER(policy);
+	int rows = GET_LENGTH(policy)/2;
+	for (int i=0;i<rows;++i) {
+	    iS=pP[i];
+	    iA=pP[rows+i];
+	    p->SetPolicyAction(iS, iA);
+    }
+	return R_NilValue;
+}
+
+
 /** Set the state weight. */
 SEXP MDP_SetStateW(SEXP ptr, SEXP w, SEXP iS, SEXP iW)
 {
@@ -473,6 +497,18 @@ SEXP MDP_SetStateW(SEXP ptr, SEXP w, SEXP iS, SEXP iW)
 	if (p == NULL) error("pointer is NULL");
 	p->SetStateW(NUMERIC_POINTER(w)[0], INTEGER_POINTER(iS)[0],
 		INTEGER_POINTER(iW)[0]);
+	return R_NilValue;
+}
+
+
+/** Set the action weight. */
+SEXP MDP_SetActionW(SEXP ptr, SEXP w, SEXP iS, SEXP iA, SEXP iW)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	p->SetActionW(NUMERIC_POINTER(w)[0], INTEGER_POINTER(iS)[0],
+		INTEGER_POINTER(iA)[0], INTEGER_POINTER(iW)[0]);
 	return R_NilValue;
 }
 

@@ -648,6 +648,25 @@ public:
     }
 
 
+    /** Set the action weight.
+     * \param w The weight to set.
+     * \param iS The index of the state we consider in \code states.
+     * \param iA The index of the action we consider.
+     * \param iW The weight index.
+     */
+    void SetActionW(flt w, idx iS, idx iA, idx iW) {
+        int idxHArc = FindAction(iS,iA);
+		if (idxHArc<0) { // arc
+			ArcPtr pArc = H.GetArcsPtr()-idxHArc;
+			pArc->w[iW] = w;
+		}
+		if (idxHArc>0) { // hyperarc
+			HArcPtr pHArc = H.GetHArcsPtr() + idxHArc;
+            pHArc->w[iW] = w;
+		}
+    }
+
+
     /** Remove the action.
      * \param iS The index of the state we consider in \code states.
      * \param iA The action index.
