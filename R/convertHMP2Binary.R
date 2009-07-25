@@ -17,6 +17,7 @@
 convertHMP2Binary<-function(file, prefix="") {
 	setWeights<-function(q) {
 		labels<-unlist(lapply(q, function(x) xmlAttrs(x)))
+		ctrW<<-length(labels)+1
 		w$setWeights(c("Duration",labels))
 	}
 
@@ -50,8 +51,8 @@ convertHMP2Binary<-function(file, prefix="") {
 	}
 
 	action<-function(a,states) {
-		if (names(xmlChildren(a))[1]=="proc") {
-			w$action(label=xmlAttrs(a)['l'], weights=c(0,0,0), prob=c(2,0,1))
+		if ("proc" %in% names(xmlChildren(a))) {
+			w$action(label=xmlAttrs(a)['l'], weights=rep(0,ctrW), prob=c(2,0,1))
 			xmlApply(a,process)
 		} else {    # normal action
 			v<-paste("c(", gsub(" +", ",", trim(xmlValue(a[['q']]))), ")",sep="")
@@ -94,6 +95,7 @@ convertHMP2Binary<-function(file, prefix="") {
 	}
 
 	ptm <- proc.time()
+	ctrW<-0
 	doc<-xmlTreeParse(file,useInternalNodes=T)
 	r<-xmlRoot(doc)
 	w<-binaryMDPWriter(prefix)
