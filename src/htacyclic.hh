@@ -289,7 +289,7 @@ public:
      * shortest hypertree. The valid ordering is obtained as the order the nodes
      * are taken from the candidate set (heap).
      * \param H The hypergraph.
-     * \param cand The initial candidate set with pointers to the starting nodes.
+     * \param nodes The initial candidate set with pointers to the starting nodes.
      *      having no backward star (hyper)arcs.
      */
     void FindValidOdr(Hypergraph& H, vector<idx> & nodes);
@@ -303,6 +303,13 @@ public:
 
     /** Print the predecessor (hyper)arc of a node. */
     void PrintPred(Hypergraph& H, idx idxNode, idx idxPred);
+
+    /** Print the valid ordering. */
+    void PrintValidOdr() {
+        cout << "Valid odr: ";
+        for (idx i=0;i<validOdr.size();++i) cout << validOdr[i] << " ";
+        cout << endl;
+    }
 private:
 
 private:

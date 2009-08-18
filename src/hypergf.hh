@@ -1,16 +1,16 @@
 #ifndef HYPERGF_HPP
 #define HYPERGF_HPP
 
-
 //-----------------------------------------------------------------------------
 #include <stdlib.h>     // For use of exit command
 #include <stdio.h>      // For use of scanf and printf
 #include <iostream>
 #include <vector>
+using namespace std;
 #include "basicdt.hh"
 #include "time.hh"
 #include "hgfreader.hh"
-using namespace std;
+#include "matrix.hh"
 
 //-----------------------------------------------------------------------------
 //  basic data types: Node, Arc, Tail and Hyperarc
@@ -238,6 +238,48 @@ public:
     void PrintBSArc(int i);
     void PrintFSArc(int i);
 
+    /** Return a vector of idx. The first head and the next tail. */
+    vector<int> ArcVector(idx i) {
+        vector<int> v;
+        v.push_back(itsArcs[i].pHead-itsNodes);
+        v.push_back(itsArcs[i].pTail-itsNodes);
+        return v;
+    }
+
+    /** Return a vector of idx. The first head the rest tails. */
+    vector<int> HArcVector(idx i) {
+        vector<int> v;
+        TailPtr pTailIndex,pLast;
+        v.push_back(itsHArcs[i].pHead-itsNodes);
+        for(pTailIndex=itsHArcs[i].pTail,pLast=itsHArcs[i+1].pTail;
+            pTailIndex!=pLast;pTailIndex++)
+            v.push_back(pTailIndex->pTail-itsNodes);
+        return v;
+    }
+
+    /** Return the hypergraph as a matrix.
+     Each row contains a (h)arc with the first column the head and the rest
+     tails. The number of columns in each row is the same. Negative numbers
+     indicate NAs.
+    */
+    MatSimple<int> HgfMatrix() {
+        vector<int> v;
+        idx i,k = 0;
+        MatSimple<int> mat((int)(ma+mh),(int)d+1);
+        mat.Set(-1);
+        for(i=1;i<=ma;i++) {
+            v = ArcVector(i);
+            for (idx j=0; j<v.size(); ++j) mat(k,j) = v[j];
+            ++k;
+        }
+        for(i=1;i<=mh;i++) {
+            v=HArcVector(i);
+            for (idx j=0;j<v.size();++j) mat(k,j) = v[j];
+            ++k;
+        }
+        return mat;
+    }
+
     /** Fix the (h)arc, i.e. remove all other (h)arcs in the BS.
      * \param idxHArc The index of the hyperarc  (store as idxPred).
      */
@@ -323,27 +365,6 @@ public:
      * \param i j idx of the two weights to swap
      */
 	void SwapW(idx i,idx j);
-
-    //void CreateSubHypgf(idxPtr pArcIndexes,idxPtr pHArcIndexes);
-    // create the subhypergf defined by the 2 input arrays where the zero entry is not
-    // used. The first entry there is zero in the arrays indicate that no there is no
-    // more indexes. Assumes that all indexes satisfy |index|<ma for aArcArray and
-    // |index|<mh for itsHArcs. If an index is neg -> remove this (h)arc if pos ->
-    // fix this (h)arc. Remember to Reset the Hypergraph before calling this function!
-
-    //void CreateSubHypgf(idx indexBefore,idx indexNow);
-    // Precondition: A subhypergraph where indexBefore is removed is defined. Now
-    // we want to fix indexBefore and remove indexNow instead
-    // Postcondition: A the new subhypergf is defined
-
-    //int BuildAcyclicSubHypgf(idxPtr pArcIndexes,idxPtr pHArcIndexes,
-      //  idxPtr pPredIndexes);
-    // create the subhypergf defined by the 2 input arrays where the zero entry is not
-    // used. The first entry there is zero in the arrays indicate that no there is no
-    // more indexes. Assumes that all indexes satisfy |index|<ma for pArcArray and
-    // |index|<mh for itsHArcs. If an index is neg -> remove this (h)arc if pos ->
-    // fix this (h)arc. Return the minimal node number of nodes where the BS have been
-	// changed
 
     /** Set the variables needed to allocate memory and allocate memory */
     void Initialize(uInt n, uInt ma, uInt mh, uInt d, uInt hSize, uInt sizeW,

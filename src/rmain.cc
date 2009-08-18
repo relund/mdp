@@ -9,6 +9,19 @@ using namespace std;
 extern "C" {
 #endif
 
+/*
+Note that R store a matrix column wise, i.e. that
+
+    mat[r][c] = vec[r + rows * c] = vec[k]
+
+where rows denote the number of rows in the matrix. If k is known and r and c
+unknown then
+
+    c = k/rows              (int division)
+    r = k - rows * c        (int division)
+*/
+
+
 static SEXP type_tag;
 
 typedef class HMDP* HMDPPtr;
@@ -512,6 +525,22 @@ SEXP MDP_SetActionW(SEXP ptr, SEXP w, SEXP iS, SEXP iA, SEXP iW)
 	return R_NilValue;
 }
 
+
+/** Return the state-expanded hgf as a matrix. */
+SEXP MDP_HgfMatrix(SEXP ptr)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	MatSimple<int> mat = p->HgfMatrix();
+	int rows = mat.rows;
+	int cols = mat.cols;
+	SEXP vec;
+	PROTECT(vec = NEW_INTEGER(rows*cols));
+	for (int k=0; k<rows*cols; ++k) INTEGER_POINTER(vec)[k] = mat(k-rows*(k/rows),k/rows);
+	UNPROTECT(1);
+	return vec;
+}
 
 
 

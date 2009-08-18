@@ -3,12 +3,13 @@
 #'
 #' @usage loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 #'    "actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"), eps = 0.00001)
-#' @param prefix A character string with the prefix added to \code{binNames}.
+#' @param prefix A character string with the prefix added to \code{binNames}. Used to identify a specific model.
 #' @param binNames A character vector of length 7 giving the names of the binary
 #'     files storing the model.
 #' @param eps The sum of the transition probablities must at most differ eps from one.
-#' @return A list containing binNames and a pointer \code{ptr} to the model.
+#' @return A list containing relavant information about the model and a pointer \code{ptr} to the model object in memory.
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
 loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"), eps = 0.00001)
 {
@@ -96,6 +97,20 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 }
 
 
+#' Return the index of a weight in the model. Note that index always start from zero (C++ style), i.e. the first weight, the first state at a stage etc has index 0.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param wLbl The label/string of the weight.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @return The index (integer).
+#' @name checkWIdx
+getWIdx<-function(mdp, wLbl) {
+	idx<-grepl(wLbl,mdp$weightNames)
+	if (!any(idx)) # we do not have a match
+		stop("The weight name does not seem to exist!", call.=FALSE)
+	return(which(idx)-1)
+}
+
 
 #' Perform value iteration on the MDP.
 #'
@@ -103,8 +118,8 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 #' are ignored.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param iW Index of the weight we optimize.
-#' @param iDur Index of duration/time such that discount rates can be calculated.
+#' @param w The label of the weight we optimize.
+#' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate Interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
 #' @param times The max number of times value iteration is performed.
@@ -113,8 +128,12 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 #' @return NULL (invisible)
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
-valueIte<-function(mdp, iW, iDur = NULL, rate = 0.1, rateBase = 365, times = 10, eps = 0.00001,
+#' @example pkg/tests/machine.Rex
+valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, times = 10, eps = 0.00001,
 	termValues = NULL) {
+	iW<-getWIdx(mdp,w)
+	iDur<-NULL
+	if (!is.null(dur)) iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	if (is.null(termValues)) termValues<-rep(0,mdp$founderStatesLast)
 	if (mdp$timeHorizon>=Inf) {
@@ -134,11 +153,12 @@ valueIte<-function(mdp, iW, iDur = NULL, rate = 0.1, rateBase = 365, times = 10,
 #' Get parts of the optimal policy.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param sId Vector of id's of the states we want to retrive.
-#' @param labels If true return policy labels otherwise return action index.
+#' @param sId Vector of id's of the states we want to retrieve.
+#' @param labels If true return action labels otherwise return action index.
 #' @return The policy (matrix (if \code{labels = FALSE}) otherwise data frame).
 #' @author Lars Relund \email{lars@@relund.dk}
-getPolicy<-function(mdp, sId = 1:mdp$states-1, labels=FALSE) {
+#' @example pkg/tests/machine.Rex
+getPolicy<-function(mdp, sId = 1:mdp$states-1, labels = FALSE) {
 	maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
 	if (max(sId)>=maxS | min(sId)<0)
 		stop("Out of range (sId). Need to be a subset of 0,...,",maxS-1,"!")
@@ -156,12 +176,13 @@ getPolicy<-function(mdp, sId = 1:mdp$states-1, labels=FALSE) {
 #' Get parts of the optimal policy weights.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param iW Vector of weight indices.
+#' @param w The label of the weight we consider.
 #' @param sId Vector of id's of the states we want to retrive.
-#' @param labels If true return policy labels otherwise return action index.
-#' @return The weights (matrix (if \code{labels = FALSE}) otherwise data frame).
+#' @return The weights of the policy.
 #' @author Lars Relund \email{lars@@relund.dk}
-getPolicyW<-function(mdp, iW, sId = 1:mdp$states-1) {
+#' @example pkg/tests/machine.Rex
+getPolicyW<-function(mdp, w, sId = 1:mdp$states-1) {
+	iW<-getWIdx(mdp,w)
 	.checkWIdx(iW, length(mdp$weightNames))
 	maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
 	if (max(sId)>=maxS | min(sId)<0)
@@ -175,17 +196,19 @@ getPolicyW<-function(mdp, iW, sId = 1:mdp$states-1) {
 
 #' Perform policy iteration (discount criterion) on the MDP.
 #'
-#' The policy can afterwards be recieved using functions \code{getPolicy} and \code{getPolicyW}.
+#' The policy can afterwards be received using functions \code{getPolicy} and \code{getPolicyW}.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param iW index we want to optimize with respect to.
-#' @param iDur Index of duration/time such that discount rates can be calculated.
+#' @param w The label of the weight we optimize.
+#' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
-policyIteDiscount<-function(mdp, iW, iDur, rate = 0.1, rateBase = 365) {
+policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1) {
+	iW<-getWIdx(mdp,w)
+	iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	.Call("MDP_PolicyIteDiscount", mdp$ptr, as.integer(iW),
 		as.integer(iDur), as.numeric(rate), as.numeric(rateBase))
@@ -199,12 +222,14 @@ policyIteDiscount<-function(mdp, iW, iDur, rate = 0.1, rateBase = 365) {
 #' The policy can afterwards be recieved using functions \code{getPolicy} and \code{getPolicyW}.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param iW Weight index we want to optimize with respect to.
-#' @param iDur Index of duration such that discount rates can be calculated.
+#' @param w The label of the weight we optimize.
+#' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @return The optimal gain (g) calculated.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
-policyIteAve<-function(mdp, iW, iDur) {
+policyIteAve<-function(mdp, w, dur) {
+	iW<-getWIdx(mdp,w)
+	iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	g<-.Call("MDP_PolicyIteAve", mdp$ptr, as.integer(iW),
 		as.integer(iDur))
@@ -213,24 +238,26 @@ policyIteAve<-function(mdp, iW, iDur) {
 }
 
 
-#' Calculate the rentention payoff (RPO) for some states.
+#' Calculate the rentention payoff (RPO) or opportunity cost for some states.
 #'
 #' The RPO is defined as the difference between
 #' the weight of the state when using action \code{iA} and the maximum
 #' weight of the node when using another predecessor different from \code{iA}.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param iW Weight index we want to calculate RPO for.
+#' @param w The label of the weight we calculate RPO for.
 #' @param iA  The action index we calculate the RPO with respect to.
 #' @param sId Vector of id's of the states we want to retrive.
 #' @param criterion The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.
-#' @param iDur Index of duration such that discount rates can be calculated.
+#' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
 #' @param g The optimal gain (g) calculated (used if \code{criterion = "average"}).
 #' @return The rpo (matrix/data frame).
 #' @author Lars Relund \email{lars@@relund.dk}
-calcRPO<-function(mdp, iW, iA, sId = 1:mdp$states-1, criterion="expected", iDur = 0, rate = 0.1, rateBase = 365, g = 0) {
+calcRPO<-function(mdp, w, iA, sId = 1:mdp$states-1, criterion="expected", dur = 0, rate = 0.1, rateBase = 1, g = 0) {
+	iW<-getWIdx(mdp,w)
+	iDur<-getWIdx(mdp,dur)
 	.checkWIdx(iW,length(mdp$weightNames))
 	if (max(sId)>=mdp$states | min(sId)<0)
 		stop("Out of range (sId). Need to be a subset of 0, ...,",mdp$states-1,"!")
@@ -250,15 +277,17 @@ calcRPO<-function(mdp, iW, iA, sId = 1:mdp$states-1, criterion="expected", iDur 
 #' Calculate weights based on current policy. Normally run after an optimal policy has been found.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param iW Vector of weight indices we want to calc weights for.
+#' @param w The label of the weight we consider.
 #' @param criterion The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.
-#' @param iDur Index of duration such that discount rates can be calculated.
+#' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
-#' @param g The optimal gain (g) calculated (used if \code{criterion = "average"}).
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
-calcWeights<-function(mdp, iW, criterion="expected", iDur = 0, rate = 0.1, rateBase = 365, termValues=NULL) {
+#' @example pkg/tests/machine.Rex
+calcWeights<-function(mdp, w, criterion="expected", dur = NULL, rate = 0.1, rateBase = 1, termValues=NULL) {
+	iW<-getWIdx(mdp,w)
+	if (!is.null(dur)) iDur<-getWIdx(mdp,dur)
 	.checkWIdx(iW,length(mdp$weightNames))
 	if (mdp$timeHorizon<Inf) {
 		if (is.null(termValues)) stop("Terminal values must be specified under finite time-horizon!")
@@ -300,6 +329,7 @@ fixAction<-function(mdp, sId, iA) {
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{resetActions}}, \code{\link{fixAction}}.
+#' @example pkg/tests/machine.Rex
 removeAction<-function(mdp, sId, iA) {
 	.Call("MDP_RemoveAction", mdp$ptr, as.integer(sId), as.integer(iA))
 	invisible(NULL)
@@ -312,6 +342,7 @@ removeAction<-function(mdp, sId, iA) {
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{resetActions}}, \code{\link{fixAction}}.
+#' @example pkg/tests/machine.Rex
 resetActions<-function(mdp) {
 	.Call("MDP_ResetActions", mdp$ptr)
 	invisible(NULL)
@@ -337,7 +368,9 @@ setPolicyAction<-function(mdp, sId, iA) {
 #' @param policy A matrix with sId in the first column and action index in the second
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
 setPolicy<-function(mdp, policy) {
+	policy<-as.matrix(policy)
 	if (ncol(policy)!=2) stop("The policy must be a matrix with 2 columns!")
 	.Call("MDP_SetPolicy", mdp$ptr, as.integer(policy))
 	invisible(NULL)
@@ -349,10 +382,11 @@ setPolicy<-function(mdp, policy) {
 #' @param mdp The MDP loaded using \link{loadMDP}.
 #' @param w The weight.
 #' @param sId The state id of the state.
-#' @param iW Weight index where set the weight.
+#' @param wLbl The label of the weight we consider.
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
-setStateWeight<-function(mdp, w, sId, iW) {
+setStateWeight<-function(mdp, w, sId, wLbl) {
+	iW<-getWIdx(mdp,wLbl)
 	.Call("MDP_SetStateW", mdp$ptr, as.numeric(w), as.integer(sId), as.integer(iW))
 	invisible(NULL)
 }
@@ -362,22 +396,27 @@ setStateWeight<-function(mdp, w, sId, iW) {
 #' @param mdp The MDP loaded using \link{loadMDP}.
 #' @param w The weight.
 #' @param sId The state id of the state.
-#' @param iW Weight index where set the weight.
+#' @param wLbl The label of the weight we consider.
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
-setActionWeight<-function(mdp, w, sId, iA, iW) {
+#' @example pkg/tests/machine.Rex
+setActionWeight<-function(mdp, w, sId, iA, wLbl) {
+	iW<-getWIdx(mdp,wLbl)
 	.Call("MDP_SetActionW", mdp$ptr, as.numeric(w), as.integer(sId), as.integer(iA), as.integer(iW))
 	invisible(NULL)
 }
 
-
-# Build the HMDP in memory. That is, the state-expanded hypergraph is created.
-#
-# @param mdp The MDP loaded using \link{loadMDP}.
-# @return NULL (invisible)
-# @author Lars Relund \email{lars@@relund.dk}
-#buildMDP<-function(mdp) {
-#    str<-.Call("MDP_BuildHMDP",mdp$ptr)
-#    cat(str)
-#    invisible(NULL)
-#}
+#' The state-expanded hypergraph as a matrix
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @return Return the hypergraph as a matrix. Each row contains a (h)arc with the first column denoting the head (sId) and the rest tails (sId).
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
+hypergf<-function(mdp) {
+	v<-.Call("MDP_HgfMatrix", mdp$ptr)
+	v<-v-1  # so sId starts from zero
+	v[v < 0] <- NA
+	v<-matrix(v,nrow=mdp$actions)
+	v<-v[order(v[,1]),]
+	return(v)
+}

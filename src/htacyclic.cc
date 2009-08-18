@@ -451,8 +451,7 @@ void HTAcyclic::FindValidOdr(Hypergraph& H, vector<idx> & nodes)
 			}
 		}
 	}
-	//cout << endl << validOdr.size() << endl;
-	//for (idx i=0; i<validOdr.size(); ++i) cout << validOdr[i] << " ";
+	PrintValidOdr();
 }
 
 //-----------------------------------------------------------------------------

@@ -4,7 +4,8 @@
 #include "hypergf.hh"
 #include "htacyclic.hh"
 #include "hmdpReader.hh"
-#include "matrix.hh"    // simple matrix class and linear equations solver using lapack
+#include "matrix.hh"    // simple matrix class
+#include "matalg.hh"    // linear equations solver using lapack
 #include <vector>
 #include <deque>
 #include <string>
@@ -353,9 +354,15 @@ public:
     void BuildHMDP();
 
 
-    /** Get the content of the log. */
+    /** Get the content of the log as a string. */
     string GetLog() {
         return log.str();
+    }
+
+
+    /** Get the state-expanded hypergraph in matrix format. */
+    MatSimple<int> HgfMatrix() {
+        return H.HgfMatrix();
     }
 
 
@@ -489,10 +496,10 @@ public:
         int rows = stages.count("0");
         pairZero = stages.equal_range("0");
         pairLast = stages.equal_range("1");
-        MatDouble r(rows,1),   // Matrix of founder rewards of action
+        MatSimple<double> r(rows,1),   // Matrix of founder rewards of action
                        w(rows,1),   // Matrix of weights (the unknown)
                        P(rows,rows);    // Matrix of prob values
-        MatDouble I(rows,true); // identity
+        MatSimple<double> I(rows,true); // identity
         idx i;
 
         FounderRewardDiscount(r, idxW, idxDur, rate, rateBase, pairZero, pairLast);
@@ -531,11 +538,11 @@ public:
         int rows = stages.count("0");
         pairZero = stages.equal_range("0");
         pairLast = stages.equal_range("1");
-        MatDouble r(rows,1),   // Matrix of founder rewards
+        MatSimple<double> r(rows,1),   // Matrix of founder rewards
                        w(rows,1),   // Matrix of weights (the unknown)
                        d(rows,1),    // Matrix of denominator values
                        P(rows,rows);    // Matrix of prob values
-        MatDouble I(rows,true); // identity
+        MatSimple<double> I(rows,true); // identity
         idx i;
         flt g = 0;
 
@@ -839,14 +846,14 @@ private:
      * \param idxW W The index where the reward is stored.
      * \param pairZero The iterator pair pointing to the founder states at stage zero.
      */
-    void SetR(MatDouble &r, const idx &idxW,
+    void SetR(MatSimple<double> &r, const idx &idxW,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero);
 
 
     /** Calculate the rewards of the founder states given a specific policy.
      *
      */
-    void FounderRewardDiscount(MatDouble &r, const idx &idxW, const idx &idxDur,
+    void FounderRewardDiscount(MatSimple<double> &r, const idx &idxW, const idx &idxDur,
         const flt &rate, const flt &rateBase,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairLast);
@@ -859,7 +866,7 @@ private:
      * \param pairOne Iterator pair pointing to stage one at founder level.
      * \note Modify the weights stored in the states of the HMDP.
      */
-    void FounderW(MatDouble &w, const idx &idxW,
+    void FounderW(MatSimple<double> &w, const idx &idxW,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairOne);
 
@@ -867,7 +874,7 @@ private:
     /** Calculate the transition probabilities including discount rates of the
      * founder states given a specific policy.
      */
-    void FounderPrDiscount(MatDouble &P, const idx &idxW, const idx &idxDur,
+    void FounderPrDiscount(MatSimple<double> &P, const idx &idxW, const idx &idxDur,
         const flt &rate, const flt &rateBase,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairLast);
@@ -876,7 +883,7 @@ private:
     /** Calculate the transition probabilities of the
      * founder states given a specific policy.
      */
-    void FounderPr(MatDouble &P, const idx &idxW,
+    void FounderPr(MatSimple<double> &P, const idx &idxW,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairLast);
 

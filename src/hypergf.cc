@@ -11,7 +11,7 @@ Hypergraph::Hypergraph(char filename[12])
 	pReader->ReadInHgf();
 	delete pReader;
 	ResetHgf();
-	NormalizeMult(); 
+	NormalizeMult();
 }
 
 // -----------------------------------------------------------------------------
@@ -501,7 +501,7 @@ void Hypergraph::PrintFSHArc(int i)
 
 // ----------------------------------------------------------------------------
 
-void Hypergraph::PrintBSHArc(int i)
+/*void Hypergraph::PrintBSHArc(int i)
 {
 	HArcPtr pHNow,pHLast;
 	TailPtr pTailIndex,pLast;
@@ -515,7 +515,7 @@ void Hypergraph::PrintBSHArc(int i)
 			printf("%d ",-(pTailIndex->pTail-itsNodes));
 		printf("tailsize: %d weight: %f\n",pHNow->tailSize,pHNow->w[0]);
 	}
-}
+}*/
 
 // ----------------------------------------------------------------------------
 

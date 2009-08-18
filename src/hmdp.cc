@@ -229,9 +229,10 @@ bool HMDP::CheckIdx() {
 				if (states[iState].tmpActions[a].scope[j]==1) ctr = ctrNext;
 				if (states[iState].tmpActions[a].scope[j]==0) ctr = ctrUp;
 				if (states[iState].tmpActions[a].scope[j]==2) ctr = ctrDown;
+				if (states[iState].tmpActions[a].scope[j]==3) ctr = states.size();
 				if (states[iState].tmpActions[a].idxStates[j]>=ctr) {
 					log << "Error: specify transition to nonexisting state in state "
-						<< iState << " (sId) action number " << a << ".\n";
+						<< iState << " (sId) action index " << a << ".\n";
 					return false;
 				}
 
@@ -365,7 +366,7 @@ void HMDP::BuildHMDP() {
 	else {  // find stage 2 states of founder
 		vector<idx> nodes;
 		pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pair
-			= stages.equal_range("1");
+			= stages.equal_range(ToString(timeHorizon-1));
 		for (multimap<string, int >::iterator ite = pair.first;
 			ite != pair.second; ++ite) {
 			nodes.push_back( ((*ite).second) + 1);   // add hgf node
@@ -438,9 +439,9 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 		}
 	}
 	log << " " << i+1;
-	vector<idx> vW = WeightIdx(idxW, idxDur);
+	//vector<idx> vW = WeightIdx(idxW, idxDur);
 	// TODO LRE: May have idxPred as argument or use the same idx as idxW.
-	HT.CalcOptW(H,vW,idxPred,idxMult);
+	//HT.CalcOptW(H,vW,idxPred,idxMult);
 	cpuTime.StopTime(0);
 	log << ". Running time " << cpuTime.TimeDiff(0) << "s." << endl;
 }
@@ -481,9 +482,9 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 		}
 	}
 	log << " " << i+1;
-	vector<idx> vW = WeightIdx(idxW, idxDur);
+	//vector<idx> vW = WeightIdx(idxW, idxDur);
 	// TODO LRE: May have idxPred as argument or use the same idx as idxW.
-	HT.CalcOptW(H,vW,idxPred,idxMult);
+	//HT.CalcOptW(H,vW,idxPred,idxMult);
 	cpuTime.StopTime(0);
 	log << ". Running time " << cpuTime.TimeDiff(0) << "s." << endl;
 }
@@ -510,8 +511,8 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 	for (ite=pairLast.first; ite!=pairLast.second; ++ite) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(0);
 	HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
-	vector<idx> vW = WeightIdx(idxW, idxDur);
-	HT.CalcOptW(H,vW,idxPred,idxMult);
+	//vector<idx> vW = WeightIdx(idxW, idxDur);
+	//HT.CalcOptW(H,vW,idxPred,idxMult);
 	cpuTime.StopTime(0);
 	log << "Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;
 }
@@ -541,8 +542,8 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 	for (ite=pairLast.first, iteV=termValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(*(iteV));
 	HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
-	vector<idx> vW = WeightIdx(idxW, idxDur);
-	HT.CalcOptW(H,vW,idxPred,idxMult);
+	//vector<idx> vW = WeightIdx(idxW, idxDur);
+	//HT.CalcOptW(H,vW,idxPred,idxMult);
 	cpuTime.StopTime(0);
 	log << "Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;
 }
@@ -569,15 +570,15 @@ void HMDP::ValueIteFinite(idx idxW, vector<flt> & termValues)
 	for (ite=pairLast.first, iteV=termValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(*(iteV));
 	HT.CalcHTacyclic(H,idxW,idxPred,idxMult);
-	vector<idx> vW = WeightIdx(idxW, weightNames.size()+1); // hack so idxDur is just greater than the index
-	HT.CalcOptW(H,vW,idxPred,idxMult);
+	//vector<idx> vW = WeightIdx(idxW, weightNames.size()+1); // hack so idxDur is just greater than the index
+	//HT.CalcOptW(H,vW,idxPred,idxMult);
 	cpuTime.StopTime(0);
 	log << "Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;
 }
 
 // ----------------------------------------------------------------------------
 
-void HMDP::SetR(MatDouble &r, const idx &idxW,
+void HMDP::SetR(MatSimple<double> &r, const idx &idxW,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero)
 {
 	idx i;
@@ -590,7 +591,7 @@ void HMDP::SetR(MatDouble &r, const idx &idxW,
 
 // ----------------------------------------------------------------------------
 
-void HMDP::FounderRewardDiscount(MatDouble &r, const idx &idxW, const idx &idxDur,
+void HMDP::FounderRewardDiscount(MatSimple<double> &r, const idx &idxW, const idx &idxDur,
 	const flt &rate, const flt &rateBase,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairLast)
@@ -605,7 +606,7 @@ void HMDP::FounderRewardDiscount(MatDouble &r, const idx &idxW, const idx &idxDu
 
 // ----------------------------------------------------------------------------
 
-void HMDP::FounderW(MatDouble &w, const idx &idxW,
+void HMDP::FounderW(MatSimple<double> &w, const idx &idxW,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairOne)
 {
@@ -618,7 +619,7 @@ void HMDP::FounderW(MatDouble &w, const idx &idxW,
 
 // ----------------------------------------------------------------------------
 
-void HMDP::FounderPrDiscount(MatDouble &P, const idx &idxW, const idx &idxDur,
+void HMDP::FounderPrDiscount(MatSimple<double> &P, const idx &idxW, const idx &idxDur,
 	const flt &rate, const flt &rateBase,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairLast)
@@ -643,7 +644,7 @@ void HMDP::FounderPrDiscount(MatDouble &P, const idx &idxW, const idx &idxDur,
 
 // ----------------------------------------------------------------------------
 
-void HMDP::FounderPr(MatDouble &P, const idx &idxW,
+void HMDP::FounderPr(MatSimple<double> &P, const idx &idxW,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairLast)
 {
@@ -683,10 +684,10 @@ void HMDP::PolicyIteDiscount(const idx idxW, const idx idxDur, const flt &rate,
 	H.ResetPred();
 	bool newPred, firstRun;
 	int rows = stages.count("0");
-	MatDouble r(rows,1),   // Matrix of founder rewards of action
+	MatSimple<double> r(rows,1),   // Matrix of founder rewards of action
 				   w(rows,1),   // Matrix of weights (the unknown)
 				   P(rows,rows);    // Matrix of prob values
-	MatDouble I(rows,true); // identity
+	MatSimple<double> I(rows,true); // identity
 	idx i,k = 0;
 
 	log << "Run policy iteration using quantity '" <<
@@ -740,11 +741,11 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD) {
 	H.ResetPred();
 	bool newPred, firstRun;
 	int rows = stages.count("0");
-	MatDouble r(rows,1),   // Matrix of founder rewards
+	MatSimple<double> r(rows,1),   // Matrix of founder rewards
 				   w(rows,1),   // Matrix of weights (the unknown)
 				   d(rows,1),    // Matrix of denominator values
 				   P(rows,rows);    // Matrix of prob values
-	MatDouble I(rows,true); // identity
+	MatSimple<double> I(rows,true); // identity
 	idx i,k=0;
 	flt g = 0;
 

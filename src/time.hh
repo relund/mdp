@@ -11,9 +11,9 @@
 #include <sys/times.h>      // For use of counting time (Unix/Linux)
 #include <sys/types.h>
 #include <unistd.h>
-#include <stdio.h>
 #endif
 
+#include <iostream>
 //-----------------------------------------------------------------------------
 // Win:  CLOCKS_PER_SEC = 1000
 // Unix uni: CLOCKS_PER_SEC = 1000000

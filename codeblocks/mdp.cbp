@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mdp" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\mdp" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory="C:\Programmer\R\R-2.9.1\include" />
+		</Compiler>
+		<Linker>
+			<Add library="C:\Programmer\R\R-2.9.1\bin\Rlapack.dll" />
+			<Add library="C:\Programmer\R\R-2.9.1\bin\R.dll" />
+			<Add directory="C:\Programmer\R\R-2.9.1\bin" />
+		</Linker>
+		<Unit filename="main.cc" />
+		<Unit filename="..\src\basicdt.hh" />
+		<Unit filename="..\src\hgfreader.cc" />
+		<Unit filename="..\src\hgfreader.hh" />
+		<Unit filename="..\src\hmdp.cc" />
+		<Unit filename="..\src\hmdp.hh" />
+		<Unit filename="..\src\hmdpReader.cc" />
+		<Unit filename="..\src\hmdpReader.hh" />
+		<Unit filename="..\src\htacyclic.cc" />
+		<Unit filename="..\src\htacyclic.hh" />
+		<Unit filename="..\src\hypergf.cc" />
+		<Unit filename="..\src\hypergf.hh" />
+		<Unit filename="..\src\matalg.hh" />
+		<Unit filename="..\src\matrix.hh" />
+		<Unit filename="..\src\rmain.cc" />
+		<Unit filename="..\src\time.hh" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -132,7 +132,7 @@ actionInfo<-function(prefix="", file="actionIdx.bin" , weightFile="actionWeight.
 	mat2<-transProbMat(prefix, transPrFile)
 	mat<-merge(mat,mat2,all.x=T)
 	i<-(ncol(mat)-2-ncol(mat1)+1)/3     # number of idx used for (scp, idx, pr) triple
-	mat<-mat[,c("aId","sId",colnames(mat1[,2:ncol(mat1)]),paste(c("scp","idx","pr"),rep(1:i-1,each=3),sep=""))]
+	mat<-mat[,c("aId","sId",colnames(mat1[,2:ncol(mat1),drop=FALSE]),paste(c("scp","idx","pr"),rep(1:i-1,each=3),sep=""))]
 	if (!is.null(labels)) {
 		tmp<-readBin(labels, character(),n=file.info(labels)$size)
 		tmp<-as.data.frame(matrix(tmp,ncol=2,byrow=T))
