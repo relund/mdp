@@ -1,8 +1,8 @@
 \name{hmpMDPWriter}
 \alias{hmpMDPWriter}
 \title{Function for writing an HMDP model to a hmp file (XML).}
-\usage{hmpMDPWriter(file="r.hmp", rate=0.1, rateBase=1, precision=1e-05,
-    desc="HMP file created using hmpMDPWriter in R")}
+\usage{hmpMDPWriter(file=r.hmp, rate=0.1, rateBase=1, precision=1e-05,
+    desc=HMP file created using hmpMDPWriter in R)}
 \description{Function for writing an HMDP model to a hmp file (XML). The function define
 subfunctions which can be used to define an HMDP model.}
 \details{HMP files are in XML format and human readable using e.g. a text editor.
