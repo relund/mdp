@@ -9,11 +9,7 @@
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @seealso \link{binaryMDPWriter}.
-#' @examples
-#' f = system.file("inst/models", "mdp.xml", package = "MDP")
-#' convertHMP2Binary("mdp.hmp")
-#' stateIdxDf()
-#' actionInfo()
+#' @example pkg/tests/convert.Rex
 convertHMP2Binary<-function(file, prefix="") {
 	setWeights<-function(q) {
 		labels<-unlist(lapply(q, function(x) xmlAttrs(x)))
@@ -96,10 +92,10 @@ convertHMP2Binary<-function(file, prefix="") {
 
 	ptm <- proc.time()
 	ctrW<-0
-	doc<-xmlTreeParse(file,useInternalNodes=T)
+	doc<-xmlTreeParse(file,useInternalNodes=TRUE)
 	r<-xmlRoot(doc)
 	w<-binaryMDPWriter(prefix)
-		setWeights(r['quantities',all=T])
+		setWeights(r['quantities',all=TRUE])
 		process(r[['proc']])
 	w$closeWriter()
 	free(doc)

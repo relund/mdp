@@ -1,5 +1,5 @@
 #' Function for writing an HMDP model to a hmp file (XML). The function define
-#' subfunctions which can be used to define an HMDP model.
+#' subfunctions which can be used to define an HMDP model stored in a hmp file.
 #'
 #' HMP files are in XML format and human readable using e.g. a text editor.
 #' HMP files are not suitable for storing large HMDP models since text files are very
@@ -7,7 +7,7 @@
 #' the parser writing the hmp file may no output all digits. If you consider large
 #' models then use the binary file format instead.
 #'
-#' The functions which can be used are:
+#' The functions which can be used are:\itemize{
 #'   \item{\code{setWeights(labels, duration)}: }{Set the labels of the weights used in the actions.
 #'      \code{labels} is a vector of label names, \code{duration} A number defining which label
 #'      that corresponds to duration/time, e.g. if the first entry in labels is time then \code{duration = 1}.
@@ -30,7 +30,11 @@
 #'     \code{statesNext} is the number of states in the next stage of the process
 #'     (only needed if have a transition to the father).}
 #'   \item{\code{endAction()}: }{Ends an action.}
-#'   \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}
+#'   \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}}
+#'
+#' @usage
+#' hmpMDPWriter(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001,
+#'   desc="HMP file created using hmpMDPWriter in R")
 #'
 #' @param file The name of the file storing the model (e.g. mdp.hmp).
 #' @param rate The interest rate (used if consider discounting).
@@ -41,125 +45,8 @@
 #' @return A list of functions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @examples
-#'
-#' # Create a small HMDP with two levels
-#' w<-hmpMDPWriter()
-#' w$setWeights(c("Duration","Net reward","Items"),duration=1)
-#' w$process()
-#'     w$stage()
-#'         w$state(label="M0")
-#'             w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
-#'                 w$process()
-#'                     w$stage()
-#'                         w$state(label="D")
-#'                             w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                             w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                             w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                 w$endProcess()
-#'             w$endAction()
-#'             w$action(label="A1",weights=c(0,0,0),prob=c(2,0,1))
-#'                 w$process()
-#'                     w$stage()
-#'                         w$state(label="D")
-#'                             w$action(label="A0",weights=c(0,0,1),prob=c(1,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                             w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                             w$action(label="A1",weights=c(0,10,5),prob=c(0,0,0.5,0,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                 w$endProcess()
-#'             w$endAction()
-#'         w$endState()
-#'         w$state(label="M1")
-#'             w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
-#'                 w$process()
-#'                     w$stage()
-#'                         w$state(label="D")
-#'                             w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                     w$stage()
-#'                         w$state(label="C0")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                         w$state(label="C1")
-#'                             w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-#'                             w$endAction()
-#'                         w$endState()
-#'                     w$endStage()
-#'                 w$endProcess()
-#'             w$endAction()
-#'         w$endState()
-#'     w$endStage()
-#' w$endProcess()
-#' w$closeWriter()
-#'
-#' stateIdxDf()
-#' actionIdxDf()
-#' actionWeightMat()
-#' transProbMat()
-#' a<-actionInfo()
-#' a                   # ordered by action id
-#' a[order(a$sId),]    # ordered by state id
-#'  for (i in 1:10) {
-#'      print(i)
-#'  }
+#' @example pkg/tests/hmpMDPWriter.Rex
+
 hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, desc="HMP file created using hmpMDPWriter in R")
 {
 	addLevelRates<-function(rates){
@@ -173,7 +60,8 @@ hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, de
 	}
 
 	setWeights<-function(labels, duration) {
-		durIdx<<-duration
+		if (is.null(duration)) durIdx<<- -1  # no duration specified by negative number
+		else durIdx<<-duration
 		tr$addTag("i",rate)
 		if (wFixed) stop("Weights already added!")
 		for (i in 1:length(labels)) {
@@ -254,7 +142,8 @@ hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, de
 		} else {
 			tr$addTag("p",paste(probs,collapse=" "),attrs=c(t='s'))
 		}
-		tr$addTag("d", weights[durIdx])
+		if (durIdx<0) tr$addTag("d", 1)
+		else tr$addTag("d", weights[durIdx])
 		invisible(NULL)
 	}
 
@@ -265,7 +154,7 @@ hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, de
 
 	closeWriter<-function(){
 		saveXML(tr$value(),file=file,compression=0,prefix = NULL)
-		cat("\n\tModel saved to file:",file,"\n")
+		cat("\nModel saved to file:",file,"\n")
 	}
 
 	file <- file

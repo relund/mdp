@@ -1,0 +1,622 @@
+% Code that make it possible to use listnings togeather with sweave
+\RequirePackage{listings}
+\RequirePackage{Sweave}
+\usepackage{xcolor}
+
+%------------------------------------------------------------------------------%
+%Preparations for Sweave and Listings
+%------------------------------------------------------------------------------%
+%
+\RequirePackage{color}
+\definecolor{Rcolor}{rgb}{0, 0, 0}
+\definecolor{Rbcolor}{rgb}{0, 0.6, 0.6}
+\definecolor{Rout}{rgb}{0.461, 0.039, 0.102}
+\definecolor{Rcomment}{rgb}{0.101, 0.043, 0.432}
+%------------------------------------------------------------------------------%
+\lstdefinelanguage{Rd}[common]{TeX}%
+  {moretexcs={acronym,alias,arguments,author,bold,cite,%
+          code,command,concept,cr,deqn,describe,%
+          description,details,dfn,docType,dots,%
+          dontrun,dontshow,donttest,dQuote,%
+          email,emph,enc,encoding,enumerate,env,eqn,%
+          examples,file,format,item,itemize,kbd,keyword,%
+          keyword,ldots,link,linkS4class,method,name,note,%
+          option,pkg,preformatted,R,references,S3method,%
+          S4method,samp,section,seealso,source,sp,special,%
+          sQuote,strong,synopsis,tab,tabular,testonly,%
+          title,url,usage,value,var},
+   sensitive=true,%
+   morecomment=[l]\%% 2008 Peter Ruckdeschel
+}[keywords,comments]%%
+%------------------------------------------------------------------------------%
+\lstdefinestyle{Rstyle}{fancyvrb=true,language=R,escapechar=`,tabsize=2,%
+                        showstringspaces=false,%
+                        breaklines=true,%
+                        breakatwhitespace=true,%
+                        basicstyle={\color{Rcolor}},%
+                        keywordstyle={\color{blue}},%
+                        commentstyle={\color{Rcomment}\ttfamily\itshape},%
+                        alsoother={$},%
+                        alsoletter={.<-},%
+                        deletekeywords={action,end,weights},%
+                        otherkeywords={.,!,!=,~,$,*,\&,\%/\%,\%*\%,\%\%,<<-,/}}%
+\lstdefinestyle{Rdstyle}{fancyvrb=true,language=Rd,keywordstyle={\bf},%
+                         basicstyle={\color{black}\footnotesize},%
+                         commentstyle={\ttfamily\itshape},%
+                         alsolanguage=R}%
+%------------------------------------------------------------------------------%
+\global\def\Rlstset{\lstset{style=Rstyle}}%
+\global\def\Rdlstset{\lstset{style=Rdstyle}}%
+\Rlstset
+%------------------------------------------------------------------------------%
+\DefineVerbatimEnvironment{Sinput}{Verbatim}%
+  {formatcom=\color{Rcolor}\lstset{fancyvrb=true,escapechar='}}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}%
+  {formatcom=\color{Rout}\small\lstset{fancyvrb=false}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}%
+  {fontshape=sl,formatcom=\color{Rcolor}\lstset{fancyvrb=true}}
+%------------------------------------------------------------------------------%
+\ifthenelse{\boolean{Sweave@gin}}{\setkeys{Gin}{width=0.8\textwidth}}{}%
+%------------------------------------------------------------------------------%
+\let\code\lstinline
+\def\Code#1{{\tt\color{Rcolor} #1}}
+\def\file#1{{\tt #1}}
+\def\pkg#1{{\tt "#1"}}
+\newcommand{\pkgversion}{{\tt 2.0.2}}
+%------------------------------------------------------------------------------%
+% --------------------------
+% Registration of package SweaveListingUtils
+% --------------------------
+\lstset{morekeywords={[2]changeKeywordstyles,copySourceFromRForge,getSweaveListingOption,lstinputSourceFromRForge,lstset,%
+lstsetLanguage,lstsetR,lstsetRd,readPkgVersion,readSourceFromRForge,%
+setToBeDefinedPkgs,SweaveListingMASK,SweaveListingoptions,SweaveListingOptions,SweaveListingPreparations,%
+taglist%
+},%
+keywordstyle={[2]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package startupmsg
+% --------------------------
+\lstset{morekeywords={[3]buildStartupMessage,infoShow,mySMHandler,mystartupMessage,NEWS,%
+onlytypeStartupMessages,pointertoNEWS,readURLInformation,readVersionInformation,startupEndline,%
+startupMessage,StartupMessage,startupPackage,startupType,suppressStartupMessages%
+},%
+keywordstyle={[3]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package tools
+% --------------------------
+\lstset{morekeywords={[4]Adobe_glyphs,buildVignettes,charset_to_Unicode,checkDocFiles,checkDocStyle,%
+checkFF,checkMD5sums,checkNEWS,checkRd,checkReplaceFuns,%
+checkS3methods,checkTnF,checkVignettes,codoc,codocClasses,%
+codocData,delimMatch,dependsOnPkgs,encoded_text_to_latex,file_path_as_absolute,%
+file_path_sans_ext,findHTMLlinks,getDepList,installFoundDepends,list_files_with_exts,%
+list_files_with_type,md5sum,package.dependencies,parse_Rd,pkgDepends,%
+pkgVignettes,Rd_db,Rd_parse,Rd2ex,Rd2HTML,%
+Rd2latex,Rd2txt,Rdiff,Rdindex,read.00Index,%
+readNEWS,showNonASCII,testInstalledBasic,testInstalledPackage,testInstalledPackages,%
+texi2dvi,vignetteDepends,write_PACKAGES,xgettext,xgettext2pot,%
+xngettext%
+},%
+keywordstyle={[4]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package stats
+% --------------------------
+\lstset{morekeywords={[5]acf,acf2AR,add.scope,addmargins,aggregate.data.frame,%
+aggregate.default,aggregate.ts,AIC,anova.glm,anova.glmlist,%
+anova.lm,anova.lmlist,anova.mlm,anovalist.lm,ansari.test,%
+ar,ar.burg,ar.mle,ar.ols,ar.yw,%
+arima,arima.sim,arima0,arima0.diag,ARMAtoMA,%
+ARMAacf,as.dendrogram,as.dist,as.formula,as.hclust,%
+as.stepfun,as.ts,asOneSidedFormula,bandwidth.kernel,bartlett.test,%
+binom.test,biplot,Box.test,bw.bcv,bw.nrd,%
+bw.nrd0,bw.SJ,bw.ucv,cancor,case.names,%
+ccf,chisq.test,clearNames,cmdscale,complete.cases,%
+confint,confint.default,constrOptim,contr.helmert,contr.poly,%
+contr.SAS,contr.sum,contr.treatment,contrasts<-,cooks.distance,%
+cophenetic,cor.test,cov.wt,cov2cor,cpgram,%
+cutree,decompose,delete.response,dendrapply,density.default,%
+deriv.default,deriv.formula,deriv3,deriv3.default,deriv3.formula,%
+df.kernel,df.residual,dfbeta,diff.ts,diffinv,%
+dist,dmultinom,drop.scope,drop.terms,dummy.coef,%
+ecdf,eff.aovlist,embed,estVar,expand.model.frame,%
+factanal,factor.scope,filter,fisher.test,fitted.values,%
+fligner.test,friedman.test,get_all_vars,getInitial,glm.control,%
+glm.fit,glm.fit.null,hatvalues,hatvalues.lm,hclust,%
+heatmap,HoltWinters,influence.measures,integrate,interaction.plot,%
+inverse.gaussian,is.empty.model,is.leaf,is.mts,is.stepfun,%
+is.ts,is.tskernel,isoreg,KalmanForecast,KalmanLike,%
+KalmanRun,KalmanSmooth,kernapply,kernel,kmeans,%
+knots,kruskal.test,ks.test,ksmooth,lag,%
+lag.plot,line,lines.ts,lm.fit,lm.fit.null,%
+lm.influence,lm.wfit,lm.wfit.null,loadings,loess,%
+loess.control,loess.smooth,logLik,ls.diag,ls.print,%
+make.link,makeARIMA,makepredictcall,manova,mantelhaen.test,%
+mauchley.test,mauchly.test,mcnemar.test,median.default,medpolish,%
+model.extract,model.frame,model.frame.aovlist,model.frame.default,model.frame.glm,%
+model.frame.lm,model.matrix,model.matrix.default,model.matrix.lm,model.offset,%
+model.response,model.tables,model.weights,monthplot,mood.test,%
+na.action,na.contiguous,na.exclude,na.fail,na.omit,%
+na.pass,napredict,naprint,naresid,nlminb,%
+nls,nls.control,NLSstAsymptotic,NLSstClosestX,NLSstLfAsymptote,%
+NLSstRtAsymptote,numericDeriv,oneway.test,order.dendrogram,p.adjust,%
+p.adjust.methods,pacf,pairwise.prop.test,pairwise.t.test,pairwise.table,%
+pairwise.wilcox.test,pbirthday,plclust,plot.density,plot.ecdf,%
+plot.lm,plot.mlm,plot.spec,plot.spec.coherency,plot.spec.phase,%
+plot.stepfun,plot.ts,plot.TukeyHSD,poisson.test,polym,%
+power.anova.test,power.prop.test,power.t.test,PP.test,ppr,%
+prcomp,predict.glm,predict.lm,predict.mlm,predict.poly,%
+princomp,print.anova,print.coefmat,print.density,print.family,%
+print.formula,print.ftable,print.glm,print.infl,print.integrate,%
+print.lm,print.logLik,print.terms,print.ts,printCoefmat,%
+promax,prop.test,prop.trend.test,qbirthday,qqnorm.default,%
+quade.test,quantile.default,quasibinomial,quasipoisson,r2dtable,%
+read.ftable,rect.hclust,reorder,reshape,reshapeLong,%
+reshapeWide,residuals.default,residuals.glm,residuals.lm,rmultinom,%
+rstandard.glm,rstandard.lm,rstudent.glm,rstudent.lm,runmed,%
+scatter.smooth,screeplot,se.contrast,selfStart,setNames,%
+shapiro.test,simulate,smooth,smooth.spline,smoothEnds,%
+sortedXyData,spec.ar,spec.pgram,spec.taper,spectrum,%
+splinefunH,SSasymp,SSasympOff,SSasympOrig,SSbiexp,%
+SSD,SSfol,SSfpl,SSgompertz,SSlogis,%
+SSmicmen,SSweibull,stat.anova,stepfun,stl,%
+StructTS,summary.aov,summary.aovlist,summary.glm,summary.infl,%
+summary.lm,summary.manova,summary.mlm,summary.stepfun,supsmu,%
+t.test,termplot,terms.aovlist,terms.default,terms.formula,%
+terms.terms,toeplitz,ts.intersect,ts.plot,ts.union,%
+tsdiag,tsp<-,tsSmooth,TukeyHSD,TukeyHSD.aov,%
+update.default,update.formula,var.test,variable.names,varimax,%
+vcov,weighted.mean,weighted.residuals,wilcox.test,window<-,%
+write.ftable,xtabs%
+},%
+keywordstyle={[5]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package graphics
+% --------------------------
+\lstset{morekeywords={[6]assocplot,Axis,axis.Date,axis.POSIXct,axTicks,%
+barplot.default,boxplot.default,boxplot.matrix,cdplot,clip,%
+close.screen,co.intervals,contour.default,dotchart,erase.screen,%
+filled.contour,fourfoldplot,grconvertX,grconvertY,hist.default,%
+image.default,layout.show,lines.default,pairs.default,panel.smooth,%
+pie,plot.default,plot.design,plot.new,plot.window,%
+plot.xy,points.default,smoothScatter,spineplot,split.screen,%
+strheight,stripchart,text.default,xspline%
+},%
+keywordstyle={[6]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package grDevices
+% --------------------------
+\lstset{morekeywords={[7]as.graphicsAnnot,bitmap,blues9,bmp,boxplot.stats,%
+bringToTop,check.options,CIDFont,cm.colors,col2rgb,%
+colorConverter,colorRamp,colorRampPalette,colorspaces,contourLines,%
+convertColor,densCols,dev.control,dev.copy,dev.copy2eps,%
+dev.copy2pdf,dev.cur,dev.interactive,dev.list,dev.new,%
+dev.next,dev.off,dev.prev,dev.print,dev.set,%
+dev.size,devAskNewPage,deviceIsInteractive,embedFonts,extendrange,%
+getGraphicsEvent,graphics.off,gray.colors,grey.colors,hcl,%
+heat.colors,Hershey,jpeg,make.rgb,msgWindow,%
+n2mfrow,nclass.FD,nclass.scott,nclass.Sturges,pdf,%
+pdf.options,pdfFonts,png,postscriptFont,postscriptFonts,%
+ps.options,recordGraphics,recordPlot,replayPlot,rgb2hsv,%
+savePlot,setEPS,setPS,terrain.colors,tiff,%
+topo.colors,trans3d,Type1Font,win.graph,win.metafile,%
+win.print,windows,windows.options,windowsFont,windowsFonts,%
+xfig,xy.coords,xyTable,xyz.coords%
+},%
+keywordstyle={[7]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package utils
+% --------------------------
+\lstset{morekeywords={[8]alarm,argsAnywhere,as.person,as.personList,as.relistable,%
+as.roman,assignInNamespace,available.packages,browseEnv,browseURL,%
+browseVignettes,bug.report,capture.output,checkCRAN,choose.dir,%
+choose.files,chooseCRANmirror,citation,citEntry,citFooter,%
+citHeader,close.socket,combn,compareVersion,contrib.url,%
+count.fields,CRAN.packages,data.entry,de.ncols,de.restore,%
+de.setup,DLL.version,download.file,download.packages,dump.frames,%
+file.edit,file_test,Filters,fixInNamespace,fixup.libraries.URLs,%
+fixup.package.URLs,flush.console,formatOL,formatUL,getAnywhere,%
+getClipboardFormats,getCRANmirrors,getFromNamespace,getIdentification,getS3method,%
+getTxtProgressBar,getWindowsHandle,getWindowTitle,getWinProgressBar,glob2rx,%
+head,head.matrix,help.request,help.search,help.start,%
+history,index.search,install.packages,installed.packages,is.relistable,%
+limitedLabels,link.html.help,loadhistory,loadRconsole,localeToCharset,%
+ls.str,lsf.str,make.packages.html,make.search.html,make.socket,%
+makeRweaveLatexCodeRunner,memory.limit,memory.size,mirror2html,modifyList,%
+new.packages,normalizePath,object.size,old.packages,package.contents,%
+package.skeleton,packageDescription,packageStatus,person,personList,%
+promptData,promptPackage,rc.getOption,rc.options,rc.settings,%
+rc.status,read.csv,read.csv2,read.delim,read.delim2,%
+read.DIF,read.fortran,read.fwf,read.socket,read.table,%
+readCitationFile,readClipboard,readRegistry,recover,relist,%
+remove.packages,Rprof,Rprofmem,RShowDoc,RSiteSearch,%
+rtags,Rtangle,RtangleSetup,RtangleWritedoc,RweaveChunkPrefix,%
+RweaveEvalWithOpt,RweaveLatex,RweaveLatexFinish,RweaveLatexOptions,RweaveLatexSetup,%
+RweaveLatexWritedoc,RweaveTryStop,savehistory,select.list,sessionInfo,%
+setRepositories,setStatusBar,setTxtProgressBar,setWindowTitle,setWinProgressBar,%
+shortPathName,stack,Stangle,str,strOptions,%
+summaryRprof,Sweave,SweaveHooks,SweaveSyntaxLatex,SweaveSyntaxNoweb,%
+SweaveSyntConv,tail,tail.matrix,timestamp,toBibtex,%
+toLatex,txtProgressBar,type.convert,unstack,unzip,%
+update.packages,update.packageStatus,upgrade,url.show,URLdecode,%
+URLencode,View,vignette,win.version,winDialog,%
+winDialogString,winMenuAdd,winMenuAddItem,winMenuDel,winMenuDelItem,%
+winMenuItems,winMenuNames,winProgressBar,write.csv,write.csv2,%
+write.socket,write.table,writeClipboard,wsbrowser,zip.file.extract,%
+zip.unpack%
+},%
+keywordstyle={[8]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package datasets
+% --------------------------
+\lstset{morekeywords={[9]ability.cov,airmiles,AirPassengers,airquality,anscombe,%
+attenu,attitude,austres,beaver1,beaver2,%
+BJsales,BJsales.lead,BOD,cars,ChickWeight,%
+chickwts,co2,CO2,crimtab,discoveries,%
+DNase,esoph,euro,euro.cross,eurodist,%
+EuStockMarkets,faithful,fdeaths,Formaldehyde,freeny,%
+freeny.x,freeny.y,HairEyeColor,Harman23.cor,Harman74.cor,%
+Indometh,infert,InsectSprays,iris,iris3,%
+islands,JohnsonJohnson,LakeHuron,ldeaths,lh,%
+LifeCycleSavings,Loblolly,longley,lynx,mdeaths,%
+morley,mtcars,nhtemp,Nile,nottem,%
+occupationalStatus,Orange,OrchardSprays,PlantGrowth,precip,%
+presidents,pressure,Puromycin,quakes,randu,%
+rivers,rock,Seatbelts,sleep,stack.loss,%
+stack.x,stackloss,state.abb,state.area,state.center,%
+state.division,state.name,state.region,state.x77,sunspot.month,%
+sunspot.year,sunspots,swiss,Theoph,Titanic,%
+ToothGrowth,treering,trees,UCBAdmissions,UKDriverDeaths,%
+UKgas,USAccDeaths,USArrests,USJudgeRatings,USPersonalExpenditure,%
+uspop,VADeaths,volcano,warpbreaks,women,%
+WorldPhones,WWWusage%
+},%
+keywordstyle={[9]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package methods
+% --------------------------
+\lstset{morekeywords={[10]addNextMethod,allGenerics,allNames,Arith,as<-,%
+asMethodDefinition,assignClassDef,assignMethodsMetaData,balanceMethodsList,body<-,%
+cacheGenericsMetaData,cacheMetaData,cacheMethod,callGeneric,callNextMethod,%
+canCoerce,cbind2,checkSlotAssignment,classesToAM,classMetaName,%
+coerce,coerce<-,Compare,completeClassDefinition,completeExtends,%
+completeSubclasses,Complex,conformMethod,defaultDumpName,defaultPrototype,%
+doPrimitiveMethod,dumpMethod,dumpMethods,el,el<-,%
+elNamed,elNamed<-,empty.dump,emptyMethodsList,existsFunction,%
+existsMethod,extends,finalDefaultMethod,findClass,findFunction,%
+findMethod,findMethods,findMethodSignatures,findUnique,fixPre1.8,%
+formalArgs,functionBody,functionBody<-,generic.skeleton,getAccess,%
+getAllMethods,getAllSuperClasses,getClass,getClassDef,getClasses,%
+getClassName,getClassPackage,getDataPart,getExtends,getFunction,%
+getGeneric,getGenerics,getGroup,getGroupMembers,getMethod,%
+getMethods,getMethodsForDispatch,getMethodsMetaData,getPackageName,getProperties,%
+getPrototype,getSlots,getSubclasses,getValidity,getVirtual,%
+hasArg,hasMethod,hasMethods,implicitGeneric,initialize,%
+insertMethod,isClass,isClassDef,isClassUnion,isGeneric,%
+isGrammarSymbol,isGroup,isSealedClass,isSealedMethod,isVirtualClass,%
+isXS3Class,languageEl,languageEl<-,linearizeMlist,listFromMethods,%
+listFromMlist,loadMethod,Logic,makeClassRepresentation,makeExtends,%
+makeGeneric,makeMethodsList,makePrototypeFromClassDef,makeStandardGeneric,matchSignature,%
+Math2,mergeMethods,metaNameUndo,method.skeleton,MethodAddCoerce,%
+methodSignatureMatrix,MethodsList,MethodsListSelect,methodsPackageMetaName,missingArg,%
+mlistMetaName,newBasic,newClassRepresentation,newEmptyObject,packageSlot,%
+packageSlot<-,possibleExtends,prohibitGeneric,promptClass,promptMethods,%
+prototype,Quote,rbind2,reconcilePropertiesAndPrototype,registerImplicitGenerics,%
+rematchDefinition,removeClass,removeGeneric,removeMethod,removeMethods,%
+removeMethodsObject,representation,requireMethods,resetClass,resetGeneric,%
+S3Class,S3Class<-,S3Part,S3Part<-,sealClass,%
+seemsS4Object,selectMethod,selectSuperClasses,sessionData,setAs,%
+setClass,setClassUnion,setDataPart,setGeneric,setGenericImplicit,%
+setGroupGeneric,setIs,setMethod,setOldClass,setPackageName,%
+setPrimitiveMethods,setReplaceMethod,setValidity,showClass,showDefault,%
+showExtends,showMethods,showMlist,signature,SignatureMethod,%
+sigToEnv,slot,slot<-,slotNames,slotsFromS3,%
+substituteDirect,substituteFunctionArgs,Summary,superClassDepth,testInheritedMethods,%
+testVirtual,traceOff,traceOn,tryNew,trySilent,%
+unRematchDefinition,validObject,validSlotNames%
+},%
+keywordstyle={[10]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package base
+% --------------------------
+\lstset{morekeywords={[11]addNA,addTaskCallback,agrep,all.equal,all.equal.character,%
+all.equal.default,all.equal.factor,all.equal.formula,all.equal.language,all.equal.list,%
+all.equal.numeric,all.equal.POSIXct,all.equal.raw,all.names,all.vars,%
+as.array,as.array.default,as.call,as.character,as.character.condition,%
+as.character.Date,as.character.default,as.character.error,as.character.factor,as.character.hexmode,%
+as.character.numeric_version,as.character.octmode,as.character.POSIXt,as.character.srcref,as.complex,%
+as.data.frame,as.data.frame.array,as.data.frame.AsIs,as.data.frame.character,as.data.frame.complex,%
+as.data.frame.data.frame,as.data.frame.Date,as.data.frame.default,as.data.frame.difftime,as.data.frame.factor,%
+as.data.frame.integer,as.data.frame.list,as.data.frame.logical,as.data.frame.matrix,as.data.frame.model.matrix,%
+as.data.frame.numeric,as.data.frame.numeric_version,as.data.frame.ordered,as.data.frame.POSIXct,as.data.frame.POSIXlt,%
+as.data.frame.raw,as.data.frame.table,as.data.frame.ts,as.data.frame.vector,as.Date,%
+as.Date.character,as.Date.date,as.Date.dates,as.Date.default,as.Date.factor,%
+as.Date.numeric,as.Date.POSIXct,as.Date.POSIXlt,as.difftime,as.double,%
+as.double.difftime,as.double.POSIXlt,as.environment,as.expression,as.expression.default,%
+as.factor,as.function,as.function.default,as.hexmode,as.integer,%
+as.list,as.list.data.frame,as.list.default,as.list.environment,as.list.factor,%
+as.list.function,as.list.numeric_version,as.logical,as.matrix,as.matrix.data.frame,%
+as.matrix.default,as.matrix.noquote,as.matrix.POSIXlt,as.name,as.null,%
+as.null.default,as.numeric,as.numeric_version,as.octmode,as.ordered,%
+as.package_version,as.pairlist,as.POSIXct,as.POSIXct.date,as.POSIXct.Date,%
+as.POSIXct.dates,as.POSIXct.default,as.POSIXct.numeric,as.POSIXct.POSIXlt,as.POSIXlt,%
+as.POSIXlt.character,as.POSIXlt.date,as.POSIXlt.Date,as.POSIXlt.dates,as.POSIXlt.default,%
+as.POSIXlt.factor,as.POSIXlt.numeric,as.POSIXlt.POSIXct,as.qr,as.raw,%
+as.real,as.single,as.single.default,as.symbol,as.table,%
+as.table.default,as.vector,as.vector.factor,asNamespace,asS4,%
+assign,attachNamespace,attr.all.equal,attr<-,attributes<-,%
+baseenv,bindingIsActive,bindingIsLocked,bindtextdomain,body<-,%
+bquote,by.data.frame,by.default,bzfile,c.Date,%
+c.noquote,c.numeric_version,c.POSIXct,c.POSIXlt,callCC,%
+capabilities,casefold,cbind.data.frame,char.expand,charToRaw,%
+chartr,check_tzones,chol.default,class<-,close.connection,%
+close.srcfile,closeAllConnections,codes.factor,codes.ordered,codes<-,%
+colMeans,colnames<-,colSums,comment<-,computeRestarts,%
+conditionCall,conditionCall.condition,conditionMessage,conditionMessage.condition,contributors,%
+Cstack_info,cut.Date,cut.default,cut.POSIXt,data.class,%
+data.frame,data.matrix,default.stringsAsFactors,delayedAssign,det,%
+determinant,determinant.matrix,diag<-,diff.Date,diff.default,%
+diff.POSIXt,difftime,dim.data.frame,dim<-,dimnames.data.frame,%
+dimnames<-,dimnames<-.data.frame,dir.create,do.call,dQuote,%
+duplicated.array,duplicated.data.frame,duplicated.default,duplicated.matrix,duplicated.numeric_version,%
+duplicated.POSIXlt,dyn.load,dyn.unload,eapply,emptyenv,%
+encodeString,Encoding,Encoding<-,env.profile,environment<-,%
+environmentIsLocked,environmentName,eval.parent,expand.grid,expm1,%
+F,factorial,fifo,file.access,file.append,%
+file.choose,file.copy,file.create,file.exists,file.info,%
+file.path,file.remove,file.rename,file.show,file.symlink,%
+Filter,Find,findInterval,findPackageEnv,findRestart,%
+flush,flush.connection,force,formals<-,format.AsIs,%
+format.char,format.data.frame,format.Date,format.default,format.difftime,%
+format.factor,format.hexmode,format.info,format.octmode,format.POSIXct,%
+format.POSIXlt,format.pval,formatDL,gc.time,getAllConnections,%
+getCallingDLL,getCallingDLLe,getCConverterDescriptions,getCConverterStatus,getConnection,%
+getDLLRegisteredRoutines,getDLLRegisteredRoutines.character,getDLLRegisteredRoutines.DLLInfo,getExportedValue,getHook,%
+getLoadedDLLs,getNamespace,getNamespaceExports,getNamespaceImports,getNamespaceInfo,%
+getNamespaceName,getNamespaceUsers,getNamespaceVersion,getNativeSymbolInfo,getNumCConverters,%
+getRversion,getSrcLines,getTaskCallbackNames,gettext,gettextf,%
+gregexpr,grepl,gzcon,gzfile,iconv,%
+iconvlist,icuSetCollate,identical,identity,importIntoEnv,%
+intToBits,intToUtf8,inverse.rle,invokeRestart,invokeRestartInteractively,%
+is.array,is.atomic,is.call,is.character,is.complex,%
+is.data.frame,is.double,is.element,is.environment,is.expression,%
+is.factor,is.finite,is.function,is.infinite,is.integer,%
+is.language,is.list,is.loaded,is.logical,is.matrix,%
+is.na,is.na.data.frame,is.na.POSIXlt,is.na<-,is.na<-.default,%
+is.na<-.factor,is.name,is.nan,is.null,is.numeric,%
+is.numeric.Date,is.numeric.POSIXt,is.numeric_version,is.object,is.ordered,%
+is.package_version,is.pairlist,is.primitive,is.qr,is.R,%
+is.raw,is.real,is.recursive,is.single,is.symbol,%
+is.table,is.unsorted,is.vector,isBaseNamespace,isdebugged,%
+isIncomplete,isNamespace,ISOdate,ISOdatetime,isOpen,%
+isRestart,isS4,isSeekable,isSymmetric,isSymmetric.matrix,%
+isTRUE,julian,julian.Date,julian.POSIXt,kappa.default,%
+kappa.lm,kappa.qr,kappa.tri,l10n_info,La.chol,%
+La.chol2inv,La.eigen,La.svd,labels.default,lazyLoad,%
+lazyLoadDBfetch,length<-,length<-.factor,letters,LETTERS,%
+levels.default,levels<-,levels<-.factor,lfactorial,library.dynam,%
+library.dynam.unload,list.files,loadedNamespaces,loadingNamespaceInfo,loadNamespace,%
+loadURL,lockBinding,lockEnvironment,logb,lower.tri,%
+make.names,make.unique,makeActiveBinding,manglePackageName,Map,%
+mapply,margin.table,mat.or.vec,match.arg,match.call,%
+match.fun,Math.data.frame,Math.Date,Math.difftime,Math.factor,%
+Math.POSIXt,max.col,mean.data.frame,mean.Date,mean.default,%
+mean.difftime,mean.POSIXct,mean.POSIXlt,mem.limits,memory.profile,%
+merge.data.frame,merge.default,message,mget,mode<-,%
+month.abb,month.name,months,months.Date,months.POSIXt,%
+mostattributes<-,names<-,namespaceExport,namespaceImport,namespaceImportClasses,%
+namespaceImportFrom,namespaceImportMethods,Negate,new.env,ngettext,%
+numeric_version,nzchar,oldClass,oldClass<-,on.exit,%
+open,open.connection,open.srcfile,open.srcfilecopy,Ops.data.frame,%
+Ops.Date,Ops.difftime,Ops.factor,Ops.numeric_version,Ops.ordered,%
+Ops.POSIXt,package.description,package_version,packageEvent,packageHasNamespace,%
+packageStartupMessage,packBits,parent.env,parent.env<-,parent.frame,%
+parse.dcf,parseNamespaceFile,path.expand,pi,pipe,%
+pmax.int,pmin.int,pos.to.env,Position,prettyNum,%
+print.AsIs,print.atomic,print.by,print.condition,print.connection,%
+print.data.frame,print.Date,print.default,print.difftime,print.DLLInfo,%
+print.DLLInfoList,print.DLLRegisteredRoutines,print.factor,print.hexmode,print.libraryIQR,%
+print.listof,print.NativeRoutineList,print.noquote,print.numeric_version,print.octmode,%
+print.packageInfo,print.POSIXct,print.POSIXlt,print.proc_time,print.restart,%
+print.rle,print.simple.list,print.srcfile,print.srcref,print.summary.table,%
+print.table,print.warnings,printNoClass,proc.time,prop.table,%
+psigamma,pushBack,pushBackLength,qr.coef,qr.default,%
+qr.fitted,qr.Q,qr.qty,qr.qy,qr.R,%
+qr.resid,qr.solve,qr.X,quarters,quarters.Date,%
+quarters.POSIXt,R.home,R.version,R.Version,R.version.string,%
+R_system_version,range.default,rapply,raw,rawConnection,%
+rawConnectionValue,rawShift,rawToBits,rawToChar,rbind.data.frame,%
+rcond,read.dcf,read.table.url,readBin,readChar,%
+readLines,Reduce,reg.finalizer,registerS3method,registerS3methods,%
+removeCConverter,removeTaskCallback,rep.Date,rep.factor,rep.int,%
+rep.numeric_version,rep.POSIXct,rep.POSIXlt,replicate,restartDescription,%
+restartFormals,retracemem,rev.default,RNGversion,round.Date,%
+round.difftime,round.POSIXt,row.names,row.names.data.frame,row.names.default,%
+row.names<-,row.names<-.data.frame,row.names<-.default,rowMeans,rownames<-,%
+rowsum.data.frame,rowsum.default,rowSums,sample.int,save.image,%
+saveNamespaceImage,scale.default,scan.url,seek,seek.connection,%
+seq.Date,seq.default,seq.int,seq.POSIXt,seq_along,%
+seq_len,serialize,set.seed,setCConverterStatus,setHook,%
+setNamespaceInfo,setSessionTimeLimit,setTimeLimit,shell,shell.exec,%
+showConnections,shQuote,signalCondition,simpleCondition,simpleError,%
+simpleMessage,simpleWarning,sink.number,slice.index,socketConnection,%
+socketSelect,solve.default,solve.qr,sort.default,sort.int,%
+sort.list,sort.POSIXlt,source.url,split.data.frame,split.Date,%
+split.default,split.POSIXct,split<-,split<-.data.frame,split<-.default,%
+sprintf,sQuote,srcfile,srcfilecopy,srcref,%
+standardGeneric,stderr,stdin,stdout,stopifnot,%
+storage.mode,storage.mode<-,strftime,strptime,strtrim,%
+strwrap,subset.data.frame,subset.default,subset.matrix,substr<-,%
+substring<-,summary.connection,summary.data.frame,Summary.data.frame,summary.Date,%
+Summary.Date,summary.default,Summary.difftime,summary.factor,Summary.factor,%
+summary.matrix,Summary.numeric_version,summary.POSIXct,Summary.POSIXct,summary.POSIXlt,%
+Summary.POSIXlt,summary.table,suppressMessages,suppressPackageStartupMessages,suppressWarnings,%
+symbol.C,symbol.For,sys.call,sys.calls,Sys.chmod,%
+Sys.Date,sys.frame,sys.frames,sys.function,Sys.getenv,%
+Sys.getlocale,Sys.getpid,Sys.glob,Sys.info,sys.load.image,%
+Sys.localeconv,sys.nframe,sys.on.exit,sys.parent,sys.parents,%
+Sys.putenv,sys.save.image,Sys.setenv,Sys.setlocale,Sys.sleep,%
+sys.source,sys.status,Sys.time,Sys.timezone,Sys.umask,%
+Sys.unsetenv,Sys.which,system.file,system.time,T,%
+t.data.frame,t.default,taskCallbackManager,tcrossprod,tempdir,%
+testPlatformEquivalence,textConnection,textConnectionValue,tolower,topenv,%
+toString,toString.default,toupper,tracemem,tracingState,%
+transform.data.frame,transform.default,trunc.Date,trunc.POSIXt,truncate,%
+truncate.connection,tryCatch,unique.array,unique.data.frame,unique.default,%
+unique.matrix,unique.numeric_version,unique.POSIXlt,units,units.difftime,%
+units<-,units<-.difftime,unix.time,unloadNamespace,unlockBinding,%
+unserialize,unsplit,untracemem,unz,upper.tri,%
+utf8ToInt,Vectorize,version,weekdays,weekdays.Date,%
+weekdays.POSIXt,which.max,which.min,with,with.default,%
+withCallingHandlers,within,within.data.frame,within.list,withRestarts,%
+withVisible,write.dcf,write.table0,writeBin,writeChar,%
+writeLines,xpdrows.data.frame,xtfrm,xtfrm.Date,xtfrm.default,%
+xtfrm.factor,xtfrm.numeric_version,xtfrm.POSIXct,xtfrm.POSIXlt,xtfrm.Surv%
+},%
+keywordstyle={[11]{\color{blue}}}%
+}
+%
+%
+
+%------------------------------------------------------------------------------%
+%
+%% --------------------------
+% Registration of package RODBC
+% --------------------------
+\lstset{morekeywords={[12]getSqlTypeInfo,odbcClearError,odbcClose,odbcCloseAll,odbcColumns,%
+odbcConnect,odbcConnectAccess,odbcConnectAccess2007,odbcConnectDbase,odbcConnectExcel,%
+odbcConnectExcel2007,odbcDataSources,odbcDriverConnect,odbcEndTran,odbcFetchRows,%
+odbcGetErrMsg,odbcGetInfo,odbcPrimaryKeys,odbcQuery,odbcReConnect,%
+odbcSetAutoCommit,odbcTables,odbcUpdate,setSqlTypeInfo,sqlClear,%
+sqlColumns,sqlCopy,sqlCopyTable,sqlDrop,sqlFetch,%
+sqlFetchMore,sqlGetResults,sqlPrimaryKeys,sqlQuery,sqlSave,%
+sqlTables,sqlTypeInfo,sqlUpdate%
+},%
+keywordstyle={[12]{\color{blue}}}%
+}
+%
+%% --------------------------
+% Registration of package lattice
+% --------------------------
+\lstset{morekeywords={[13]as.factorOrShingle,as.shingle,axis.default,banking,barchart,%
+barley,bwplot,canonical.theme,cloud,col.whitebg,%
+contourplot,current.column,current.panel.limits,current.row,densityplot,%
+diag.panel.splom,do.breaks,dotplot,draw.colorkey,draw.key,%
+environmental,equal.count,ethanol,histogram,is.shingle,%
+larrows,lattice.getOption,lattice.options,latticeParseFormula,level.colors,%
+levelplot,llines,lplot.xy,lpoints,lpolygon,%
+lrect,lsegments,ltext,ltransform3dMatrix,ltransform3dto3d,%
+make.groups,melanoma,oneway,packet.number,packet.panel.default,%
+panel.3dscatter,panel.3dwire,panel.abline,panel.arrows,panel.average,%
+panel.axis,panel.barchart,panel.brush.splom,panel.bwplot,panel.cloud,%
+panel.contourplot,panel.curve,panel.densityplot,panel.dotplot,panel.error,%
+panel.fill,panel.grid,panel.histogram,panel.identify,panel.identify.cloud,%
+panel.identify.qqmath,panel.levelplot,panel.linejoin,panel.lines,panel.link.splom,%
+panel.lmline,panel.loess,panel.mathdensity,panel.number,panel.pairs,%
+panel.parallel,panel.points,panel.polygon,panel.qq,panel.qqmath,%
+panel.qqmathline,panel.rect,panel.refline,panel.rug,panel.segments,%
+panel.smoothScatter,panel.splom,panel.stripplot,panel.superpose,panel.superpose.2,%
+panel.text,panel.tmd.default,panel.tmd.qqmath,panel.violin,panel.wireframe,%
+panel.xyplot,parallel,prepanel.default.bwplot,prepanel.default.cloud,prepanel.default.densityplot,%
+prepanel.default.histogram,prepanel.default.levelplot,prepanel.default.parallel,prepanel.default.qq,prepanel.default.qqmath,%
+prepanel.default.splom,prepanel.default.xyplot,prepanel.lmline,prepanel.loess,prepanel.qqmathline,%
+prepanel.tmd.default,prepanel.tmd.qqmath,qq,qqmath,rfs,%
+Rows,shingle,show.settings,simpleKey,simpleTheme,%
+singer,splom,standard.theme,strip.custom,strip.default,%
+stripplot,tmd,trellis.currentLayout,trellis.device,trellis.focus,%
+trellis.grobname,trellis.last.object,trellis.panelArgs,trellis.par.get,trellis.par.set,%
+trellis.switchFocus,trellis.unfocus,trellis.vpname,which.packet,wireframe,%
+xscale.components.default,xyplot,yscale.components.default%
+},%
+keywordstyle={[13]{\color{blue}}}%
+}
+%
+%% --------------------------
+% Registration of package MDP
+% --------------------------
+\lstset{morekeywords={[14]actionIdxDf,actionIdxMat,actionInfo,actionWeightMat,binaryMDPWriter,%
+calcRPO,calcWeights,convertBinary2HMP,convertHMP2Binary,fixAction,%
+getPolicy,getPolicyW,hmpMDPWriter,loadMDP,policyIteAve,%
+policyIteDiscount,removeAction,resetActions,setPolicyAction,setStateWeight,%
+stateIdxDf,stateIdxMat,transProbMat,valueIte,weightNames%
+},%
+keywordstyle={[14]{\color{blue}}}%
+}
+%
+%
+
+% --------------------------
+% Registration of package XML
+% --------------------------
+\lstset{morekeywords={[15]addAttributes,addChildren,addNode,addSibling,append.xmlNode,%
+append.XMLNode,asXMLNode,asXMLTreeNode,catalogAdd,catalogClearTable,%
+catalogLoad,catalogResolve,comment.SAX,docName,docName<-,%
+Doctype,dtdElement,dtdElementValidEntry,dtdEntity,dtdIsAttribute,%
+dtdValidElement,endElement.SAX,ensureNamespace,entityDeclaration.SAX,findXInclude,%
+free,genericSAXHandlers,getDefaultNamespace,getEncoding,getLineNumber,%
+getNodeSet,getRelativeURL,getSibling,getXMLErrors,htmlParse,%
+htmlTreeParse,libxmlVersion,matchNamespaces,names.XMLNode,newXMLCDataNode,%
+newXMLCommentNode,newXMLDoc,newXMLDTDNode,newXMLNamespace,newXMLNode,%
+newXMLPINode,newXMLTextNode,parseDTD,parseURI,processingInstruction.SAX,%
+processXInclude,removeAttributes,removeChildren,removeNodes,replaceNodes,%
+saveXML,schemaValidationErrorHandler,source,startElement.SAX,supportsExpat,%
+supportsLibxml,text.SAX,toHTML,toString.XMLNode,xmlAncestors,%
+xmlApply,xmlAttributeType,xmlAttrs,xmlAttrs<-,xmlCDataNode,%
+xmlChildren,xmlChildren<-,xmlClone,xmlCodeFile,xmlCommentNode,%
+xmlContainsElement,xmlContainsEntity,xmlDoc,xmlDOMApply,xmlElementsByTagName,%
+xmlElementSummary,xmlErrorCumulator,xmlEventHandler,xmlEventParse,xmlGetAttr,%
+xmlHandler,xmlHashTree,xmlInternalTreeParse,xmlName,xmlName<-,%
+xmlNamespace,xmlNamespaceDefinitions,xmlNamespaces,xmlNamespaces<-,xmlNativeTreeParse,%
+xmlNode,xmlOutputBuffer,xmlOutputDOM,xmlParent,xmlParse,%
+xmlParserContextFunction,xmlPINode,xmlRoot,xmlSApply,xmlSchemaParse,%
+xmlSchemaValidate,xmlSize,xmlSize.default,xmlSource,xmlStopParser,%
+xmlStructuredStop,xmlTextNode,xmlToList,xmlTree,xmlTreeParse,%
+xmlValue,xmlValue<-,xpathApply,xpathSApply%
+},%
+keywordstyle={[15]{\color{green}}}%
+}
+%
+%
+\DefineVerbatimEnvironment{Soutput}{Verbatim}%
+  {fontsize=\scriptsize,frame=single,formatcom=\lstset{fancyvrb=false}\color{Rout}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}%
+  {fontsize=\scriptsize,formatcom=\color{Rcolor}\lstset{fancyvrb=true}}
+
+\setkeys{Gin}{width=\textwidth}
+
+

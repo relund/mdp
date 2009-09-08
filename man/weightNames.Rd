@@ -5,4 +5,5 @@
 \description{Names of weights used in actions.}
 \author{Lars Relund \email{lars@relund.dk}}
 \value{Vector of weight names.}
-\arguments{\item{labels}{The HMDP binary file containing the weight labels.}}
+\arguments{\item{prefix}{A character string with the prefix added to the binary file names.}
+\item{labels}{The HMDP binary file containing the weight labels.}}

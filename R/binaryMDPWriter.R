@@ -5,7 +5,7 @@
 #' Binary files are efficent for storing large models. Compared to the HMP (XML)
 #' format the binary files use less storage space and loading the model is faster.
 #'
-#' The functions which can be used are:
+#' The functions which can be used are: \itemize{
 #'   \item{\code{setWeights(labels, ...)}: }{Set the labels of the weights used in the actions.
 #'      \code{labels} is a vector of label names, \code{...} are not used.
 #'      The function must be called before starting building the model.}
@@ -18,11 +18,11 @@
 #'   \item{\code{action(label=NULL, weights, prob, ...)}: }{Starts an action. Parameter \code{weights} must be a vector of action weights,
 #'      \code{prob} must contain triples of (scope,idx,pr) (see the description of actionIdx.bin below), \code{...} is currently not used.}
 #'   \item{\code{endAction()}: }{Ends an action.}
-#'   \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}
+#'   \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}}
 #'
-#' Seven binary files are created using the following format:
+#' Seven binary files are created using the following format:\itemize{
 #' \item{stateIdx.bin: }{File of integers containing the indexes defining all states in the format
-#' "d0 s0 -1 d0 s0 a0 d1 s1 -1 d0 s0 a0 d1 s1 a1 d2 s2 -1 d0 s0 ...". Here -1 is
+#' "n0 s0 -1 n0 s0 a0 n1 s1 -1 n0 s0 a0 n1 s1 a1 n2 s2 -1 n0 s0 ...". Here -1 is
 #' used to indicate that a new state is considered (new line).}
 #' \item{stateIdxLbl.bin: }{File of characters in the format "sIdx label sIdx label ..." Here
 #' sIdx corresponds to the index/line number in stateIdxLbl.bin (index starts from 0).
@@ -50,7 +50,7 @@
 #' \item{transProb.bin: }{File of doubles containing the probabilities of the transitions
 #' defined in actions in actionIdx.bin. The format is
 #' "p1 p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -1 is
-#' used to indicate that a new action is considered (new line).}
+#' used to indicate that a new action is considered (new line).}}
 #'
 #' @usage binaryMDPWriter(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 #'    "actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"))

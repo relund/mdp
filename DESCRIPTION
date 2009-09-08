@@ -1,7 +1,7 @@
 Package: MDP
 Type: Package
 Title: Markov Decision Processes (MDPs) in R
-Version: 1.0
+Version: 1.1
 Date: 2009-05-15
 Author: Lars Relund Nielsen and Anders Ringgaard Kristensen
 Maintainer: Lars Relund Nielsen <lars@relund.dk>

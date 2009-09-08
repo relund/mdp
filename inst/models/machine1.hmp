@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<mlhmp l="HMP file created by converting binary files" b="0.1" dsl="1" precision="1e-05" version="1.1">
+  <i>0.1</i>
+  <sources>0 1</sources>
+  <proc>
+    <g>
+      <s l="Dummy">
+        <a l="buy">
+          <q></q>
+          <p t="s">0 0.7 1 0.3</p>
+          <d>-100</d>
+        </a>
+      </s>
+    </g>
+    <g>
+      <s l="good">
+        <a l="mt">
+          <q></q>
+          <p t="d">0</p>
+          <d>55</d>
+        </a>
+        <a l="nmt">
+          <q></q>
+          <p t="s">0 0.6 1 0.4</p>
+          <d>70</d>
+        </a>
+      </s>
+      <s l="average">
+        <a l="mt">
+          <q></q>
+          <p t="d">0</p>
+          <d>40</d>
+        </a>
+        <a l="nmt">
+          <q></q>
+          <p t="s">1 0.6 2 0.4</p>
+          <d>50</d>
+        </a>
+      </s>
+    </g>
+    <g>
+      <s l="good">
+        <a l="mt">
+          <q></q>
+          <p t="d">0</p>
+          <d>55</d>
+        </a>
+        <a l="nmt">
+          <q></q>
+          <p t="s">0 0.5 1 0.5</p>
+          <d>70</d>
+        </a>
+      </s>
+      <s l="average">
+        <a l="mt">
+          <q></q>
+          <p t="d">0</p>
+          <d>40</d>
+        </a>
+        <a l="nmt">
+          <q></q>
+          <p t="s">1 0.5 2 0.5</p>
+          <d>50</d>
+        </a>
+      </s>
+      <s l="not working">
+        <a l="mt">
+          <q></q>
+          <p t="d">0</p>
+          <d>30</d>
+        </a>
+        <a l="rep">
+          <q></q>
+          <p t="d">3</p>
+          <d>5</d>
+        </a>
+      </s>
+    </g>
+    <g>
+      <s l="good">
+        <a l="mt">
+          <q></q>
+          <p t="d">0</p>
+          <d>55</d>
+        </a>
+        <a l="nmt">
+          <q></q>
+          <p t="s">0 0.2 1 0.8</p>
+          <d>70</d>
+        </a>
+      </s>
+      <s l="average">
+        <a l="mt">
+          <q></q>
+          <p t="d">0</p>
+          <d>40</d>
+        </a>
+        <a l="nmt">
+          <q></q>
+          <p t="s">1 0.2 2 0.8</p>
+          <d>50</d>
+        </a>
+      </s>
+      <s l="not working">
+        <a l="mt">
+          <q></q>
+          <p t="d">0</p>
+          <d>30</d>
+        </a>
+        <a l="rep">
+          <q></q>
+          <p t="d">3</p>
+          <d>5</d>
+        </a>
+      </s>
+      <s l="replaced">
+        <a l="Dummy">
+          <q></q>
+          <p t="d">3</p>
+          <d>0</d>
+        </a>
+      </s>
+    </g>
+    <g>
+      <s l="good"/>
+      <s l="average"/>
+      <s l="not working"/>
+      <s l="replaced"/>
+    </g>
+  </proc>
+</mlhmp>
