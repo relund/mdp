@@ -81,7 +81,7 @@
 % redefine abstract environment so left justified
 \renewenvironment{abstract}{\parindent0pt\textbf{Abstract:}}{}
 
-\title{Solving MDPs using the MDP package in R}
+\title{The MDP package in R some examples}
 
 \author{%
 Lars Relund Nielsen\thanks{Corresponding author}\\
