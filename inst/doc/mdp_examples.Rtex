@@ -14,7 +14,7 @@
 \usepackage{amssymb}
 %\usepackage{tabularx}
 %\usepackage{booktabs}
-\usepackage{fancyref,frefext}
+\usepackage{fancyref}
 \renewcommand{\fancyrefdefaultformat}{plain}
 \usepackage[english]{babel}
 \usepackage[numbers,sort&compress,longnamesfirst]{natbib}   % Natbib for better citations
