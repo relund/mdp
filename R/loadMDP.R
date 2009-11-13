@@ -212,7 +212,7 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1) {
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	.Call("MDP_PolicyIteDiscount", mdp$ptr, as.integer(iW),
 		as.integer(iDur), as.numeric(rate), as.numeric(rateBase), PACKAGE="MDP")
-	cat(.Call("MDP_GetLog",mdp$ptr), PACKAGE="MDP")
+	cat(.Call("MDP_GetLog",mdp$ptr, PACKAGE="MDP"))
 	invisible()
 }
 
@@ -233,7 +233,7 @@ policyIteAve<-function(mdp, w, dur) {
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	g<-.Call("MDP_PolicyIteAve", mdp$ptr, as.integer(iW),
 		as.integer(iDur), PACKAGE="MDP")
-	cat(.Call("MDP_GetLog",mdp$ptr), PACKAGE="MDP")
+	cat(.Call("MDP_GetLog",mdp$ptr, PACKAGE="MDP"))
 	return(g)
 }
 
