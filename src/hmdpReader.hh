@@ -83,7 +83,7 @@ public:
             transProbFile);
         Compile();
         cpuTime.StopTime(0);
-        cout << "Cpu for reading the binary files: " << cpuTime.TimeDiff(0) << endl;
+        //cout << "Cpu for reading the binary files: " << cpuTime.TimeDiff(0) << endl;
     }
 
     ~HMDPReader() {}

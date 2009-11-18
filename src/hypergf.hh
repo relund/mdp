@@ -406,10 +406,10 @@ public:
     uInt         htailsize;      // total size of hyperarc tails (hsize-mh)
     uInt         size;           // size (hsize+(2*ma))
 
-    uInt sizeW;      ///< Size of weight vector in nodes and (hyper)arcs.
-    uSInt sizeWTmp;   ///< Size of temponary wight vector.
+    uInt sizeW;       ///< Size of weight vector in nodes and (hyper)arcs.
+    uSInt sizeWTmp;   ///< Size of temponary weight vector.
     uSInt sizePred;   ///< Size of predecessor vector.
-    uInt sizeMult;   ///< Number of multipliers in each tail.
+    uInt sizeMult;    ///< Number of multipliers in each tail.
 
 private:
     // hyperarc representation

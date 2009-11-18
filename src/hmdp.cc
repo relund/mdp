@@ -203,7 +203,7 @@ string HMDP::StateActionsToHgf(idx iState, bool & findValidOdr) {
 bool HMDP::CheckIdx() {
 	string sUp, sDown, sNext;
 	idx iS = 0;
-	uSInt ctrUp, ctrNext, ctrDown, ctr = 0;
+	uInt ctrUp, ctrNext, ctrDown, ctr = 0;
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairUp;
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairDown;
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairNext;

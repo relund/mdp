@@ -190,7 +190,7 @@ void HMDPReader::Compile() {
 	vector<idx> s;  // vector of index
 	s.push_back(1);
 	if (pHMDP->timeHorizon>=INFINT) {   // add second stage at founder level
-		uSInt ctr = pHMDP->stages.count("0");  // states at founder level
+		uInt ctr = pHMDP->stages.count("0");  // states at founder level
 		for (idx i=0;i<ctr;++i) {
 			s.push_back(i);
 			pHMDP->AddState(s);

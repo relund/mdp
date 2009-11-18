@@ -17,7 +17,7 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 	binNames<-paste(prefix,binNames,sep="")
 	ptm <- proc.time()
 	p<-.Call("MDP_NewHMDP", binNames, .deleteHMDP, PACKAGE="MDP")
-	cpu <- (proc.time() - ptm)[2]
+	cpu <- (proc.time() - ptm)[3]
 	cat("Cpu for reading the binary files: ", cpu, "s\n", sep="")
 	.Call("MDP_Check",p,as.numeric(eps), PACKAGE="MDP")
 	str<-.Call("MDP_GetLog", p, PACKAGE="MDP")
