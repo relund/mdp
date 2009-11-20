@@ -335,6 +335,7 @@ void HMDP::BuildHMDP() {
 	NodePtr pNode;
 	bool findValidOdr = false;
 
+    cpuTime.Reset(0);
 	cpuTime.StartTime(0);
 	CalcHgfSizes(n, ma, mh, d, hsize, sizeW, sizeWTmp, sizePred, sizeMult);
 	H.Initialize(n, ma, mh, d, hsize, sizeW, sizeWTmp, sizePred, sizeMult);     // Allocate mem for the hgf
@@ -343,7 +344,9 @@ void HMDP::BuildHMDP() {
 		//log << str << endl;
 		H.AddHyperarcs(str);
 	}
+	cout << "Cpu time loading MDP into tmp hgf arrays" << cpuTime.TimeDiff(0) << endl;
 	H.BuildHgf();   // create the hypergraph
+	cout << "Cpu time after building hgf " << cpuTime.TimeDiff(0) << endl;
 
 	// TODO LRE Virker dette ikke kun hvis alle states har en label!!
 	for (idx i=0; i<states.size(); i++) {   // set pointers to labels
@@ -360,6 +363,7 @@ void HMDP::BuildHMDP() {
 			}
 		}
 	}
+	cout << "Cpu time after setting label pointers " << cpuTime.TimeDiff(0) << endl;
 
 	idxPred = idxMult = 0;  // consider first pred and multipliers
 	if (!findValidOdr) HT.SetValidOdrToReverseNodeOdr(H);
@@ -374,11 +378,13 @@ void HMDP::BuildHMDP() {
 		}
 		HT.FindValidOdr(H,nodes);
 	}
+	cout << "Cpu time after finding valid odr " << cpuTime.TimeDiff(0) << endl;
+
 	for (idx i=0; i<states.size(); i++) {   // remove tmpActions
 		states[i].RemoveActions();
 	}
 	cpuTime.StopTime(0);
-	log << "Cpu time for building state-expanded hypergraph " << cpuTime.TimeDiff(0) << "s" << endl;
+	log << "Total cpu time for building state-expanded hypergraph " << cpuTime.TimeDiff(0) << "s" << endl;
 }
 
 // ----------------------------------------------------------------------------

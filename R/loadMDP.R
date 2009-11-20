@@ -3,26 +3,30 @@
 #'
 #' @usage loadMDP(prefix="",
 #'   binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin","actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
-#'   eps = 0.00001)
+#'   eps = 0.00001, check = TRUE)
 #' @param prefix A character string with the prefix added to \code{binNames}. Used to identify a specific model.
 #' @param binNames A character vector of length 7 giving the names of the binary
 #'     files storing the model.
 #' @param eps The sum of the transition probabilities must at most differ eps from one.
+#' @param check Check if the MDP seems correct.
 #' @return A list containing relevant information about the model and a pointer \code{ptr} to the model object in memory.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example pkg/tests/machine.Rex
 loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
-	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"), eps = 0.00001)
+	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
+	eps = 0.00001, check = TRUE)
 {
 	binNames<-paste(prefix,binNames,sep="")
 	ptm <- proc.time()
 	p<-.Call("MDP_NewHMDP", binNames, .deleteHMDP, PACKAGE="MDP")
 	cpu <- (proc.time() - ptm)[3]
 	cat("Cpu for reading the binary files: ", cpu, "s\n", sep="")
-	.Call("MDP_Check",p,as.numeric(eps), PACKAGE="MDP")
-	str<-.Call("MDP_GetLog", p, PACKAGE="MDP")
-	cat(str)
-	if (length(grep("error",str, ignore.case = TRUE))>0) return(invisible(NULL))
+	if (check) {
+		.Call("MDP_Check",p,as.numeric(eps), PACKAGE="MDP")
+		str<-.Call("MDP_GetLog", p, PACKAGE="MDP")
+		cat(str)
+		if (length(grep("error",str, ignore.case = TRUE))>0) return(invisible(NULL))
+	}
 	.Call("MDP_BuildHMDP",p, PACKAGE="MDP")
 	cat(.Call("MDP_GetLog",p, PACKAGE="MDP"))
 	timeHorizon = .Call("MDP_GetTimeHorizon", p, PACKAGE="MDP")

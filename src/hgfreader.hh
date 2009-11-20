@@ -109,7 +109,7 @@ public:
         BuildHarcRepF6();
         BuildFSHRep();
         cpuTime.StopTime(0);
-        cout << "Cpu time for building the hypergraph " << cpuTime.TimeDiff(0) << endl;
+        //cout << "Cpu time for allocating memory for the state-expanded hypergraph " << cpuTime.TimeDiff(0) << endl;
     }
 
     void Initialize() {AllocateMem();}
