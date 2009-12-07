@@ -11,19 +11,26 @@
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="0" />
+				<Option projectIncludeDirsRelation="1" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="C:\tools\R\R-2.10.0\include" />
 				</Compiler>
+				<Linker>
+					<Add library="C:\tools\R\R-2.10.0\bin\Rlapack.dll" />
+					<Add library="C:\tools\R\R-2.10.0\bin\R.dll" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
-			<Add directory="C:\Programmer\R\R-2.9.1\include" />
+			<Add directory="C:\tools\R\R-2.10.0\include" />
 		</Compiler>
 		<Linker>
-			<Add library="C:\Programmer\R\R-2.9.1\bin\Rlapack.dll" />
-			<Add library="C:\Programmer\R\R-2.9.1\bin\R.dll" />
+			<Add library="C:\tools\R\R-2.10.0\bin\Rlapack.dll" />
+			<Add library="C:\tools\R\R-2.10.0\bin\R.dll" />
 			<Add directory="C:\Programmer\R\R-2.9.1\bin" />
 		</Linker>
 		<Unit filename="main.cc" />

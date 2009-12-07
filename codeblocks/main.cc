@@ -20,26 +20,100 @@ idx Ctr(vector<idx> iHMDP);
 
 // Input for main function see error output in main
 int main(int argc, char **argv) {
+    /*flt rate = 0.03;
+    flt rateBase = 365;
+    idx i;*/
+    string prefix = argv[1];
 
-    /*vector< vector<int> > v;
-    int myints[] = {16,2,77};
-    vector<int> tmp (myints, myints + sizeof(myints) / sizeof(int) );
+    //Read HMDP from binary file
+    HMDP hmdp1(prefix+"stateIdx.bin", prefix+"stateIdxLbl.bin",
+        prefix+"actionIdx.bin", prefix+"actionIdxLbl.bin",
+        prefix+"actionWeight.bin", prefix+"actionWeightLbl.bin",
+        prefix+"transProb.bin");
+    //hmdp1.Print();
+
+    //hmdp1.Check(0.000001);
+    //cout << hmdp1.GetLog() << endl;
+    //hmdp1.BuildHMDP();
+
+    /*vector<flt> v(1,0);
+	hmdp1.ValueIteFinite(0,v);
+    cout << hmdp1.PolicyW(11,0) << endl;
+    cout << hmdp1.PolicyW(10,0) << endl;
 
 
-    v.resize(2);
-    v[0].assign(3,-1);
-    v[1].assign(3,-1);
+    rate = 0.1;
+    rateBase = 1;
+    idx iW = 1;
+    idx iDur = 2;
+    flt g = 0;*/
 
-    for (idx r=0; r<v.size(); r++)
-        for (idx c=0; c<v[0].size(); ++c) cout << "[" << r << "," << c << "] = " << v[r][c] << endl;
+    //hmdp1.ValueIteInfDiscount(1,0.000001,1,0,rate,rateBase);
+    //hmdp1.CalcRPO(3,1,0);
+    //hmdp1.PolicyIteDiscount(1,0,rate,rateBase);
+    //g = hmdp1.PolicyIteAve(iW,iDur);
+    //hmdp1.PolicyIteAve(1,2);
+    //cout << hmdp1.PolicyInfoIdx(1) << endl;
 
-    v[0] = tmp;
+    /*cout << g << endl;
+    for (idx iS=0; iS<hmdp1.states.size(); ++iS)
+        cout << hmdp1.CalcRPOAve(iS,iW,0,iDur,g) << endl;*/
 
-    for (idx r=0; r<v.size(); r++)
-        for (idx c=0; c<v[0].size(); ++c) cout << "[" << r << "," << c << "] = " << v[r][c] << endl;
+    //for (i=0; i<hmdp1.states.size(); i++) cout << i << ": " << hmdp1.StateActionsToHgf(i) << endl;
+
+}
 
 
-    */
+//----------------------------------------------------------------------------
+
+/** Number of stage, states or actions given iHMDP. */
+idx Ctr(const vector<idx> iHMDP) {
+    int level = iHMDP.size() / 3;
+    int idxType = iHMDP.size() % 3; // next index specify 0: stage, 1: state, 2: action
+
+    if (level==0) {
+        if (idxType==0 | idxType==1) return 2;
+        if (iHMDP[0]==1) return 0;  // second stage
+        if (idxType==2 & iHMDP[1]==0) return 2;
+        if (idxType==2 & iHMDP[1]==1) return 1;
+
+    }
+    if (level==1) {   // d0,s0,a0,d1,s1,a1
+        // second stage at level 0
+        if (iHMDP[0]==1) return 0;
+        // stages at level 1
+        if (idxType==0) return 3;
+        // states at level 1
+        if (idxType==1 & iHMDP[3]==0) return 1; // dummey state
+        if (idxType==1 & iHMDP[2]==1 & iHMDP[3]==1) return 1;
+        if (idxType==1) return 2;
+        // actions at level 1
+        if (idxType==2 & iHMDP[3]==0) return 1; // dummy action at stage 0
+        // process 0,0,0
+        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==0 & iHMDP[3]==1) return 2;
+        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==0 & iHMDP[3]==2) return 1;
+        // process 0,0,1
+        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==1 & iHMDP[3]==1) return 2;
+        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==1 & iHMDP[3]==2 & iHMDP[4]==0) return 1;
+        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==1 & iHMDP[3]==2 & iHMDP[4]==1) return 2;
+        // process 0,1,0
+        if (iHMDP[0]==0 & iHMDP[1]==1 & iHMDP[2]==0 & iHMDP[3]>=1) return 1;
+        cout << "Error in Ctr!\n";
+        exit(1);
+    }
+    return 1;
+}
+
+
+//----------------------------------------------------------------------------
+
+void RunPrintHgraph(char filename[]) {
+    cout << "\nPrint hypergraph: " << filename << endl;
+    Hypergraph H(filename);     // Reads the hypergraph
+    H.PrintArcs();
+}
+
+
     /*MatDouble I(5,true);
     MatDouble P(5,false);
     P.Set(2);
@@ -67,30 +141,6 @@ int main(int argc, char **argv) {
     w.Print();
     exit(0);*/
 
-    flt rate = 0.03;
-    flt rateBase = 365;
-
-    idx i;
-    /*bool printHgraph;
-    int inputf,outputf;	// Indexes in array
-
-    i=1;
-    inputf=outputf=0;
-    while (i<(idx)argc) {
-        if (!strcmp(argv[i],"-inf")) {
-            inputf = ++i;
-        }
-        if (!strcmp(argv[i],"-outf")) {
-            outputf = ++i;
-        }
-        if (!strcmp(argv[i],"-hgraph")) {
-            printHgraph = true;
-        }
-        i++;
-    }*/
-
-    //RunPrintHgraph(argv[inputf]);
-    //exit(0);
 
     /*HMDP hmdp(3, INFINT);
     //cout << "time: " << hmdp.timeHorizon << endl;
@@ -238,16 +288,6 @@ int main(int argc, char **argv) {
     //hmdp.PolicyIteAve(1,0);
     //hmdp.PolicyIteAve(1,2);
 
-    //Read HMDP from binary file
-    HMDP hmdp1("machine_stateIdx.bin", "machine_stateIdxLbl.bin",
-        "machine_actionIdx.bin", "machine_actionIdxLbl.bin",
-        "machine_actionWeight.bin", "machine_actionWeightLbl.bin",
-        "machine_transProb.bin");
-    //hmdp1.Print();
-
-    //hmdp1.Check(0.000001);
-    //cout << hmdp1.GetLog() << endl;
-    hmdp1.BuildHMDP();
 
     /*MatSimple<int> mat = hmdp1.HgfMatrix();
     cout << mat.rows << endl << mat.cols << endl;
@@ -265,110 +305,3 @@ int main(int argc, char **argv) {
 	cout << endl;
 	for (int k=0; k<rows*cols; ++k) cout << vec[k] << " ";
 	cout << endl;*/
-
-    vector<flt> v(1,0);
-	hmdp1.ValueIteFinite(0,v);
-    cout << hmdp1.PolicyW(11,0) << endl;
-    cout << hmdp1.PolicyW(10,0) << endl;
-
-
-
-
-
-
-
-
-
-
-
-    rate = 0.1;
-    rateBase = 1;
-    idx iW = 1;
-    idx iDur = 2;
-    flt g = 0;
-
-    //hmdp1.ValueIteInfDiscount(1,0.000001,1,0,rate,rateBase);
-    //hmdp1.CalcRPO(3,1,0);
-    //hmdp1.PolicyIteDiscount(1,0,rate,rateBase);
-    //g = hmdp1.PolicyIteAve(iW,iDur);
-    //hmdp1.PolicyIteAve(1,2);
-    //cout << hmdp1.PolicyInfoIdx(1) << endl;
-
-    /*cout << g << endl;
-    for (idx iS=0; iS<hmdp1.states.size(); ++iS)
-        cout << hmdp1.CalcRPOAve(iS,iW,0,iDur,g) << endl;*/
-
-    //for (i=0; i<hmdp1.states.size(); i++) cout << i << ": " << hmdp1.StateActionsToHgf(i) << endl;
-
-}
-
-
-
-//    Hypergraph H(argv[inputf]);     // Reads the hypergraph
-//    H.PrintArcs();
-//
-//    HTAcyclic HT(H);
-//    HT.SetValidOdrToNodeOdr(H);
-//    H.ResetWeights();
-//    H.SetNodeW(1,0,0);
-//    H.SetNodeW(1,1,0);
-//    HT.CalcHTacyclic(H,0,0,0);
-//    HT.CalcOptW(H,0,0,0);
-//    HT.PrintTree(H,0);*/
-//
-//    return (0);
-//
-//    cout << "Error end of main!";
-//    return(1);
-//}
-
-//----------------------------------------------------------------------------
-
-/** Number of stage, states or actions given iHMDP. */
-idx Ctr(const vector<idx> iHMDP) {
-    int level = iHMDP.size() / 3;
-    int idxType = iHMDP.size() % 3; // next index specify 0: stage, 1: state, 2: action
-
-    if (level==0) {
-        if (idxType==0 | idxType==1) return 2;
-        if (iHMDP[0]==1) return 0;  // second stage
-        if (idxType==2 & iHMDP[1]==0) return 2;
-        if (idxType==2 & iHMDP[1]==1) return 1;
-
-    }
-    if (level==1) {   // d0,s0,a0,d1,s1,a1
-        // second stage at level 0
-        if (iHMDP[0]==1) return 0;
-        // stages at level 1
-        if (idxType==0) return 3;
-        // states at level 1
-        if (idxType==1 & iHMDP[3]==0) return 1; // dummey state
-        if (idxType==1 & iHMDP[2]==1 & iHMDP[3]==1) return 1;
-        if (idxType==1) return 2;
-        // actions at level 1
-        if (idxType==2 & iHMDP[3]==0) return 1; // dummy action at stage 0
-        // process 0,0,0
-        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==0 & iHMDP[3]==1) return 2;
-        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==0 & iHMDP[3]==2) return 1;
-        // process 0,0,1
-        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==1 & iHMDP[3]==1) return 2;
-        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==1 & iHMDP[3]==2 & iHMDP[4]==0) return 1;
-        if (iHMDP[0]==0 & iHMDP[1]==0 & iHMDP[2]==1 & iHMDP[3]==2 & iHMDP[4]==1) return 2;
-        // process 0,1,0
-        if (iHMDP[0]==0 & iHMDP[1]==1 & iHMDP[2]==0 & iHMDP[3]>=1) return 1;
-        cout << "Error in Ctr!\n";
-        exit(1);
-    }
-    return 1;
-}
-
-
-//----------------------------------------------------------------------------
-
-void RunPrintHgraph(char filename[]) {
-    cout << "\nPrint hypergraph: " << filename << endl;
-    Hypergraph H(filename);     // Reads the hypergraph
-    H.PrintArcs();
-}
-
-

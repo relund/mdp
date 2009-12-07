@@ -33,8 +33,10 @@ void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile) {
 	int * sIdx;    // raw idx data
 	char * lbl;    // raw labels
 	uInt numb = 0;     // max number of state idx
+	//cout << "ss:" << sIdx << endl;
 
 	idx sIdxSize = ReadBinary<int>(stateIdxFile,sIdx);
+	//cout << "sss:" << sIdx << endl;
 	// now scan sIdx and generate index vectors for each state
 	vector<idx> s;  // vector of index
 	idx prev=0;
