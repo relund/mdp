@@ -184,7 +184,6 @@ public:
 
     Hypergraph() {
         memAllocated = false;
-        pReader = new HgfReader(this);
     }
 
     /** Read from file. */
@@ -376,6 +375,7 @@ public:
 
     void BuildHgf() {
         pReader->BuildHgf();
+        cout << "Delete pReader\n";
         delete pReader;
         ResetHgf();
         NormalizeMult();    // TODO (LRE#1#): Shall we normalize or change 'f 6' so load flt?

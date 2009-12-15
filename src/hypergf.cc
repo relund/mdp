@@ -64,6 +64,7 @@ void Hypergraph::Initialize(uInt n, uInt ma, uInt mh, uInt d, uInt hSize,
 	this->htailsize = this->hsize - this->mh;
 	this->size = this->hsize + (2*this->ma);
 	//cout << this->n << " " << this->sizeMult << endl;
+	pReader = new HgfReader(this);
 	AllocateMem();
 	pReader->Initialize();
 }

@@ -9,6 +9,4 @@ Depends: R (>= 2.9.0), XML
 Description: Using this package you can create and optimize MDPs with
     discrete time steps and state space.
 License: GPL (version 2 or later)
-Collate: 'binaryMDPWriter.R' 'convertBinary2HMP.R'
-    'convertHMP2Binary.R' 'hmpMDPWriter.R' 'infoMat.R' 'loadMDP.R'
-    'mdp-package.R' 'zzz.R'
+

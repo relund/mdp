@@ -29,12 +29,12 @@ class HMDPAction {
     friend class HMDP;          // so can access private members in HMDPAction
     friend class HMDPReader;    // so can access private members in HMDPAction
 
-    HMDPAction() {};
+    HMDPAction() {}
 
 
     HMDPAction(string lbl) {
         label=lbl;
-    };
+    }
 
 
     /** Create an action. */
@@ -45,6 +45,12 @@ class HMDPAction {
         scope = scpe;
     }
 
+    ~HMDPAction() {
+        idxStates.clear();
+        transPr.clear();
+        scope.clear();
+        weights.clear();
+    }
 
     /** Add a single transition probability to the action.
      * \param iS Index of the state in the scope.
@@ -147,6 +153,11 @@ class HMDPState {
         idxHMDP = idx;
     }
 
+    ~HMDPState() {
+        idxHMDP.clear();
+        actionLabels.clear();
+        tmpActions.clear();
+    }
 
     /** Stage index as a string, e.g. "0,0,0,3". Always contains 1+2*level
      * numbers.
@@ -262,7 +273,6 @@ private:
 public:
     string label;                   ///< State label.
     vector<idx> idxHMDP;            ///< Index of the state in the HMDP tree. Always of size 2+3*level.
-
     vector<string> actionLabels;    ///< Vector of action labels. The size will be equal the number of actions, i.e. store also empty labels because then the action number can be identified.
 private:
     vector<HMDPAction> tmpActions;  ///< Tempoary actions need to build the hypergraph. Removed after the hypergraph built.
@@ -293,10 +303,15 @@ public:
             actionIdxLblFile, actionWFile, actionWLblFile, transProbFile, this);
     }
 
-
-    /** Create a HMDP with no actions and states.
-     */
+    /** Create a HMDP with no actions and states.*/
     HMDP(){};
+
+    /** Deconstructor */
+    ~HMDP() {
+        states.clear();
+        weightNames.clear();
+        stages.clear();
+    }
 
     /** Create a HMDP with no actions and states.
      * \param levels Number of levels in the HMDP.

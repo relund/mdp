@@ -59,7 +59,9 @@ public:
 
 
     /** Deconstructor. */
-    ~HTAcyclic() {}
+    ~HTAcyclic() {
+        validOdr.clear();
+    }
 
 
     /** Calkulates the longest hypertree for all the nodes in the hypergraph.
