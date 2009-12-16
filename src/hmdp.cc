@@ -380,9 +380,14 @@ void HMDP::BuildHMDP() {
 	}
 	cout << "Cpu time after finding valid odr " << cpuTime.TimeDiff(0) << endl;
 
+	cout<<"Before remove actions";
+	cin >> str;
+
 	for (idx i=0; i<states.size(); i++) {   // remove tmpActions
 		states[i].RemoveActions();
 	}
+
+
 	cpuTime.StopTime(0);
 	log << "Total cpu time for building state-expanded hypergraph " << cpuTime.TimeDiff(0) << "s" << endl;
 }

@@ -10,26 +10,54 @@ using namespace std;
 
 //----------------------------------------------------------------------------
 // Forward declarations:
-
-// Print the hypergraph
 void RunPrintHgraph(char filename[]);
-
 idx Ctr(vector<idx> iHMDP);
+void ReadBin(string prefix);
+
 
 //----------------------------------------------------------------------------
 
 // Input for main function see error output in main
 int main(int argc, char **argv) {
-    /*flt rate = 0.03;
-    flt rateBase = 365;
-    idx i;*/
-    string prefix = argv[1];
+    string str,prefix = argv[1];
 
-    //Read HMDP from binary file
-    HMDP hmdp1(prefix+"stateIdx.bin", prefix+"stateIdxLbl.bin",
+    cout << "Before\n";
+    cin >> str;
+
+    ReadBin(prefix);
+    
+    cout << "After removing from memory\n";
+    cin >> str;
+}
+
+//----------------------------------------------------------------------------
+
+/** Number of stage, states or actions given iHMDP. */
+void ReadBin(string prefix) {
+    string str;
+    HMDP * pHMDP = new HMDP(prefix+"stateIdx.bin", prefix+"stateIdxLbl.bin",
         prefix+"actionIdx.bin", prefix+"actionIdxLbl.bin",
         prefix+"actionWeight.bin", prefix+"actionWeightLbl.bin",
         prefix+"transProb.bin");
+    cout << "After reading bin\n";
+    cin >> str;
+
+    pHMDP->BuildHMDP();
+
+    cout << "After building\n";
+    cin >> str;
+
+    flt rate = 0.03;
+    flt rateBase = 365;
+    idx iW = 1;
+    idx iDur = 2;
+
+
+
+
+
+
+    delete pHMDP;
     //hmdp1.Print();
 
     //hmdp1.Check(0.000001);
@@ -42,8 +70,8 @@ int main(int argc, char **argv) {
     cout << hmdp1.PolicyW(10,0) << endl;
 
 
-    rate = 0.1;
-    rateBase = 1;
+    rate = 0.03;
+    rateBase = 365;
     idx iW = 1;
     idx iDur = 2;
     flt g = 0;*/
@@ -60,7 +88,6 @@ int main(int argc, char **argv) {
         cout << hmdp1.CalcRPOAve(iS,iW,0,iDur,g) << endl;*/
 
     //for (i=0; i<hmdp1.states.size(); i++) cout << i << ": " << hmdp1.StateActionsToHgf(i) << endl;
-
 }
 
 

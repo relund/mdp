@@ -54,6 +54,7 @@ void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile) {
 	vector<string> labels;
 	char * ptr = lbl;
 	for (int i=0;;++i) {
+		//cout << ptr << endl;
 		labels.push_back(ptr);
 		ptr = strrchr(ptr,'\0');
 		if (ptr==0 | ptr-lbl>=(int)lblSize) break;
