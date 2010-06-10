@@ -10,7 +10,7 @@
 \usepackage[T1]{fontenc} % The font encoding used. Always load after the last font package.
 %\usepackage{theorem}
 \usepackage{graphicx}
-%\graphicspath{{/mdp_examples_files/}}
+\graphicspath{{mdp_examples_files/}}
 \usepackage{amsmath}
 \usepackage{amssymb}
 %\usepackage{tabularx}
@@ -19,7 +19,7 @@
 \renewcommand{\fancyrefdefaultformat}{plain}
 \usepackage[english]{babel}
 \usepackage[numbers,sort&compress,longnamesfirst]{natbib}   % Natbib for better citations
-\input{listingsRw}
+\input{mdp_examples_files/listingsRw}
 %input "mdp_examples.Rtex"
 \usepackage[pdftex,colorlinks=false,linkcolor=blue,breaklinks=true]{hyperref}
 
@@ -123,11 +123,11 @@ lattice.options(default.theme = pdftheme) ## set as default
 ## function for saving trellis graphics to both pdf and eps
 savePlot<-function(name, plot, w=8.25, h=11.75, thm="pdftheme", fontf="Helvetica", eps=FALSE, landscape=FALSE) {
 	if (landscape) {tmp<-w; w<-h; h<-tmp }
-	trellis.device("pdf",file=paste("",name,".pdf",sep=""),family=fontf,theme=thm,width=w,height=h)
+	trellis.device("pdf",file=paste("mdp_examples_files/",name,".pdf",sep=""),family=fontf,theme=thm,width=w,height=h)
 	print(plot)
 	dev.off()
 	if (eps) {
-		trellis.device("postscript",file=paste("",name,".eps",sep=""),family=fontf,theme=thm,paper="special",horizontal=F,width=w,height=h)
+		trellis.device("postscript",file=paste("mdp_examples_files/",name,".eps",sep=""),family=fontf,theme=thm,paper="special",horizontal=F,width=w,height=h)
 		print(plot)
 		dev.off()
 	}
@@ -782,7 +782,7 @@ are provided in a csv file. To ease the understanding we provide 2 functions
 for reading from the csv:
 %
 \begin{Scode}{label=Generate cow MDP functions,echo=true}
-cowDf<-read.csv("cow.csv")
+cowDf<-read.csv("mdp_examples_files/cow.csv")
 head(cowDf)
 
 lev1W<-function(s0Idx,n1Idx,s1Idx,a1Lbl) {
@@ -924,7 +924,7 @@ MLHMP.
 %-------------------
 
 \bibliographystyle{plainnat}
-\bibliography{litt}     % remember to make a local copy when paper finished (use JabRef)
+\bibliography{mdp_examples_files/litt}     % remember to make a local copy when paper finished (use JabRef)
 
 %% Next line included for gather purpose in WinEdt only:
 %input "litt.bib"
