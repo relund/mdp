@@ -375,6 +375,49 @@ public:
     }
 
 
+    /** Get the id of a state with index string idxS (e.g. "n0,s0,a0,n1,s1"). */
+    int GetIdS(string idxS) {
+        string stage = idxS.substr(0,idxS.find_last_of(","));
+        multimap<string, int >::iterator iter;
+        pair< multimap<string, int >::iterator, multimap<string, int >::iterator > ii;
+        ii = stages.equal_range(stage);
+        for(iter = ii.first; iter != ii.second; ++iter) {
+            if (idxS.compare(states[iter->second].StateStr())==0) return iter->second;
+        }
+        return -1;
+    }
+
+
+    /** Get the ids of the states in a stage with index string stage (e.g. "n0,s0,a0,n1"). */
+    vector<idx> GetIdSStage(string stage) {
+        multimap<string, int >::iterator iter;
+        pair< multimap<string, int >::iterator, multimap<string, int >::iterator > ii;
+        ii = stages.equal_range(stage);
+        vector<idx> v;
+        for(iter = ii.first; iter != ii.second; ++iter) {
+            v.push_back(iter->second);
+        }
+        return v;
+    }
+
+
+    /** Get all information about an action.
+     * \param iS The index of the state we consider in \code states.
+     * \param iA The index of the action we consider.
+     */
+    string GetActionInfo(idx iS, idx iA) {
+        string str;
+        int idxHArc = FindAction(iS,iA);
+        if (idxHArc==0) return str;
+        vector<idx> tails = H.GetHArcTailIdx(idxHArc);
+        for (idx i=0; i<tails.size(); ++i) tails[i] = tails[i]-1;   // so that id start from zero
+        vector<flt> w = H.GetHArcWeights(idxHArc);
+        vector<flt> pr = H.GetHArcM(idxHArc,idxMult);
+        string label = H.GetHArcLabel(idxHArc);
+        str = "trans=" + vec2String<idx>(tails) + " pr=" + vec2String<flt>(pr) + " w=" + vec2String<flt>(w) + " (" + label + ")";
+        return str;
+    }
+
     /** Get the state-expanded hypergraph in matrix format. */
     MatSimple<int> HgfMatrix() {
         return H.HgfMatrix();
@@ -809,10 +852,9 @@ public:
             if (!okay) break;
         }
         /*if (okay)*/ okay = okay & CheckIdx();
-        cpuTime.StopTime(0);
         //if (!okay) log << "Error in HMDP description!" << endl;
         //else log << "Everything seem to be okay." << endl;
-        log << "Cpu time for checking MDP " << cpuTime.TimeDiff(0) << "s." << endl;
+        log << "Cpu time for checking MDP " << cpuTime.StopAndGetTotalTimeDiff(0) << "s." << endl;
         return okay;
     }
 

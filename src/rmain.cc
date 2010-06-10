@@ -543,6 +543,107 @@ SEXP MDP_HgfMatrix(SEXP ptr)
 }
 
 
+/** Return info about a state and its actions. */
+/*SEXP MDP_Info(SEXP ptr, SEXP iS)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+
+}*/
+
+
+/** Return ids for states having index in idxS.
+ \param idxS A char vector of index in the form "n0,s0,a0,n1,s1".
+ */
+SEXP MDP_GetIdS(SEXP ptr, SEXP idxS)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+    SEXP vec;
+    PROTECT(vec = NEW_INTEGER(GET_LENGTH(idxS)));
+    for (idx i=0; i < (idx)GET_LENGTH(idxS); ++i)
+        INTEGER_POINTER(vec)[i] = p->GetIdS((string)CHAR(STRING_ELT(idxS, i)));
+	UNPROTECT(1);
+	return vec;
+}
+
+
+/** Return ids for states in stage.
+ \param stages A char vector of stage index in the form "n0,s0,a0,n1".
+ */
+SEXP MDP_GetIdSStage(SEXP ptr, SEXP stages)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	vector<idx> v;
+	vector<idx> tmp;
+    for (idx i=0; i < (idx)GET_LENGTH(stages); ++i) {
+        tmp = p->GetIdSStage((string)CHAR(STRING_ELT(stages, i)));
+        for (idx j=0; j<tmp.size(); ++j) v.push_back(tmp[j]);
+    }
+    SEXP vec;
+    PROTECT(vec = NEW_INTEGER(v.size()));
+    for (idx i=0; i<v.size(); ++i)
+        INTEGER_POINTER(vec)[i] = v[i];
+	UNPROTECT(1);
+	return vec;
+}
+
+
+/** Return idx string for states having id idS.
+ \param idS A vector of state ids.
+ */
+SEXP MDP_GetIdxS(SEXP ptr, SEXP idS)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	SEXP idxS;
+	PROTECT(idxS = allocVector(STRSXP, GET_LENGTH(idS)));
+    for (idx i=0; i < (idx)GET_LENGTH(idS); ++i)
+        SET_STRING_ELT(idxS, i, mkChar( (p->states[ INTEGER_POINTER(idS)[i] ].StateStr()).c_str() ));
+	UNPROTECT(1);
+	return idxS;
+}
+
+/** Return label of states having id idS.
+ \param idS A vector of state ids.
+ */
+SEXP MDP_GetLabel(SEXP ptr, SEXP idS)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	SEXP idxS;
+	PROTECT(idxS = allocVector(STRSXP, GET_LENGTH(idS)));
+    for (idx i=0; i < (idx)GET_LENGTH(idS); ++i)
+        SET_STRING_ELT(idxS, i, mkChar( (p->states[ INTEGER_POINTER(idS)[i] ].label).c_str() ));
+	UNPROTECT(1);
+	return idxS;
+}
+
+
+/** Return a vector of char containing action info for a specific state id.
+ \param idS The state id.
+ */
+SEXP MDP_GetActionInfo(SEXP ptr, SEXP idS)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	idx iS = INTEGER_POINTER(idS)[0];
+	idx size = p->states[iS].actionLabels.size();
+	SEXP a;
+	PROTECT(a = allocVector(STRSXP, size));
+    for (idx iA=0; iA < size; ++iA)
+        //Rprintf("%s \n",p->GetActionInfo(iS,iA).c_str());
+         SET_STRING_ELT(a, iA, mkChar( (p->GetActionInfo(iS,iA).c_str()) ));
+	UNPROTECT(1);
+	return a;
+}
 
 #ifdef __cplusplus
 }

@@ -426,3 +426,120 @@ hypergf<-function(mdp) {
 	v<-v[order(v[,1]),]
 	return(v)
 }
+
+
+#' Return ids for states having index string in idxS.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' param idxS A char vector of index in the form "n0,s0,a0,n1,s1", i.e. 3*level+2 elements in the string.
+#' @return A vector of ids for the states.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
+getIdS<-function(mdp, idxS) {
+	v<-.Call("MDP_GetIdS", mdp$ptr, as.character(idxS), PACKAGE="MDP")
+	v[v== -1] <- NA
+	return(v)
+}
+
+
+#' Return ids for states in a stage.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' param stages A char vector of index in the form "n0,s0,a0,n1", i.e. 3*level+1 elements in the string.
+#' @return A vector of ids for the states.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
+getIdSStages<-function(mdp, stages) {
+	v<-.Call("MDP_GetIdSStage", mdp$ptr, as.character(stages), PACKAGE="MDP")
+	return(v)
+}
+
+
+#' Return the index strings for states having id idS.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' param idS A vector of state ids.
+#' @return A vector of index for the states.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
+getStrIdxS<-function(mdp, idS) {
+	n<- mdp$states + ifelse(mdp$timeHorizon>=Inf,mdp$founderStatesLast,0)
+	idS <- idS[idS<n & idS>=0]
+	v<-.Call("MDP_GetIdxS", mdp$ptr, as.integer(idS), PACKAGE="MDP")
+	return(v)
+}
+
+
+#' Return the label of states having id idS.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' param idS A vector of state ids.
+#' @return A vector of labels for the states.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
+getLabel<-function(mdp, idS) {
+	n<- mdp$states + ifelse(mdp$timeHorizon>=Inf,mdp$founderStatesLast,0)
+	idS <- idS[idS<n & idS>=0]
+	v<-.Call("MDP_GetLabel", mdp$ptr, as.integer(idS), PACKAGE="MDP")
+	return(v)
+}
+
+
+#' Get the weights of an action.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' param idS The state id.
+#' param idxA The action index.
+#' @return A vector of weights for the action.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
+getActionW<-function(mdp, idS, idxA) {
+	l<-info(mdp, idS[1])
+	l<-l[[1]]$actions[idxA+1]
+	l<-substring(l,regexpr("w",l)+3)
+	l<-gsub(").*","",l)
+	zz<-textConnection(l)
+	l<-scan(zz, sep=",", quiet = TRUE)
+	close(zz)
+	return(l)
+}
+
+
+#' Get the ids of the transition states of an action.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' param idS The state id.
+#' param idxA The action index.
+#' @return A vector of weights for the action.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
+getActionTransIdS<-function(mdp, idS, idxA) {
+	l<-info(mdp, idS[1])
+	l<-l[[1]]$actions[idxA+1]
+	l<-substring(l,regexpr("trans",l)+7)
+	l<-gsub(").*","",l)
+	zz<-textConnection(l)
+	l<-scan(zz, sep=",", quiet = TRUE)
+	close(zz)
+	return(l)
+}
+
+
+#' Get the transition probabilities of the transition states of an action.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' param idS The state id.
+#' param idxA The action index (c++ style starting from zero).
+#' @return A vector of weights for the action.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
+getActionTransPr<-function(mdp, idS, idxA) {
+	l<-info(mdp, idS[1])
+	l<-l[[1]]$actions[idxA+1]
+	l<-substring(l,regexpr("pr",l)+4)
+	l<-gsub(").*","",l)
+	zz<-textConnection(l)
+	l<-scan(zz, sep=",", quiet = TRUE)
+	close(zz)
+	return(l)
+}

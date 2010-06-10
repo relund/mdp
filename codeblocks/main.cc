@@ -21,13 +21,13 @@ void ReadBin(string prefix);
 int main(int argc, char **argv) {
     string str,prefix = argv[1];
 
-    cout << "Before\n";
-    cin >> str;
+    //cout << "Before\n";
+    //cin >> str;
 
     ReadBin(prefix);
-    
-    cout << "After removing from memory\n";
-    cin >> str;
+
+    //cout << "After removing from memory\n";
+    //cin >> str;
 }
 
 //----------------------------------------------------------------------------
@@ -39,13 +39,23 @@ void ReadBin(string prefix) {
         prefix+"actionIdx.bin", prefix+"actionIdxLbl.bin",
         prefix+"actionWeight.bin", prefix+"actionWeightLbl.bin",
         prefix+"transProb.bin");
-    cout << "After reading bin\n";
-    cin >> str;
+    //cout << "After reading bin\n";
+    //cin >> str;
 
     pHMDP->BuildHMDP();
+    cout << "Log:" << endl << pHMDP->GetLog() << endl << "----" << endl;
 
-    cout << "After building\n";
-    cin >> str;
+    /*cout << pHMDP->GetIdS("1,0") << endl;
+    cout << vec2String<idx>(pHMDP->GetIdSStage("1")) << endl;
+    cout << pHMDP->states[pHMDP->GetIdS("1,0")].StateStr() << endl;
+    cout << pHMDP->GetActionInfo(3,0) << endl;*/
+
+	vector<flt> ini;
+	ini.assign(1,0);
+	pHMDP->ValueIteInfDiscount(1,0.00001,1,0,0.03,365,ini);
+    cout << "Log:" << endl << pHMDP->GetLog() << endl << "----" << endl;
+    //cout << "After building\n";
+    //cin >> str;
 
     flt rate = 0.03;
     flt rateBase = 365;

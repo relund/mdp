@@ -1,7 +1,7 @@
 \name{actionIdxMat}
 \alias{actionIdxMat}
 \title{Info about the actions in the HMDP model under consideration.}
-\usage{actionIdxMat(prefix, file=actionIdx.bin)}
+\usage{actionIdxMat(prefix="", file="actionIdx.bin")}
 \description{Info about the actions in the HMDP model under consideration.}
 \value{A matrix with columns (aId, ...) where
 aId is the action row id and ... are alternating pairs (scp, idx), one for each

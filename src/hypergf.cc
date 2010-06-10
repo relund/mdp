@@ -437,6 +437,72 @@ void Hypergraph::PrintArc(idx i)
 	cout << itsArcs[i].w[sizeW-1] << "} label=" << *(itsArcs[i].pLabel) << "\n";
 }
 
+
+// ----------------------------------------------------------------------------
+
+vector<idx> Hypergraph::GetHArcTailIdx(int i)
+{
+    TailPtr pTailIndex,pLast;
+    vector<idx> v;
+    if (i<0) {  // an arc
+        v.push_back(itsArcs[-i].pTail-itsNodes);
+        return v;
+    }
+    if (i>0) {  // an harc
+        for(pTailIndex=itsHArcs[i].pTail,pLast=itsHArcs[i+1].pTail;
+            pTailIndex!=pLast;pTailIndex++)
+            v.push_back(pTailIndex->pTail-itsNodes);
+        return v;
+	}
+	v.push_back(0);
+	return v;
+}
+
+// ----------------------------------------------------------------------------
+
+vector<flt> Hypergraph::GetHArcWeights(int i)
+{
+    vector<flt> v(sizeW,0);
+    if (i<0) {  // an arc
+        for(idx j=0; j<(idx)sizeW; j++) v[j] = itsArcs[-i].w[j];
+    }
+    if (i>0) {  // an harc
+        for(idx j=0; j<(idx)sizeW; j++) v[j] = itsHArcs[i].w[j];
+	}
+	return v;
+}
+
+// ----------------------------------------------------------------------------
+
+string Hypergraph::GetHArcLabel(int i)
+{
+    if (i<0) {  // an arc
+        return *(itsArcs[-i].pLabel);
+    }
+    if (i>0) {  // an harc
+        return *(itsHArcs[i].pLabel);
+	}
+	string str;
+	return str;
+}
+
+// ----------------------------------------------------------------------------
+
+vector<flt> Hypergraph::GetHArcM(int i,idx iM)
+{
+    TailPtr pTailIndex,pLast;
+    vector<flt> v;
+    if (i<0) {  // an arc
+        v.push_back(1);
+    }
+    if (i>0) {  // an harc
+        for(pTailIndex=itsHArcs[i].pTail,pLast=itsHArcs[i+1].pTail;
+            pTailIndex!=pLast;pTailIndex++)
+            v.push_back(pTailIndex->m[iM]);
+	}
+	return v;
+}
+
 // ----------------------------------------------------------------------------
 
 void Hypergraph::PrintBSArc(int i)

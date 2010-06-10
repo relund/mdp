@@ -21,7 +21,7 @@ void HgfReader::AllocateMem() {
 	pTmpHMult = new intPtr[pH->htailsize+1];;    // for storing multipliers
 	for (i=0;i<pH->htailsize+1;i++) pTmpHMult[i] = new int[pH->sizeMult];    // can now access using pTmpHMult[i][j]
 
-	// initilalization 
+	// initilalization
 	for (i=1;i<=pH->n;i++) pTmpTailSize[i]=0;
 	narcs = 1;              // current number of arcs to be read
 	arcIndex = 1;           // current arc index in temp arc arrays
@@ -166,8 +166,7 @@ void HgfReader::ReadInHgf() {
 	BuildFSHRep();
 
 	cout << " done.\n";
-	cpuTime.StopTime(0);
-	cout << "Cpu time for reading and building (sec)  : " << cpuTime.TimeDiff(0) << endl << endl;
+	cout << "Cpu time for reading and building (sec)  : " << cpuTime.StopAndGetTotalTimeDiff(0) << endl << endl;
 
 	fclose(fstream);
 	DeallocateMem();

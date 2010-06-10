@@ -1,8 +1,8 @@
 \name{actionWeightMat}
 \alias{actionWeightMat}
 \title{Info about the weights of the actions in the HMDP model under consideration.}
-\usage{actionWeightMat(prefix, file=actionWeight.bin,
-    labels=actionWeightLbl.bin)}
+\usage{actionWeightMat(prefix="", file="actionWeight.bin",
+    labels="actionWeightLbl.bin")}
 \description{Info about the weights of the actions in the HMDP model under consideration.}
 \value{A matrix with columns (aId, ...) where
 aId is the action row id and ... are the weights of the action.}

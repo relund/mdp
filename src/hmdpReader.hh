@@ -77,12 +77,12 @@ public:
         string transProbFile, HMDP *pHMDP):cpuTime(1)
     {
         this->pHMDP = pHMDP;
-        cpuTime.StartTime(0);
+        //cpuTime.StartTime(0);
         AddStates(stateIdxFile, stateIdxLblFile);
         AddActions(actionIdxFile, actionIdxLblFile, actionWFile, actionWLblFile,
             transProbFile);
         Compile();
-        cpuTime.StopTime(0);
+        //cpuTime.StopTime(0);
         //cout << "Cpu for reading the binary files: " << cpuTime.TimeDiff(0) << endl;
     }
 

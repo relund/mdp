@@ -237,6 +237,27 @@ public:
     void PrintBSArc(int i);
     void PrintFSArc(int i);
 
+    /** Get the index of the tail nodes in the (h)arc.
+     \param i The index of the (h)arc (if i<0 then an arc).
+    */
+    vector<idx> GetHArcTailIdx(int i);
+
+    /** Get the weights of the (h)arc.
+     \param i The index of the (h)arc (if i<0 then an arc).
+    */
+    vector<flt> GetHArcWeights(int i);
+
+    /** Get the label of the (h)arc.
+     \param i The index of the (h)arc (if i<0 then an arc).
+    */
+    string GetHArcLabel(int i);
+
+    /** Get the multipliers of the (h)arc.
+     \param i The index of the (h)arc (if i<0 then an arc).
+     \param iM The index of the multipliers used.
+    */
+    vector<flt> GetHArcM(int i, idx iM);
+
     /** Return a vector of idx. The first head and the next tail. */
     vector<int> ArcVector(idx i) {
         vector<int> v;

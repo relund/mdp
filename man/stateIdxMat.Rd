@@ -1,7 +1,7 @@
 \name{stateIdxMat}
 \alias{stateIdxMat}
 \title{Info about the states in the HMDP model under consideration.}
-\usage{stateIdxMat(prefix, file=stateIdx.bin)}
+\usage{stateIdxMat(prefix="", file="stateIdx.bin")}
 \description{Info about the states in the HMDP model under consideration.}
 \value{A matrix with columns (sId, n0, s0, a0, ...) where
 sId is the state row id, n0 the index of the stage at level 0, s0 the index

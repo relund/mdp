@@ -1,7 +1,7 @@
 \name{stateIdxDf}
 \alias{stateIdxDf}
 \title{Info about the states in the HMDP model under consideration.}
-\usage{stateIdxDf(prefix, file=stateIdx.bin, labels=stateIdxLbl.bin)}
+\usage{stateIdxDf(prefix="", file="stateIdx.bin", labels="stateIdxLbl.bin")}
 \description{Info about the states in the HMDP model under consideration.}
 \value{A data frame with the same columns as in
 \code{stateIdxMat} plus another column containing the labels.}

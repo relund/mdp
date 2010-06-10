@@ -1,8 +1,9 @@
 \name{actionInfo}
 \alias{actionInfo}
 \title{Info about the actions in the HMDP model under consideration.}
-\usage{actionInfo(prefix, file=actionIdx.bin, weightFile=actionWeight.bin,
-    transPrFile=transProb.bin, labels=actionIdxLbl.bin)}
+\usage{actionInfo(prefix="", file="actionIdx.bin",
+    weightFile="actionWeight.bin", transPrFile="transProb.bin",
+    labels="actionIdxLbl.bin")}
 \description{Info about the actions in the HMDP model under consideration.}
 \value{A matrix with columns from \code{actionIdxMat},
 \code{actionCostMat} and \code{transProbMat} if labels is NULL. If labels

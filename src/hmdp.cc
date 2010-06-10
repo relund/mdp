@@ -344,9 +344,9 @@ void HMDP::BuildHMDP() {
 		//log << str << endl;
 		H.AddHyperarcs(str);
 	}
-	cout << "Cpu time loading MDP into tmp hgf arrays" << cpuTime.TimeDiff(0) << endl;
+	log << "Cpu time loading MDP into tmp hgf arrays " << cpuTime.GetLocalTimeDiff(0) << endl;
 	H.BuildHgf();   // create the hypergraph
-	cout << "Cpu time after building hgf " << cpuTime.TimeDiff(0) << endl;
+	log << "Cpu time after building hgf " << cpuTime.GetLocalTimeDiff(0) << endl;
 
 	// TODO LRE Virker dette ikke kun hvis alle states har en label!!
 	for (idx i=0; i<states.size(); i++) {   // set pointers to labels
@@ -363,14 +363,15 @@ void HMDP::BuildHMDP() {
 			}
 		}
 	}
-	cout << "Cpu time after setting label pointers " << cpuTime.TimeDiff(0) << endl;
+	log << "Cpu time after setting label pointers " << cpuTime.GetLocalTimeDiff(0) << endl;
 
 	idxPred = idxMult = 0;  // consider first pred and multipliers
 	if (!findValidOdr) HT.SetValidOdrToReverseNodeOdr(H);
 	else {  // find stage 2 states of founder
 		vector<idx> nodes;
-		pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pair
-			= stages.equal_range(ToString(timeHorizon-1));
+		pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pair;
+		if (timeHorizon<INFINT) pair = stages.equal_range(ToString(timeHorizon-1));
+		else pair = stages.equal_range("1");
 		for (multimap<string, int >::iterator ite = pair.first;
 			ite != pair.second; ++ite) {
 			nodes.push_back( ((*ite).second) + 1);   // add hgf node
@@ -378,18 +379,17 @@ void HMDP::BuildHMDP() {
 		}
 		HT.FindValidOdr(H,nodes);
 	}
-	cout << "Cpu time after finding valid odr " << cpuTime.TimeDiff(0) << endl;
+	log << "Cpu time after finding valid odr " << cpuTime.GetLocalTimeDiff(0) << endl;
 
-	cout<<"Before remove actions";
-	cin >> str;
+	//cout<<"Before remove actions";
+	//cin >> str;
 
 	for (idx i=0; i<states.size(); i++) {   // remove tmpActions
 		states[i].RemoveActions();
 	}
 
-
-	cpuTime.StopTime(0);
-	log << "Total cpu time for building state-expanded hypergraph " << cpuTime.TimeDiff(0) << "s" << endl;
+    log << "Cpu time after removing actions " << cpuTime.GetLocalTimeDiff(0) << endl;
+	log << "Total cpu time for building state-expanded hypergraph " << cpuTime.StopAndGetTotalTimeDiff(0) << "s" << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -441,20 +441,21 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 	for (ite=pairLast.first; ite!=pairLast.second; ++ite) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(idxW,0);
 
-	for (i=0; i<times; ++i) {
+	for (i=1; i<=times; ++i) {
 		HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 		if(MaxDiffFounder(idxW,pairZero,pairLast)<epsilon) break;
-		if (i<times-1) {    // set next stage to stage zero values
+		if (i<times) {    // set next stage to stage zero values
 			for (ite=pairLast.first, iteZ=pairZero.first; ite!=pairLast.second; ++ite, ++iteZ)
 				H.itsNodes[(ite->second)+1].SetW(idxW,H.itsNodes[(iteZ->second)+1].w[idxW]);
 		}
 	}
-	log << " " << i+1;
+	if (i>times) i=times;   // just to get output in the next line correct
+	log << " " << i;
 	//vector<idx> vW = WeightIdx(idxW, idxDur);
 	// TODO LRE: May have idxPred as argument or use the same idx as idxW.
 	//HT.CalcOptW(H,vW,idxPred,idxMult);
-	cpuTime.StopTime(0);
-	log << ". Running time " << cpuTime.TimeDiff(0) << "s." << endl;
+	HT.PrintTree(H,idxPred);
+	log << ". Running time " << cpuTime.StopAndGetTotalTimeDiff(0) << "s." << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -484,20 +485,21 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 	for (ite=pairLast.first, iteV=iniValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(idxW,*(iteV));
 
-	for (i=0; i<times; ++i) {
+	for (i=1; i<=times; ++i) {
 		HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 		if(MaxDiffFounder(idxW,pairZero,pairLast)<epsilon) break;
-		if (i<times-1) {    // set next stage to stage zero values
+		if (i<times) {    // set next stage to stage zero values
 			for (ite=pairLast.first, iteZ=pairZero.first; ite!=pairLast.second; ++ite, ++iteZ)
 				H.itsNodes[(ite->second)+1].SetW(idxW,H.itsNodes[(iteZ->second)+1].w[idxW]);
 		}
 	}
-	log << " " << i+1;
+	if (i>times) i=times;   // just to get output in the next line correct
+	log << " " << i;
 	//vector<idx> vW = WeightIdx(idxW, idxDur);
 	// TODO LRE: May have idxPred as argument or use the same idx as idxW.
 	//HT.CalcOptW(H,vW,idxPred,idxMult);
-	cpuTime.StopTime(0);
-	log << ". Running time " << cpuTime.TimeDiff(0) << "s." << endl;
+    //HT.PrintTree(H,idxPred);
+	log << ". Running time " << cpuTime.StopAndGetTotalTimeDiff(0) << "s." << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -524,8 +526,7 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 	HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 	//vector<idx> vW = WeightIdx(idxW, idxDur);
 	//HT.CalcOptW(H,vW,idxPred,idxMult);
-	cpuTime.StopTime(0);
-	log << "Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;
+	log << "Finished (" << cpuTime.StopAndGetTotalTimeDiff(0) << "s)." << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -555,8 +556,7 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 	HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 	//vector<idx> vW = WeightIdx(idxW, idxDur);
 	//HT.CalcOptW(H,vW,idxPred,idxMult);
-	cpuTime.StopTime(0);
-	log << "Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;
+	log << "Finished (" << cpuTime.StopAndGetTotalTimeDiff(0) << "s)." << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -583,8 +583,7 @@ void HMDP::ValueIteFinite(idx idxW, vector<flt> & termValues)
 	HT.CalcHTacyclic(H,idxW,idxPred,idxMult);
 	//vector<idx> vW = WeightIdx(idxW, weightNames.size()+1); // hack so idxDur is just greater than the index
 	//HT.CalcOptW(H,vW,idxPred,idxMult);
-	cpuTime.StopTime(0);
-	log << "Finished (" << cpuTime.TimeDiff(0) << "s)." << endl;
+	log << "Finished (" << cpuTime.StopAndGetTotalTimeDiff(0) << "s)." << endl;
 }
 
 // ----------------------------------------------------------------------------

@@ -205,3 +205,29 @@ weightNames<-function(prefix="", labels="actionWeightLbl.bin") {
 	colNames<-readBin(labels, character(),n=file.info(labels)$size)
 	return(colNames)
 }
+
+
+#' Information about a state and its corresponding actions
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param idS The id of the state(s) considered.
+#' @param idxS A string containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1"). Parameter \code{idS} are ignored if not NULL.
+#' @param idxN A string containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). Parameter \code{idS} are ignored if not NULL.
+#' @return A list of states containing actions.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example pkg/tests/machine.Rex
+info<-function(mdp, idS=NULL, idxS=NULL, idxN=NULL) {
+	if (!is.null(idxS)) idS<-getIdS(mdp, idxS)
+	if (!is.null(idxN)) idS<-getIdSStages(mdp, idxN)
+	l<-vector("list", length(idS))
+	lapply(l,function(x) x<-list(id=NULL,idx=NULL,label=NULL,actions=NULL))
+	idxStr<-getStrIdxS(mdp,idS)
+	label<-getLabel(mdp,idS)
+	for (i in 1:length(l)) {
+		l[[i]]$id <- idS[i]
+		l[[i]]$idx <- idxStr[i]
+		l[[i]]$label <- label[i]
+		l[[i]]$actions <- .Call("MDP_GetActionInfo", mdp$ptr, as.integer(idS[i]), PACKAGE="MDP")
+	}
+	return(l)
+}

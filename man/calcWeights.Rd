@@ -1,7 +1,7 @@
 \name{calcWeights}
 \alias{calcWeights}
 \title{Calculate weights based on current policy.}
-\usage{calcWeights(mdp, w, criterion=expected, dur, rate=0.1, rateBase=1,
+\usage{calcWeights(mdp, w, criterion="expected", dur, rate=0.1, rateBase=1,
     termValues)}
 \description{Calculate weights based on current policy. Normally run after an optimal policy has been found.}
 \value{Nothing.}

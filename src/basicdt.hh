@@ -4,6 +4,7 @@
 //#include <iostream>
 //#include <string>
 #include <sstream>
+#include <vector>
 using namespace std;
 
 // Basic datatypes and definitions
@@ -35,19 +36,17 @@ const flt PRECISION = 1e-10;  ///< used for comparison floats
 * if less than PRECISION.
 * \return True if equal.
 */
-inline bool Equal(flt n1,flt n2)
-{
+inline bool Equal(flt n1,flt n2) {
     return ((n2-PRECISION)<=n1 && n1<=(n2+PRECISION));
 };
 
 /** Global function for converting a number to a string */
-template<typename T>
- std::string inline ToString(T t)
- {
-  std::ostringstream s;
-  s << t;
-  return s.str();
- }
+template <typename T>
+std::string inline ToString(T t) {
+    std::ostringstream s;
+    s << t;
+    return s.str();
+};
 
 /** Global function for converting a string
  \param t The variable of the result.
@@ -66,15 +65,24 @@ template<typename T>
   }
 
  */
- template <class T>
-bool from_string(T& t,
+template <typename T>
+bool inline from_string(T& t,
                  const std::string& s,
                  std::ios_base& (*f)(std::ios_base&))
 {
   std::istringstream iss(s);
   return !(iss >> f >> t).fail();
-}
+};
 
+/** convert a vector to a comma separated string. */
+template <typename T>
+string inline vec2String(const vector<T>& v) {
+    std::ostringstream s;
+    s << "(";
+    for (idx i=0; i<v.size()-1; ++i) s << v[i] << ",";
+    s << v[v.size()-1] << ")";
+    return s.str();
+}
 
 
 

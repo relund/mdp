@@ -1,7 +1,7 @@
 \name{transProbMat}
 \alias{transProbMat}
 \title{Info about the transition probabilities in the HMDP model under consideration.}
-\usage{transProbMat(prefix, file=transProb.bin)}
+\usage{transProbMat(prefix="", file="transProb.bin")}
 \description{Info about the transition probabilities in the HMDP model under consideration.}
 \value{A matrix with columns (aId, ...) where
 aId is the action row id and ... are the probabilities of the action.}

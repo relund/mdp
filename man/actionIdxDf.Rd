@@ -1,7 +1,7 @@
 \name{actionIdxDf}
 \alias{actionIdxDf}
 \title{Info about the actions in the HMDP model under consideration.}
-\usage{actionIdxDf(prefix, file=actionIdx.bin, labels=actionIdxLbl.bin)}
+\usage{actionIdxDf(prefix="", file="actionIdx.bin", labels="actionIdxLbl.bin")}
 \description{Info about the actions in the HMDP model under consideration.}
 \value{A data frame with the same columns as in
 \code{actionIdxMat} plus another column containing the labels.}

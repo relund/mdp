@@ -101,14 +101,12 @@ public:
 
     /** Create the hypergraph after adding hyperarcs. */
     void BuildHgf() {
-        cpuTime.StartTime(0);
         CheckDimensions();        // Check if reading ok
         // Build BS arc rep
         BuildArcRepF6();
         BuildFSARep();     // Build FS arc rep
         BuildHarcRepF6();
         BuildFSHRep();
-        cpuTime.StopTime(0);
         //cout << "Cpu time for allocating memory for the state-expanded hypergraph " << cpuTime.TimeDiff(0) << endl;
     }
 

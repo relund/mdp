@@ -1,7 +1,7 @@
 \name{convertHMP2Binary}
 \alias{convertHMP2Binary}
 \title{Convert a HMDP model stored in a hmp (xml) file to binary file format.}
-\usage{convertHMP2Binary(file, prefix)}
+\usage{convertHMP2Binary(file, prefix="")}
 \description{Convert a HMDP model stored in a hmp (xml) file to binary file format.}
 \details{The function simply parse the hmp file and create binary files using
 the \link{binaryMDPWriter}.}

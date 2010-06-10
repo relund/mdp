@@ -31,7 +31,7 @@
 * For the times() function it will wrap after approx 1.4 year. Therefore this is a
 * better way. However, works only on linux/unix.
 * \author Lars Relund.
-* \version 3.0
+* \version 3.1
 */
 class TimeMan
 {
@@ -100,18 +100,43 @@ public:
     */
     int Size() const {return size;}
 
-    /** Return the time difference for time measure i.
+    /** Return the total time difference for time measure i.
     * \pre Time measure i must have been set by the StartTime method and stopped by the StopTime method.
     * \param i Index for time measure i
     * \return The time difference for time measure i in seconds.
     * \see StartTime
     * \see StopTime
     */
-    double TimeDiff(int i) const
+    double GetTotalTimeDiff(int i) const
     {
         return aTDiff[i];
     }
 
+    /** Stop and return the total time difference for time measure i.
+    * \pre Time measure i must have been set by the StartTime method.
+    * \param i Index for time measure i
+    * \return The time difference for time measure i in seconds.
+    * \see StartTime
+    * \see StopTime
+    */
+    double StopAndGetTotalTimeDiff(int i)
+    {
+        StopTime(i);
+        return aTDiff[i];
+    }
+
+    /** Return the time difference for time measure i since last started.
+    * \pre Time measure i must have been set by the StartTime method.
+    * \note Do not stop the timer!
+    * \param i Index for time measure i
+    * \return The time difference for time measure i in seconds since last started using StartTime.
+    * \see StartTime
+    * \see StopTime
+    */
+    double GetLocalTimeDiff(int i) const
+    {
+        return (double)(clock()-aTimes[i])/(double)CLOCKS_PER_SEC;
+    }
 
 #ifdef CLOCK
 

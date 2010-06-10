@@ -1,7 +1,7 @@
 \name{calcRPO}
 \alias{calcRPO}
 \title{Calculate the rentention payoff (RPO) or opportunity cost for some states.}
-\usage{calcRPO(mdp, w, iA, sId=1:mdp$states - 1, criterion=expected, dur=0,
+\usage{calcRPO(mdp, w, iA, sId=1:mdp$states - 1, criterion="expected", dur=0,
     rate=0.1, rateBase=1, g=0)}
 \description{Calculate the rentention payoff (RPO) or opportunity cost for some states.}
 \details{The RPO is defined as the difference between
