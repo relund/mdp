@@ -678,7 +678,7 @@ public:
      */
     flt CalcRPOAve(idx iS, idx idxW, idx idxA, idx idxDur, flt g) {
         int idxHArc = FindAction(iS,idxA);
-        cout << "iS:" << iS << " a:" << idxHArc << " ";
+        //cout << "iS:" << iS << " a:" << idxHArc << " ";
         return HT.CalcRPOAve(H,idxW,idxDur,idxMult,idxHArc,g);
     }
 
