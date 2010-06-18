@@ -228,15 +228,16 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1) {
 #' @param mdp The MDP loaded using \link{loadMDP}.
 #' @param w The label of the weight we optimize.
 #' @param dur The label of the duration/time such that discount rates can be calculated.
+#' @param maxIte Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.
 #' @return The optimal gain (g) calculated.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
-policyIteAve<-function(mdp, w, dur) {
+policyIteAve<-function(mdp, w, dur, maxIte=100) {
 	iW<-getWIdx(mdp,w)
 	iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	g<-.Call("MDP_PolicyIteAve", mdp$ptr, as.integer(iW),
-		as.integer(iDur), PACKAGE="MDP")
+		as.integer(iDur), as.integer(maxIte), PACKAGE="MDP")
 	cat(.Call("MDP_GetLog",mdp$ptr, PACKAGE="MDP"))
 	return(g)
 }

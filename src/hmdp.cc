@@ -737,7 +737,7 @@ void HMDP::PolicyIteDiscount(const idx idxW, const idx idxDur, const flt &rate,
 
 // ----------------------------------------------------------------------------
 
-flt HMDP::PolicyIteAve(const idx idxW, const idx idxD) {
+flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 	log.str("");
 	if (timeHorizon<INFINT) {
 		log << "Policy iteration can only be done on infinite time-horizon HMDPs!" << endl;
@@ -757,7 +757,7 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD) {
 				   P(rows,rows);    // Matrix of prob values
 	MatSimple<double> I(rows,true); // identity
 	idx i,k=0;
-	flt g = 0;
+	flt gB,g = 0;
 
 	log << "Run policy iteration under average reward criterion using \nreward '" <<
 		weightNames[idxW] << "' over '" <<
@@ -798,13 +798,22 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD) {
 		//cout << "I-P with d=" << endl << P << endl;
 		matAlg.LASolve(P,w,r);
 		//cout << "w=" << endl << w << endl;
+		gB = g;
 		g = w(rows-1,0);
+		//cout << g << " " << k << endl;
+		//cout << PolicyInfoLabel(1) << endl;
+
+        /*for (idx i=0; i < states.size(); ++i)
+            cout << PolicyLabel(i) << " ";
+        cout << endl;*/
+
 		// set last to w values
 		for (ite=pairLast.first, i=0; ite!=pairLast.second; ++ite, ++i) {
 			if (i<(idx)rows-1) H.itsNodes[(ite->second)+1].SetW(idxW,w(i,0));   // last state always has value zero
 		}
 		log << k <<  " (" << g << ") ";
 		//if (!firstRun & !newPred) break;    // optimal strategy found
+		if (k>=times) { log << "\nReached upper limit of iterations! Seems to loop. \nIs the model fulfilling the model assumptions (e.g. unichain)?\n"; break;}
 	} while (true);
 	log << "finished." << endl;
 	return g;

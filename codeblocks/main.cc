@@ -50,7 +50,7 @@ void ReadBin(string prefix) {
     cout << pHMDP->states[pHMDP->GetIdS("1,0")].StateStr() << endl;
     cout << pHMDP->GetActionInfo(3,0) << endl;*/
 
-	vector<flt> ini;
+	/*vector<flt> ini;
 	ini.assign(1,0);
 	pHMDP->ValueIteInfDiscount(1,0.00001,1,0,0.03,365,ini);
     cout << "Log:" << endl << pHMDP->GetLog() << endl << "----" << endl;
@@ -60,12 +60,11 @@ void ReadBin(string prefix) {
     flt rate = 0.03;
     flt rateBase = 365;
     idx iW = 1;
-    idx iDur = 2;
+    idx iDur = 2;*/
 
 
-
-
-
+    pHMDP->PolicyIteAve(1,0,100);
+    cout << "Log:" << endl << pHMDP->GetLog() << endl << "----" << endl;
 
     delete pHMDP;
     //hmdp1.Print();

@@ -492,10 +492,11 @@ public:
     /** Policy iteration algorithm average reward criterion (infinite time-horizon).
      * \param idxW Index of the weight used as nominator.
      * \param idxD The denominator we want to maximize the weight over.
+     * \param times The max number of iterations. The model may loop if not unichain.
      * \return g The gain.
      * \post Use \code GetLog to see the optimization log.
      */
-    flt PolicyIteAve(const idx idxW, const idx idxD);
+    flt PolicyIteAve(const idx idxW, const idx idxD, const uSInt times);
 
 
     /** Set the terminal values, i.e. the weights of the states at the last stage at for founder level.

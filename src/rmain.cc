@@ -307,13 +307,13 @@ SEXP MDP_Check(SEXP ptr, SEXP eps)
 
 
 /** Perform poliy iteration (average) on an infinite time MDP. */
-SEXP MDP_PolicyIteAve(SEXP ptr, SEXP idxW, SEXP idxDur)
+SEXP MDP_PolicyIteAve(SEXP ptr, SEXP idxW, SEXP idxDur, SEXP times)
 {
 	CHECK_PTR(ptr);
 	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
 	if (p == NULL) error("pointer is NULL");
 	double g = p->PolicyIteAve(INTEGER_POINTER(idxW)[0],
-		INTEGER_POINTER(idxDur)[0]);
+		INTEGER_POINTER(idxDur)[0], INTEGER_POINTER(times)[0]);
 	SEXP gR;
 	PROTECT(gR = NEW_NUMERIC(1));
 	NUMERIC_POINTER(gR)[0] = g;

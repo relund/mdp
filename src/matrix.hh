@@ -91,7 +91,7 @@ public:
        return v[rows*c+r];
     }
 
-    /* Get entry (r,c). */
+    /* Get entry i in the vector. */
     T& operator()(int i) const {
        return v[i];
     }
@@ -107,11 +107,34 @@ public:
     uInt rows;     ///< Number of rows.
     uInt cols;     ///< Number of cols.
 
+    /** Output matrix to stream. */
+    friend std::ostream& operator<< (std::ostream& o, const MatSimple<T>& m) {
+        for(idx r=0;r<m.rows;r++) {
+            for(idx c=0;c<m.cols;c++) o << m.v[m.rows*c+r] << "\t";
+            o << endl;
+        }
+        cout << endl;
+    return o;
+    }
+
+
+/*ostream& operator<<(ostream& os, const MatSimple & m) const {
+    for(idx r=0;r<rows;r++) {
+        for(idx c=0;c<cols;c++) os << v[rows*c+r] << "\t";
+        os << endl;
+    }
+    cout << endl;
+    return os;
+}*/
+
 private:
     T * v;   ///< Array of T's used to store the matrix column-wise.
 };
 
 typedef class MatSimple<int> * IntMatPtr;
+
+
+
 
 #endif
 

@@ -11,7 +11,7 @@
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="genCLac1_ &gt; out.txt" />
+				<Option parameters="test_ &gt; out.txt" />
 				<Option projectLinkerOptionsRelation="0" />
 				<Option projectIncludeDirsRelation="1" />
 				<Compiler>
