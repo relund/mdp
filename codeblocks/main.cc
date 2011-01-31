@@ -61,10 +61,16 @@ void ReadBin(string prefix) {
     flt rateBase = 365;
     idx iW = 1;
     idx iDur = 2;*/
+    pHMDP->SetPolicyAction(0,0);
+    pHMDP->SetPolicyAction(1,0);
+    pHMDP->SetPolicyAction(2,0);
+    pHMDP->CalcStadyStatePr();
+    (pHMDP->GetTransPr()).Print();
+    cout << pHMDP->GetLog() << endl;
 
 
-    pHMDP->PolicyIteAve(1,0,100);
-    cout << "Log:" << endl << pHMDP->GetLog() << endl << "----" << endl;
+    //pHMDP->PolicyIteAve(1,0,100);
+    //cout << "Log:" << endl << pHMDP->GetLog() << endl << "----" << endl;
 
     delete pHMDP;
     //hmdp1.Print();

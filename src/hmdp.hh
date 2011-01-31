@@ -299,15 +299,18 @@ public:
         string actionIdxLblFile, string actionWFile,  string actionWLblFile,
         string transProbFile)
     {
+        okay = true;
         HMDPReader reader(stateIdxFile, stateIdxLblFile, actionIdxFile,
-            actionIdxLblFile, actionWFile, actionWLblFile, transProbFile, this);
+            actionIdxLblFile, actionWFile, actionWLblFile, transProbFile, this, log);
+        if (!reader.okay) okay = false;
     }
 
     /** Create a HMDP with no actions and states.*/
-    HMDP(){};
+    HMDP(){okay = true;};
 
     /** Deconstructor */
     ~HMDP() {
+        okay = true;
         states.clear();
         weightNames.clear();
         stages.clear();
@@ -423,6 +426,18 @@ public:
         return H.HgfMatrix();
     }
 
+    /** Get the transition probability matrix P given a policy for the founder. */
+    MatSimple<flt> GetTransPr() {
+        int rows = stages.count("0");
+        pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
+        pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
+        MatSimple<flt> P(rows,rows);    // Matrix of prob values
+        pairZero = stages.equal_range("0");
+        pairLast = stages.equal_range("1");
+        FounderPr(P,pairZero,pairLast);
+        return P;
+    }
+
 
     /** Value iteration algorithm for discounted expected reward (infinite
      * time-horizon).
@@ -497,6 +512,13 @@ public:
      * \post Use \code GetLog to see the optimization log.
      */
     flt PolicyIteAve(const idx idxW, const idx idxD, const uSInt times);
+
+
+    /** Calculate the stady state probabilities for the founder chain (infinite time-horizon, ergodic chain).
+     * \return A vector with the probabilities
+     * \post Use \code GetLog to see the log.
+     */
+    vector<flt> CalcStadyStatePr();
 
 
     /** Set the terminal values, i.e. the weights of the states at the last stage at for founder level.
@@ -606,7 +628,7 @@ public:
         flt g = 0;
 
         FounderW(r, idxW, pairZero, pairLast);
-        FounderPr(P,idxW,pairZero,pairLast);
+        FounderPr(P,pairZero,pairLast);
         FounderW(d,idxD,pairZero,pairLast);
         // Now solve equations h = r - dg + Ph where r, d and P have been
         // calculated for the founder. This is equvivalent to solving
@@ -855,7 +877,7 @@ public:
         /*if (okay)*/ okay = okay & CheckIdx();
         //if (!okay) log << "Error in HMDP description!" << endl;
         //else log << "Everything seem to be okay." << endl;
-        log << "Cpu time for checking MDP " << cpuTime.StopAndGetTotalTimeDiff(0) << "s." << endl;
+        log << "Cpu time for checking MDP " << cpuTime.StopAndGetTotalTimeDiff(0) << " sec." << endl;
         return okay;
     }
 
@@ -941,7 +963,7 @@ private:
     /** Calculate the transition probabilities of the
      * founder states given a specific policy.
      */
-    void FounderPr(MatSimple<double> &P, const idx &idxW,
+    void FounderPr(MatSimple<double> &P,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairLast);
 
@@ -957,7 +979,7 @@ public:
     //flt rate;                       ///< Intrest rate used to calc discount rates.
     //flt rateBase;                   ///< The time-horizon the rate is valid over. That is, the discout rate for duration $d$ is $\exp(-rate/rateBase*d)$.
     multimap<string, int> stages;   ///< Multimap to quickly find the different stages.
-
+    bool okay;                      ///< True if reading was okay.
 private:
 
     Hypergraph H;                   ///< Hypergraph representation.

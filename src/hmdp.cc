@@ -108,6 +108,7 @@ void HMDPAction::Print() {
 // ----------------------------------------------------------------------------
 
 HMDP::HMDP(uInt levels, uInt timeHorizon){
+    okay = true;
 	this->levels = levels;
 	this->timeHorizon = timeHorizon;
 }
@@ -344,9 +345,9 @@ void HMDP::BuildHMDP() {
 		//log << str << endl;
 		H.AddHyperarcs(str);
 	}
-	log << "Cpu time loading MDP into tmp hgf arrays " << cpuTime.GetLocalTimeDiff(0) << endl;
+	//log << "Cpu time loading MDP into tmp hgf arrays " << cpuTime.GetLocalTimeDiff(0) << endl;
 	H.BuildHgf();   // create the hypergraph
-	log << "Cpu time after building hgf " << cpuTime.GetLocalTimeDiff(0) << endl;
+	//log << "Cpu time after building hgf " << cpuTime.GetLocalTimeDiff(0) << endl;
 
 	// TODO LRE Virker dette ikke kun hvis alle states har en label!!
 	for (idx i=0; i<states.size(); i++) {   // set pointers to labels
@@ -363,7 +364,7 @@ void HMDP::BuildHMDP() {
 			}
 		}
 	}
-	log << "Cpu time after setting label pointers " << cpuTime.GetLocalTimeDiff(0) << endl;
+	//log << "Cpu time after setting label pointers " << cpuTime.GetLocalTimeDiff(0) << endl;
 
 	idxPred = idxMult = 0;  // consider first pred and multipliers
 	if (!findValidOdr) HT.SetValidOdrToReverseNodeOdr(H);
@@ -379,7 +380,7 @@ void HMDP::BuildHMDP() {
 		}
 		HT.FindValidOdr(H,nodes);
 	}
-	log << "Cpu time after finding valid odr " << cpuTime.GetLocalTimeDiff(0) << endl;
+	//log << "Cpu time after finding valid odr " << cpuTime.GetLocalTimeDiff(0) << endl;
 
 	//cout<<"Before remove actions";
 	//cin >> str;
@@ -388,8 +389,8 @@ void HMDP::BuildHMDP() {
 		states[i].RemoveActions();
 	}
 
-    log << "Cpu time after removing actions " << cpuTime.GetLocalTimeDiff(0) << endl;
-	log << "Total cpu time for building state-expanded hypergraph " << cpuTime.StopAndGetTotalTimeDiff(0) << "s" << endl;
+    //log << "Cpu time after removing actions " << cpuTime.GetLocalTimeDiff(0) << endl;
+	log << "Cpu time for building state-expanded hypergraph " << cpuTime.StopAndGetTotalTimeDiff(0) << " sec." << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -654,7 +655,7 @@ void HMDP::FounderPrDiscount(MatSimple<double> &P, const idx &idxW, const idx &i
 
 // ----------------------------------------------------------------------------
 
-void HMDP::FounderPr(MatSimple<double> &P, const idx &idxW,
+void HMDP::FounderPr(MatSimple<double> &P,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairZero,
 	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairLast)
 {
@@ -784,7 +785,7 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 			SetR(r,idxW,pairZero);
 		}
 
-		FounderPr(P,idxW,pairZero,pairLast);
+		FounderPr(P,pairZero,pairLast);
 		FounderW(d,idxD,pairZero,pairLast);
 		//cout << "r=" << endl << r << endl << "P=" << endl << P << endl << "d=" << endl << d << endl;
 		// Now solve equations h = r - dg + Ph where r, d and P have been
@@ -817,6 +818,46 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 	} while (true);
 	log << "finished." << endl;
 	return g;
+}
+
+// ----------------------------------------------------------------------------
+
+vector<flt> HMDP::CalcStadyStatePr() {
+	log.str("");
+	int rows = stages.count("0");
+	vector<flt> v(rows,0);
+	if (timeHorizon<INFINT) {
+		log << "Stady state probabilities can only be done be calculated on infinite time-horizon HMDPs!" << endl;
+		return v;
+	}
+
+	MatAlg matAlg; // Matrix routines
+	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
+	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
+	multimap<string, int >::iterator ite, iteZ;
+	MatSimple<double> b(rows,1),    // Matrix left hand side
+				   w(rows,1),       // Matrix of weights (the unknown)
+				   P(rows,rows);    // Matrix of prob values
+	MatSimple<double> I(rows,true); // identity
+
+	log << "Calculate steady state probabilities:";
+	pairZero = stages.equal_range("0");
+	pairLast = stages.equal_range("1");
+	FounderPr(P,pairZero,pairLast);
+	//P.Print();
+    // Now solve equations wP = w and w1=1 -> w(P-I) = 0 and w1=1 where P have been
+    // calculated for the founder. This is equvivalent to solving
+    // Qw=b where Q=(P-I)' and b=(0,...,0,1)' where last col in
+    // (P-I) is replaced with 1.
+    matAlg.PMinusI(P);
+    for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = 1;
+    b.Set(0);
+    b(rows-1,0) = 1;
+    matAlg.LASolveT(P,w,b);
+    v.assign(&w(0,0),&w(0,0)+rows);
+    //cout << "r=" << endl << r << endl << "P=" << endl << P << endl << "w=" << endl << w << endl;
+	log << " finished." << endl;
+    return v;
 }
 
 // ----------------------------------------------------------------------------

@@ -11,28 +11,22 @@
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="test_ &gt; out.txt" />
-				<Option projectLinkerOptionsRelation="0" />
-				<Option projectIncludeDirsRelation="1" />
+				<Option parameters="ex_ &gt; out.txt" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="C:\tools\R\R-2.10.0\include" />
 				</Compiler>
-				<Linker>
-					<Add library="C:\tools\R\R-2.10.0\bin\Rlapack.dll" />
-					<Add library="C:\tools\R\R-2.10.0\bin\R.dll" />
-				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
-			<Add directory="C:\tools\R\R-2.10.0\include" />
+			<Add directory="C:\tools\R\R-2.12.0\include" />
 		</Compiler>
 		<Linker>
-			<Add library="C:\tools\R\R-2.10.0\bin\Rlapack.dll" />
-			<Add library="C:\tools\R\R-2.10.0\bin\R.dll" />
-			<Add directory="C:\Programmer\R\R-2.9.1\bin" />
+			<Add library="C:\tools\R\R-2.12.0\bin\i386\Rlapack.dll" />
+			<Add library="C:\tools\R\R-2.12.0\bin\i386\R.dll" />
+			<Add library="C:\tools\R\R-2.12.0\bin\i386\Rblas.dll" />
+			<Add directory="C:\tools\R\R-2.12.0\bin\i386" />
 		</Linker>
 		<Unit filename="main.cc" />
 		<Unit filename="..\src\basicdt.hh" />

@@ -74,13 +74,14 @@ public:
      */
     HMDPReader(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
         string actionIdxLblFile, string actionWFile, string actionWLblFile,
-        string transProbFile, HMDP *pHMDP):cpuTime(1)
+        string transProbFile, HMDP *pHMDP, ostringstream & log)
     {
+        okay = true;
         this->pHMDP = pHMDP;
         //cpuTime.StartTime(0);
-        AddStates(stateIdxFile, stateIdxLblFile);
+        AddStates(stateIdxFile, stateIdxLblFile, log);
         AddActions(actionIdxFile, actionIdxLblFile, actionWFile, actionWLblFile,
-            transProbFile);
+            transProbFile, log);
         Compile();
         //cpuTime.StopTime(0);
         //cout << "Cpu for reading the binary files: " << cpuTime.TimeDiff(0) << endl;
@@ -95,13 +96,13 @@ private:
      * \return The size of the array p.
      */
     template <class T>
-    idx ReadBinary(string file, T *&p);
+    idx ReadBinary(string file, T *&p, ostringstream & log);
 
     /** Add the states to the HMDP.
      * \param stateIdxFile Filename of the state index file.
      * \param stateIdxLblFile Filename of the state label file.
      */
-    void AddStates(string stateIdxFile, string stateIdxLblFile);
+    void AddStates(string stateIdxFile, string stateIdxLblFile, ostringstream & log);
 
     /** Add the actions to the HMDP.
      * \param actionIdxFile Filename of the action index file.
@@ -110,15 +111,18 @@ private:
      * \param transProbFile Filename of the transition probability file.
      */
     void AddActions(string actionIdxFile, string actionIdxLblFile,
-        string actionWFile, string actionWLblFile, string transProbFile);
+        string actionWFile, string actionWLblFile, string transProbFile, ostringstream & log);
 
     /** Add dummy states at founder level if infinite time-horizon HMDP.
      */
     void Compile();
 
+public:
+    bool okay;            ///< True if reading was okay.
 private:
     HMDP * pHMDP;         ///< Pointer to the HMDP.
-    TimeMan cpuTime;
+    //TimeMan cpuTime;
+
 };
 
 // -----------------------------------------------------------------------------

@@ -19,8 +19,14 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 	binNames<-paste(prefix,binNames,sep="")
 	ptm <- proc.time()
 	p<-.Call("MDP_NewHMDP", binNames, .deleteHMDP, PACKAGE="MDP")
+	if (!.Call("MDP_Okay",p, PACKAGE="MDP")) {
+		str<-.Call("MDP_GetLog", p, PACKAGE="MDP")
+		cat(str)
+		rm(p)
+		return(invisible(NULL))
+	}
 	cpu <- (proc.time() - ptm)[3]
-	cat("Cpu for reading the binary files: ", cpu, "s\n", sep="")
+	cat("Cpu time for reading the model (binary files): ", cpu, " sec.\n", sep="")
 	if (check) {
 		.Call("MDP_Check",p,as.numeric(eps), PACKAGE="MDP")
 		str<-.Call("MDP_GetLog", p, PACKAGE="MDP")
@@ -432,7 +438,7 @@ hypergf<-function(mdp) {
 #' Return ids for states having index string in idxS.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' param idxS A char vector of index in the form "n0,s0,a0,n1,s1", i.e. 3*level+2 elements in the string.
+#' @param idxS A char vector of index in the form "n0,s0,a0,n1,s1", i.e. 3*level+2 elements in the string.
 #' @return A vector of ids for the states.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example pkg/tests/machine.Rex
@@ -446,7 +452,7 @@ getIdS<-function(mdp, idxS) {
 #' Return ids for states in a stage.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' param stages A char vector of index in the form "n0,s0,a0,n1", i.e. 3*level+1 elements in the string.
+#' @param stages A char vector of index in the form "n0,s0,a0,n1", i.e. 3*level+1 elements in the string.
 #' @return A vector of ids for the states.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example pkg/tests/machine.Rex
@@ -459,7 +465,7 @@ getIdSStages<-function(mdp, stages) {
 #' Return the index strings for states having id idS.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' param idS A vector of state ids.
+#' @param idS A vector of state ids.
 #' @return A vector of index for the states.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example pkg/tests/machine.Rex
@@ -474,7 +480,7 @@ getStrIdxS<-function(mdp, idS) {
 #' Return the label of states having id idS.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' param idS A vector of state ids.
+#' @param idS A vector of state ids.
 #' @return A vector of labels for the states.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example pkg/tests/machine.Rex
@@ -489,8 +495,8 @@ getLabel<-function(mdp, idS) {
 #' Get the weights of an action.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' param idS The state id.
-#' param idxA The action index.
+#' @param idS The state id.
+#' @param idxA The action index.
 #' @return A vector of weights for the action.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example pkg/tests/machine.Rex
@@ -509,8 +515,8 @@ getActionW<-function(mdp, idS, idxA) {
 #' Get the ids of the transition states of an action.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' param idS The state id.
-#' param idxA The action index.
+#' @param idS The state id.
+#' @param idxA The action index.
 #' @return A vector of weights for the action.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example pkg/tests/machine.Rex
@@ -529,8 +535,8 @@ getActionTransIdS<-function(mdp, idS, idxA) {
 #' Get the transition probabilities of the transition states of an action.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' param idS The state id.
-#' param idxA The action index (c++ style starting from zero).
+#' @param idS The state id.
+#' @param idxA The action index (c++ style starting from zero).
 #' @return A vector of weights for the action.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example pkg/tests/machine.Rex
@@ -543,4 +549,28 @@ getActionTransPr<-function(mdp, idS, idxA) {
 	l<-scan(zz, sep=",", quiet = TRUE)
 	close(zz)
 	return(l)
+}
+
+
+#' Calculate the steady state transition probabilities for the founder process (level 0).
+#'
+#' Assume that we consider an ergodic/irreducible time-homogeneous Markov chain specified using a policy in the MDP.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @return A vector stady state probabilities for all the states.
+#' @author Lars Relund \email{lars@@relund.dk}
+calcSteadyStatePr<-function(mdp) {
+	pr<-.Call("MDP_CalcSteadyStatePr", mdp$ptr, PACKAGE="MDP")
+	return(pr)
+}
+
+#' Get the transition probability matrix P for the founder process (level 0).
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @return The state probability matrix.
+#' @author Lars Relund \email{lars@@relund.dk}
+getTransPr<-function(mdp) {
+	v<-.Call("MDP_GetTransPr", mdp$ptr, PACKAGE="MDP")
+	v<-matrix(v,nrow=mdp$states)
+	return(v)
 }

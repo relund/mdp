@@ -115,7 +115,7 @@ void HgfReader::ReadInHgf() {
 	cpuTime.StartTime(0);    // Start time
 	AllocateMem();
 
-	cout << "Read (hyper)arcs ... ";
+	//cout << "Read (hyper)arcs ... ";
 
 	//--- start reading (hyper)arcs  -----------------
 	do {
@@ -165,8 +165,8 @@ void HgfReader::ReadInHgf() {
 	BuildHarcRepF6();
 	BuildFSHRep();
 
-	cout << " done.\n";
-	cout << "Cpu time for reading and building (sec)  : " << cpuTime.StopAndGetTotalTimeDiff(0) << endl << endl;
+	//cout << " done.\n";
+	//cout << "Cpu time for reading and building (sec)  : " << cpuTime.StopAndGetTotalTimeDiff(0) << endl << endl;
 
 	fclose(fstream);
 	DeallocateMem();

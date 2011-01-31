@@ -4,15 +4,15 @@
 // -----------------------------------------------------------------------------
 
 template <class T>
-idx HMDPReader::ReadBinary(string fileName, T *&p) {
+idx HMDPReader::ReadBinary(string fileName, T *&p, ostringstream & log) {
 	ifstream::pos_type fileSize;
 	ifstream file;
 
 	// read idx
 	file.open(fileName.c_str() ,ios::in|ios::binary|ios::ate);    // open binary file for reading with pointer at end of file to get filesize
 	if(!file) {
-		cerr << "Problems opening " << fileName << "\nExiting..." << endl;
-		exit(1);
+		log << "Problems opening file " << fileName << "\n" << endl;
+		return(0);
 	}
 	fileSize = file.tellg();
 	idx size = fileSize/sizeof(T);
@@ -29,13 +29,14 @@ idx HMDPReader::ReadBinary(string fileName, T *&p) {
 
 // -----------------------------------------------------------------------------
 
-void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile) {
+void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile, ostringstream & log) {
 	int * sIdx;    // raw idx data
 	char * lbl;    // raw labels
 	uInt numb = 0;     // max number of state idx
 	//cout << "ss:" << sIdx << endl;
 
-	idx sIdxSize = ReadBinary<int>(stateIdxFile,sIdx);
+	idx sIdxSize = ReadBinary<int>(stateIdxFile,sIdx,log);
+    if (sIdxSize==0) {okay = false; return;}
 	//cout << "sss:" << sIdx << endl;
 	// now scan sIdx and generate index vectors for each state
 	vector<idx> s;  // vector of index
@@ -49,7 +50,8 @@ void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile) {
 		}
 	}
 
-	idx lblSize = ReadBinary<char>(stateIdxLblFile,lbl);
+	idx lblSize = ReadBinary<char>(stateIdxLblFile,lbl,log);
+	if (lblSize==0) {okay = false; return;}
 	// add labels to a string vector
 	vector<string> labels;
 	char * ptr = lbl;
@@ -83,7 +85,7 @@ void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile) {
 // -----------------------------------------------------------------------------
 
 void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
-	string actionWFile, string actionWLblFile, string transProbFile)
+	string actionWFile, string actionWLblFile, string transProbFile, ostringstream & log)
 {
 	ifstream::pos_type fileSize;
 	ifstream file;
@@ -98,13 +100,13 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	vector<string> labels;
 	char * ptr;
 
-	idx aIdxSize = ReadBinary(actionIdxFile,aIdx);
-	idx lblSize = ReadBinary(actionIdxLblFile,lbl);
-	ReadBinary(actionWFile,aW);
-	idx wLblSize = ReadBinary(actionWLblFile,wLbl);
-	idx tPrSize = ReadBinary(transProbFile,tPr);
+	idx aIdxSize = ReadBinary(actionIdxFile,aIdx,log);
+	idx lblSize = ReadBinary(actionIdxLblFile,lbl,log);
+	idx aWSize = ReadBinary(actionWFile,aW,log);
+	idx wLblSize = ReadBinary(actionWLblFile,wLbl,log);
+	idx tPrSize = ReadBinary(transProbFile,tPr,log);
 	// note that all arrays (except the label arrays) have the same number of rows (same number of -1's).
-
+    if (aIdxSize==0 | lblSize==0 | aWSize==0 | wLblSize==0 | tPrSize==0) {okay = false; return;}
 	// add wight labels to HMDP
 	ptr = wLbl;
 	for (int i=0;;++i) {

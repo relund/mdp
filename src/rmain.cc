@@ -59,6 +59,19 @@ SEXP MDP_NewHMDP(SEXP binNames, SEXP fun)
 	}
 }
 
+/** Return TRUE if loading/reading the model was okay. */
+SEXP MDP_Okay(SEXP ptr)
+{
+    CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	SEXP sexp;
+	PROTECT(sexp = NEW_LOGICAL(1));
+	LOGICAL_POINTER(sexp)[0] = (bool)(p->okay);
+	UNPROTECT(1);
+	return sexp;
+}
+
 /** Remove the HMDP object */
 SEXP MDP_DeleteHMDP(SEXP ptr)
 {
@@ -644,6 +657,41 @@ SEXP MDP_GetActionInfo(SEXP ptr, SEXP idS)
 	UNPROTECT(1);
 	return a;
 }
+
+/** Return the steady state probabilities.
+ \param idS The state id.
+ */
+SEXP MDP_CalcSteadyStatePr(SEXP ptr)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	vector<flt> v = p->CalcStadyStatePr();
+	SEXP pr;
+	PROTECT(pr = NEW_NUMERIC(v.size()));
+	double * prPtr = NUMERIC_POINTER(pr);
+	for (idx i=0; i < (idx)v.size(); ++i)
+		prPtr[i] = v[i];
+	UNPROTECT(1);
+	return pr;
+}
+
+/** Return the transition probability matrix P given a policy for the founder. */
+SEXP MDP_GetTransPr(SEXP ptr)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	MatSimple<flt> mat = p->GetTransPr();
+	int rows = mat.rows;
+	int cols = mat.cols;
+	SEXP vec;
+	PROTECT(vec = NEW_NUMERIC(rows*cols));
+	for (int k=0; k<rows*cols; ++k) NUMERIC_POINTER(vec)[k] = mat(k-rows*(k/rows),k/rows);
+	UNPROTECT(1);
+	return vec;
+}
+
 
 #ifdef __cplusplus
 }
