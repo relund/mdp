@@ -587,7 +587,7 @@ public:
         FounderPrDiscount(P,idxW,idxDur,rate,rateBase,pairZero,pairLast);
         // Now solve equations w = r + Pw -> (I-P)w = r
         matAlg.IMinusP(P);
-        matAlg.LASolve(P,w,r);
+        if (matAlg.LASolve(P,w,r)) log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? " << endl;
         // Set pairLast to optimal values
         for (ite=pairLast.first, i=0; ite!=pairLast.second; ++ite, ++i) // set last to w values
             H.itsNodes[(ite->second)+1].SetW(idxW,w(i,0));
@@ -637,7 +637,7 @@ public:
         // (I-P) replaced with d.
         matAlg.IMinusP(P);  // Set P := I-P
         for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
-        matAlg.LASolve(P,w,r);
+        if (matAlg.LASolve(P,w,r)) {log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? " << endl; return -INF;}
         g = w(rows-1,0);
         // set last to w values
         for (ite=pairLast.first, i=0; ite!=pairLast.second; ++ite, ++i) {

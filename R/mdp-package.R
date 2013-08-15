@@ -4,5 +4,7 @@
 #' @aliases MDP-package MDP
 #' @docType package
 #' @title Markov Decision Processes (MDPs) in R
-#' @author Lars Relund \email{lars@@relund.dk} and Anders Ringgaard Kristensen
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @useDynLib MDP
 NA
+

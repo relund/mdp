@@ -66,7 +66,7 @@ char HgfReader::ReadSizes(char filename[12]) {
 		c=fgetc(fstream);
 		if (c =='f') {
 			for (;c!='\n';c=fgetc(fstream)) {
-				if (c=='2' | c=='3' | c=='4' | c=='5' | c=='6') {
+				if ( (c=='2') | (c=='3') | (c=='4') | (c=='5') | (c=='6') ) {
 					recognized = true;
 					break;
 				}
@@ -89,7 +89,7 @@ char HgfReader::ReadSizes(char filename[12]) {
 				exit(1);
 			};
 		} else
-			if ( c == 'c' | c=='#') for (; fgetc(fstream) != '\n';);
+			if ( (c == 'c') | (c=='#') ) for (; fgetc(fstream) != '\n';);
 			else {
 				cout << "Error: Wrong comment syntax.\n";
 				exit(1);

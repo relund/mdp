@@ -1,13 +1,20 @@
 \name{resetActions}
 \alias{resetActions}
 \title{Reset the actions of a state.}
-\usage{resetActions(mdp)}
-\description{Reset the actions of a state.}
-\value{Nothing.}
-\author{Lars Relund \email{lars@relund.dk}}
-\seealso{\code{\link{resetActions}}, \code{\link{fixAction}}.}
-\arguments{\item{mdp}{The MDP loaded using \link{loadMDP}.}}
-\examples{# Create the small machine repleacement problem used as an example in L.R.
+\usage{
+  resetActions(mdp)
+}
+\arguments{
+  \item{mdp}{The MDP loaded using \link{loadMDP}.}
+}
+\value{
+  Nothing.
+}
+\description{
+  Reset the actions of a state.
+}
+\examples{
+# Create the small machine repleacement problem used as an example in L.R.
 # Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
 # Markov decision process. European Journal of Operational Research,
 # 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
@@ -223,4 +230,12 @@ states<-stateIdxDf(prefix)              # information about the states
 policy<-merge(states,policy)            # merge the two data frames
 policyW<-getPolicyW(mdp, w)             # the optimal rewards of the policy
 policy<-merge(policy,policyW)           # add the rewards
-policy}
+policy
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+\seealso{
+  \code{\link{resetActions}}, \code{\link{fixAction}}.
+}
+

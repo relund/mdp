@@ -59,7 +59,7 @@ void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile, ostrings
 		//cout << ptr << endl;
 		labels.push_back(ptr);
 		ptr = strrchr(ptr,'\0');
-		if (ptr==0 | ptr-lbl>=(int)lblSize) break;
+		if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
 		++ptr;
 	}
 	// now add labels to states
@@ -106,13 +106,13 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	idx wLblSize = ReadBinary(actionWLblFile,wLbl,log);
 	idx tPrSize = ReadBinary(transProbFile,tPr,log);
 	// note that all arrays (except the label arrays) have the same number of rows (same number of -1's).
-    if (aIdxSize==0 | lblSize==0 | aWSize==0 | wLblSize==0 | tPrSize==0) {okay = false; return;}
+    if ( (aIdxSize==0) | (lblSize==0) | (aWSize==0) | (wLblSize==0) | (tPrSize==0) ) {okay = false; return;}
 	// add wight labels to HMDP
 	ptr = wLbl;
 	for (int i=0;;++i) {
 		labels.push_back(ptr);
 		ptr = strrchr(ptr,'\0');
-		if (ptr==0 | ptr-wLbl>=(int)wLblSize) break;
+		if ( (ptr==0) | (ptr-wLbl>=(int)wLblSize) ) break;
 		++ptr;
 	}
 	labels.pop_back();  // the last element is a dummy
@@ -167,7 +167,7 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	for (int i=0;;++i) {
 		labels.push_back(ptr);
 		ptr = strrchr(ptr,'\0');
-		if (ptr==0 | ptr-lbl>=(int)lblSize) break;
+		if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
 		++ptr;
 	}
 	labels.pop_back();  // the last element is a dummy

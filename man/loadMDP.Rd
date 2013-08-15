@@ -1,19 +1,34 @@
 \name{loadMDP}
 \alias{loadMDP}
-\title{Create the HMDP defined in the binary files.}
-\usage{loadMDP(prefix="",
-binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin","actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
-eps = 0.00001, check = TRUE)}
-\description{Create the HMDP defined in the binary files. The model are created in memory
+\title{Create the HMDP defined in the binary files. The model are created in memory
 using the external C++ library.}
-\value{A list containing relevant information about the model and a pointer \code{ptr} to the model object in memory.}
-\author{Lars Relund \email{lars@relund.dk}}
-\arguments{\item{prefix}{A character string with the prefix added to \code{binNames}. Used to identify a specific model.}
-\item{binNames}{A character vector of length 7 giving the names of the binary
-files storing the model.}
-\item{eps}{The sum of the transition probabilities must at most differ eps from one.}
-\item{check}{Check if the MDP seems correct.}}
-\examples{# Create the small machine repleacement problem used as an example in L.R.
+\usage{
+  loadMDP(prefix="",
+    binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin","actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
+    eps = 0.00001, check = TRUE)
+}
+\arguments{
+  \item{prefix}{A character string with the prefix added to
+  \code{binNames}. Used to identify a specific model.}
+
+  \item{binNames}{A character vector of length 7 giving the
+  names of the binary files storing the model.}
+
+  \item{eps}{The sum of the transition probabilities must
+  at most differ eps from one.}
+
+  \item{check}{Check if the MDP seems correct.}
+}
+\value{
+  A list containing relevant information about the model
+  and a pointer \code{ptr} to the model object in memory.
+}
+\description{
+  Create the HMDP defined in the binary files. The model
+  are created in memory using the external C++ library.
+}
+\examples{
+# Create the small machine repleacement problem used as an example in L.R.
 # Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
 # Markov decision process. European Journal of Operational Research,
 # 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
@@ -229,4 +244,9 @@ states<-stateIdxDf(prefix)              # information about the states
 policy<-merge(states,policy)            # merge the two data frames
 policyW<-getPolicyW(mdp, w)             # the optimal rewards of the policy
 policy<-merge(policy,policyW)           # add the rewards
-policy}
+policy
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+

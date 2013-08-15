@@ -1,15 +1,30 @@
 \name{info}
 \alias{info}
-\title{Information about a state and its corresponding actions...}
-\usage{info(mdp, idS, idxS, idxN)}
-\description{Information about a state and its corresponding actions}
-\value{A list of states containing actions.}
-\author{Lars Relund \email{lars@relund.dk}}
-\arguments{\item{mdp}{The MDP loaded using \link{loadMDP}.}
-\item{idS}{The id of the state(s) considered.}
-\item{idxS}{A string containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1"). Parameter \code{idS} are ignored if not NULL.}
-\item{idxN}{A string containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). Parameter \code{idS} are ignored if not NULL.}}
-\examples{# Create the small machine repleacement problem used as an example in L.R.
+\title{Information about a state and its corresponding actions}
+\usage{
+  info(mdp, idS = NULL, idxS = NULL, idxN = NULL)
+}
+\arguments{
+  \item{mdp}{The MDP loaded using \link{loadMDP}.}
+
+  \item{idS}{The id of the state(s) considered.}
+
+  \item{idxS}{A string containing the index of the state(s)
+  (e.g. "n0,s0,a0,n1,s1"). Parameter \code{idS} are ignored
+  if not NULL.}
+
+  \item{idxN}{A string containing the index of the stage(s)
+  (e.g. "n0,s0,a0,n1"). Parameter \code{idS} and
+  \code{idxS} are ignored if not NULL.}
+}
+\value{
+  A list of states containing actions.
+}
+\description{
+  Information about a state and its corresponding actions
+}
+\examples{
+# Create the small machine repleacement problem used as an example in L.R.
 # Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
 # Markov decision process. European Journal of Operational Research,
 # 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
@@ -225,4 +240,9 @@ states<-stateIdxDf(prefix)              # information about the states
 policy<-merge(states,policy)            # merge the two data frames
 policyW<-getPolicyW(mdp, w)             # the optimal rewards of the policy
 policy<-merge(policy,policyW)           # add the rewards
-policy}
+policy
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+

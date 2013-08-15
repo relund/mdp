@@ -1,19 +1,38 @@
 \name{calcWeights}
 \alias{calcWeights}
-\title{Calculate weights based on current policy.}
-\usage{calcWeights(mdp, w, criterion="expected", dur, rate=0.1, rateBase=1,
-    termValues)}
-\description{Calculate weights based on current policy. Normally run after an optimal policy has been found.}
-\value{Nothing.}
-\author{Lars Relund \email{lars@relund.dk}}
-\arguments{\item{mdp}{The MDP loaded using \link{loadMDP}.}
-\item{w}{The label of the weight we consider.}
-\item{criterion}{The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.}
-\item{dur}{The label of the duration/time such that discount rates can be calculated.}
-\item{rate}{The interest rate.}
-\item{rateBase}{The time-horizon the rate is valid over.}
-\item{termValues}{The terminal values used (values of the last stage in the MDP).}}
-\examples{# Create the small machine repleacement problem used as an example in L.R.
+\title{Calculate weights based on current policy. Normally run after an optimal policy has been found.}
+\usage{
+  calcWeights(mdp, w, criterion = "expected", dur = NULL,
+    rate = 0.1, rateBase = 1, termValues = NULL)
+}
+\arguments{
+  \item{mdp}{The MDP loaded using \link{loadMDP}.}
+
+  \item{w}{The label of the weight we consider.}
+
+  \item{criterion}{The criterion used. If \code{expected}
+  used expected reward, if \code{discount} used discounted
+  rewards, if \code{average} use average rewards.}
+
+  \item{dur}{The label of the duration/time such that
+  discount rates can be calculated.}
+
+  \item{rate}{The interest rate.}
+
+  \item{rateBase}{The time-horizon the rate is valid over.}
+
+  \item{termValues}{The terminal values used (values of the
+  last stage in the MDP).}
+}
+\value{
+  Nothing.
+}
+\description{
+  Calculate weights based on current policy. Normally run
+  after an optimal policy has been found.
+}
+\examples{
+# Create the small machine repleacement problem used as an example in L.R.
 # Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
 # Markov decision process. European Journal of Operational Research,
 # 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
@@ -229,4 +248,9 @@ states<-stateIdxDf(prefix)              # information about the states
 policy<-merge(states,policy)            # merge the two data frames
 policyW<-getPolicyW(mdp, w)             # the optimal rewards of the policy
 policy<-merge(policy,policyW)           # add the rewards
-policy}
+policy
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+

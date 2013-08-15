@@ -10,7 +10,8 @@
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
 #'
-#' @example pkg/tests/infoMat.Rex
+#' @example tests/infoMat.Rex
+#' @export
 stateIdxMat<-function(prefix="", file="stateIdx.bin") {
 	file<-paste(prefix,file,sep="")
 	tmp<-readBin(file, integer(),n=file.info(file)$size/4)
@@ -38,7 +39,8 @@ stateIdxMat<-function(prefix="", file="stateIdx.bin") {
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
 #'
-#' @example pkg/tests/infoMat.Rex
+#' @example tests/infoMat.Rex
+#' @export
 stateIdxDf<-function(prefix="", file="stateIdx.bin", labels="stateIdxLbl.bin") {
 	labels<-paste(prefix,labels,sep="")
 	mat<-stateIdxMat(prefix, file)
@@ -60,7 +62,8 @@ stateIdxDf<-function(prefix="", file="stateIdx.bin", labels="stateIdxLbl.bin") {
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
 #'
-#' @example pkg/tests/infoMat.Rex
+#' @example tests/infoMat.Rex
+#' @export
 transProbMat<-function(prefix="", file="transProb.bin") {
 	file<-paste(prefix,file,sep="")
 	tmp<-readBin(file, numeric(),n=file.info(file)$size/8)
@@ -90,7 +93,8 @@ transProbMat<-function(prefix="", file="transProb.bin") {
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
 #'
-#' @example pkg/tests/infoMat.Rex
+#' @example tests/infoMat.Rex
+#' @export
 actionIdxMat<-function(prefix="", file="actionIdx.bin") {
 	file<-paste(prefix,file,sep="")
 	tmp<-readBin(file, integer(),n=file.info(file)$size/4)
@@ -116,7 +120,8 @@ actionIdxMat<-function(prefix="", file="actionIdx.bin") {
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
 #'
-#' @example pkg/tests/infoMat.Rex
+#' @example tests/infoMat.Rex
+#' @export
 actionIdxDf<-function(prefix="", file="actionIdx.bin", labels="actionIdxLbl.bin") {
 	labels<-paste(prefix,labels,sep="")
 	mat<-actionIdxMat(prefix, file)
@@ -144,7 +149,8 @@ actionIdxDf<-function(prefix="", file="actionIdx.bin", labels="actionIdxLbl.bin"
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
 #'
-#' @example pkg/tests/infoMat.Rex
+#' @example tests/infoMat.Rex
+#' @export
 actionInfo<-function(prefix="", file="actionIdx.bin" , weightFile="actionWeight.bin", transPrFile="transProb.bin", labels="actionIdxLbl.bin") {
 	labels<-paste(prefix,labels,sep="")
 	mat<-actionIdxMat(prefix, file)
@@ -177,7 +183,8 @@ actionInfo<-function(prefix="", file="actionIdx.bin" , weightFile="actionWeight.
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
 #'
-#' @example pkg/tests/infoMat.Rex
+#' @example tests/infoMat.Rex
+#' @export
 actionWeightMat<-function(prefix="", file="actionWeight.bin",labels="actionWeightLbl.bin") {
 	file<-paste(prefix,file,sep="")
 	labels<-paste(prefix,labels,sep="")
@@ -200,6 +207,7 @@ actionWeightMat<-function(prefix="", file="actionWeight.bin",labels="actionWeigh
 #' @param labels The HMDP binary file containing the weight labels.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @return Vector of weight names.
+#' @export
 weightNames<-function(prefix="", labels="actionWeightLbl.bin") {
 	labels<-paste(prefix,labels,sep="")
 	colNames<-readBin(labels, character(),n=file.info(labels)$size)
@@ -212,10 +220,11 @@ weightNames<-function(prefix="", labels="actionWeightLbl.bin") {
 #' @param mdp The MDP loaded using \link{loadMDP}.
 #' @param idS The id of the state(s) considered.
 #' @param idxS A string containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1"). Parameter \code{idS} are ignored if not NULL.
-#' @param idxN A string containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). Parameter \code{idS} are ignored if not NULL.
+#' @param idxN A string containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). Parameter \code{idS} and \code{idxS} are ignored if not NULL.
 #' @return A list of states containing actions.
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @example pkg/tests/machine.Rex
+#' @example tests/machine.Rex
+#' @export
 info<-function(mdp, idS=NULL, idxS=NULL, idxN=NULL) {
 	if (!is.null(idxS)) idS<-getIdS(mdp, idxS)
 	if (!is.null(idxN)) idS<-getIdSStages(mdp, idxN)

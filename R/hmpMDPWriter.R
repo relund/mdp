@@ -32,10 +32,6 @@
 #'   \item{\code{endAction()}: }{Ends an action.}
 #'   \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}}
 #'
-#' @usage
-#' hmpMDPWriter(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001,
-#'   desc="HMP file created using hmpMDPWriter in R")
-#'
 #' @param file The name of the file storing the model (e.g. mdp.hmp).
 #' @param rate The interest rate (used if consider discounting).
 #' @param rateBase The time where the \code{rate} is taken over, e.g. if the \code{rate} is 0.1 and \code{rateBase} is 365 days
@@ -45,8 +41,8 @@
 #' @return A list of functions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @example pkg/tests/hmpMDPWriter.Rex
-
+#' @example tests/hmpMDPWriter.Rex
+#' @export
 hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, desc="HMP file created using hmpMDPWriter in R")
 {
 	addLevelRates<-function(rates){

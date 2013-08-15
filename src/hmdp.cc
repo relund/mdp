@@ -62,12 +62,12 @@ string HMDPState::NextFatherStageStr() {
 uSInt HMDPAction::Check(flt eps, ostringstream & log) {
 	flt sum = 0;
 	uSInt msg;
-	if (idxStates.size() != transPr.size() & scope.size() != transPr.size()) {
+	if ( (idxStates.size() != transPr.size()) & (scope.size() != transPr.size()) ) {
 		log << "Error: In action " << label << " sizes of scope, index and probability do not have the same size!" << endl;
 		return 2;
 	}
 	for (idx i=0;i<idxStates.size();i++) {
-		if (idxStates[i]<0 | transPr[i]<0 | scope[i]<0) {
+		if ( (idxStates[i]<0) | (transPr[i]<0) | (scope[i]<0) ) {
 			log << "Error: In action " << label << " scope, index or probability is negative!" << endl;
 			log << "  (scp,idx,pr) = (" << scope[i] << "," << idxStates[i] << "," << transPr[i] << ")" << endl;
 			return 2;
@@ -258,13 +258,13 @@ bool HMDP::CheckIdx() {
 				if (states[iState].tmpActions[a].scope[j]==3) { // specify state index/id
 					iS = states[iState].tmpActions[a].idxStates[j];
 				}
-				if (iS<=iState & states[iState].tmpActions[a].scope[j]!=3) {
+				if ( (iS<=iState) & (states[iState].tmpActions[a].scope[j]!=3) ) {
 					log << "Error: action " << a << " in state " << iState
 						<< " (sId) seems to be looping.\n";
 					states[iState].Print();
 					return false;
 				}
-				if (iS>states.size() | iS<1) {
+				if ( (iS>states.size()) | (iS<1) ) {
 					log << "Error: specify transition to nonexisting state in state "
 						<< iState << " (sId) action number " << a << ".\n";
 					states[iState].Print();
@@ -398,7 +398,7 @@ void HMDP::BuildHMDP() {
 vector<idx> HMDP::WeightIdx(idx idxW, idx idxDur) {
 	vector<idx> v;
 	for (idx i=0; i<weightNames.size(); ++i) {
-		if (i!=idxW & i!=idxDur) v.push_back(i);
+		if ( (i!=idxW) & (i!=idxDur) ) v.push_back(i);
 	}
 	return v;
 }
@@ -727,7 +727,7 @@ void HMDP::PolicyIteDiscount(const idx idxW, const idx idxDur, const flt &rate,
 		FounderPrDiscount(P,idxW,idxDur,rate,rateBase,pairZero,pairLast);
 		// Now solve equations w = r + Pw -> (I-P)w = r
 		matAlg.IMinusP(P);
-		matAlg.LASolve(P,w,r);
+		if (matAlg.LASolve(P,w,r)) {log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? " << endl; break;}
 		//cout << "r=" << endl << r << endl << "P=" << endl << P << endl << "w=" << endl << w << endl;
 		for (ite=pairLast.first, i=0; ite!=pairLast.second; ++ite, ++i) // set last to w values
 			H.itsNodes[(ite->second)+1].SetW(idxW,w(i,0));
@@ -797,7 +797,7 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 		//cout << "I-P=" << endl << P << endl;
 		for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
 		//cout << "I-P with d=" << endl << P << endl;
-		matAlg.LASolve(P,w,r);
+		if (matAlg.LASolve(P,w,r)) {log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; break;}
 		//cout << "w=" << endl << w << endl;
 		gB = g;
 		g = w(rows-1,0);
@@ -853,7 +853,7 @@ vector<flt> HMDP::CalcStadyStatePr() {
     for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = 1;
     b.Set(0);
     b(rows-1,0) = 1;
-    matAlg.LASolveT(P,w,b);
+    if (matAlg.LASolveT(P,w,b)) log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? " << endl;
     v.assign(&w(0,0),&w(0,0)+rows);
     //cout << "r=" << endl << r << endl << "P=" << endl << P << endl << "w=" << endl << w << endl;
 	log << " finished." << endl;

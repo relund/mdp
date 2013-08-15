@@ -11,7 +11,7 @@
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="ex_ &gt; out.txt" />
+				<Option parameters="stoc_M=2_Z=5_mL=0_sdL=1_mD=20_c=0_h=0_p=1000_k=0_ &gt; out.txt" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

@@ -2,13 +2,22 @@ Package: MDP
 Type: Package
 Title: Markov Decision Processes (MDPs) in R
 Version: 1.1
-Date: 2009-05-15
-Author: Lars Relund Nielsen and Anders Ringgaard Kristensen
+Date: 2013-08-15
+Author: Lars Relund Nielsen
 Maintainer: Lars Relund Nielsen <lars@relund.dk>
-Depends: R (>= 2.9.0), XML
+Depends:
+    R (>= 2.9.0),
+    XML
 Description: Using this package you can create and optimize MDPs with
-    discrete time steps and state space.
-License: GPL (version 2 or later)
-Collate: 'binaryMDPWriter.R' 'convertBinary2HMP.R'
-    'convertHMP2Binary.R' 'hmpMDPWriter.R' 'infoMat.R' 'loadMDP.R'
-    'mdp-package.R' 'zzz.R'
+    discrete time steps and state space. Both hierarchical and ordinary
+    MDPs can be modelled.
+License: GPL (>= 2)
+Collate:
+    'binaryMDPWriter.R'
+    'convertBinary2HMP.R'
+    'convertHMP2Binary.R'
+    'hmpMDPWriter.R'
+    'infoMat.R'
+    'loadMDP.R'
+    'mdp-package.R'
+    'zzz.R'

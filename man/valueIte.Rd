@@ -1,23 +1,41 @@
 \name{valueIte}
 \alias{valueIte}
 \title{Perform value iteration on the MDP.}
-\usage{valueIte(mdp, w, dur, rate=0.1, rateBase=1, times=10, eps=1e-05,
-    termValues)}
-\description{Perform value iteration on the MDP.}
-\details{If the MDP has a finite time-horizon then arguments \code{times} and \code{eps}
-are ignored.}
-\value{NULL (invisible)}
-\author{Lars Relund \email{lars@relund.dk}}
-\references{[1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.}
-\arguments{\item{mdp}{The MDP loaded using \link{loadMDP}.}
-\item{w}{The label of the weight we optimize.}
-\item{dur}{The label of the duration/time such that discount rates can be calculated.}
-\item{rate}{Interest rate.}
-\item{rateBase}{The time-horizon the rate is valid over.}
-\item{times}{The max number of times value iteration is performed.}
-\item{eps}{Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see [1] p161).}
-\item{termValues}{The terminal values used (values of the last stage in the MDP).}}
-\examples{# Create the small machine repleacement problem used as an example in L.R.
+\usage{
+  valueIte(mdp, w, dur = NULL, rate = 0.1, rateBase = 1,
+    times = 10, eps = 1e-05, termValues = NULL)
+}
+\arguments{
+  \item{mdp}{The MDP loaded using \link{loadMDP}.}
+
+  \item{w}{The label of the weight we optimize.}
+
+  \item{dur}{The label of the duration/time such that
+  discount rates can be calculated.}
+
+  \item{rate}{Interest rate.}
+
+  \item{rateBase}{The time-horizon the rate is valid over.}
+
+  \item{times}{The max number of times value iteration is
+  performed.}
+
+  \item{eps}{Stopping criterion. If
+  max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the
+  policy becomes epsilon optimal (see [1] p161).}
+
+  \item{termValues}{The terminal values used (values of the
+  last stage in the MDP).}
+}
+\value{
+  NULL (invisible)
+}
+\description{
+  If the MDP has a finite time-horizon then arguments
+  \code{times} and \code{eps} are ignored.
+}
+\examples{
+# Create the small machine repleacement problem used as an example in L.R.
 # Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
 # Markov decision process. European Journal of Operational Research,
 # 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
@@ -233,4 +251,13 @@ states<-stateIdxDf(prefix)              # information about the states
 policy<-merge(states,policy)            # merge the two data frames
 policyW<-getPolicyW(mdp, w)             # the optimal rewards of the policy
 policy<-merge(policy,policyW)           # add the rewards
-policy}
+policy
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+\references{
+  [1] Puterman, M.; Markov Decision Processes,
+  Wiley-Interscience, 1994.
+}
+

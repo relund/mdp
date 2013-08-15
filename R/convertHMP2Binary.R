@@ -9,7 +9,8 @@
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @seealso \link{binaryMDPWriter}.
-#' @example pkg/tests/convert.Rex
+#' @example tests/convert.Rex
+#' @export
 convertHMP2Binary<-function(file, prefix="") {
 	setWeights<-function(q) {
 		labels<-unlist(lapply(q, function(x) xmlAttrs(x)))

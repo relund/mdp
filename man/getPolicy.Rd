@@ -1,14 +1,27 @@
 \name{getPolicy}
 \alias{getPolicy}
 \title{Get parts of the optimal policy.}
-\usage{getPolicy(mdp, sId=1:mdp$states - 1, labels=FALSE)}
-\description{Get parts of the optimal policy.}
-\value{The policy (matrix (if \code{labels = FALSE}) otherwise data frame).}
-\author{Lars Relund \email{lars@relund.dk}}
-\arguments{\item{mdp}{The MDP loaded using \link{loadMDP}.}
-\item{sId}{Vector of id's of the states we want to retrieve.}
-\item{labels}{If true return action labels otherwise return action index.}}
-\examples{# Create the small machine repleacement problem used as an example in L.R.
+\usage{
+  getPolicy(mdp, sId = 1:mdp$states - 1, labels = FALSE)
+}
+\arguments{
+  \item{mdp}{The MDP loaded using \link{loadMDP}.}
+
+  \item{sId}{Vector of id's of the states we want to
+  retrieve.}
+
+  \item{labels}{If true return action labels otherwise
+  return action index.}
+}
+\value{
+  The policy (matrix (if \code{labels = FALSE}) otherwise
+  data frame).
+}
+\description{
+  Get parts of the optimal policy.
+}
+\examples{
+# Create the small machine repleacement problem used as an example in L.R.
 # Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
 # Markov decision process. European Journal of Operational Research,
 # 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
@@ -224,4 +237,9 @@ states<-stateIdxDf(prefix)              # information about the states
 policy<-merge(states,policy)            # merge the two data frames
 policyW<-getPolicyW(mdp, w)             # the optimal rewards of the policy
 policy<-merge(policy,policyW)           # add the rewards
-policy}
+policy
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+

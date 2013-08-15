@@ -1,13 +1,22 @@
 \name{getStrIdxS}
 \alias{getStrIdxS}
 \title{Return the index strings for states having id idS.}
-\usage{getStrIdxS(mdp, idS)}
-\description{Return the index strings for states having id idS.}
-\value{A vector of index for the states.}
-\author{Lars Relund \email{lars@relund.dk}}
-\arguments{\item{mdp}{The MDP loaded using \link{loadMDP}.}
-\item{idS}{A vector of state ids.}}
-\examples{# Create the small machine repleacement problem used as an example in L.R.
+\usage{
+  getStrIdxS(mdp, idS)
+}
+\arguments{
+  \item{mdp}{The MDP loaded using \link{loadMDP}.}
+
+  \item{idS}{A vector of state ids.}
+}
+\value{
+  A vector of index for the states.
+}
+\description{
+  Return the index strings for states having id idS.
+}
+\examples{
+# Create the small machine repleacement problem used as an example in L.R.
 # Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
 # Markov decision process. European Journal of Operational Research,
 # 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
@@ -223,4 +232,9 @@ states<-stateIdxDf(prefix)              # information about the states
 policy<-merge(states,policy)            # merge the two data frames
 policyW<-getPolicyW(mdp, w)             # the optimal rewards of the policy
 policy<-merge(policy,policyW)           # add the rewards
-policy}
+policy
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+

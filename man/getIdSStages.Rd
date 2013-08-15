@@ -1,13 +1,23 @@
 \name{getIdSStages}
 \alias{getIdSStages}
 \title{Return ids for states in a stage.}
-\usage{getIdSStages(mdp, stages)}
-\description{Return ids for states in a stage.}
-\value{A vector of ids for the states.}
-\author{Lars Relund \email{lars@relund.dk}}
-\arguments{\item{mdp}{The MDP loaded using \link{loadMDP}.}
-\item{stages}{A char vector of index in the form "n0,s0,a0,n1", i.e. 3*level+1 elements in the string.}}
-\examples{# Create the small machine repleacement problem used as an example in L.R.
+\usage{
+  getIdSStages(mdp, stages)
+}
+\arguments{
+  \item{mdp}{The MDP loaded using \link{loadMDP}.}
+
+  \item{stages}{A char vector of index in the form
+  "n0,s0,a0,n1", i.e. 3*level+1 elements in the string.}
+}
+\value{
+  A vector of ids for the states.
+}
+\description{
+  Return ids for states in a stage.
+}
+\examples{
+# Create the small machine repleacement problem used as an example in L.R.
 # Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
 # Markov decision process. European Journal of Operational Research,
 # 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
@@ -223,4 +233,9 @@ states<-stateIdxDf(prefix)              # information about the states
 policy<-merge(states,policy)            # merge the two data frames
 policyW<-getPolicyW(mdp, w)             # the optimal rewards of the policy
 policy<-merge(policy,policyW)           # add the rewards
-policy}
+policy
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+

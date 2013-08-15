@@ -1,15 +1,31 @@
 \name{stateIdxDf}
 \alias{stateIdxDf}
 \title{Info about the states in the HMDP model under consideration.}
-\usage{stateIdxDf(prefix="", file="stateIdx.bin", labels="stateIdxLbl.bin")}
-\description{Info about the states in the HMDP model under consideration.}
-\value{A data frame with the same columns as in
-\code{stateIdxMat} plus another column containing the labels.}
-\author{Lars Relund \email{lars@relund.dk}}
-\arguments{\item{prefix}{A character string with the prefix added to til file(s).}
-\item{file}{The HMDP binary file containing the description under consideration.}
-\item{labels}{The HMDP binary file containing the labels under consideration.}}
-\examples{wDir<-getwd()
+\usage{
+  stateIdxDf(prefix = "", file = "stateIdx.bin",
+    labels = "stateIdxLbl.bin")
+}
+\arguments{
+  \item{prefix}{A character string with the prefix added to
+  til file(s).}
+
+  \item{file}{The HMDP binary file containing the
+  description under consideration.}
+
+  \item{labels}{The HMDP binary file containing the labels
+  under consideration.}
+}
+\value{
+  A data frame with the same columns as in
+  \code{stateIdxMat} plus another column containing the
+  labels.
+}
+\description{
+  Info about the states in the HMDP model under
+  consideration.
+}
+\examples{
+wDir<-getwd()
 setwd(system.file("models", package = "MDP"))
 
 prefix<-"machine1_"
@@ -23,4 +39,9 @@ transProbMat(prefix)
 a<-actionInfo(prefix)
 a[order(a$sId),]
 
-setwd(wDir)}
+setwd(wDir)
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+

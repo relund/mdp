@@ -1,16 +1,28 @@
 \name{setActionWeight}
 \alias{setActionWeight}
 \title{Set the weight of an action.}
-\usage{setActionWeight(mdp, w, sId, iA, wLbl)}
-\description{Set the weight of an action.}
-\value{Nothing.}
-\author{Lars Relund \email{lars@relund.dk}}
-\arguments{\item{mdp}{The MDP loaded using \link{loadMDP}.}
-\item{w}{The weight.}
-\item{sId}{The state id of the state.}
-\item{iA}{The action index.}
-\item{wLbl}{The label of the weight we consider.}}
-\examples{# Create the small machine repleacement problem used as an example in L.R.
+\usage{
+  setActionWeight(mdp, w, sId, iA, wLbl)
+}
+\arguments{
+  \item{mdp}{The MDP loaded using \link{loadMDP}.}
+
+  \item{w}{The weight.}
+
+  \item{sId}{The state id of the state.}
+
+  \item{iA}{The action index.}
+
+  \item{wLbl}{The label of the weight we consider.}
+}
+\value{
+  Nothing.
+}
+\description{
+  Set the weight of an action.
+}
+\examples{
+# Create the small machine repleacement problem used as an example in L.R.
 # Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
 # Markov decision process. European Journal of Operational Research,
 # 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
@@ -226,4 +238,9 @@ states<-stateIdxDf(prefix)              # information about the states
 policy<-merge(states,policy)            # merge the two data frames
 policyW<-getPolicyW(mdp, w)             # the optimal rewards of the policy
 policy<-merge(policy,policyW)           # add the rewards
-policy}
+policy
+}
+\author{
+  Lars Relund \email{lars@relund.dk}
+}
+
