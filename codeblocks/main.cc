@@ -19,15 +19,20 @@ void ReadBin(string prefix);
 
 // Input for main function see error output in main
 int main(int argc, char **argv) {
-    string str,prefix = argv[1];
+    //string str,prefix = argv[1];
 
     //cout << "Before\n";
     //cin >> str;
 
-    ReadBin(prefix);
+    //ReadBin(prefix);
+
+    cout << "Test\n";
+    //HMDPWriter w;
+
 
     //cout << "After removing from memory\n";
     //cin >> str;
+    return 0;
 }
 
 //----------------------------------------------------------------------------

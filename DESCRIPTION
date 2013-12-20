@@ -12,12 +12,3 @@ Description: Using this package you can create and optimize MDPs with
     discrete time steps and state space. Both hierarchical and ordinary
     MDPs can be modelled.
 License: GPL (>= 2)
-Collate:
-    'binaryMDPWriter.R'
-    'convertBinary2HMP.R'
-    'convertHMP2Binary.R'
-    'hmpMDPWriter.R'
-    'infoMat.R'
-    'loadMDP.R'
-    'mdp-package.R'
-    'zzz.R'
