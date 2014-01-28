@@ -6,7 +6,7 @@
 //-----------------------------------------------------------------------------
 
 #ifdef CLOCK
-#include <time.h>           // For use of counting time (Windows)
+#include <ctime>           // For use of counting time (Windows)
 #else
 #include <sys/times.h>      // For use of counting time (Unix/Linux)
 #include <sys/types.h>
@@ -14,6 +14,7 @@
 #endif
 
 #include <iostream>
+using namespace std;
 //-----------------------------------------------------------------------------
 // Win:  CLOCKS_PER_SEC = 1000
 // Unix uni: CLOCKS_PER_SEC = 1000000

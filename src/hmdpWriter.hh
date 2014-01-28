@@ -1,7 +1,6 @@
 #ifndef HMDPWRITER_HPP
 #define HMDPWRITER_HPP
 
-
 //-----------------------------------------------------------------------------
 #include <stdlib.h>     // For use of exit command
 #include <stdio.h>      // For use of scanf and printf
@@ -10,7 +9,7 @@
 #include <string>
 #include <vector>
 #include "basicdt.hh"
-//#include "time.hh"
+#include "time.hh"
 using namespace std;
 
 // -----------------------------------------------------------------------------
@@ -112,7 +111,7 @@ public:
         wFixed=false;
         wLblLth=sTotal=aTotal=0;
         aCtr=-1;
-        //cpuTime.StartTime(0);
+        cpuTime.StartTime(0);
         pStateIdxFile = fopen(stateIdxFileN.c_str(), "wb");
         pStateIdxLblFile = fopen(stateIdxLblFileN.c_str(), "wb");
         pActionIdxFile = fopen(actionIdxFileN.c_str(), "wb");
@@ -120,7 +119,6 @@ public:
         pActionWFile = fopen(actionWFileN.c_str(), "wb");
         pActionWLblFile = fopen(actionWLblFileN.c_str(), "wb");
         pTransProbFile = fopen(transProbFileN.c_str(), "wb");
-        //cpuTime.StopTime(0);
     }
 
     ~HMDPWriter() {
@@ -131,18 +129,20 @@ public:
         fclose(pActionWFile);
         fclose(pActionWLblFile);
         fclose(pTransProbFile);
+        cpuTime.StopTime(0);
 
-		cout << "\n  Statistics:\n";
-		cout << "    states : " << sTotal << "\n";
-		cout << "    actions: " << aTotal << "\n";
-		cout << "    weights: " << wLblLth << "\n\n";
-		cout << "  Closing binary MDP writer.\n\n";
+		log << "\n  Statistics:\n";
+		log << "    states : " << sTotal << "\n";
+		log << "    actions: " << aTotal << "\n";
+		log << "    weights: " << wLblLth << "\n\n";
+		log << "  Closing binary MDP writer.\n";
+		log << "  Total time for writing to binary files: " << cpuTime.GetTotalTimeDiff(0) << "\n\n";
     }
 
     /** Add a weight name to the binary files.
      * \param label The label of the weight.
      */
-    void SetWeight(const string &label, ostringstream & log) {
+    void SetWeight(const string &label) {
         if (wFixed) {
             log << "Error: can not add weight label!\n";
             okay = false;
@@ -156,7 +156,7 @@ public:
     /** Add weight names to the binary files.
      * \param label The label of the weight.
      */
-    void SetWeights(const vector<string> &labels, ostringstream & log) {
+    void SetWeights(const vector<string> &labels) {
         if (wFixed) {
             log << "Error: can not add weight label!\n";
             okay = false;
@@ -294,7 +294,8 @@ private:
 	int aCtr; // current action at current state
 	int wLblLth;
 	bool wFixed; // TRUE if size of weights are fixed
-    //TimeMan cpuTime;
+	ostringstream log;
+    TimeMan cpuTime;
 };
 
 // -----------------------------------------------------------------------------
