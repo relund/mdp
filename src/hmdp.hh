@@ -4,7 +4,6 @@
 #include "hypergf.hh"
 #include "htacyclic.hh"
 #include "hmdpReader.hh"
-#include "hmdpWriter.hh"
 #include "matrix.hh"    // simple matrix class
 #include "matalg.hh"    // linear equations solver using lapack
 #include <vector>

@@ -44,13 +44,15 @@
 #' @param prefix A character string with the prefix added to \code{binNames}.
 #' @param binNames A character vector of length 5 giving the names of the binary
 #'     files storing the model.
+#' @param append Logical indicating whether should keep the currents actions (default - TRUE) 
+#' defined or delete them and start over (FALSE).
 #' @return A list of functions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @example tests/binaryMDPWriter.Rex
 #' @export
 binaryActionWriter<-function(prefix="", binNames=c("actionIdx.bin",
-	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"))
+	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"), append=TRUE)
 {
 	setWeights<-function(labels,...){
 		if (wFixed) stop("Weights already added!")
@@ -60,7 +62,7 @@ binaryActionWriter<-function(prefix="", binNames=c("actionIdx.bin",
 		invisible(NULL)
 	}
 
-	addAction<-function(label=NULL, sIdx, weights, prob, ...){     # prop is a matrix with columns (idS,prob)
+	addAction<-function(label=NULL, sIdx, weights, prob, ...){     # do not hold now: prop is a matrix with columns (idS,prob)
 # 		cat("action:\n")
 # 		print(weights)
 # 		print(prob)
@@ -68,9 +70,12 @@ binaryActionWriter<-function(prefix="", binNames=c("actionIdx.bin",
 		#cat(paste("a:(",paste(c(idx),collapse=","),")|",sep=""))
 		#cat(paste("a: sId=",sIdx[length(sIdx)],"|",sep=""))
 		aRowId<<- aRowId+1
-		writeBin(as.integer(c(sIdx,t(cbind(3,prob[,1])),-1)), fA)
+		scpIdx<-NULL
+		for (i in 0:(length(prob)/3-1)) scpIdx<-c(scpIdx,prob[1:2+3*i])
+		probs<-prob[1:(length(prob)/3)*3]    
+		writeBin(as.integer(c(sIdx,scpIdx,-1)), fA)
 		if (!is.null(label)) writeBin(c(as.character(aRowId),label), fALbl)   # aRowId added before label
-		writeBin(as.numeric(c(prob[,2],-1)), fTransP)
+		writeBin(as.numeric(c(probs,-1)), fTransP)
 		writeBin(as.numeric(weights), fACost)
 		#cat("end action\n")
 		invisible(NULL)
@@ -80,7 +85,6 @@ binaryActionWriter<-function(prefix="", binNames=c("actionIdx.bin",
     if (!wFixed) stop("Weights must be added using 'setWeights'!")
 		cat("\n  Statistics:\n")
 		cat("    actions:",aRowId+1,"\n")
-		cat("    weights:",wCtr,"\n\n")
 		cat("  Closing binary Action writer.\n\n")
 		close(fA)
 		close(fALbl)
@@ -89,16 +93,24 @@ binaryActionWriter<-function(prefix="", binNames=c("actionIdx.bin",
 		close(fTransP)
 		invisible(NULL)
 	}
-
+   
 	binNames<-paste(prefix,binNames,sep="")
-	fA <- file(binNames[1], "wb")
-	fALbl <- file(binNames[2], "wb")
-	fACost <- file(binNames[3], "wb")
-	fACostLbl <- file(binNames[4], "wb")
-	fTransP <- file(binNames[5], "wb")
-	wCtr<- 0    # number of weights in the model
-	aRowId<- -1    # current row/line of action in actionIdx file
-	wFixed<-FALSE  # TRUE if size of weights are fixed
+	if (append) {
+	   # find number of actions already written
+	   tmp<-readBin(binNames[1], integer(),n=file.info(binNames[1])$size/4)
+	   aRowId<-length(tmp[tmp==-1])-1 # current number of actions defined
+	   wFixed<-TRUE  # TRUE if size of weights are fixed
+	} else {
+	   aRowId<- -1    # current row/line of action in actionIdx file
+	   wCtr<- 0    # number of weights in the model
+	   wFixed<-FALSE  # TRUE if size of weights are fixed
+	}
+  mode <- ifelse(append,"ab","wb")
+	fA <- file(binNames[1], mode)
+	fALbl <- file(binNames[2], mode)
+	fACost <- file(binNames[3], mode)
+	fACostLbl <- file(binNames[4], mode)
+	fTransP <- file(binNames[5], mode)
 	v <- list(setWeights = setWeights, addAction = addAction, closeWriter = closeWriter)
 	class(v) <- c("binaryActionWriter")
 	return(v)
