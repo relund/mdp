@@ -566,15 +566,18 @@ getActionTransIdS<-function(mdp, idS, idxA) {
 #' @example tests/machine.Rex
 #' @export
 getActionTransPr<-function(mdp, idS, idxA) {
-	l<-info(mdp, idS[1])
-	l<-l[[1]]$actions[idxA+1]
-	l<-substring(l,regexpr("pr",l)+4)
-	l<-gsub(").*","",l)
-	zz<-textConnection(l)
-	l<-scan(zz, sep=",", quiet = TRUE)
-	close(zz)
-	return(l)
+  return(.Call("MDP_GetActionTransPr", mdp$ptr, as.integer(idS), as.integer(idxA), PACKAGE="MDP") )
 }
+# getActionTransPr<-function(mdp, idS, idxA) {
+# 	l<-info(mdp, idS[1])
+# 	l<-l[[1]]$actions[idxA+1]
+# 	l<-substring(l,regexpr("pr",l)+4)
+# 	l<-gsub(").*","",l)
+# 	zz<-textConnection(l)
+# 	l<-scan(zz, sep=",", quiet = TRUE)
+# 	close(zz)
+# 	return(l)
+# }
 
 
 #' Calculate the steady state transition probabilities for the founder process (level 0).

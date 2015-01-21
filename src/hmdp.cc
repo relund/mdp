@@ -139,35 +139,54 @@ void HMDP::AddState(const vector<idx> &iHMDP) {
 
 // ----------------------------------------------------------------------------
 
-string HMDP::StateActionsToHgf(idx iState, bool & findValidOdr) {
-	string sUp, sDown, sNext;
+string HMDP::StateActionsToHgf(const idx & iState, bool & findValidOdr) {
+	bool up, next;    // where do the actions go
 	ostringstream hgf;
 	hgf.setf(ios::fixed);
 	idx iS = 0;
+	int level = states[iState].GetLevel();
+	string stageNext = states[iState].NextStageStr();
+	string stageNextFather = states[iState].NextFatherStageStr();
+	string sStage;
+
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairUp;
-	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairDown;
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairNext;
 	multimap<string, int >::iterator ite;
 
-	sUp = states[iState].NextFatherStageStr();
-	pairUp = stages.equal_range(sUp);
-	sNext = states[iState].NextStageStr();
-	pairNext = stages.equal_range(sNext);
+    // check what scopes we have
+    up=next=false;
+    for (idx a=0; a<states[iState].tmpActions.size(); a++) {
+        for (idx j=0; j<states[iState].tmpActions[a].transPr.size(); j++) {
+            if (states[iState].tmpActions[a].scope[j]==0) up=true;
+            if (states[iState].tmpActions[a].scope[j]==1) next=true;
+        }
+    }
+    if (up)	pairUp = stages.equal_range(stageNextFather);
+    if (next) pairNext = stages.equal_range(stageNext);
 	//cout << endl << sUp << " - " <<sNext << endl;
 	/*for (ite = pairUp.first; ite != pairUp.second; ++ite)
 	{
 	   cout << "  [" << (*ite).first << ", " << (*ite).second << "]" << endl;
 	}*/
-
+    //log << "level: " << level << " levels:" << levels << " - ";
 	for (idx a=0; a<states[iState].tmpActions.size(); a++) {
 		hgf << iState+1 << " "; // add one since hgf start from node 1
-		sDown = states[iState].NextChildStageStr(a);
-		pairDown = stages.equal_range(sDown);
 		for (idx j=0; j<states[iState].tmpActions[a].transPr.size(); j++) {
+            //log << "scp: " << states[iState].tmpActions[a].scope[j] << " - ";
 			if (states[iState].tmpActions[a].scope[j]==1) { // next stage
-				ite = pairNext.first;
-				for (idx i=0; i<states[iState].tmpActions[a].idxStates[j]; i++) ++ite;
-				iS = ite->second;
+				if (level==levels-1) {    // check if at lowest level -> states at a stage are defined in sequence. TODO: This may be dangerous does it always hold!!
+                    //log << "Use new implementation!\n";
+                    iS = pairNext.first->second + states[iState].tmpActions[a].idxStates[j];
+				}
+				else {
+                    ite = pairNext.first;
+                    for (idx i=0; i<states[iState].tmpActions[a].idxStates[j]; i++) ++ite;      // TODO This is very slow for stages with many states!! e.g. a ordinary big MDP. Current hack define your MDP using scope 3
+                    iS = ite->second;
+				}
+				// old implementation:
+				/*ite = pairNext.first;
+				for (idx i=0; i<states[iState].tmpActions[a].idxStates[j]; i++) ++ite;      // TODO This is very slow for stages with many states!! e.g. a ordinary big MDP. Current hack define your MDP using scope 3
+				iS = ite->second;*/
 			}
 			if (states[iState].tmpActions[a].scope[j]==0) { // next father stage
 				ite = pairUp.first;
@@ -176,9 +195,19 @@ string HMDP::StateActionsToHgf(idx iState, bool & findValidOdr) {
 				//cout << "iS: "<< iS << endl;
 			}
 			if (states[iState].tmpActions[a].scope[j]==2) { // next child stage
-				ite = pairDown.first;
+                sStage = states[iState].NextChildStageStr(a);
+                pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairDown = stages.equal_range(sStage);
+                if (level+1==levels-1) { // check if child stage at lowest level -> states at a stage are defined in sequence.
+                    iS = pairDown.first->second + states[iState].tmpActions[a].idxStates[j];
+                } else {
+                    ite = pairDown.first;
+                    for (idx i=0; i<states[iState].tmpActions[a].idxStates[j]; i++) ++ite;      // TODO This is very slow for stages with many states!! e.g. a ordinary big MDP. Current hack define your MDP using scope 3
+                    iS = ite->second;
+				}
+                // old implementation:
+				/*ite = pairDown.first;
 				for (idx i=0; i<states[iState].tmpActions[a].idxStates[j]; i++) ++ite;
-				iS = ite->second;
+				iS = ite->second;*/
 			}
 			if (states[iState].tmpActions[a].scope[j]==3) { // specify state index/id
 				iS = states[iState].tmpActions[a].idxStates[j];
@@ -191,7 +220,7 @@ string HMDP::StateActionsToHgf(idx iState, bool & findValidOdr) {
 			hgf << states[iState].tmpActions[a].weights[w] << " ";
 		}
 		for (idx j=0; j<states[iState].tmpActions[a].transPr.size(); j++) {
-			hgf << (int)(states[iState].tmpActions[a].transPr[j]*10000000) << " ";
+			hgf << (int)(states[iState].tmpActions[a].transPr[j]*2147483647) << " ";    // use the limit of an int
 		}
 		hgf << endl;
 	}
@@ -336,18 +365,26 @@ void HMDP::BuildHMDP() {
 	NodePtr pNode;
 	bool findValidOdr = false;
 
-    cpuTime.Reset(0);
+    cpuTime.Reset();
 	cpuTime.StartTime(0);
 	CalcHgfSizes(n, ma, mh, d, hsize, sizeW, sizeWTmp, sizePred, sizeMult);
 	H.Initialize(n, ma, mh, d, hsize, sizeW, sizeWTmp, sizePred, sizeMult);     // Allocate mem for the hgf
+	cout << "Allocated memory to H " << cpuTime.GetLocalTimeDiff(0) << endl;
 	for (idx i=0; i<states.size(); i++) {   // add hyperarcs to tmp hgf memory
-		str = StateActionsToHgf(i,findValidOdr);
-		//log << str << endl;
+		cpuTime.StartTime(1);
+		str = StateActionsToHgf(i,findValidOdr);    // seems to be the time consuming one
+		cpuTime.StopTime(1);
+		//DBG4("s:" << i << " " << str << endl)
+		cpuTime.StartTime(2);
 		H.AddHyperarcs(str);
+		cpuTime.StopTime(2);
 	}
-	//log << "Cpu time loading MDP into tmp hgf arrays " << cpuTime.GetLocalTimeDiff(0) << endl;
+	cout << "Cpu time str " << cpuTime.GetTotalTimeDiff(1) << endl;
+	cout << "Cpu time add HArc str " << cpuTime.GetTotalTimeDiff(2) << endl;
+	cout << "Cpu time loading MDP into tmp hgf arrays " << cpuTime.GetLocalTimeDiff(0) << endl;
 	H.BuildHgf();   // create the hypergraph
 	//log << "Cpu time after building hgf " << cpuTime.GetLocalTimeDiff(0) << endl;
+	cout << "Cpu time after building hgf " << cpuTime.GetLocalTimeDiff(0) << endl;
 
 	// TODO LRE Virker dette ikke kun hvis alle states har en label!!
 	for (idx i=0; i<states.size(); i++) {   // set pointers to labels
@@ -365,6 +402,7 @@ void HMDP::BuildHMDP() {
 		}
 	}
 	//log << "Cpu time after setting label pointers " << cpuTime.GetLocalTimeDiff(0) << endl;
+	cout << "Cpu time after setting label pointers " << cpuTime.GetLocalTimeDiff(0) << endl;
 
 	idxPred = idxMult = 0;  // consider first pred and multipliers
 	if (!findValidOdr) HT.SetValidOdrToReverseNodeOdr(H);
@@ -381,6 +419,7 @@ void HMDP::BuildHMDP() {
 		HT.FindValidOdr(H,nodes);
 	}
 	//log << "Cpu time after finding valid odr " << cpuTime.GetLocalTimeDiff(0) << endl;
+	cout << "Cpu time after finding valid odr " << cpuTime.GetLocalTimeDiff(0) << endl;
 
 	//cout<<"Before remove actions";
 	//cin >> str;
@@ -390,6 +429,7 @@ void HMDP::BuildHMDP() {
 	}
 
     //log << "Cpu time after removing actions " << cpuTime.GetLocalTimeDiff(0) << endl;
+    cout << "Cpu time after removing actions " << cpuTime.GetLocalTimeDiff(0) << endl;
 	log << "Cpu time for building state-expanded hypergraph " << cpuTime.StopAndGetTotalTimeDiff(0) << " sec." << endl;
 }
 

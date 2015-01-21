@@ -658,6 +658,27 @@ SEXP MDP_GetActionInfo(SEXP ptr, SEXP idS)
 	return a;
 }
 
+/** Return a vector with transition pr
+ \param idS The state id.
+ \param idxA The action index.
+ */
+SEXP MDP_GetActionTransPr(SEXP ptr, SEXP idS, SEXP idxA)
+{
+  CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	idx iS = INTEGER_POINTER(idS)[0];
+  idx iA = INTEGER_POINTER(idxA)[0];
+  vector<flt> v = p->GetActionTransPr(iS,iA);
+  SEXP pr;
+	PROTECT(pr = NEW_NUMERIC(v.size()));
+	double * prPtr = NUMERIC_POINTER(pr);
+	for (idx i=0; i < (idx)v.size(); ++i)
+		prPtr[i] = v[i];
+	UNPROTECT(1);
+	return pr;
+}
+
 /** Return the steady state probabilities.
  \param idS The state id.
  */

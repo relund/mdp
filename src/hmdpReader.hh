@@ -78,13 +78,13 @@ public:
     {
         okay = true;
         this->pHMDP = pHMDP;
-        //cpuTime.StartTime(0);
+        cpuTime.StartTime(0);
         AddStates(stateIdxFile, stateIdxLblFile, log);
         AddActions(actionIdxFile, actionIdxLblFile, actionWFile, actionWLblFile,
             transProbFile, log);
         Compile();
-        //cpuTime.StopTime(0);
-        //cout << "Cpu for reading the binary files: " << cpuTime.TimeDiff(0) << endl;
+        cpuTime.StopTime(0);
+        cout << "Cpu for reading the binary files: " << cpuTime.GetTotalTimeDiff(0) << endl;
     }
 
     ~HMDPReader() {}
@@ -121,7 +121,7 @@ public:
     bool okay;            ///< True if reading was okay.
 private:
     HMDP * pHMDP;         ///< Pointer to the HMDP.
-    //TimeMan cpuTime;
+    TimeMan cpuTime;
 
 };
 

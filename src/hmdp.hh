@@ -6,6 +6,7 @@
 #include "hmdpReader.hh"
 #include "matrix.hh"    // simple matrix class
 #include "matalg.hh"    // linear equations solver using lapack
+#include "debug.h"
 #include <vector>
 #include <deque>
 #include <string>
@@ -270,6 +271,11 @@ private:
     /** Stage label of next father stage, e.g. if state is "0,1,0,1,1" then return "0". */
     string NextFatherStageStr();
 
+    /** Return which level the state is on (starting from zero). */
+    int GetLevel() {
+        return (idxHMDP.size()-2)/3;
+    }
+
 public:
     string label;                   ///< State label.
     vector<idx> idxHMDP;            ///< Index of the state in the HMDP tree. Always of size 2+3*level.
@@ -297,7 +303,7 @@ public:
      */
     HMDP(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
         string actionIdxLblFile, string actionWFile,  string actionWLblFile,
-        string transProbFile)
+        string transProbFile): cpuTime(4)
     {
         okay = true;
         HMDPReader reader(stateIdxFile, stateIdxLblFile, actionIdxFile,
@@ -420,6 +426,20 @@ public:
         str = "trans=" + vec2String<idx>(tails) + " pr=" + vec2String<flt>(pr) + " w=" + vec2String<flt>(w) + " (" + label + ")";
         return str;
     }
+    
+    
+    /** Get all information about an action.
+     * \param iS The index of the state we consider in \code states.
+     * \param iA The index of the action we consider.
+     */
+    vector<flt> GetActionTransPr(idx iS, idx iA) {
+        vector<flt> v;
+        int idxHArc = FindAction(iS,iA);
+        if (idxHArc==0) return v;
+        vector<flt> pr = H.GetHArcM(idxHArc,idxMult);
+        return pr;
+    }
+    
 
     /** Get the state-expanded hypergraph in matrix format. */
     MatSimple<int> HgfMatrix() {
@@ -882,7 +902,7 @@ public:
     }
 
     /** Return actions for the specific state in hypergraph 'f 6' format. */
-    string StateActionsToHgf(idx iState, bool & findValidOdr);
+    string StateActionsToHgf(const idx & iState, bool & findValidOdr);
 
 private:
 // ----------------------------------------------------------------------------

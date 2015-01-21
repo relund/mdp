@@ -240,3 +240,4 @@ info<-function(mdp, idS=NULL, idxS=NULL, idxN=NULL) {
 	}
 	return(l)
 }
+

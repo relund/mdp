@@ -21,7 +21,7 @@ void ReadBin(string prefix);
 int main(int argc, char **argv) {
     //string str,prefix = argv[1];
 
-    //cout << "Before\n";
+    cout << "Before\n";
     //cin >> str;
 
     //ReadBin(prefix);

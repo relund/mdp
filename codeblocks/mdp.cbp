@@ -34,8 +34,6 @@
 		<Unit filename="../src/hmdp.hh" />
 		<Unit filename="../src/hmdpReader.cc" />
 		<Unit filename="../src/hmdpReader.hh" />
-		<Unit filename="../src/hmdpWriter.cc" />
-		<Unit filename="../src/hmdpWriter.hh" />
 		<Unit filename="../src/htacyclic.cc" />
 		<Unit filename="../src/htacyclic.hh" />
 		<Unit filename="../src/hypergf.cc" />

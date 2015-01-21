@@ -451,7 +451,7 @@ void HTAcyclic::FindValidOdr(Hypergraph& H, vector<idx> & nodes)
 			}
 		}
 	}
-	PrintValidOdr();
+	//PrintValidOdr();
 }
 
 //-----------------------------------------------------------------------------

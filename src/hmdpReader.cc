@@ -107,7 +107,7 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	idx tPrSize = ReadBinary(transProbFile,tPr,log);
 	// note that all arrays (except the label arrays) have the same number of rows (same number of -1's).
     if ( (aIdxSize==0) | (lblSize==0) | (aWSize==0) | (wLblSize==0) | (tPrSize==0) ) {okay = false; return;}
-	// add wight labels to HMDP
+	// add weight labels to HMDP
 	ptr = wLbl;
 	for (int i=0;;++i) {
 		labels.push_back(ptr);
