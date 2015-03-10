@@ -1,6 +1,6 @@
 Package: MDP
 Type: Package
-Title: Markov Decision Processes (MDPs) in RR
+Title: Markov Decision Processes (MDPs) in R
 Version: 1.1
 Date: 2013-08-15
 Author: Lars Relund Nielsen
