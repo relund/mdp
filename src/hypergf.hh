@@ -428,7 +428,7 @@ public:
     uInt         size;           // size (hsize+(2*ma))
 
     uInt sizeW;       ///< Size of weight vector in nodes and (hyper)arcs.
-    uSInt sizeWTmp;   ///< Size of temponary weight vector.
+    uSInt sizeWTmp;   ///< Size of temporary weight vector.
     uSInt sizePred;   ///< Size of predecessor vector.
     uInt sizeMult;    ///< Number of multipliers in each tail.
 

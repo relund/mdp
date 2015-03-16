@@ -6,14 +6,14 @@
 subfunctions which can be used to define an HMDP model saved in a set of binary
 files.}
 \usage{
-binaryMDPWriter(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
-   "actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"))
+binaryMDPWriter(prefix = "", binNames = c("stateIdx.bin", "stateIdxLbl.bin",
+  "actionIdx.bin", "actionIdxLbl.bin", "actionWeight.bin",
+  "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin"))
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to \code{binNames}.}
 
-\item{binNames}{A character vector of length 7 giving the names of the binary
-files storing the model.}
+\item{binNames}{A character vector giving the names of the binary files storing the model.}
 }
 \value{
 A list of functions.
@@ -65,10 +65,12 @@ Note no delimiter is used.}
 "c1 c2 c3 c1 c2 c3 ..." assuming three weights for each action.}
 \item{actionWeightLbl.bin: }{File of characters containing the labels of the
 weights in the format "lable1 label2 label3" assuming three weights for each action. }
-\item{transProb.bin: }{File of doubles containing the probabilities of the transitions
-defined in actions in actionIdx.bin. The format is
-"p1 p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -1 is
-used to indicate that a new action is considered (new line).}}
+\item{transProb.bin: }{File of doubles containing the probabilities of the transitions defined in
+actions in actionIdx.bin. The format is "p1 p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -1 is used to
+indicate that a new action is considered (new line).} \item{externalProcesses.bin: }{File of
+characters containing links to the external processes. The format is "n0 s0 prefix -1 n0 s0 a0 n1
+s1 prefix -1 ...". Here -1 is used to indicate that a new external process is considered for the
+stage defined by the indexes.}}
 }
 \note{
 Note all indexes are starting from zero (C/C++ style).

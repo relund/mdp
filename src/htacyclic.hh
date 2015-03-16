@@ -10,6 +10,8 @@
 #include "hypergf.hh"
 using namespace std;
 
+class HMDP;   // forward declaration
+
 /** The index of the Arc with a negative sign so can be stored as a
  * predecessor in a Node.
  * \param pA Pointer to the Arc in the hypergraph.
@@ -115,12 +117,13 @@ public:
      * \param idxPred The predecessor index to be used to store the hypertree.
      * \param idxMult The index of the multipliers to use.
      * \param g The average gain.
+     * \param pHMDP Pointer to the HMDP object.
      * \return True if a new hypertree found compared to the old one stored in
      * idxPred. Remember to reset the predecessors if no old hypertree before
      * running this method.
      */
     bool CalcHTacyclicAve(Hypergraph& H, idx idxW, idx idxD, idx idxPred,
-        idx idxMult, flt g);
+        idx idxMult, flt g, HMDP *pHMDP);
 
 
     /** Calculate rentention payoff (RPO) for a specific predecessor.

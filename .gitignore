@@ -4,3 +4,8 @@
 src/*.o
 src/*.so
 src/*.dll
+*.bin
+*.log
+*cache/*
+*concordance.tex
+Sweavel.sty

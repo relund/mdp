@@ -74,7 +74,7 @@ public:
      */
     HMDPReader(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
         string actionIdxLblFile, string actionWFile, string actionWLblFile,
-        string transProbFile, HMDP *pHMDP, ostringstream & log)
+        string transProbFile, string externalFile, HMDP *pHMDP, ostringstream & log)
     {
         okay = true;
         this->pHMDP = pHMDP;
@@ -82,6 +82,7 @@ public:
         AddStates(stateIdxFile, stateIdxLblFile, log);
         AddActions(actionIdxFile, actionIdxLblFile, actionWFile, actionWLblFile,
             transProbFile, log);
+        AddExternal(externalFile, log);
         Compile();
         cpuTime.StopTime(0);
         cout << "Cpu for reading the binary files: " << cpuTime.GetTotalTimeDiff(0) << endl;
@@ -92,7 +93,7 @@ public:
 private:
 
     /** Read a binary file of T's into an array of T's.
-        T could for insteance be a float.
+        T could for instance be a float.
      * \return The size of the array p.
      */
     template <class T>
@@ -112,6 +113,12 @@ private:
      */
     void AddActions(string actionIdxFile, string actionIdxLblFile,
         string actionWFile, string actionWLblFile, string transProbFile, ostringstream & log);
+
+    /** Add the external processes to the HMDP.
+     * Store stage idx and prefix in a map
+     * \param externalFile Filename of the external processes file.
+     */
+    void AddExternal(string externalFile, ostringstream & log);
 
     /** Add dummy states at founder level if infinite time-horizon HMDP.
      */

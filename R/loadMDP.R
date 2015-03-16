@@ -14,7 +14,7 @@
 #' @example tests/machine.Rex
 #' @export
 loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
-	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
+	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"),
 	eps = 0.00001, check = TRUE)
 {
 	binNames<-paste(prefix,binNames,sep="")

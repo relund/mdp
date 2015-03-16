@@ -812,7 +812,7 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 	firstRun = true;
 	do {
 		k++;
-		newPred = HT.CalcHTacyclicAve(H,idxW,idxD,idxPred,idxMult,g);
+		newPred = HT.CalcHTacyclicAve(H,idxW,idxD,idxPred,idxMult,g, this);
 		if (!firstRun & !newPred) {
 			log << k <<  " (" << g << ") ";
 			break;    // optimal strategy found

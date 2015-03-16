@@ -4,7 +4,7 @@
 
 
 bool HTAcyclic::CalcHTacyclicAve(Hypergraph& H, idx idxW, idx idxD, idx idxPred,
-		idx idxMult, flt g) {
+		idx idxMult, flt g, HMDP *pHMDP) {
 	NodePtr pHnode;  // pointer to last node
 	TailPtr pTailNow,pTailLast;
 	ArcPtr pArcNow,     // pointer to the arc to examine

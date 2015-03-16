@@ -49,7 +49,8 @@ SEXP MDP_NewHMDP(SEXP binNames, SEXP fun)
 		(string)CHAR(STRING_ELT(binNames, 3)),
 		(string)CHAR(STRING_ELT(binNames, 4)),
 		(string)CHAR(STRING_ELT(binNames, 5)),
-		(string)CHAR(STRING_ELT(binNames, 6)));
+		(string)CHAR(STRING_ELT(binNames, 6)),
+        (string)CHAR(STRING_ELT(binNames, 7)));
 	if (p == NULL)
 		return R_NilValue;
 	else {

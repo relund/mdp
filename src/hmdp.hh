@@ -281,7 +281,7 @@ public:
     vector<idx> idxHMDP;            ///< Index of the state in the HMDP tree. Always of size 2+3*level.
     vector<string> actionLabels;    ///< Vector of action labels. The size will be equal the number of actions, i.e. store also empty labels because then the action number can be identified.
 private:
-    vector<HMDPAction> tmpActions;  ///< Tempoary actions need to build the hypergraph. Removed after the hypergraph built.
+    vector<HMDPAction> tmpActions;  ///< Temporary actions need to build the hypergraph. Removed after the hypergraph built.
 };
 
 //-----------------------------------------------------------------------------
@@ -303,16 +303,18 @@ public:
      */
     HMDP(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
         string actionIdxLblFile, string actionWFile,  string actionWLblFile,
-        string transProbFile): cpuTime(4)
+        string transProbFile, string externalFile): cpuTime(4)
     {
         okay = true;
         HMDPReader reader(stateIdxFile, stateIdxLblFile, actionIdxFile,
-            actionIdxLblFile, actionWFile, actionWLblFile, transProbFile, this, log);
+            actionIdxLblFile, actionWFile, actionWLblFile, transProbFile, externalFile, this, log);
         if (!reader.okay) okay = false;
+        AddExternalPrefix();
     }
 
     /** Create a HMDP with no actions and states.*/
     HMDP(){okay = true;};
+
 
     /** Deconstructor */
     ~HMDP() {
@@ -321,6 +323,7 @@ public:
         weightNames.clear();
         stages.clear();
     }
+
 
     /** Create a HMDP with no actions and states.
      * \param levels Number of levels in the HMDP.
@@ -331,12 +334,27 @@ public:
      */
     HMDP(uInt levels, uInt timeHorizon, flt rate, flt rateBase);
 
+
     /** Create a HMDP with no actions and states.
      * \param levels Number of levels in the HMDP.
      * \param timeHorizon The time-horizon. If infinite use INFINT here.
      * \note Levels are numbered from zero, i.e. we have level <tt>0, ..., levels-1</tt>.
      */
     HMDP(uInt levels, uInt timeHorizon);
+
+
+    /** Given a set of external process states from the first stage (stored in external),
+     * add the prefix of each external process to the states/nodes as its label.
+     */
+    void AddExternalPrefix() {
+        vector<idx> id;
+        map<string,string>::iterator it;
+        for (it=external.begin(); it!=external.end(); ++it) {
+            id = GetIdSStage(it->first);
+            for (idx j=0; j<id.size(); ++j) states[ id[j] ].label = it->second;
+        }
+    }
+
 
     /** Add a state with no actions defined yet.
      * \param iHMDP The index vector of the HMDP state. Always of size
@@ -426,8 +444,8 @@ public:
         str = "trans=" + vec2String<idx>(tails) + " pr=" + vec2String<flt>(pr) + " w=" + vec2String<flt>(w) + " (" + label + ")";
         return str;
     }
-    
-    
+
+
     /** Get all information about an action.
      * \param iS The index of the state we consider in \code states.
      * \param iA The index of the action we consider.
@@ -439,7 +457,7 @@ public:
         vector<flt> pr = H.GetHArcM(idxHArc,idxMult);
         return pr;
     }
-    
+
 
     /** Get the state-expanded hypergraph in matrix format. */
     MatSimple<int> HgfMatrix() {
@@ -1000,6 +1018,8 @@ public:
     //flt rateBase;                   ///< The time-horizon the rate is valid over. That is, the discout rate for duration $d$ is $\exp(-rate/rateBase*d)$.
     multimap<string, int> stages;   ///< Multimap to quickly find the different stages.
     bool okay;                      ///< True if reading was okay.
+    //bool external;                  ///< True if the HMDP use external processes
+    map<string, string> external;   ///< Store the external processes in format <stageIdx, prefix>
 private:
 
     Hypergraph H;                   ///< Hypergraph representation.

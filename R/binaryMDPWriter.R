@@ -47,24 +47,22 @@
 #' "c1 c2 c3 c1 c2 c3 ..." assuming three weights for each action.}
 #' \item{actionWeightLbl.bin: }{File of characters containing the labels of the
 #' weights in the format "lable1 label2 label3" assuming three weights for each action. }
-#' \item{transProb.bin: }{File of doubles containing the probabilities of the transitions
-#' defined in actions in actionIdx.bin. The format is
-#' "p1 p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -1 is
-#' used to indicate that a new action is considered (new line).}}
-#'
-#' @usage binaryMDPWriter(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
-#'    "actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"))
+#' \item{transProb.bin: }{File of doubles containing the probabilities of the transitions defined in
+#' actions in actionIdx.bin. The format is "p1 p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -1 is used to
+#' indicate that a new action is considered (new line).} \item{externalProcesses.bin: }{File of
+#' characters containing links to the external processes. The format is "n0 s0 prefix -1 n0 s0 a0 n1
+#' s1 prefix -1 ...". Here -1 is used to indicate that a new external process is considered for the
+#' stage defined by the indexes.}}
 #'
 #' @param prefix A character string with the prefix added to \code{binNames}.
-#' @param binNames A character vector of length 7 giving the names of the binary
-#'     files storing the model.
+#' @param binNames A character vector giving the names of the binary files storing the model.
 #' @return A list of functions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @example tests/binaryMDPWriter.Rex
 #' @export
 binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
-	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"))
+	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"))
 {
 	setWeights<-function(labels,...){
 		if (wFixed) stop("Weights already added!")
@@ -160,6 +158,51 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		invisible(NULL)
 	}
 
+   includeProcess<-function(prefix, label, weights, prob){     # prop contain tripeles (scope,idx,prob) - Here all scope must be 2!!
+      #cat("action:\n")
+      #print(weights)
+      #print(prob)
+      #if (is.null(label) | label=="") stop("label = null");
+      #if (length(weights)!=wCtr) stop("Weight length must be ",wCtr,"!")
+      aCtr<<-aCtr+1
+      idx<<-c(idx,aCtr)   # add action idx
+      #cat(paste("a:(",paste(c(idx),collapse=","),")|",sep=""))
+      #cat(paste("a: sId=",sIdx[length(sIdx)],"|",sep=""))
+      scpIdx<-NULL
+      aRowId<<- aRowId+1
+      for (i in 0:(length(prob)/3-1)) scpIdx<-c(scpIdx,prob[1:2+3*i])
+      probs<-prob[1:(length(prob)/3)*3]
+      #        if (any(scpIdx<0) | any(probs<0)) {
+      #            print(label)
+      #            print(prob)
+      #            print(scpIdx)
+      #            print(probs)
+      #            stop()
+      #        }
+      writeBin(as.integer(c(sIdx[length(sIdx)],scpIdx,-1)), fA)
+      if (!is.null(label)) writeBin(c(as.character(aRowId),label), fALbl)   # aRowId added before label
+      writeBin(as.numeric(c(probs,-1)), fTransP)
+      writeBin(as.numeric(weights), fACost)
+      #cat("end action\n")
+      writeBin(c(as.character(idx[1:(length(idx)-1)]), prefix, -1), fExt)  # store the external process' name
+      maxId<-max(scpIdx[2*(1:(length(scpIdx)/2))])  # number of states to create at the first stage of the child
+      process()  # start external subprocess
+        stage()  # first stage of the external process
+        for (i in 0:maxId) {  # create the states in the first stage (with no actions)
+           state(end=TRUE)
+        }
+        endStage()
+        # now the user has to include the last stage using the normal syntax
+      invisible(NULL)
+   }
+
+   endIncludeProcess<-function() {
+      endProcess()   # end external subprocess
+      idx<<-idx[1:(length(idx)-1)]    # remove action index
+      #cat(paste("-a:(",paste(c(idx),collapse=","),")|",sep=""))
+      invisible(NULL)
+   }
+
 	closeWriter<-function(){
 		cat("\n  Statistics:\n")
 		cat("    states :",sRowId+1,"\n")
@@ -173,6 +216,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		close(fACost)
 		close(fACostLbl)
 		close(fTransP)
+		close(fExt)
 		invisible(NULL)
 	}
 
@@ -184,6 +228,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 	fACost <- file(binNames[5], "wb")
 	fACostLbl <- file(binNames[6], "wb")
 	fTransP <- file(binNames[7], "wb")
+   fExt <- file(binNames[8], "wb")
 	idx<-NULL  # containing the stage, state or action idx's
 	sIdx<-NULL # containing the state row id's (used to find the state id the action is defined under)
 	dCtr<- -1   # current stage at current level
@@ -194,7 +239,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 	aRowId<- -1    # current row/line of action in actionIdx file
 	wFixed<-FALSE  # TRUE if size of weights are fixed
 	v <- list(setWeights = setWeights, stage = stage, endStage = endStage, state = state, endState = endState,
-		action = action, endAction = endAction, process = process, endProcess = endProcess,
+		action = action, endAction = endAction, includeProcess = includeProcess, endIncludeProcess = endIncludeProcess, process = process, endProcess = endProcess,
 		closeWriter = closeWriter)
 	class(v) <- c("binaryMDPWriter")
 	return(v)
