@@ -344,14 +344,18 @@ public:
 
 
     /** Given a set of external process states from the first stage (stored in external),
-     * add the prefix of each external process to the states/nodes as its label.
+     * add the stage label of each external process to the states/nodes as its label.
      */
     void AddExternalPrefix() {
+        cout << "Add labels!!\n";
         vector<idx> id;
         map<string,string>::iterator it;
         for (it=external.begin(); it!=external.end(); ++it) {
             id = GetIdSStage(it->first);
-            for (idx j=0; j<id.size(); ++j) states[ id[j] ].label = it->second;
+            for (idx j=0; j<id.size(); ++j) {
+                cout << "Node:" << id[j] << " lbl:" << it->first << endl;
+                states[ id[j] ].label = it->first;
+            }
         }
     }
 

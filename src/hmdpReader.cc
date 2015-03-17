@@ -234,8 +234,8 @@ void HMDPReader::AddExternal(string externalFile, ostringstream & log) {
         //cout << "idxStr" << idxStr << endl;
     }
   // showing contents:
-  //std::map<string,string>::iterator it;
-  //std::cout << "mymap contains:\n";
-  //for (it=pHMDP->external.begin(); it!=pHMDP->external.end(); ++it)
-    //std::cout << it->first << " => " << it->second << '\n';
+  std::map<string,string>::iterator it;
+  std::cout << "mymap contains:\n";
+  for (it=pHMDP->external.begin(); it!=pHMDP->external.end(); ++it)
+    std::cout << it->first << " => " << it->second << '\n';
 }
