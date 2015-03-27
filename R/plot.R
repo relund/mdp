@@ -45,7 +45,7 @@ plotHypergraph<-function(gridDim,states=NULL,actions=NULL,showGrid=FALSE,fileN=N
                                               arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol="gray")
          pt<-splitarrow(from = pos[gMap(tails), ], to = pos[gMap(actions[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=actions$lwd[i], lty=actions$lty[i], 
                         arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol=actions$col[i])
-         textempty(pt,lab=actions$label[i],cex=0.3,adj=c(-1.1,1.1))
+         textempty(pt,lab=actions$label[i],cex=0.5,adj=c(-0.1,0.1))
       }
    }	
    

@@ -10,8 +10,6 @@
 #include "hypergf.hh"
 using namespace std;
 
-class HMDP;   // forward declaration
-
 /** The index of the Arc with a negative sign so can be stored as a
  * predecessor in a Node.
  * \param pA Pointer to the Arc in the hypergraph.
@@ -54,6 +52,8 @@ struct CompareNodes
  * hypergraph is given.
  */
 class HTAcyclic {
+    friend class HMDP;
+
 public:
 
     /** Constructor. */
@@ -103,27 +103,6 @@ public:
      */
     bool CalcHTacyclic(Hypergraph& H, idx idxW, idx idxPred, idx idxMult,
         idx idxDur, flt rate, flt rateBase);
-
-    /** Calkulates the longest hypertree for all the nodes in the hypergraph
-     * based on average reward update equations.
-     * \pre Assume that the hypergraph is acyclic and that a valid ordering of
-     * the hypergraph is stored in validOdr. Moreover, weights in nodes with
-     * backward size 0 must have been set.
-     * \post The hypertree is defined pred[idxPred] and weights w[idxW] are
-     * calculated in each node.
-     * \param H The acyclic hypergraph.
-     * \param idxW The weight index used as nominator.
-     * \param idxD The denominator we want to maximize the weight over.
-     * \param idxPred The predecessor index to be used to store the hypertree.
-     * \param idxMult The index of the multipliers to use.
-     * \param g The average gain.
-     * \param pHMDP Pointer to the HMDP object.
-     * \return True if a new hypertree found compared to the old one stored in
-     * idxPred. Remember to reset the predecessors if no old hypertree before
-     * running this method.
-     */
-    bool CalcHTacyclicAve(Hypergraph& H, idx idxW, idx idxD, idx idxPred,
-        idx idxMult, flt g, HMDP *pHMDP);
 
 
     /** Calculate rentention payoff (RPO) for a specific predecessor.

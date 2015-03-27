@@ -543,8 +543,8 @@ void Hypergraph::PrintHArc(idx i)
 	cout << itsHArcs[i].pHead-itsNodes << " <- {";
 	for(pTailIndex=itsHArcs[i].pTail,pLast=itsHArcs[i+1].pTail;
 		pTailIndex!=pLast-1;pTailIndex++)
-		cout << pTailIndex->pTail-itsNodes << ",";
-	cout << pTailIndex->pTail-itsNodes;
+		cout << pTailIndex->pTail-itsNodes << " (" << pTailIndex->m[0] << "),";
+	cout << pTailIndex->pTail-itsNodes << " (" << pTailIndex->m[0] << ")";
 	cout << "} w = {";
 	for (idx j=0; j<(idx)sizeW-1; ++j) cout << itsHArcs[i].w[j] << ",";
 	cout << itsHArcs[i].w[sizeW-1] << "} label=" << *(itsHArcs[i].pLabel) << "\n";

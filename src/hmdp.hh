@@ -7,12 +7,15 @@
 #include "matrix.hh"    // simple matrix class
 #include "matalg.hh"    // linear equations solver using lapack
 #include "debug.h"
+#include "timer.hpp"
 #include <vector>
 #include <deque>
 #include <string>
 #include <map>
 #include <cmath>
 using namespace std;
+
+typedef class HMDP* HMDPPtr;
 
 //-----------------------------------------------------------------------------
 
@@ -305,11 +308,46 @@ public:
         string actionIdxLblFile, string actionWFile,  string actionWLblFile,
         string transProbFile, string externalFile): cpuTime(4)
     {
+        verbose = true;
+        loadBin(stateIdxFile, stateIdxLblFile, actionIdxFile, actionIdxLblFile,
+                actionWFile,  actionWLblFile, transProbFile, externalFile);
+
+    }
+
+
+    /** Create a HMDP from binary files using the default names and a prefix
+     */
+    HMDP(string prefix): cpuTime(4)
+    {
+        verbose = false;
+        string stateIdxFile = prefix + "stateIdx.bin";
+        string stateIdxLblFile = prefix + "stateIdxLbl.bin";
+        string actionIdxFile = prefix + "actionIdx.bin";
+        string actionIdxLblFile = prefix + "actionIdxLbl.bin";
+        string actionWFile = prefix +  "actionWeight.bin";
+        string actionWLblFile = prefix + "actionWeightLbl.bin";
+        string transProbFile = prefix + "transProb.bin";
+        string externalFile = prefix + "externalProcesses.bin";
+        loadBin(stateIdxFile, stateIdxLblFile, actionIdxFile, actionIdxLblFile,
+                actionWFile,  actionWLblFile, transProbFile, externalFile);
+    }
+
+    /** Create a HMDP from binary files.
+     *  Note does not build the hypergraph yet.
+     */
+    void loadBin(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
+        string actionIdxLblFile, string actionWFile,  string actionWLblFile,
+        string transProbFile, string externalFile)
+    {
         okay = true;
+        externalProc = false;
         HMDPReader reader(stateIdxFile, stateIdxLblFile, actionIdxFile,
             actionIdxLblFile, actionWFile, actionWLblFile, transProbFile, externalFile, this, log);
         if (!reader.okay) okay = false;
-        AddExternalPrefix();
+        else if (external.size()>0) {
+            externalProc = true;
+            ExternalAddStageStr();
+        }
     }
 
     /** Create a HMDP with no actions and states.*/
@@ -322,6 +360,7 @@ public:
         states.clear();
         weightNames.clear();
         stages.clear();
+        //cout << "  Free memory of HMDP." << endl;
     }
 
 
@@ -332,7 +371,7 @@ public:
      * \param rateBase The time-horizon the rate is valid over.
      * \note Levels are numbered from zero, i.e. we have level <tt>0, ..., levels-1</tt>.
      */
-    HMDP(uInt levels, uInt timeHorizon, flt rate, flt rateBase);
+    //HMDP(uInt levels, uInt timeHorizon, flt rate, flt rateBase);
 
 
     /** Create a HMDP with no actions and states.
@@ -340,24 +379,102 @@ public:
      * \param timeHorizon The time-horizon. If infinite use INFINT here.
      * \note Levels are numbered from zero, i.e. we have level <tt>0, ..., levels-1</tt>.
      */
-    HMDP(uInt levels, uInt timeHorizon);
+    //HMDP(uInt levels, uInt timeHorizon);
 
 
-    /** Given a set of external process states from the first stage (stored in external),
+    /** Given a set of external process states corresponding to the first stage in the external process,
      * add the stage label of each external process to the states/nodes as its label.
      */
-    void AddExternalPrefix() {
-        cout << "Add labels!!\n";
-        vector<idx> id;
-        map<string,string>::iterator it;
-        for (it=external.begin(); it!=external.end(); ++it) {
-            id = GetIdSStage(it->first);
-            for (idx j=0; j<id.size(); ++j) {
-                cout << "Node:" << id[j] << " lbl:" << it->first << endl;
-                states[ id[j] ].label = it->first;
-            }
-        }
-    }
+    void ExternalAddStageStr();
+
+
+    /** Set external process states corresponding to the first stage in the
+     * external process to -INF.
+     * \param idxW Index of the weight used.
+     */
+    void ExternalResetNodes(const idx & idxW);
+
+
+    /** Set the reward, duration and trans pr of external process actions to zero.
+     * \param idxW Index of the weight used.
+     * \param idxD Index of the duration.
+     */
+    void ExternalResetActions(const idx & idxW, const idx & idxD);
+
+
+    /** Update external process states corresponding to the first stage in the external process.
+     * \param pNode Pointer to the external state/node found with weight -INF.
+     * \param curPrefix The prefix of the current external process in memory.
+     * \param pExt Pointer to the current external process.
+     * \param idxW Index of the weight used.
+     * \param idxD Index of duration.
+     * \param g Current average reward.
+     * \return True if a new policy of the external process is found.
+     */
+    bool ExternalStatesUpdateAve(NodePtr pNode, string & curPrefix, HMDPPtr & pExt,
+                            const idx & idxW, const idx & idxD, const flt & g);
+
+
+    /** Copy values between the HMDP and the external process.
+     * \param pairTo Iterator pair of node where values is moved to.
+     * \param pairFrom Iterator pair of node where values is moved from.
+     * \param pExt Pointer to the current external process.
+     * \param idxW Index of the weight used.
+     * \param toExt True if move values to the external process (false if move from).
+     */
+    void ExternalCopyWState(
+        const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > & pairTo,
+        const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > & pairFrom,
+        const idx & idxW, const HMDPPtr & pExt, const bool toExt);
+
+
+    /** Return true if the state/node is a external process state corresponding to the first stage in a external process.
+     * \param pNode Pointer to the state/node.
+     */
+    bool ExternalState(NodePtr pNode);
+
+
+    /** Allocate memory for the external process (check if not already allocated).
+     * \param prefix Prefix of the external process.
+     * \param curPrefix The prefix of the current external process in memory.
+     * \param pExt Pointer to the current external process.
+     */
+    void ExternalAllocteMem(HMDPPtr & pExt, const string & prefix, string & curPrefix);
+
+
+    /** Set the values of the external actions to the reward, duration and trans pr of the external process
+     * \param pairZeroExt Iterator pair of states in the external process at stage zero.
+     * \param pairLastExt Iterator pair of states in the external process at last stage.
+     * \param pairStage Iterator pair of states corresponding to the first stage in the external process.
+     * \param pairNext Iterator pair of states corresponding to the last stage in the external process.
+     * \param pExt Pointer to the current external process.
+     * \param idxW Index of the weight used.
+     * \param idxD Index of duration.
+     * \return True if the values have changed (indicate that the policy have changed).
+     */
+    bool ExternalSetActions(
+        const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZeroExt,
+        const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLastExt,
+        const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairStage,
+        const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairNext,
+        const HMDPPtr & pExt, const idx & idxW, const idx & idxD);
+
+
+    /** Set the value of the transition pr.
+     * \param pr The transition pr.
+     * \param iS Id of the state.
+     * \param iA Id of the action.
+     * \param iSTail Id the the tail state.
+     * \return The old transition pr.
+     */
+    flt SetGetActionPr(const flt & pr, const idx & iS, const idx & iA, const idx & iSTail);
+
+
+    /** Set all the transition pr to zero of an action (only if not deterministic).
+     * \param iS Id of the state.
+     * \param iA Id of the action.
+     */
+    void SetActionPrZero(const idx & iS, const idx & iA);
 
 
     /** Add a state with no actions defined yet.
@@ -527,6 +644,20 @@ public:
      */
     void ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
         const flt &rateBase, vector<flt> & termValues);
+
+     /** Value iteration algorithm for average reward (finite
+     * time-horizon).
+     *
+     * The algorithm assumes a given average reward \code g
+     * and is used when the optimal policy of an external process must be found.
+     * \param idxW Index of the weight used.
+     * \param idxDur Index of duration such that discount rates can be calculated.
+     * \param termValues Terminal values used at founder level.
+     * \param g The average gain.
+     * \post Use \code GetLog to see the optimization log.
+     */
+    void ValueIteFiniteAve(const idx & idxW, const idx & idxDur, vector<flt> & termValues, const flt & g);
+
 
     /** Value iteration algorithm for expected reward (finite
      * time-horizon).
@@ -778,6 +909,62 @@ public:
     }
 
 
+    /** Return the state weights of a given stage.
+     * \param stageStr Stage string.
+     * \param iW The weight index.
+     */
+    vector<flt> GetStageW(string stageStr, idx iW) {
+        vector<idx> ids = GetIdSStage(stageStr);
+        vector<flt> w;
+        for (idx i=0; i<ids.size(); ++i) {
+            w.push_back(H.itsNodes[ ids[i]+1 ].w[iW]);
+        }
+        return w;
+    }
+
+
+    /** Return the state weights of a given stage.
+     * \param pair Multimap iterator of the states in the stage.
+     * \param iW The weight index.
+     */
+    vector<flt> GetStageW(pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pair, idx iW) {
+        multimap<string, int >::iterator iter;
+        vector<flt> w;
+        for(iter = pair.first; iter != pair.second; ++iter) {
+            w.push_back(H.itsNodes[ (iter->second) + 1 ].w[iW]);
+        }
+        return w;
+    }
+
+
+    /** Set the state weights of a given stage.
+     * \param stageStr Stage string.
+     * \param iW The weight index.
+     * \param w The weights to set.
+     * \pre Assume that the size of \code w is at least the size of the states in the stage.
+     */
+    void SetStageW(string stageStr, idx iW, vector<flt> w) {
+        vector<idx> ids = GetIdSStage(stageStr);
+        for (idx i=0; i<ids.size(); ++i) {
+            cout << "Set state " << ids[i] << " to " << w[i] << endl;
+            H.itsNodes[ ids[i]+1 ].w[iW] = w[i];
+        }
+    }
+
+
+    /** Set the first (h)arcs weight of the states to \code w.
+     * \param idS Stage ids.
+     * \param iW The weight index.
+     * \param w The weights to set.
+     * \pre Assume that the size of \code w is at least the size of the states.
+     */
+    void SetWActions(vector<idx> idS, idx iW, vector<flt> w) {
+        for (idx i=0; i<idS.size(); ++i) {
+            H.itsNodes[ idS[i]+1 ].w[iW] = w[i];
+        }
+    }
+
+
     /** Set the action weight.
      * \param w The weight to set.
      * \param iS The index of the state we consider in \code states.
@@ -794,6 +981,24 @@ public:
 			HArcPtr pHArc = H.GetHArcsPtr() + idxHArc;
             pHArc->w[iW] = w;
 		}
+    }
+
+    /** Get the action weight.
+     * \param iS The index of the state we consider in \code states.
+     * \param iA The index of the action we consider.
+     * \param iW The weight index.
+     */
+    flt GetActionW(idx iS, idx iA, idx iW) {
+        int idxHArc = FindAction(iS,iA);
+		if (idxHArc<0) { // arc
+			ArcPtr pArc = H.GetArcsPtr()-idxHArc;
+			return pArc->w[iW];
+		}
+		if (idxHArc>0) { // hyperarc
+			HArcPtr pHArc = H.GetHArcsPtr() + idxHArc;
+            return pHArc->w[iW];
+		}
+		return -INF;
     }
 
 
@@ -819,6 +1024,16 @@ public:
     idx CountNext(idx iState) {
         string str = states[iState].NextStageStr();
         return stages.count(str);
+    }
+
+
+    /** Return the string of the next stage at the current level (do not check if exists).
+     * \param curStageStr The string of the current stage (e.g. 'n0,s0,a0,n1').
+     */
+    string NextStageStr(string curStageStr) {
+        uSInt found = curStageStr.find_last_of(",");
+        int nextStage = atoi(curStageStr.substr(found+1).c_str()) + 1;
+        return curStageStr.substr(0,found+1) + ToString<int>(nextStage);
     }
 
 
@@ -910,7 +1125,7 @@ public:
     bool Check(flt eps) {
         // TODO (LRE#1#): Currently do not check if the number of weights are correct, e.g. if 10 actions and 3 weights the number must be 30!!.
         log.flush();
-        cpuTime.StartTime(0);
+        timer.StartTimer();
         bool okay = true;
         for (idx i=0; i<states.size(); i++) {
             okay = okay & states[i].Check(eps,log);
@@ -919,7 +1134,8 @@ public:
         /*if (okay)*/ okay = okay & CheckIdx();
         //if (!okay) log << "Error in HMDP description!" << endl;
         //else log << "Everything seem to be okay." << endl;
-        log << "Cpu time for checking MDP " << cpuTime.StopAndGetTotalTimeDiff(0) << " sec." << endl;
+        timer.StopTimer();
+        log << "Cpu time for checking MDP: " << timer.ElapsedTime("sec") << " sec." << endl;
         return okay;
     }
 
@@ -993,6 +1209,15 @@ private:
         const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > &pairOne);
 
 
+    /** Calculate the weights of states in pairZero given a specific policy.
+     * \param idxW The weight index we consider.
+     * \param pairLast Iterator pair pointing to stage last stage (initialize these weights to zero).
+     * \note Modify the weights stored in the states of the HMDP.
+     */
+    void FiniteW(const idx &idxW,
+        const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > & pairLast);
+
+
     /** Calculate the transition probabilities including discount rates of the
      * founder states given a specific policy.
      */
@@ -1013,6 +1238,24 @@ private:
     /** Reverse the sign of weight with index idxW. */
     void ReverseWeight(idx idxW) {H.ReverseW(idxW);}
 
+
+    /** Calculates the longest hypertree for all the nodes in the hypergraph
+     * based on average reward update equations.
+     * \pre Assume that the hypergraph is acyclic and that a valid ordering of
+     * the hypergraph is stored in validOdr. Moreover, weights in nodes with
+     * backward size 0 must have been set (except if external process nodes).
+     * \post The hypertree is defined pred[idxPred] and weights w[idxW] are
+     * calculated in each node.
+     * \param idxW The weight index used as nominator.
+     * \param idxD The denominator we want to maximize the weight over.
+     * \param g The average gain.
+     * \return True if a new hypertree found compared to the old one stored in
+     * idxPred. Remember to reset the predecessors if no old hypertree before
+     * running this method.
+     */
+    bool CalcHTAcyclicAve(idx idxW, idx idxD, flt g);
+
+
 public:
     vector<HMDPState> states;       ///< States in the HMDP.
     int levels;                     ///< Number of levels in the HMDP, i.e. the levels are 0, ..., levels-1.
@@ -1021,16 +1264,18 @@ public:
     //flt rate;                       ///< Intrest rate used to calc discount rates.
     //flt rateBase;                   ///< The time-horizon the rate is valid over. That is, the discout rate for duration $d$ is $\exp(-rate/rateBase*d)$.
     multimap<string, int> stages;   ///< Multimap to quickly find the different stages.
-    bool okay;                      ///< True if reading was okay.
-    //bool external;                  ///< True if the HMDP use external processes
-    map<string, string> external;   ///< Store the external processes in format <stageIdx, prefix>
-private:
+    bool okay;                      ///< True if reading was okay. Later used to check if an algorithm works okay.
+    bool verbose;                   ///< More output to the log.
+    bool externalProc;              ///< True if the HMDP use external processes
 
+private:
     Hypergraph H;                   ///< Hypergraph representation.
+    map<string, string> external;   ///< Store the external processes in format <stageIdx, prefix>
     HTAcyclic HT;                   ///< Shortest hypertree algorithms
     idx idxPred;                    ///< The index in pred (of a node in the hypergraph) storing the predecessor. Currently always zero.
     idx idxMult;                    ///< The index in m (of a hyperarc tail in the hypergraph) storing the transition probabilities. Currently always zero.
     TimeMan cpuTime;                ///< Mesuare cpu time.
+    Timer timer;
     ostringstream log;              ///< Stream to store log messages.
 };
 

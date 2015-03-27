@@ -158,7 +158,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		invisible(NULL)
 	}
 
-   includeProcess<-function(prefix, label, weights, prob){     # prop contain tripeles (scope,idx,prob) - Here all scope must be 2!!
+   includeProcess<-function(prefix, label, weights, prob, termStates){     # prop contain tripeles (scope,idx,prob) - Here all scope must be 2!!
       #cat("action:\n")
       #print(weights)
       #print(prob)
@@ -188,8 +188,11 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
       process()  # start external subprocess
         stage()  # first stage of the external process
         writeBin(c(as.character(idx), prefix, -1), fExt)  # store the external process' name
+        pr<-as.numeric( t(matrix(c(rep(1,termStates), 1:termStates-1, rep(1/termStates,termStates)), ncol=3)) )
         for (i in 0:maxId) {  # create the states in the first stage (with no actions)
-           state(end=TRUE)
+           state()
+             w$action(weights=rep(0,length(weights)), prob=pr, end=TRUE) # dummy action of external process with transition to all terminal states
+           endState()
         }
         endStage()
         # now the user has to include the last stage using the normal syntax

@@ -41,7 +41,7 @@ SEXP MDP_Init(void)
 }
 
 /** Create a HMDP object */
-SEXP MDP_NewHMDP(SEXP binNames, SEXP fun)
+SEXP MDP_NewHMDP(SEXP binNames, SEXP verb, SEXP fun)
 {
 	HMDPPtr p = new HMDP((string)CHAR(STRING_ELT(binNames, 0)),
 		(string)CHAR(STRING_ELT(binNames, 1)),
@@ -56,6 +56,7 @@ SEXP MDP_NewHMDP(SEXP binNames, SEXP fun)
 	else {
 		SEXP val = R_MakeExternalPtr(p, type_tag, R_NilValue);
 		R_RegisterFinalizer(val, fun);
+		p->verbose = asLogical(verb);
 		return val;
 	}
 }
@@ -143,6 +144,21 @@ SEXP MDP_ValueIteFinite(SEXP ptr, SEXP idxW, SEXP iniValues)
 	ini.assign(NUMERIC_POINTER(iniValues),
         NUMERIC_POINTER(iniValues)+GET_LENGTH(iniValues));
 	p->ValueIteFinite(INTEGER_POINTER(idxW)[0], ini);
+	return R_NilValue;
+}
+
+/** Perform a single value iteration on the MDP using average reward update
+ * equations for a specific g value.
+ */
+SEXP MDP_ValueIteFiniteAve(SEXP ptr, SEXP idxW, SEXP idxDur, SEXP iniValues, SEXP g)
+{
+	CHECK_PTR(ptr);
+	HMDPPtr p = (HMDPPtr)R_ExternalPtrAddr(ptr);
+	if (p == NULL) error("pointer is NULL");
+	vector<flt> ini;
+	ini.assign(NUMERIC_POINTER(iniValues),
+        NUMERIC_POINTER(iniValues)+GET_LENGTH(iniValues));
+	p->ValueIteFiniteAve(INTEGER_POINTER(idxW)[0], INTEGER_POINTER(idxDur)[0], ini, NUMERIC_POINTER(g)[0]);
 	return R_NilValue;
 }
 

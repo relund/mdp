@@ -9,3 +9,4 @@ src/*.dll
 *cache/*
 *concordance.tex
 Sweavel.sty
+*.synctex.gz

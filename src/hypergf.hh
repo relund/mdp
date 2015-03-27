@@ -35,7 +35,7 @@ private:
 
    NodePtr  pHead,      ///< Pointer to head node.
             pTail;      ///< Pointer to tail node.
-   vector<flt> w;       ///< Vector of floating point wights.
+   vector<flt> w;       ///< Vector of floating point weights.
    bool inSubHgf;       ///< True if in the subhypergraph.
    string * pLabel;     ///< Direct pointer to label in the HMDPState object.
 };
@@ -55,7 +55,7 @@ private:
 
    NodePtr  pHead;      ///< Pointer to head node.
    vector<flt> w;       ///< Vector of floating point weights.
-   TailPtr  pTail;		///< Pointer to the fiste item in the tail.
+   TailPtr  pTail;		///< Pointer to the first item in the tail.
    int      tailSize;   ///< Size of the tail (zero if not used)
    bool inSubHgf;       ///< True if in the subhypergraph
    string * pLabel;     ///< Direct pointer to label in the HMDPState object.
@@ -70,11 +70,12 @@ public:
     friend class Hypergraph;
     friend class HgfReader;
     friend class HTAcyclic;
+    friend class HMDP;
 
 private:
    void SetSize(int sizeMult){m.resize(sizeMult,0);}
 
-   NodePtr pTail;   ///< Pointer to the tail node.
+   NodePtr pTail;   ///< Pointer to the tail nodes.
    vector<flt> m;   ///< Vector of multipliers.
 };
 
@@ -321,6 +322,14 @@ public:
     void PrintNode(idx i) {
         cout << i << " |BS|=" << itsNodes[i].BSsize << " - w: ";
         for(idx j=0; j<sizeW; j++) cout << " " << itsNodes[i].w[j];
+    }
+
+    /** Print node info. */
+    void PrintPred(idx i, idx idxPred) {
+        int pred = itsNodes[i].pred[idxPred];
+        if (pred<0) PrintArc(-pred);
+        if (pred>0) PrintHArc(pred);
+        if (pred==0) cout << "No pred\n";
     }
 
     /** Reverse the sign of a weight at all arcs and hyperarcs. */

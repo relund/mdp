@@ -107,11 +107,11 @@ void HMDPAction::Print() {
 
 // ----------------------------------------------------------------------------
 
-HMDP::HMDP(uInt levels, uInt timeHorizon){
+/*HMDP::HMDP(uInt levels, uInt timeHorizon){
     okay = true;
 	this->levels = levels;
 	this->timeHorizon = timeHorizon;
-}
+}*/
 
 // ----------------------------------------------------------------------------
 
@@ -364,28 +364,30 @@ void HMDP::BuildHMDP() {
 	string str;
 	NodePtr pNode;
 	bool findValidOdr = false;
+	Timer timer1, timer2;
 
-    cpuTime.Reset();
-	cpuTime.StartTime(0);
+	timer.StartTimer(); timer1.StartTimer();
 	CalcHgfSizes(n, ma, mh, d, hsize, sizeW, sizeWTmp, sizePred, sizeMult);
 	H.Initialize(n, ma, mh, d, hsize, sizeW, sizeWTmp, sizePred, sizeMult);     // Allocate mem for the hgf
-	cout << "Allocated memory to H " << cpuTime.GetLocalTimeDiff(0) << endl;
+	timer1.StopTimer();
+	if (verbose) log << "Start building hypergraph ... \n  Allocated memory to H: " << timer1.ElapsedTime("sec") << " sec." << endl;
+	timer1.Reset();
 	for (idx i=0; i<states.size(); i++) {   // add hyperarcs to tmp hgf memory
-		cpuTime.StartTime(1);
+		timer1.StartTimer();
 		str = StateActionsToHgf(i,findValidOdr);    // seems to be the time consuming one
-		cpuTime.StopTime(1);
+		timer1.StopTimer();
 		//DBG4("s:" << i << " " << str << endl)
-		cpuTime.StartTime(2);
+		timer2.StartTimer();
 		H.AddHyperarcs(str);
-		cpuTime.StopTime(2);
+		timer2.StopTimer();
 	}
-	cout << "Cpu time str " << cpuTime.GetTotalTimeDiff(1) << endl;
-	cout << "Cpu time add HArc str " << cpuTime.GetTotalTimeDiff(2) << endl;
-	cout << "Cpu time loading MDP into tmp hgf arrays " << cpuTime.GetLocalTimeDiff(0) << endl;
+	if (verbose) log << "  Cpu time to build hypergraph string: " << timer1.CumulativeTime("sec") << " sec." <<endl;
+	if (verbose) log << "  Cpu time for adding HArc strings: " << timer2.ElapsedTime("sec") << " sec." << endl;
+	timer1.StartTimer();
 	H.BuildHgf();   // create the hypergraph
-	//log << "Cpu time after building hgf " << cpuTime.GetLocalTimeDiff(0) << endl;
-	cout << "Cpu time after building hgf " << cpuTime.GetLocalTimeDiff(0) << endl;
-
+	timer1.StopTimer();
+	if (verbose) log << "  Cpu time for building the hypergraph: " << timer1.ElapsedTime("sec") << " sec." <<endl;
+	timer1.StartTimer();
 	// TODO LRE Virker dette ikke kun hvis alle states har en label!!
 	for (idx i=0; i<states.size(); i++) {   // set pointers to labels
 		pNode =  H.itsNodes + i+1;
@@ -401,9 +403,9 @@ void HMDP::BuildHMDP() {
 			}
 		}
 	}
-	//log << "Cpu time after setting label pointers " << cpuTime.GetLocalTimeDiff(0) << endl;
-	cout << "Cpu time after setting label pointers " << cpuTime.GetLocalTimeDiff(0) << endl;
-
+	timer1.StopTimer();
+	if (verbose) log << "  Cpu time used to set label pointers: " << timer1.ElapsedTime("sec") << " sec." << endl;
+	//cout << "Cpu time after setting label pointers " << cpuTime.GetLocalTimeDiff(0) << endl;
 	idxPred = idxMult = 0;  // consider first pred and multipliers
 	if (!findValidOdr) HT.SetValidOdrToReverseNodeOdr(H);
 	else {  // find stage 2 states of founder
@@ -419,7 +421,7 @@ void HMDP::BuildHMDP() {
 		HT.FindValidOdr(H,nodes);
 	}
 	//log << "Cpu time after finding valid odr " << cpuTime.GetLocalTimeDiff(0) << endl;
-	cout << "Cpu time after finding valid odr " << cpuTime.GetLocalTimeDiff(0) << endl;
+	//cout << "Cpu time after finding valid odr " << cpuTime.GetLocalTimeDiff(0) << endl;
 
 	//cout<<"Before remove actions";
 	//cin >> str;
@@ -429,8 +431,9 @@ void HMDP::BuildHMDP() {
 	}
 
     //log << "Cpu time after removing actions " << cpuTime.GetLocalTimeDiff(0) << endl;
-    cout << "Cpu time after removing actions " << cpuTime.GetLocalTimeDiff(0) << endl;
-	log << "Cpu time for building state-expanded hypergraph " << cpuTime.StopAndGetTotalTimeDiff(0) << " sec." << endl;
+    //cout << "Cpu time after removing actions " << cpuTime.GetLocalTimeDiff(0) << endl;
+	timer.StopTimer();
+	log << "Cpu time for building state-expanded hypergraph " << timer.ElapsedTime("sec") << " sec." << endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -602,6 +605,38 @@ void HMDP::ValueIteFiniteDiscount(idx idxW, idx idxDur, const flt &rate,
 
 // ----------------------------------------------------------------------------
 
+void HMDP::ValueIteFiniteAve(const idx & idxW, const idx & idxDur, vector<flt> & termValues, const flt & g) {
+	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
+	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
+	multimap<string, int >::iterator ite, iteZ;
+	vector<flt>::iterator iteV;
+
+	log.str("");
+	log << "Run value iteration using quantity '" <<
+		weightNames[idxW] << "' given an average reward g = " << g << ".\n";
+	timer.StartTimer();
+	//cout << log.str() << endl;
+	H.ResetPred();
+	// find founder states at stage zero and last stage
+	pairZero = stages.equal_range("0");
+	pairLast = stages.equal_range(ToString(timeHorizon-1));
+    if (termValues.size()!=stages.count(ToString(timeHorizon-1))) {
+        log << "Error initial values vector does not have the same size " << termValues.size() << " as the states that must be assigned the values (" << stages.count(ToString(timeHorizon-1)) << ")!\n";
+        //cout << log.str() << endl;
+        return;
+    }
+	for (ite=pairLast.first, iteV=termValues.begin(); ite!=pairLast.second; ++ite, ++iteV) {// set last to termValues
+		//cout << "Set state - " << (ite->second) << " to " << *iteV << endl;
+		H.itsNodes[(ite->second)+1].SetW(*(iteV));
+	}
+	CalcHTAcyclicAve(idxW,idxDur,g);
+	timer.StopTimer();
+	log << "Finished (" << timer.ElapsedTime("sec") << " sec.)." << endl;
+}
+
+// ----------------------------------------------------------------------------
+
+
 void HMDP::ValueIteFinite(idx idxW, vector<flt> & termValues)
 {
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
@@ -666,6 +701,17 @@ void HMDP::FounderW(MatSimple<double> &w, const idx &idxW,
 		H.itsNodes[(ite->second)+1].SetW(idxW,0);
 	HT.CalcOptW(H,idxW,idxPred,idxMult);
 	SetR(w,idxW,pairZero);
+}
+
+// ----------------------------------------------------------------------------
+
+void HMDP::FiniteW(const idx &idxW,
+	const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > & pairLast)
+{
+	multimap<string, int >::iterator ite;
+	for (ite=pairLast.first; ite!=pairLast.second; ++ite) // set last to zero
+		H.itsNodes[(ite->second)+1].SetW(idxW,0);
+	HT.CalcOptW(H,idxW,idxPred,idxMult);
 }
 
 // ----------------------------------------------------------------------------
@@ -784,12 +830,13 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 		log << "Policy iteration can only be done on infinite time-horizon HMDPs!" << endl;
 		return INF;
 	}
-
+    timer.StartTimer();
 	MatAlg matAlg; // Matrix routines
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZero;
 	pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLast;
 	multimap<string, int >::iterator ite, iteZ;
 	H.ResetPred();
+	ExternalResetActions(idxW, idxD);
 	bool newPred, firstRun;
 	int rows = stages.count("0");
 	MatSimple<double> r(rows,1),   // Matrix of founder rewards
@@ -798,23 +845,23 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 				   P(rows,rows);    // Matrix of prob values
 	MatSimple<double> I(rows,true); // identity
 	idx i,k=0;
-	flt gB,g = 0;
+	flt g = 0;  //gB
 
 	log << "Run policy iteration under average reward criterion using \nreward '" <<
-		weightNames[idxW] << "' over '" <<
-		weightNames[idxD] << "'. Iterations (g):" << endl;
+		weightNames[idxW] << "' over '" << weightNames[idxD] << "'. Iterations (g):" << endl;
 
 	pairZero = stages.equal_range("0");
 	pairLast = stages.equal_range("1");
 	for (ite=pairLast.first; ite!=pairLast.second; ++ite) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(0);
 
-	firstRun = true;
+	firstRun = true; okay = true;
 	do {
 		k++;
-		newPred = HT.CalcHTacyclicAve(H,idxW,idxD,idxPred,idxMult,g, this);
+		if (verbose) log << endl; log << k << " "; if (verbose) log << endl;
+		newPred = CalcHTAcyclicAve(idxW,idxD,g); if (!okay) {g=-INF; break;}   // something went wrong (see the log)
 		if (!firstRun & !newPred) {
-			log << k <<  " (" << g << ") ";
+			log << "(" << g << ") "; if (verbose) log << endl;
 			break;    // optimal strategy found
 		}
 		if (!firstRun) {
@@ -824,7 +871,6 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 			firstRun = false;
 			SetR(r,idxW,pairZero);
 		}
-
 		FounderPr(P,pairZero,pairLast);
 		FounderW(d,idxD,pairZero,pairLast);
 		//cout << "r=" << endl << r << endl << "P=" << endl << P << endl << "d=" << endl << d << endl;
@@ -837,9 +883,9 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 		//cout << "I-P=" << endl << P << endl;
 		for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
 		//cout << "I-P with d=" << endl << P << endl;
-		if (matAlg.LASolve(P,w,r)) {log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; break;}
+		if (matAlg.LASolve(P,w,r)) {g = -INF; log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; break;}
 		//cout << "w=" << endl << w << endl;
-		gB = g;
+		//gB = g;
 		g = w(rows-1,0);
 		//cout << g << " " << k << endl;
 		//cout << PolicyInfoLabel(1) << endl;
@@ -852,11 +898,11 @@ flt HMDP::PolicyIteAve(const idx idxW, const idx idxD, const uSInt times) {
 		for (ite=pairLast.first, i=0; ite!=pairLast.second; ++ite, ++i) {
 			if (i<(idx)rows-1) H.itsNodes[(ite->second)+1].SetW(idxW,w(i,0));   // last state always has value zero
 		}
-		log << k <<  " (" << g << ") ";
+		log << "(" << g << ") "; if (verbose) log << endl;
 		//if (!firstRun & !newPred) break;    // optimal strategy found
 		if (k>=times) { log << "\nReached upper limit of iterations! Seems to loop. \nIs the model fulfilling the model assumptions (e.g. unichain)?\n"; break;}
 	} while (true);
-	log << "finished." << endl;
+	log << "finished. Cpu time: " << timer.ElapsedTime("sec") << " sec." << endl;
 	return g;
 }
 
@@ -1003,5 +1049,332 @@ void HMDP::SetTerminalValues(idx idxW, vector<flt> & termValues) {
     for (ite=pairLast.first, iteV=termValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
         H.itsNodes[(ite->second)+1].SetW(idxW,*(iteV));
 }
+
+// ----------------------------------------------------------------------------
+
+bool HMDP::CalcHTAcyclicAve(idx idxW, idx idxD, flt g) {
+	NodePtr pHnode;  // pointer to last node
+	TailPtr pTailNow,pTailLast;
+	ArcPtr pArcNow,     // pointer to the arc to examine
+	pLastArc;   // pointer to the arc we have to examine to (not with)
+	HArcPtr pHNow,
+	pLastHArc;
+	flt weightTmp;      // weight to compaire
+	bool newPred = false;       // true if the stored pred change in a node
+	bool isMinInf;      // true if a hyperarc gives -INF in the head node
+	int oldPred;
+	string externalPrefix; // prefix of the external process in memory
+	HMDP * pExtProc = NULL;    // pointer to external process
+
+    ExternalResetNodes(idxW);  // set node weight to -INF
+
+	// scan the valid ordering
+	for (idx i=0; i < HT.validOdr.size(); i++) {
+		pHnode = H.GetNodesPtr() + HT.validOdr[i];
+        if ( ExternalState(pHnode) ) {
+            //cout << "State " << NodeIndex(pHnode)-1 << " is external\n\n";
+            if (pHnode->w[idxW]== -INF) newPred = ExternalStatesUpdateAve(pHnode, externalPrefix, pExtProc, idxW, idxD, g);
+            if (!okay) return false;
+            pHnode->pred[idxPred] = FindAction(NodeIndex(pHnode)-1,0);
+            //cout << "pred: " << pHnode->pred[idxPred] << " ";   // set pred to the external action
+            //H.PrintPred(NodeIndex(pHnode), idxPred);
+        }
+        else {
+            //cout << "State " << NodeIndex(pHnode)-1 << " is normal\n";
+            if (pHnode->BSsize>0) pHnode->w[idxW]= -INF;  // reset weight
+            oldPred = pHnode->pred[idxPred];
+            // (1) scan simple arcs in backward star
+            for (pArcNow=pHnode->pAFirst, pLastArc=(pHnode+1)->pAFirst;
+                    pArcNow!=pLastArc; pArcNow++) {
+                if (pArcNow->inSubHgf) { // if arc in the subhypergf
+                    weightTmp = pArcNow->pTail->w[idxW] + pArcNow->w[idxW] - pArcNow->w[idxD]*g;
+                    if (pHnode->w[idxW] < weightTmp) { // update node label and re-insert
+                        pHnode->w[idxW] = weightTmp;
+                        pHnode->pred[idxPred] = ArcIndexPred(pArcNow);
+                    }
+                }
+            }
+            // (2) scan hyperarc backward star
+            for (pHNow=pHnode->pHFirst, pLastHArc=(pHnode+1)->pHFirst;
+                    pHNow!=pLastHArc; pHNow++) {
+                if (pHNow->inSubHgf) { // if a harc in the subhypergf
+                    weightTmp=0;
+                    isMinInf = false;
+                    // compute weighting function: scan tails
+                    for (pTailNow=pHNow->pTail,pTailLast=(pHNow+1)->pTail;
+                            pTailNow!=pTailLast;pTailNow++ ) {
+                        if ((pTailNow->pTail)->w[idxW]<= -INF) {
+                            weightTmp= -INF;
+                            isMinInf = true;
+                            break;
+                        }
+                        weightTmp += ((pTailNow->pTail)->w[idxW])
+                                     *(pTailNow->m[idxMult]);
+                    }
+                    if (isMinInf) continue; // if the (h)arc gives -INF goto next (h)arc
+                    weightTmp += pHNow->w[idxW]-pHNow->w[idxD]*g;
+                    if (pHnode->w[idxW] < weightTmp) {
+                        pHnode->w[idxW] = weightTmp;
+                        pHnode->pred[idxPred] = HArcIndex(pHNow);
+                    }
+                }
+            }
+            if (pHnode->pred[idxPred] != oldPred) newPred = true;
+            //cout << "Pred=" << pHnode->pred[idxPred] << " ";
+            //H.PrintPred(NodeIndex(pHnode), idxPred);
+        }
+	}
+	if (verbose && pExtProc!=NULL) log << "  Free memory of external process with prefix '" << externalPrefix << "'." << endl;
+	delete pExtProc;
+	return newPred;
+}
+
+// ----------------------------------------------------------------------------
+
+bool HMDP::ExternalStatesUpdateAve(NodePtr pNode, string & curPrefix, HMDPPtr & pExt,
+     const idx & idxW, const idx & idxD, const flt & g)
+{
+    pair< multimap<string, int >::iterator, multimap<string, int >::iterator >
+        pairStage, pairNext, pairZeroExt, pairLastExt;
+    string prefix, stageStr;
+
+    stageStr = states[NodeIndex(pNode)-1].label;     // stage label string if external node
+    prefix = external[stageStr];    // prefix of external process
+    //cout << "label: " << stageStr << " prefix: " << prefix << endl;
+    ExternalAllocteMem(pExt, prefix, curPrefix);
+    if (!okay) return false;
+
+    vector<flt> rewards = GetStageW(NextStageStr(stageStr),idxW);   // get the rewards from external nodes corresponding to last stage
+    //cout << "next stage: " << NextStageStr(stageStr) << endl;
+    //cout << "Start valueIte\n";
+    pExt->ValueIteFiniteAve(idxW, idxD, rewards, g);
+
+    pairZeroExt = pExt->stages.equal_range("0");       // first stage in external
+    pairLastExt = pExt->stages.equal_range(ToString(pExt->timeHorizon-1));   // last stage in external
+    pairStage = stages.equal_range(stageStr);   // external stage in HMDP corresponding to first stage
+    pairNext = stages.equal_range(NextStageStr(stageStr));   // external stage in HMDP corresponding to last stage
+    ExternalCopyWState(pairStage, pairZeroExt, idxW, pExt, false);   // copy rewards to the HMDP
+    bool newPred = ExternalSetActions(pairZeroExt, pairLastExt, pairStage, pairNext, pExt, idxW, idxD);
+    return newPred;
+}
+
+// ----------------------------------------------------------------------------
+
+void HMDP::ExternalCopyWState(
+    const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > & pairTo,
+    const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > & pairFrom,
+    const idx & idxW, const HMDPPtr & pExt, const bool toExt)
+{
+	multimap<string, int >::iterator iteTo, iteFrom;
+	if (toExt) {  // transfer to external process
+        for (iteTo=pairTo.first, iteFrom=pairFrom.first; iteTo!=pairTo.second && iteFrom!=pairFrom.second; ++iteTo, ++iteFrom) {
+            pExt->H.itsNodes[(iteTo->second)+1].w[idxW] = H.itsNodes[(iteFrom->second)+1].w[idxW];
+            //cout << "CopyToExt: val=" << H.itsNodes[(iteFrom->second)+1].w[idxW] << " to state " << iteTo->second << endl;
+        }
+	}
+	else {
+        for (iteTo=pairTo.first, iteFrom=pairFrom.first; iteTo!=pairTo.second && iteFrom!=pairFrom.second; ++iteTo, ++iteFrom) {
+           H.itsNodes[(iteTo->second)+1].w[idxW] =  pExt->H.itsNodes[(iteFrom->second)+1].w[idxW];
+           //cout << "CopyToHMDP: val=" << pExt->H.itsNodes[(iteFrom->second)+1].w[idxW] << " to state " << iteTo->second << endl;
+        }
+	}
+}
+
+// ----------------------------------------------------------------------------
+
+bool HMDP::ExternalState(NodePtr pNode) {
+    if (externalProc) {
+        if (pNode->BSsize==1) {    // could be a node in an external process not calculated yet
+            string stageStr = states[NodeIndex(pNode)-1].label;
+            if (external.count(stageStr)>0) return true;
+        }
+    }
+    return false;
+}
+
+// ----------------------------------------------------------------------------
+
+void HMDP::ExternalAllocteMem(HMDPPtr & pExt, const string & prefix, string & curPrefix) {
+    if (prefix != curPrefix) {   // then have to load a new external process
+        if (verbose && pExt!=NULL) log << "  Free memory of external process with prefix '" << curPrefix << "'." << endl;
+        delete pExt;   // delete the previous process if exists
+        if (verbose) log << "  Allocate memory for external process with prefix '" << prefix << "'." << endl;
+        pExt = new HMDP(prefix);
+        if (!pExt->okay) {
+            log << "  Error: Cannot read external process with prefix '" << prefix << "'!" << endl;
+            delete pExt; okay = false; pExt=NULL;
+            return;
+        }
+        pExt->BuildHMDP();
+        curPrefix = prefix;
+    }
+    else if (verbose) log << "  Use current external process with prefix '" << prefix << "' again." << endl;
+}
+
+// ----------------------------------------------------------------------------
+
+bool HMDP::ExternalSetActions(
+    const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairZeroExt,
+    const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairLastExt,
+    const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairStage,
+    const pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairNext,
+    const HMDPPtr & pExt, const idx & idxW, const idx & idxD)
+{
+	multimap<string, int >::iterator iteTo, iteFrom, ite, itePrev, iteN;
+	flt val, oldVal;
+	bool newPolicy = false;
+	// rewards
+	pExt->FiniteW(idxW,pairLastExt);    // calc rewards of external actions
+    for (iteTo=pairStage.first, iteFrom=pairZeroExt.first;
+         iteTo!=pairStage.second && iteFrom!=pairZeroExt.second; ++iteTo, ++iteFrom)
+    {
+        val = pExt->H.itsNodes[(iteFrom->second)+1].w[idxW];
+        if (GetActionW(iteTo->second, 0, idxW)!= val) newPolicy = true;
+        SetActionW(val, iteTo->second, 0, idxW);     // Set the weight of the external action
+    }
+    // durations
+    pExt->FiniteW(idxD,pairLastExt);    // calc durations of external actions
+    for (iteTo=pairStage.first, iteFrom=pairZeroExt.first;
+         iteTo!=pairStage.second && iteFrom!=pairZeroExt.second; ++iteTo, ++iteFrom)
+    {
+        val = pExt->H.itsNodes[(iteFrom->second)+1].w[idxD];
+        if (GetActionW(iteTo->second, 0, idxD)!= val) newPolicy = true;
+        SetActionW(val, iteTo->second, 0, idxD);     // Set the weight of the external action
+    }
+    // trans pr
+    for (ite=pairLastExt.first; ite!=pairLastExt.second; ++ite) // set last to zero
+		pExt->H.itsNodes[(ite->second)+1].f = 0;
+    //cout << "Calc transpr of external" << endl;
+	for (ite=itePrev=pairLastExt.first, iteN=pairNext.first;
+        ite!=pairLastExt.second && iteN!=pairNext.second; ++ite, ++iteN)
+    {
+		pExt->H.itsNodes[(ite->second)+1].f = 1;
+		//cout << "Set f=1 for state " << ite->second << endl;
+		if (ite!=itePrev) pExt->H.itsNodes[(itePrev->second)+1].f = 0;    // restore previous
+		pExt->HT.CalcSubTreeValues(pExt->H,pExt->idxPred,pExt->idxMult);
+        for (iteTo=pairStage.first, iteFrom=pairZeroExt.first;
+             iteTo!=pairStage.second && iteFrom!=pairZeroExt.second; ++iteTo, ++iteFrom)
+        {
+            val = pExt->H.itsNodes[(iteFrom->second)+1].f;
+            //cout << "Transpr=" << val << " from state " << iteFrom->second << " to " << itePrev->second << " (external)" << endl;
+            //cout << "Transpr=" << val << " from state " << iteTo->second << " to " << iteN->second << endl;
+            //cout << "Set val for action in state " << iteTo->second << " in tail " << iteN->second << endl;
+            oldVal = SetGetActionPr(val, iteTo->second, 0, iteN->second);
+            if (val != oldVal) newPolicy = true;
+        }
+		itePrev = ite;
+	}
+	return newPolicy;
+}
+
+// ----------------------------------------------------------------------------
+
+/*void HMDP::SetActionPr(const flt & pr, const idx & iS, const idx & iA, const idx & iSTail) {
+    int idxHArc = FindAction(iS,iA);
+    if (idxHArc<0) { // arc
+        return; // do noting since then pr = 1
+    }
+    if (idxHArc>0) { // hyperarc
+        HArcPtr pHArc = H.GetHArcsPtr() + idxHArc;
+        for (TailPtr pTailNow=pHArc->pTail, TailPtr pTailLast=(pHArc+1)->pTail, idx i=0;
+                pTailNow!=pTailLast; ++pTailNow, ++i)
+            if (NodeIndex(pTailNow) == iSTail + 1) {
+                pHArc->pTail->m[i] = pr;
+                return;
+            }
+    }
+}*/
+
+// ----------------------------------------------------------------------------
+
+flt HMDP::SetGetActionPr(const flt & pr, const idx & iS, const idx & iA, const idx & iSTail) {
+    int idxHArc = FindAction(iS,iA);
+    //cout << "HArc idx = " << idxHArc << endl;
+    flt val;
+    if (idxHArc<0) { // arc
+        return 1; // do noting
+    }
+    if (idxHArc>0) { // hyperarc
+        HArcPtr pHArc = H.GetHArcsPtr() + idxHArc;
+        TailPtr pTailNow, pTailLast;
+        idx node;
+        for (pTailNow=pHArc->pTail, pTailLast=(pHArc+1)->pTail;
+                pTailNow!=pTailLast; ++pTailNow)
+        {
+            node = NodeIndex(pTailNow->pTail);
+            //cout << "Look at tail state " << node-1 << endl;
+            if ( node == iSTail + 1) {
+                val = pTailNow->m[idxMult];
+                pTailNow->m[idxMult] = pr;
+                //cout << "Set pr to " << pr << " (prev val = " << val << ")\n";
+                return val;
+            }
+        }
+    }
+    return -INF;
+}
+
+// ----------------------------------------------------------------------------
+
+void HMDP::SetActionPrZero(const idx & iS, const idx & iA) {
+    int idxHArc = FindAction(iS,iA);
+    if (idxHArc<0) { // arc
+        return; // do noting since no multiplier
+    }
+    if (idxHArc>0) { // hyperarc
+        HArcPtr pHArc = H.GetHArcsPtr() + idxHArc;
+        TailPtr pTailNow, pTailLast;
+        idx i;
+        for (pTailNow=pHArc->pTail, pTailLast=(pHArc+1)->pTail, i=0;
+                pTailNow!=pTailLast; ++pTailNow, ++i)
+            pHArc->pTail->m[i] = 0;
+    }
+}
+
+// ----------------------------------------------------------------------------
+
+void HMDP::ExternalResetNodes(const idx & idxW) {
+    if (!externalProc) return;
+    vector<idx> id;
+    map<string,string>::iterator it;
+    for (it=external.begin(); it!=external.end(); ++it) {
+        id = GetIdSStage(it->first);
+        for (idx j=0; j<id.size(); ++j) {
+            H.itsNodes[ id[j]+1 ].w[idxW]= -INF;
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------
+
+void HMDP::ExternalResetActions(const idx & idxW, const idx & idxD) {
+    if (!externalProc) return;
+    vector<idx> id;
+    map<string,string>::iterator it;
+    for (it=external.begin(); it!=external.end(); ++it) {
+        id = GetIdSStage(it->first);
+        for (idx j=0; j<id.size(); ++j) {
+            SetActionW(0, id[j], 0, idxW);
+            SetActionW(0, id[j], 0, idxD);
+            SetActionPrZero(id[j], 0);
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------
+
+    void HMDP::ExternalAddStageStr() {
+        //cout << "Add labels!!\n";
+        if (!externalProc) return;
+        vector<idx> id;
+        map<string,string>::iterator it;
+        for (it=external.begin(); it!=external.end(); ++it) {
+            id = GetIdSStage(it->first);
+            for (idx j=0; j<id.size(); ++j) {
+                //cout << "Node:" << id[j] << " lbl:" << it->first << endl;
+                states[ id[j] ].label = it->first;
+            }
+        }
+    }
 
 // ----------------------------------------------------------------------------

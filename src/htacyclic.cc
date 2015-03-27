@@ -2,68 +2,6 @@
 
 //-----------------------------------------------------------------------------
 
-
-bool HTAcyclic::CalcHTacyclicAve(Hypergraph& H, idx idxW, idx idxD, idx idxPred,
-		idx idxMult, flt g, HMDP *pHMDP) {
-	NodePtr pHnode;  // pointer to last node
-	TailPtr pTailNow,pTailLast;
-	ArcPtr pArcNow,     // pointer to the arc to examine
-	pLastArc;   // pointer to the arc we have to examine to (not with)
-	HArcPtr pHNow,
-	pLastHArc;
-	flt weightTmp;      // weight to compaire
-	bool newPred = false;       // true if the stored pred change in a node
-	bool isMinInf;      // true if a hyperarc gives -INF in the head node
-	int oldPred;
-
-	// scan the valid ordering
-	for (idx i=0; i<validOdr.size(); i++) {
-		pHnode = H.GetNodesPtr()+validOdr[i];
-		if (pHnode->BSsize>0) pHnode->w[idxW]= -INF;  // reset weight
-		oldPred = pHnode->pred[idxPred];
-		// (1) scan simple arcs in backward star
-		for (pArcNow=pHnode->pAFirst, pLastArc=(pHnode+1)->pAFirst;
-				pArcNow!=pLastArc; pArcNow++) {
-			if (pArcNow->inSubHgf) { // if arc in the subhypergf
-				weightTmp = pArcNow->pTail->w[idxW] + pArcNow->w[idxW] - pArcNow->w[idxD]*g;
-				if (pHnode->w[idxW] < weightTmp) { // update node label and re-insert
-					pHnode->w[idxW] = weightTmp;
-					pHnode->pred[idxPred] = ArcIndexPred(pArcNow);
-				}
-			}
-		}
-		// (2) scan hyperarc backward star
-		for (pHNow=pHnode->pHFirst, pLastHArc=(pHnode+1)->pHFirst;
-				pHNow!=pLastHArc; pHNow++) {
-			if (pHNow->inSubHgf) { // if a harc in the subhypergf
-				weightTmp=0;
-				isMinInf = false;
-				// compute weighting function: scan tails
-				for (pTailNow=pHNow->pTail,pTailLast=(pHNow+1)->pTail;
-						pTailNow!=pTailLast;pTailNow++ ) {
-					if ((pTailNow->pTail)->w[idxW]<= -INF) {
-						weightTmp= -INF;
-						isMinInf = true;
-						break;
-					}
-					weightTmp += ((pTailNow->pTail)->w[idxW])
-								 *(pTailNow->m[idxMult]);
-				}
-				if (isMinInf) continue; // if the (h)arc gives -INF goto next (h)arc
-				weightTmp += pHNow->w[idxW]-pHNow->w[idxD]*g;
-				if (pHnode->w[idxW] < weightTmp) {
-					pHnode->w[idxW] = weightTmp;
-					pHnode->pred[idxPred] = HArcIndex(pHNow);
-				}
-			}
-		}
-		if (pHnode->pred[idxPred] != oldPred) newPred = true;
-	}
-	return newPred;
-}
-
-//-----------------------------------------------------------------------------
-
 void HTAcyclic::CalcHTacyclic(Hypergraph& H, idx idxW, idx idxPred,
 								idx idxMult) {
 	NodePtr pHnode;  // pointer to last node

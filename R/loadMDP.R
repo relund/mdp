@@ -9,25 +9,24 @@
 #'     files storing the model.
 #' @param eps The sum of the transition probabilities must at most differ eps from one.
 #' @param check Check if the MDP seems correct.
+#' @param verbose More output when running algorithms.
 #' @return A list containing relevant information about the model and a pointer \code{ptr} to the model object in memory.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example tests/machine.Rex
 #' @export
 loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"),
-	eps = 0.00001, check = TRUE)
+	eps = 0.00001, check = TRUE, verbose=FALSE)
 {
 	binNames<-paste(prefix,binNames,sep="")
-	ptm <- proc.time()
-	p<-.Call("MDP_NewHMDP", binNames, .deleteHMDP, PACKAGE="MDP")
+	if (!is.logical(verbose)) verbose = FALSE
+	p<-.Call("MDP_NewHMDP", binNames, verbose, .deleteHMDP, PACKAGE="MDP")
 	if (!.Call("MDP_Okay",p, PACKAGE="MDP")) {
 		str<-.Call("MDP_GetLog", p, PACKAGE="MDP")
 		cat(str)
 		rm(p)
 		return(invisible(NULL))
 	}
-	cpu <- (proc.time() - ptm)[3]
-	cat("Cpu time for reading the model (binary files): ", cpu, " sec.\n", sep="")
 	if (check) {
 		.Call("MDP_Check",p,as.numeric(eps), PACKAGE="MDP")
 		str<-.Call("MDP_GetLog", p, PACKAGE="MDP")
@@ -137,29 +136,35 @@ getWIdx<-function(mdp, wLbl) {
 #' @param times The max number of times value iteration is performed.
 #' @param eps Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see [1] p161).
 #' @param termValues The terminal values used (values of the last stage in the MDP).
+#' @param g Average reward. If specified then do a single iteration using the opdate equations under average reward criterion with the specified \code g value.
 #' @return NULL (invisible)
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
 #' @example tests/machine.Rex
 #' @export
 valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, times = 10, eps = 0.00001,
-	termValues = NULL) {
+	termValues = NULL, g=NULL) {
 	iW<-getWIdx(mdp,w)
 	iDur<-NULL
 	if (!is.null(dur)) iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	if (is.null(termValues)) termValues<-rep(0,mdp$founderStatesLast)
-	if (mdp$timeHorizon>=Inf) {
-		if (is.null(iDur)) stop("A duration index must be specified under infinite time-horizon!")
-		.Call("MDP_ValueIteInfDiscount", mdp$ptr, as.integer(times),
-			as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(rate),
-			as.numeric(rateBase), as.numeric(termValues), PACKAGE="MDP")
-	} else {
-		if (!is.null(iDur)) .Call("MDP_ValueIteFiniteDiscount", mdp$ptr, as.integer(iW),
-			as.integer(iDur), as.numeric(rate), as.numeric(rateBase), as.numeric(termValues), PACKAGE="MDP")
-		if (is.null(iDur)) .Call("MDP_ValueIteFinite", mdp$ptr, as.integer(iW), as.numeric(termValues), PACKAGE="MDP")
+	if (is.null(g)) {
+   	if (mdp$timeHorizon>=Inf) {
+   		if (is.null(iDur)) stop("A duration index must be specified under infinite time-horizon!")
+   		.Call("MDP_ValueIteInfDiscount", mdp$ptr, as.integer(times),
+   			as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(rate),
+   			as.numeric(rateBase), as.numeric(termValues), PACKAGE="MDP")
+   	} else {
+   		if (!is.null(iDur)) .Call("MDP_ValueIteFiniteDiscount", mdp$ptr, as.integer(iW),
+   			as.integer(iDur), as.numeric(rate), as.numeric(rateBase), as.numeric(termValues), PACKAGE="MDP")
+   		if (is.null(iDur)) .Call("MDP_ValueIteFinite", mdp$ptr, as.integer(iW), as.numeric(termValues), PACKAGE="MDP")
+   	}
+	} else {  # value ite under ave reward criterion
+	   if (is.null(iDur)) stop("A duration index must be specified under average reward criterion!")
+	   .Call("MDP_ValueIteFiniteAve", mdp$ptr, as.integer(iW), as.integer(iDur), as.numeric(termValues), as.numeric(g), PACKAGE="MDP")
 	}
-	cat(.Call("MDP_GetLog",mdp$ptr, PACKAGE="MDP"))
+	message(.Call("MDP_GetLog",mdp$ptr, PACKAGE="MDP"))
 	invisible(NULL)
 }
 

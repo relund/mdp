@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include "basicdt.hh"
-#include "time.hh"
+#include "timer.hpp"
 using namespace std;
 
 class HMDP;   // forward declaration
@@ -78,14 +78,14 @@ public:
     {
         okay = true;
         this->pHMDP = pHMDP;
-        cpuTime.StartTime(0);
+        timer.StartTimer();
         AddStates(stateIdxFile, stateIdxLblFile, log);
         AddActions(actionIdxFile, actionIdxLblFile, actionWFile, actionWLblFile,
             transProbFile, log);
         AddExternal(externalFile, log);
         Compile();
-        cpuTime.StopTime(0);
-        cout << "Cpu for reading the binary files: " << cpuTime.GetTotalTimeDiff(0) << endl;
+        timer.StopTimer();
+        log << "Cpu time for reading the binary files: " << timer.ElapsedTime("sec") << " sec." << endl;
     }
 
     ~HMDPReader() {}
@@ -128,7 +128,7 @@ public:
     bool okay;            ///< True if reading was okay.
 private:
     HMDP * pHMDP;         ///< Pointer to the HMDP.
-    TimeMan cpuTime;
+    Timer timer;
 
 };
 
