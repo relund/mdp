@@ -278,7 +278,7 @@ public:
           Stage();
             WriteBinary(pExternalProcessesFile, StageStr());
             WriteBinary(pExternalProcessesFile, prefix);
-            WriteBinary(pExternalProcessesFile, ToString<int>(-1));
+            //WriteBinary(pExternalProcessesFile, ToString<int>(-1));
             for (int i=0; i<=maxIdx; ++i) {
                 State(lbl);
                   Action(scp, idx, pr, w, lbl, true);

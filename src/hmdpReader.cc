@@ -208,30 +208,21 @@ void HMDPReader::Compile() {
 
 void HMDPReader::AddExternal(string externalFile, ostringstream & log) {
     char * lbl;    // raw str
-    string idxStr, prefix, tmp;
+    string stageStr, prefix, tmp;
     idx lblSize = ReadBinary<char>(externalFile,lbl,log);
-    if (lblSize==0) {return;}   // no external processes
+    if (lblSize==0) return;   // no external processes
 
     char * ptr = lbl;
-    prefix = ptr;  // store prev str
     for (int i=0;;++i) {
+        stageStr = ptr;
         ptr = strrchr(ptr,'\0');
         if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
         ++ptr;
-        tmp = ptr;  // store cur str
-        //cout << "pfx:" << prefix << " tmp:" << tmp << " idxStr:" << idxStr << endl;
-        if (tmp == "-1") {  // then prefix and idxStr stored okay
-            idxStr.erase(idxStr.end()-1,idxStr.end());  // remove last ","
-            pHMDP->external[idxStr] = prefix;
-            //cout << "Add pfx:" << prefix << " idxStr:" << idxStr << endl;
-            idxStr.clear();
-            prefix.clear();
-        }
-        else {
-            if (!prefix.empty()) idxStr += prefix + ",";
-            prefix = tmp;
-        }
-        //cout << "idxStr" << idxStr << endl;
+        prefix = ptr;
+        pHMDP->external[stageStr] = prefix;
+        ptr = strrchr(ptr,'\0');
+        if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
+        ++ptr;
     }
   // showing contents:
 //  std::map<string,string>::iterator it;

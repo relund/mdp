@@ -187,7 +187,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
       maxId<-max(scpIdx[2*(1:(length(scpIdx)/2))])  # number of states to create at the first stage of the child
       process()  # start external subprocess
         stage()  # first stage of the external process
-        writeBin(c(as.character(idx), prefix, -1), fExt)  # store the external process' name
+        writeBin(c(paste(idx,collapse=","), prefix), fExt)  # store the external process' name
         pr<-as.numeric( t(matrix(c(rep(1,termStates), 1:termStates-1, rep(1/termStates,termStates)), ncol=3)) )
         for (i in 0:maxId) {  # create the states in the first stage (with no actions)
            state()
