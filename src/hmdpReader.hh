@@ -20,7 +20,7 @@ class HMDPAction;   // forward declaration
 /** Class for reading/loading HMDP models.
 
 The HMDP must be represented using the HMDP binary format (v1.0) which is a
-collection of 7 binary files:
+collection of 8 binary files:
 
   Seven binary files are created using the following format:
   - stateIdx.bin: File of integers containing the indexes defining all states in the format
@@ -52,9 +52,10 @@ collection of 7 binary files:
     defined in actions in actionIdx.bin. The format is
     "p1 p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -1 is
     used to indicate that a new action is considered (new line).
-
-Currently the files can be created using the MDP package in R.
-
+  - externalProcesses.bin: File of characters in the format "stageStr prefix stageStr prefix...".
+    Here stageStr corresponds to the index (e.g. n0 s0 a0 n1) of the stage corresponding to the
+    first stage in the external process and prefix to the prefix of the external process. Note no
+    delimiter is used.
  */
 class HMDPReader
 {
