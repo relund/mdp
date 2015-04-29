@@ -5,7 +5,7 @@
 \title{Perform value iteration on the MDP.}
 \usage{
 valueIte(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, times = 10,
-  eps = 1e-05, termValues = NULL)
+  eps = 1e-05, termValues = NULL, g = NULL)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -23,6 +23,8 @@ valueIte(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, times = 10,
 \item{eps}{Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see [1] p161).}
 
 \item{termValues}{The terminal values used (values of the last stage in the MDP).}
+
+\item{g}{Average reward. If specified then do a single iteration using the opdate equations under average reward criterion with the specified \code g value.}
 }
 \value{
 NULL (invisible)

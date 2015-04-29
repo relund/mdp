@@ -524,12 +524,15 @@ void HMDP::ValueIteInfDiscount(uInt times, flt epsilon, idx idxW, idx idxDur,
 	// find founder states at stage zero and last stage
 	pairZero = stages.equal_range("0");
 	pairLast = stages.equal_range("1");
-	if (iniValues.size()!=stages.count("1"))
+	if (iniValues.size()!=stages.count("1")) {
         log << "Error initial values vector does not have the same size as the states that must be assigned the values!\n";
+        return;
+	}
 	for (ite=pairLast.first, iteV=iniValues.begin(); ite!=pairLast.second; ++ite, ++iteV) // set last to zero
 		H.itsNodes[(ite->second)+1].SetW(idxW,*(iteV));
 
 	for (i=1; i<=times; ++i) {
+        //cout << "Ite: " << i << endl;
 		HT.CalcHTacyclic(H,idxW,idxPred,idxMult,idxDur,rate,rateBase);
 		if(MaxDiffFounder(idxW,pairZero,pairLast)<epsilon) break;
 		if (i<times) {    // set next stage to stage zero values
@@ -810,11 +813,14 @@ void HMDP::PolicyIteDiscount(const idx idxW, const idx idxDur, const flt &rate,
 			firstRun = false;
 			SetR(r,idxW,pairZero);
 		}
+		//cout << "r mat: " << r << endl;
 		FounderPrDiscount(P,idxW,idxDur,rate,rateBase,pairZero,pairLast);
+		//cout << "P mat: " << P << endl;
 		// Now solve equations w = r + Pw -> (I-P)w = r
 		matAlg.IMinusP(P);
 		if (matAlg.LASolve(P,w,r)) {log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? " << endl; break;}
 		//cout << "r=" << endl << r << endl << "P=" << endl << P << endl << "w=" << endl << w << endl;
+		//cout << "w mat: " << w << endl;
 		for (ite=pairLast.first, i=0; ite!=pairLast.second; ++ite, ++i) // set last to w values
 			H.itsNodes[(ite->second)+1].SetW(idxW,w(i,0));
 		//if (k==10) break;

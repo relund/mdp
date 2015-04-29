@@ -23,22 +23,49 @@ Binary files are efficent for storing large models. Compared to the HMP (XML)
 format the binary files use less storage space and loading the model is faster.
 }
 \details{
-The functions which can be used are: \itemize{
+The functions which can be used are:
+\itemize{
   \item{\code{setWeights(labels, ...)}: }{Set the labels of the weights used in the actions.
-     \code{labels} is a vector of label names, \code{...} are not used.
-     The function must be called before starting building the model.}
-  \item{\code{process()}: }{Starts a (sub)process.}
-  \item{\code{endProcess()}: }{Ends a (sub)process.}
-  \item{\code{stage(label=NULL)}: }{Starts a stage. Currently \code{label} are not used in the binary format.}
-  \item{\code{endStage()}: }{Ends a (sub)process.}
-  \item{\code{state(label=NULL)}: }{Starts a state. Returns (invisible) the states index number sIdx.}
-  \item{\code{endState()}: }{Ends a stage.}
-  \item{\code{action(label=NULL, weights, prob, ...)}: }{Starts an action. Parameter \code{weights} must be a vector of action weights,
-     \code{prob} must contain triples of (scope,idx,pr) (see the description of actionIdx.bin below), \code{...} is currently not used.}
-  \item{\code{endAction()}: }{Ends an action.}
-  \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}}
+  \code{labels} is a vector of label names, \code{...} are not used. The function must be called
+  before starting building the model.}
 
-Seven binary files are created using the following format:\itemize{
+\item{\code{process()}: }{Starts a (sub)process.}
+
+\item{\code{endProcess()}: }{Ends a (sub)process.}
+
+\item{\code{stage(label=NULL)}: }{Starts a stage. Currently \code{label} are not used in the
+  binary format.}
+
+\item{\code{endStage()}: }{Ends a (sub)process.}
+
+\item{\code{state(label=NULL)}: }{Starts a state. Returns (invisible) the states index number
+  sIdx.}
+
+\item{\code{endState()}: }{Ends a stage.}
+
+\item{\code{action(label=NULL, weights, prob, ...)}: }{Starts an action. Parameter
+  \code{weights} must be a vector of action weights, \code{prob} must contain triples of
+  (scope,idx,pr) (see the description of actionIdx.bin below), \code{...} is currently not used.}
+
+\item{\code{endAction()}: }{Ends an action.}
+
+\item{\code{includeProcess(prefix, label=NULL, weights, prob, termStates)}: }{Include an
+  external process. External processes will only be loaded in memory when needed. That is,
+  external processes is usefull when considering large models and have problems with memory.
+  Parameter \code{prefix} is the prefix of the external process. The next parameters specify the
+  child jump action to the process, i.e. \code{weights} must be a vector of action weights,
+  \code{prob} must contain triples of (scope,idx,pr) (see the description of actionIdx.bin
+  below), Finally \code{termStates} must specify the number of states at the last stage in the
+  external process. Note that inside an \code{includeProcess ... endIncludeProcess} you must
+  specify the father jump actions of the last stage in the external process. An external process
+  is represented using its first and last stage, together with its jump actions.}
+
+\item{\code{endIncludeProcess()}: }{Ends an includeProcess.}
+
+\item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has
+  finished.}}
+
+Eight binary files are created using the following format:\itemize{
 \item{stateIdx.bin: }{File of integers containing the indexes defining all states in the format
 "n0 s0 -1 n0 s0 a0 n1 s1 -1 n0 s0 a0 n1 s1 a1 n2 s2 -1 n0 s0 ...". Here -1 is
 used to indicate that a new state is considered (new line).}
@@ -70,7 +97,11 @@ actions in actionIdx.bin. The format is "p1 p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -
 indicate that a new action is considered (new line).} \item{externalProcesses.bin: }{File of
 characters containing links to the external processes. The format is "n0 s0 prefix -1 n0 s0 a0 n1
 s1 prefix -1 ...". Here -1 is used to indicate that a new external process is considered for the
-stage defined by the indexes.}}
+stage defined by the indexes.}
+\item{externalProcesses.bin: }{File of characters in the format "stageStr prefix stageStr prefix
+..." Here stageStr corresponds to the index (e.g. n0 s0 a0 n1) of the stage corresponding to the
+first stage in the external process and prefix to the prefix of the external process. Note no
+delimiter is used.}}
 }
 \note{
 Note all indexes are starting from zero (C/C++ style).

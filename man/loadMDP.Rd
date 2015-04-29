@@ -18,6 +18,8 @@ files storing the model.}
 \item{eps}{The sum of the transition probabilities must at most differ eps from one.}
 
 \item{check}{Check if the MDP seems correct.}
+
+\item{verbose}{More output when running algorithms.}
 }
 \value{
 A list containing relevant information about the model and a pointer \code{ptr} to the model object in memory.

@@ -1,0 +1,85 @@
+#' Generate a "random" HMDP stored in a set of binary files.
+#'
+#' @param prefix A character string with the prefix added to til file(s).
+#' @param levels Number of levels.
+#' @param timeHorizon The time horizon for each level (vector). For the founder the timehorizon can be Inf.
+#' @param states Number of states at each stage at a given level (vector of length levels)
+#' @param actions Min and max number of actions at a state.
+#' @param childProcessPr Probability of creating a child process when define action.
+#' @param rewards Min and max reward used.
+#' @param durations Min and max duration used.
+#'
+#' @return NULL
+#'
+#' @author Lars Relund \email{lars@@relund.dk}
+#'
+#' @export
+randomHMDP<-function(prefix="", levels=3, timeHorizon=c(Inf,3,4), states=c(2,4,5), actions=c(1,2),
+                     childProcessPr = 0.5, rewards=c(0,100), durations=c(1,10) ) 
+{
+   
+   # gen finite timehorizon process
+   genProcess<-function(levels, timeHorizon, states, actions, childProcessPr, rewards, durations, statesFather) {
+      w$process()
+         for(l1 in 1:timeHorizon[1]-1 ) {
+            w$stage()
+               for (s1 in 1:states[1]-1) {
+                  w$state(s1)
+                     aSize = sample(actions[1]:actions[2],1)
+                     for (a1 in 1:aSize-1) {
+                        if (levels>1) isChild = rbinom(1,1,childProcessPr)==1 else isChild = FALSE
+                        if (isChild) idx<-sample(1:states[2]-1,states[2]/2) else idx<-sample(1:states[1]-1,states[1]/2)
+                        pr<-rep(1/length(idx),length(idx))
+                        if (isChild) scp<-rep(2,length(idx)) else scp<-rep(1,length(idx))
+                        w$action(label=a1, weights=c(sample(rewards[1]:rewards[2],1), sample(durations[1]:durations[2],1)), prob = as.vector( t(matrix(c(scp,idx,pr), ncol=3)) ))
+                           if (isChild) genProcess(levels-1, timeHorizon[2:length(timeHorizon)], states[2:length(states)], actions, childProcessPr, rewards, durations, states[1])
+                        w$endAction()
+                     }
+                  w$endState()
+               }
+            w$endStage()
+         }
+         w$stage()   # last stage
+            for (s1 in 1:states[1]-1) {
+               w$state(s1)
+                  idx<-sample(1:statesFather-1,statesFather/2)
+                  pr<-rep(1/length(idx),length(idx))
+                  scp<-rep(0,length(idx))
+                  w$action(label=a1, weights=c(sample(rewards[1]:rewards[2],1), sample(durations[1]:durations[2],1)), 
+                           prob = as.vector( t(matrix(c(scp,idx,pr), ncol=3)) ))
+                  w$endAction()
+               w$endState()
+            }
+         w$endStage()
+      w$endProcess()
+   }
+   
+   w<-binaryMDPWriter(prefix)
+   w$setWeights(c("Reward","Duration"))
+   if (!is.infinite(timeHorizon[1])) genProcess(levels, timeHorizon, states, actions, childProcessPr, rewards, durations)
+   else {
+      w$process()
+         w$stage()
+            for (s1 in 1:states[1]) {
+               w$state(s1)
+                  aSize = sample(actions[1]:actions[2],1)
+                  for (a1 in 1:aSize-1) {
+                     if (levels>1) isChild = rbinom(1,1,childProcessPr)==1 else isChild = FALSE
+                     if (isChild) idx<-sample(1:states[2]-1,states[2]/2) else idx<-sample(1:states[1]-1,states[1]/2) 
+                     pr<-rep(1/length(idx),length(idx))
+                     if (isChild) scp<-rep(2,length(idx)) else scp<-rep(1,length(idx))
+                     #print(as.vector( t(matrix(c(scp,idx,pr), ncol=3)) ))
+                     w$action(label=a1, weights=c(sample(rewards[1]:rewards[2],1), sample(durations[1]:durations[2],1)), 
+                              prob = as.vector( t(matrix(c(scp,idx,pr), ncol=3)) ))
+                        if (isChild) genProcess(levels-1, timeHorizon[2:length(timeHorizon)], 
+                                                states[2:length(states)], actions, childProcessPr, rewards, durations, states[1])
+                     w$endAction()
+                  }
+                  
+               w$endState()
+            }
+         w$endStage()
+      w$endProcess()
+   }
+   w$closeWriter()
+}
