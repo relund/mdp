@@ -1,14 +1,18 @@
-Package: MDP
+Package: MDP2
 Type: Package
 Title: Markov Decision Processes (MDPs) in R
-Version: 1.2
+Version: 2.0.0
 Date: 2013-08-15
 Author: Lars Relund Nielsen
 Maintainer: Lars Relund Nielsen <lars@relund.dk>
 Depends:
-    R (>= 2.9.0),
-    XML
+    R (>= 3.1.0),
+    XML,
+    Rcpp,
+    plyr
 Description: Using this package you can create and optimize MDPs with
     discrete time steps and state space. Both hierarchical and ordinary
     MDPs can be modelled.
 License: GPL (>= 2)
+Imports: methods, Rcpp (>= 0.11.5)
+LinkingTo: Rcpp
