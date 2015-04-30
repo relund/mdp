@@ -4,18 +4,25 @@
 \alias{infoMDP}
 \title{Information about the MDP}
 \usage{
-infoMDP(mdp, sId = 0, stateStr = NULL, stageStr = NULL, asDF = TRUE)
+infoMDP(mdp, sId = 1:ifelse(mdp$timeHorizon < Inf, mdp$states, mdp$states +
+  mdp$founderStatesLast) - 1, stateStr = NULL, stageStr = NULL,
+  withDF = TRUE, withHarc = FALSE)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
 
 \item{sId}{The id of the state(s) considered.}
 
-\item{stateStr}{A character vector containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1"). Parameter \code{sId} are ignored if not NULL.}
+\item{stateStr}{A character vector containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1").
+Parameter \code{sId} are ignored if not NULL.}
 
-\item{stageStr}{A character vector containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). Parameter \code{sId} and \code{idxS} are ignored if not NULL.}
+\item{stageStr}{A character vector containing the index of the stage(s) (e.g. "n0,s0,a0,n1").
+Parameter \code{sId} and \code{idxS} are ignored if not NULL.}
 
-\item{asDF}{Try to make two data frames with information about actions and states.}
+\item{withDF}{Include two data frames with information about actions and states.}
+
+\item{withHarc}{Include hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
+  head (sId) and the rest tails (sId).}
 }
 \value{
 A list of states containing actions.

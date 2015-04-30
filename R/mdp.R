@@ -235,17 +235,23 @@ getPolicy<-function(mdp, sId = 1:mdp$states, stageStr = NULL, stateLabels = TRUE
 
 
 #' Information about the MDP
-#'
+#' 
 #' @param mdp The MDP loaded using \link{loadMDP}.
 #' @param sId The id of the state(s) considered.
-#' @param stateStr A character vector containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1"). Parameter \code{sId} are ignored if not NULL.
-#' @param stageStr A character vector containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). Parameter \code{sId} and \code{idxS} are ignored if not NULL.
-#' @param asDF Try to make two data frames with information about actions and states.
+#' @param stateStr A character vector containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1"). 
+#'   Parameter \code{sId} are ignored if not NULL.
+#' @param stageStr A character vector containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). 
+#'   Parameter \code{sId} and \code{idxS} are ignored if not NULL.
+#' @param withDF Include two data frames with information about actions and states.
+#' @param withHarc Include hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
+#'   head (sId) and the rest tails (sId).
+#'   
 #' @return A list of states containing actions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example tests/machine.Rex
 #' @export
-infoMDP<-function(mdp, sId=0, stateStr=NULL, stageStr=NULL, asDF = TRUE) {
+infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+mdp$founderStatesLast)-1,
+                  stateStr=NULL, stageStr=NULL, withDF = TRUE, withHarc = FALSE) {
    if (!is.null(stageStr)) {
       sId<-mdp$ptr$getStateIdsStages(stageStr)
    }else {
@@ -265,7 +271,7 @@ infoMDP<-function(mdp, sId=0, stateStr=NULL, stageStr=NULL, asDF = TRUE) {
       l[[i]]$label <- labels[i]
       l[[i]]$actions <- mdp$ptr$getActionInfo(sId[i])
    }
-   if (asDF) {
+   if (withDF) {
       stateDF=ldply(
          .data=l,
          .fun = function(x) {
@@ -286,10 +292,47 @@ infoMDP<-function(mdp, sId=0, stateStr=NULL, stageStr=NULL, asDF = TRUE) {
             )
          }
       )
+   }
+   if (withHarc) {
+      harcDF=ldply(
+         .data = l,
+         .fun = function(x) {
+            ldply(
+               x$actions,
+               function(y) {
+                  rbind( c(x$sId, y$trans) )
+               }
+            )
+         }
+      )
+      harcDF$.id<-NULL
+      colnames(harcDF) <- paste("tail",colnames(harcDF),sep="")
+      colnames(harcDF)[1] <- "head"
+      l$harcDF <- harcDF
+   }
+   if (withDF) {
       l$stateDF = stateDF
       l$actionDF = actionDF
    }
    return(l)
+}
+
+
+
+#' The state-expanded hypergraph as a matrix
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @return Return the hypergraph as a matrix. Each row contains a (h)arc with the first column denoting the head (sId) and the rest tails (sId).
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example tests/machine.Rex
+#' @export
+hypergf<-function(mdp) {
+	v<-.Call("MDP_HgfMatrix", mdp$ptr, PACKAGE="MDP")
+	v<-v-1  # so sId starts from zero
+	v[v < 0] <- NA
+	v<-matrix(v,nrow=mdp$actions)
+	v<-v[order(v[,1]),]
+	return(v)
 }
 
 
@@ -475,38 +518,7 @@ infoMDP<-function(mdp, sId=0, stateStr=NULL, stageStr=NULL, asDF = TRUE) {
 # 	.Call("MDP_SetActionW", mdp$ptr, as.numeric(w), as.integer(sId), as.integer(iA), as.integer(iW), PACKAGE="MDP")
 # 	invisible(NULL)
 # }
-#
-# #' The state-expanded hypergraph as a matrix
-# #'
-# #' @param mdp The MDP loaded using \link{loadMDP}.
-# #' @return Return the hypergraph as a matrix. Each row contains a (h)arc with the first column denoting the head (sId) and the rest tails (sId).
-# #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
-# #' @export
-# hypergf<-function(mdp) {
-# 	v<-.Call("MDP_HgfMatrix", mdp$ptr, PACKAGE="MDP")
-# 	v<-v-1  # so sId starts from zero
-# 	v[v < 0] <- NA
-# 	v<-matrix(v,nrow=mdp$actions)
-# 	v<-v[order(v[,1]),]
-# 	return(v)
-# }
-#
-#
-# #' Return ids for states having index string in idxS.
-# #'
-# #' @param mdp The MDP loaded using \link{loadMDP}.
-# #' @param idxS A char vector of index in the form "n0,s0,a0,n1,s1", i.e. 3*level+2 elements in the string.
-# #' @return A vector of ids for the states.
-# #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
-# #' @export
-# getIdS<-function(mdp, idxS) {
-# 	v<-.Call("MDP_GetIdS", mdp$ptr, as.character(idxS), PACKAGE="MDP")
-# 	v[v== -1] <- NA
-# 	return(v)
-# }
-#
+
 #
 # #' Return ids for states in a stage.
 # #'
