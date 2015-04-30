@@ -245,13 +245,14 @@ getPolicy<-function(mdp, sId = 1:mdp$states, stageStr = NULL, stateLabels = TRUE
 #' @param withDF Include two data frames with information about actions and states.
 #' @param withHarc Include hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
 #'   head (sId) and the rest tails (sId).
+#' @param asStrings Write state vector, transitions and probabilities as strings.
 #'   
 #' @return A list of states containing actions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example tests/machine.Rex
 #' @export
 infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+mdp$founderStatesLast)-1,
-                  stateStr=NULL, stageStr=NULL, withDF = TRUE, withHarc = FALSE) {
+                  stateStr=NULL, stageStr=NULL, withDF = TRUE, withHarc = FALSE, asStrings = TRUE) {
    if (!is.null(stageStr)) {
       sId<-mdp$ptr$getStateIdsStages(stageStr)
    }else {
@@ -271,27 +272,70 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
       l[[i]]$label <- labels[i]
       l[[i]]$actions <- mdp$ptr$getActionInfo(sId[i])
    }
-   if (withDF) {
-      stateDF=ldply(
-         .data=l,
-         .fun = function(x) {
-            data.frame(sId=x$sId, stateStr = x$stateStr, label = x$label)
-         }
-      )
-      actionDF=ldply(
-         .data = l,
-         .fun = function(x) {
-            ldply(
-               x$actions,
-               function(y) {
-                  data.frame(sId = x$sId, aIdx=y$aIdx, label = y$label,
-                             weights = paste(y$weights, collapse = ","),
-                             trans=paste(y$trans,collapse = ","),
-                             pr = paste(y$pr, collapse = ",") )
-               }
-            )
-         }
-      )
+   if (withDF && asStrings) {
+      if (asStrings) {
+         stateDF=ldply(
+            .data=l,
+            .fun = function(x) {
+               data.frame(sId=x$sId, stateStr = x$stateStr, label = x$label)
+            }
+         )
+         actionDF=ldply(
+            .data = l,
+            .fun = function(x) {
+               ldply(
+                  x$actions,
+                  function(y) {
+                     data.frame(sId = x$sId, aIdx=y$aIdx, label = y$label,
+                                weights = paste(y$weights, collapse = ","),
+                                trans=paste(y$trans,collapse = ","),
+                                pr = paste(y$pr, collapse = ",") )
+                  }
+               )
+            }
+         )
+      } 
+      if (withDF && !asStrings) {
+         stateDF=ldply(
+            .data=l,
+            .fun = function(x) { 
+               s <- rbind( scan(text=x$stateStr,, sep=",", quiet = TRUE) )
+               data.frame(sId=x$sId, label=x$label, s)
+            }
+         )
+         levels<-(ncol(stateDF)-2) %/% 3 + 1
+         if (levels==1) colnames(stateDF)<-c("sId","label",paste(c("n","s"),levels-1,sep=""))
+         if (levels>1) colnames(stateDF)<-c("sId","label",paste(c("n","s","a"),rep(0:(levels-2),each=3),sep=""),paste(c("n","s"),levels-1,sep=""))
+         maxSizeTrans = max(ldply(
+            .data = l,
+            .fun = function(x) {
+               ldply(
+                  x$actions,
+                  function(y) {
+                     w <- length(y$trans)
+                  }
+               )
+            }
+         ) )
+         actionDF=ldply(
+            .data = l,
+            .fun = function(x) {
+               ldply(
+                  x$actions,
+                  function(y) {
+                     w <- rbind(y$weights)
+                     t<-rep(NA,maxSizeTrans)
+                     t[1:length(y$trans)] <- y$trans
+                     t <- rbind(t)
+                     pr <- rep(NA,maxSizeTrans)
+                     pr[1:length(y$pr)] <- y$pr
+                     pr <- rbind(t)
+                     data.frame(sId = x$sId, aIdx=y$aIdx, label = y$label, w = w, trans = t, pr = pr)
+                  }
+               )
+            }
+         )
+      }
    }
    if (withHarc) {
       harcDF=ldply(

@@ -6,7 +6,7 @@
 \usage{
 infoMDP(mdp, sId = 1:ifelse(mdp$timeHorizon < Inf, mdp$states, mdp$states +
   mdp$founderStatesLast) - 1, stateStr = NULL, stageStr = NULL,
-  withDF = TRUE, withHarc = FALSE)
+  withDF = TRUE, withHarc = FALSE, asStrings = TRUE)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -22,7 +22,9 @@ Parameter \code{sId} and \code{idxS} are ignored if not NULL.}
 \item{withDF}{Include two data frames with information about actions and states.}
 
 \item{withHarc}{Include hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
-  head (sId) and the rest tails (sId).}
+head (sId) and the rest tails (sId).}
+
+\item{asStrings}{Write state vector, transitions and probabilities as strings.}
 }
 \value{
 A list of states containing actions.
