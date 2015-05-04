@@ -13,8 +13,8 @@ plotHypergraph(gridDim, states = NULL, actions = NULL, showGrid = FALSE,
 \item{states}{A data frame containing 3 columns: sId = state id, gId = grid id and label = text
 to be plotted.}
 
-\item{actions}{A data frame with a column for each action of type (head, tail-1,
-tail-2,...,label,lwd,lty,col,highlight), since number of tails may differ NAs may appear. Each
+\item{actions}{A data frame with a column for each action of type (head, tail1,
+tail2,...,label,lwd,lty,col,highlight), since number of tails may differ NAs may appear. Each
 number (head and tails) must correspond to a state id. Column label contains labels = text to
 be plotted (important must appear after the last tail column). Next columns is the line width,
 line type and line color. Column highlight contains boolean which is true if highlight the

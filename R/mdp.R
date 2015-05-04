@@ -201,7 +201,7 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, ep
            as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(termValues),
            as.numeric(g), as.numeric(0), as.numeric(1) )
 	}
-	message(mdp$pth$getLog())
+	message(mdp$ptr$getLog())
 	invisible(NULL)
 }
 
@@ -220,7 +220,7 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, ep
 #' @example tests/machine.Rex
 #' @export
 getPolicy<-function(mdp, sId = 1:mdp$states, stageStr = NULL, stateLabels = TRUE, actionLabels = TRUE, actionIdx = TRUE, rewards = TRUE) {
-	if (!is.null(stageStr)) sId = mdp$ptr$getStateIds(stageStr)
+	if (!is.null(stageStr)) sId = mdp$ptr$getStateIdsStages(stageStr)
    maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
 	if (max(sId)>=maxS | min(sId)<0)
 		stop("Out of range (sId). Need to be a subset of 0,...,",maxS-1,"!")
@@ -272,7 +272,7 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
       l[[i]]$label <- labels[i]
       l[[i]]$actions <- mdp$ptr$getActionInfo(sId[i])
    }
-   if (withDF && asStrings) {
+   if (withDF) {
       if (asStrings) {
          stateDF=ldply(
             .data=l,
@@ -295,7 +295,7 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
             }
          )
       } 
-      if (withDF && !asStrings) {
+      if (!asStrings) {
          stateDF=ldply(
             .data=l,
             .fun = function(x) { 
@@ -360,27 +360,6 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
    }
    return(l)
 }
-
-
-
-#' The state-expanded hypergraph as a matrix
-#'
-#' @param mdp The MDP loaded using \link{loadMDP}.
-#' @return Return the hypergraph as a matrix. Each row contains a (h)arc with the first column denoting the head (sId) and the rest tails (sId).
-#' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.Rex
-#' @export
-hypergf<-function(mdp) {
-	v<-.Call("MDP_HgfMatrix", mdp$ptr, PACKAGE="MDP")
-	v<-v-1  # so sId starts from zero
-	v[v < 0] <- NA
-	v<-matrix(v,nrow=mdp$actions)
-	v<-v[order(v[,1]),]
-	return(v)
-}
-
-
-
 
 
 # #' Calculate the rentention payoff (RPO) or opportunity cost for some states.
