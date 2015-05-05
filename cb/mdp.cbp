@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mdp" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="hmdp_generic" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
+				<Option object_output="C:/work/github/hmdp_generic/cb/.objs" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="C:/Program Files/R/R-3.1.3/include" />
+				</Compiler>
+				<Linker>
+					<Add library="C:\Program Files\R\R-3.1.3\bin\i386\Rblas.dll" />
+					<Add library="C:\Program Files\R\R-3.1.3\bin\i386\R.dll" />
+					<Add library="C:\Program Files\R\R-3.1.3\bin\i386\Rlapack.dll" />
+					<Add directory="C:/Program Files/R/R-3.1.3/bin/i386" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="../src/basicdt.h" />
+		<Unit filename="../src/hmdp.cpp" />
+		<Unit filename="../src/hmdp.h" />
+		<Unit filename="../src/matalg.h" />
+		<Unit filename="../src/matrix.h" />
+		<Unit filename="../src/timer.h" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

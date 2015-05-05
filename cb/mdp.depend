@@ -1,0 +1,126 @@
+# depslib dependency file v1.0
+1428527585 source:c:\work\github\hmdp_generic\hmdpreader.cpp
+	"hmdp.h"
+
+1429886073 c:\work\github\hmdp_generic\hmdp.h
+	<fstream>
+	<vector>
+	<string>
+	<map>
+	<set>
+	<queue>
+	<algorithm>
+	<cmath>
+	"timer.h"
+	"basicdt.h"
+	"matrix.h"
+	"matalg.h"
+	<stdlib.h>
+	<stdio.h>
+
+1428566960 c:\work\github\hmdp_generic\hmdpreader.h
+	<stdlib.h>
+	<stdio.h>
+	<fstream>
+	<string>
+	<vector>
+	<map>
+	"basicdt.h"
+	"timer.h"
+
+1428922580 c:\work\github\hmdp_generic\basicdt.h
+	<sstream>
+	<vector>
+
+1427481983 c:\work\github\hmdp_generic\timer.h
+	<stdint.h>
+	<limits>
+	<iostream>
+	<string>
+	<windows.h>
+	<mach/mach_time.h>
+	<time.h>
+	<sys/time.h>
+
+1430142262 source:c:\work\github\hmdp_generic\cb\main.cpp
+	<iostream>
+	"../src/hmdp.h"
+
+1429887158 source:c:\work\github\hmdp_generic\hmdp.cpp
+	"hmdp.h"
+
+1429775805 c:\work\github\hmdp_generic\matrix.h
+	"basicdt.h"
+	<iostream>
+
+1428955527 c:\work\github\hmdp_generic\matalg.h
+	"basicdt.h"
+	"matrix.h"
+	<iostream>
+	<R_ext/Lapack.h>
+	<R_ext/BLAS.h>
+
+1421540106 c:\program files\r\r-3.1.3\include\r_ext\lapack.h
+	<R_ext/RS.h>
+	<R_ext/Complex.h>
+	<R_ext/BLAS.h>
+
+1362528136 c:\program files\r\r-3.1.3\include\r_ext\rs.h
+	<string.h>
+	<Rconfig.h>
+	<R_ext/Error.h>
+
+1425912532 c:\program files\r\r-3.1.3\include\rconfig.h
+
+1365026702 c:\program files\r\r-3.1.3\include\r_ext\error.h
+
+1344981906 c:\program files\r\r-3.1.3\include\r_ext\complex.h
+
+1350684306 c:\program files\r\r-3.1.3\include\r_ext\blas.h
+	<R_ext/RS.h>
+	<R_ext/Complex.h>
+
+1430258504 source:c:\work\github\hmdp_generic\src\hmdp.cpp
+	"hmdp.h"
+
+1430292823 c:\work\github\hmdp_generic\src\hmdp.h
+	<fstream>
+	<vector>
+	<string>
+	<map>
+	<set>
+	<queue>
+	<algorithm>
+	<cmath>
+	"timer.h"
+	"basicdt.h"
+	"matrix.h"
+	"matalg.h"
+	<stdlib.h>
+	<stdio.h>
+
+1427481983 c:\work\github\hmdp_generic\src\timer.h
+	<stdint.h>
+	<limits>
+	<iostream>
+	<string>
+	<windows.h>
+	<mach/mach_time.h>
+	<time.h>
+	<sys/time.h>
+
+1428922580 c:\work\github\hmdp_generic\src\basicdt.h
+	<sstream>
+	<vector>
+
+1429775805 c:\work\github\hmdp_generic\src\matrix.h
+	"basicdt.h"
+	<iostream>
+
+1428955527 c:\work\github\hmdp_generic\src\matalg.h
+	"basicdt.h"
+	"matrix.h"
+	<iostream>
+	<R_ext/Lapack.h>
+	<R_ext/BLAS.h>
+
