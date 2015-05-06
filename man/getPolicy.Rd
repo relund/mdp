@@ -4,7 +4,9 @@
 \alias{getPolicy}
 \title{Get parts of the optimal policy.}
 \usage{
-getPolicy(mdp, sId = 1:mdp$states, stageStr = NULL, stateLabels = TRUE,
+getPolicy(mdp, sId = ifelse(mdp$timeHorizon >= Inf, mdp$founderStatesLast + 1,
+  1):ifelse(mdp$timeHorizon >= Inf, mdp$states + mdp$founderStatesLast,
+  mdp$states) - 1, stageStr = NULL, stateLabels = TRUE,
   actionLabels = TRUE, actionIdx = TRUE, rewards = TRUE)
 }
 \arguments{

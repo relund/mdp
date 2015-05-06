@@ -19,7 +19,7 @@ int main()
 //    hmdp.ValueIte(HMDP::DiscountedReward,20000,1e-03,(idx)0,(idx)1,termV,0,0.1,365);
 //    cout << hmdp.GetLog();
 
-    HMDP hmdp("ext_");
+    HMDP hmdp("hmdp_");
     hmdp.verbose = true;
     cout << hmdp.GetLog();
     //cout << hmdp.Print();

@@ -124,3 +124,51 @@
 	<R_ext/Lapack.h>
 	<R_ext/BLAS.h>
 
+1430846834 source:c:\work\github\mdp\src\hmdp.cpp
+	"hmdp.h"
+
+1430910090 c:\work\github\mdp\src\hmdp.h
+	<fstream>
+	<vector>
+	<string>
+	<map>
+	<set>
+	<queue>
+	<algorithm>
+	<cmath>
+	"timer.h"
+	"basicdt.h"
+	"matrix.h"
+	"matalg.h"
+	<stdlib.h>
+	<stdio.h>
+
+1430315062 c:\work\github\mdp\src\timer.h
+	<stdint.h>
+	<limits>
+	<iostream>
+	<string>
+	<windows.h>
+	<mach/mach_time.h>
+	<time.h>
+	<sys/time.h>
+
+1430315062 c:\work\github\mdp\src\basicdt.h
+	<sstream>
+	<vector>
+
+1430315062 c:\work\github\mdp\src\matrix.h
+	"basicdt.h"
+	<iostream>
+
+1430315062 c:\work\github\mdp\src\matalg.h
+	"basicdt.h"
+	"matrix.h"
+	<iostream>
+	<R_ext/Lapack.h>
+	<R_ext/BLAS.h>
+
+1430836184 source:c:\work\github\mdp\cb\main.cpp
+	<iostream>
+	"../src/hmdp.h"
+

@@ -219,7 +219,9 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, ep
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example tests/machine.Rex
 #' @export
-getPolicy<-function(mdp, sId = 1:mdp$states, stageStr = NULL, stateLabels = TRUE, actionLabels = TRUE, actionIdx = TRUE, rewards = TRUE) {
+getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
+                       ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
+                    stageStr = NULL, stateLabels = TRUE, actionLabels = TRUE, actionIdx = TRUE, rewards = TRUE) {
 	if (!is.null(stageStr)) sId = mdp$ptr$getStateIdsStages(stageStr)
    maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
 	if (max(sId)>=maxS | min(sId)<0)

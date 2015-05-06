@@ -29,11 +29,11 @@ HMDPReader::HMDPReader(string stateIdxFile, string stateIdxLblFile, string actio
     AddActions(actionIdxFile, actionIdxLblFile, actionWFile, actionWLblFile, transProbFile);
     AddExternal(externalFile);
     timer.StopTimer();
-    pHMDP->log << "Cpu time for reading the binary files: " << timer.ElapsedTime("sec") << " sec." << endl;
+    pHMDP->log << "Read binary files (" << timer.ElapsedTime("sec") << " sec.)" << endl;
     timer.StartTimer();
     Compile();
     timer.StopTimer();
-    pHMDP->log << "Cpu time for building the HMDP: " << timer.ElapsedTime("sec") << " sec." << endl;
+    pHMDP->log << "Build the HMDP (" << timer.ElapsedTime("sec") << " sec.)" << endl;
 }
 
 // -----------------------------------------------------------------------------
@@ -229,12 +229,17 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 // -----------------------------------------------------------------------------
 
 void HMDPReader::Compile() {
+    Timer cpu;
+    if (pHMDP->verbose) {pHMDP->log << "Start building the HMDP ...\n";}
     // create multimap for stages
+    cpu.StartTimer();
     string stageStr;
     for (idx i=0; i<stateVec.size(); i++) {
         stageStr = pHMDP->GetStageStr(stateVec[i].iHMDP); //cout << "stageStr: " << stageStr << endl;
         stagesMap.insert(pair< string, int >(stageStr,i));
     }
+    cpu.StopTimer();
+    if (pHMDP->verbose) {pHMDP->log << "  Create map for stages (" << cpu.ElapsedTime("sec") << " sec.)\n";}
 	// set time horizon (have not added dummy stage yet)
 	for (uInt s=1;;++s) {
 		if (stagesMap.find(ToString(s)) == stagesMap.end()) {  // if stage s not found
@@ -257,11 +262,15 @@ void HMDPReader::Compile() {
 		}
 	}
     // set state ids which are stored in idx of an action
+    cpu.StartTimer();
     foundScp3 = false;
     for (idx sId=0; sId<stateVec.size(); ++sId) {
         SetSIds(sId, foundScp3);
     }
+    cpu.StopTimer();
+    if (pHMDP->verbose) {pHMDP->log << "  Transform actions to internal data structure (" << cpu.ElapsedTime("sec") << " sec.)\n";}
     // find valid ordering of states (no matter value of foundScp3)
+    cpu.StartTimer();
     vector<idx> order;
     FindValidOdr(order); //cout << "order: " << vec2String(order) << endl;
     // find a reverse valid ordering of stages
@@ -278,7 +287,10 @@ void HMDPReader::Compile() {
         }
     } //cout << endl;
     reverse(keys.begin(), keys.end());  // the valid ordering of the states
+    cpu.StopTimer();
+    if (pHMDP->verbose) {pHMDP->log << "  Find valid ordering of stages (" << cpu.ElapsedTime("sec") << " sec.)\n";}
 	// build the HMDP data structure based on valid odr of stages (keys vector)
+	cpu.StartTimer();
     pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairS;
     multimap<string, int>::iterator ite;
     HMDP::state_iterator sIte;
@@ -298,7 +310,10 @@ void HMDPReader::Compile() {
         }
         pHMDP->stages[keys[i]] = pair<idx,idx>(firstSId, sSize);    // store first state id of stage
 	}
+	cpu.StopTimer();
+	if (pHMDP->verbose) {pHMDP->log << "  Build the internal HMDP data structure (" << cpu.ElapsedTime("sec") << " sec.)\n";}
 	// Sort all trans pr increasing in id
+	cpu.StartTimer();
 	for (HMDP::state_iterator iteS = pHMDP->state_begin(); iteS!=pHMDP->state_end(); ++iteS) {
         for (HMDP::action_iterator iteA = pHMDP->action_begin(iteS); iteA!=pHMDP->action_end(iteS); ++iteA) {
             // Set correct id in HMDPTrans (id's in stateVec stored now)
@@ -308,6 +323,8 @@ void HMDPReader::Compile() {
             iteA->Sort();
         }
 	}
+	cpu.StopTimer();
+	if (pHMDP->verbose) {pHMDP->log << "  Sort transitions increasing in state id (" << cpu.ElapsedTime("sec") << " sec.)\n";}
 }
 
 // -----------------------------------------------------------------------------
@@ -841,7 +858,7 @@ uSInt HMDP::Check(flt eps) {
     ResetLog();
     timer.StartTimer();
     okay = true;
-    log << "Checking MDP ";
+    log << "Checking MDP";
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
        if ( ExternalState(iteS) ) {
             for (action_iterator iteA = action_begin(iteS); iteA!=action_end(iteS); ++iteA) {

@@ -6,8 +6,10 @@ src/*.so
 src/*.dll
 *.bin
 *.log
+*.exe
 *cache/*
 *concordance.tex
 Sweavel.sty
 *.synctex.gz
 inst/doc
+vignettes/graphic/*

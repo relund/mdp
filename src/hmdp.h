@@ -467,7 +467,10 @@ class HMDP
 
     /** Set the action id of the predecessor action. */
     void SetPred(int id) {
-        for (idx i=0; i<states.size(); ++i) states[i].pred = id;
+        for (idx i=0; i<states.size(); ++i) {
+            if (states[i].actions.size()>0) states[i].pred = id;
+            else states[i].pred = -1;   // states with no actions
+        }
     }
 
     /** Set the weights of all states.
@@ -1096,8 +1099,8 @@ class HMDP
     /** Return the index of the actions of current policy.
      * \param iS Vector of state indices.
      */
-    vector<idx> GetPolicy(vector<idx> iS) {
-        vector<idx> val;
+    vector<int> GetPolicy(vector<idx> iS) {
+        vector<int> val;
         for (idx i=0; i<iS.size(); ++i) {
             state_iterator iteS = GetIte(iS[i]);
             val.push_back( pred(iteS) );
@@ -1109,7 +1112,7 @@ class HMDP
     /** Return the index of the actions of current policy.
      * \param iS Vector of state indices.
      */
-    vector<idx> GetPolicyStage(string stageStr) {
+    vector<int> GetPolicyStage(string stageStr) {
         vector<idx> iS = GetIds(stageStr);
         return GetPolicy(iS);
     }
@@ -1122,8 +1125,11 @@ class HMDP
         vector<string> val;
         for (idx i=0; i<iS.size(); ++i) {
             state_iterator iteS = GetIte(iS[i]);
-            action_iterator iteA = GetIte(iteS, pred(iteS));
-            val.push_back( iteA->label );
+            if (pred(iteS)<0) val.push_back( string() );    // if no pred
+            else {
+                action_iterator iteA = GetIte(iteS, pred(iteS));
+                val.push_back( iteA->label );
+            }
         }
         return val;
     }

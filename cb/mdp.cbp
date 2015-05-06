@@ -28,6 +28,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="../inst/include/binaryMDPWriter.hpp" />
 		<Unit filename="../src/basicdt.h" />
 		<Unit filename="../src/hmdp.cpp" />
 		<Unit filename="../src/hmdp.h" />
