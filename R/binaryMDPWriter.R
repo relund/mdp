@@ -222,7 +222,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
         pr<-as.numeric( t(matrix(c(rep(1,termStates), 1:termStates-1, rep(1/termStates,termStates)), ncol=3)) )
         for (i in 0:maxId) {  # create the states in the first stage (with no actions)
            state()
-             w$action(weights=rep(0,length(weights)), prob=pr, end=TRUE) # dummy action of external process with transition to all terminal states
+             action(weights=rep(0,length(weights)), prob=pr, end=TRUE) # dummy action of external process with transition to all terminal states
            endState()
         }
         endStage()

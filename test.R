@@ -169,13 +169,21 @@ detach("package:MDP", unload=TRUE)
 # rsession.exe                 10524 Console                    1 14.121.232 K
 
 
-# # Test very large files
+# Test getPolicy
 library(MDP2)
 prefix<-"tmp/test2_"
 #tmp<-binInfoStates(prefix)
 #head(tmp)
 mdp<-loadMDP(prefix)
 g<-policyIteAve(mdp, "Reward", "Time", maxIte = 1)
-p<-getPolicy(mdp, sId=1)  # crash
+p<-getPolicy(mdp, sId=1) 
 
+
+## Testing on randomly generated HMDPs
+for (i in 1:5) {
+   prefix=paste("tmp/rand",i,"_",sep="")
+   do.call(file.remove,list(list.files(pattern = prefix)))
+   randomHMDP(prefix, levels=sample(2:4,1), timeHorizon=c(Inf,5,10,10,10), states=c(2,5,10,15,20), actions=c(1,3), 
+              childProcessPr = 0.5, externalProcessPr=0.5, rewards=c(0,100), durations=c(1,5) )
+}
 

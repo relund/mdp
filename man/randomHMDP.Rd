@@ -6,7 +6,7 @@
 \usage{
 randomHMDP(prefix = "", levels = 3, timeHorizon = c(Inf, 3, 4),
   states = c(2, 4, 5), actions = c(1, 2), childProcessPr = 0.5,
-  rewards = c(0, 100), durations = c(1, 10))
+  externalProcessPr = 0, rewards = c(0, 100), durations = c(1, 10))
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to til file(s).}
@@ -20,6 +20,8 @@ randomHMDP(prefix = "", levels = 3, timeHorizon = c(Inf, 3, 4),
 \item{actions}{Min and max number of actions at a state.}
 
 \item{childProcessPr}{Probability of creating a child process when define action.}
+
+\item{externalProcessPr}{Probability of creating an external process given that we create a child process. Only works if levels>2 and and currently does not generate external processes which include external processes.}
 
 \item{rewards}{Min and max reward used.}
 
