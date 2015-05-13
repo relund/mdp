@@ -226,10 +226,10 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
    maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
 	if (max(sId)>=maxS | min(sId)<0)
 		stop("Out of range (sId). Need to be a subset of 0,...,",maxS-1,"!")
-   policy <- data.frame(sId = sId )
-   if (stateLabels) policy = cbind(policy, stateLabel = mdp$ptr$getStateLabel(sId) )
+   policy <- data.frame(sId = sId)
+   if (stateLabels) policy = cbind(policy, stateLabel = mdp$ptr$getStateLabel(sId), stringsAsFactors = FALSE )
    if (actionIdx) policy = cbind(policy, aIdx = mdp$ptr$getPolicy(sId) )
-   if (actionLabels) policy = cbind(policy, actionLabel = mdp$ptr$getPolicyLabel(sId) )
+   if (actionLabels) policy = cbind(policy, actionLabel = mdp$ptr$getPolicyLabel(sId), stringsAsFactors = FALSE )
    policy = cbind(policy, reward = mdp$ptr$getPolicyW(sId) )
 	return(policy)
 }
