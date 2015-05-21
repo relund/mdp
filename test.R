@@ -180,10 +180,36 @@ p<-getPolicy(mdp, sId=1)
 
 
 ## Testing on randomly generated HMDPs
-for (i in 1:5) {
+for (i in 1:3) {
    prefix=paste("tmp/rand",i,"_",sep="")
    do.call(file.remove,list(list.files(pattern = prefix)))
-   randomHMDP(prefix, levels=sample(2:4,1), timeHorizon=c(Inf,5,10,10,10), states=c(2,5,10,15,20), actions=c(1,3), 
-              childProcessPr = 0.5, externalProcessPr=0.5, rewards=c(0,100), durations=c(1,5) )
+   randomHMDP(prefix, levels=sample(1:4,1), timeHorizon=c(Inf,5,5,5,5), states=c(3,3,4,5,6), actions=c(2,2), 
+              childProcessPr = 1, externalProcessPr=1, rewards=c(0,100), durations=c(1,5) )
+   mdp<-loadMDP(prefix, verbose = T)
+   g<-policyIteAve(mdp, "Reward", "Duration", maxIte = 10)
 }
+
+i=0
+prefix=paste("tmp/rand",i,"_",sep="")
+do.call(file.remove,list(list.files(pattern = prefix)))
+randomHMDP(prefix, levels=3, timeHorizon=c(Inf,5,5), states=c(3,3,4), actions=c(1,1), 
+           childProcessPr = 1, externalProcessPr=1, rewards=c(0,100), durations=c(1,5) )
+mdp<-loadMDP(prefix, verbose = T)
+g<-policyIteAve(mdp, "Reward", "Duration", maxIte = 10)
+valueIte(mdp, "Reward", "Duration")
+
+
+prefix=paste("tmp/rand1")
+do.call(file.remove,list(list.files(pattern = prefix)))
+randomHMDP(prefix, levels=3, timeHorizon=c(Inf,5,10,3,3), states=c(2,5,10,10,10), actions=c(1,3), 
+           childProcessPr = 0.5, externalProcessPr=0.1, rewards=c(0,100), durations=c(1,5) )
+
+
+
+
+
+prefix<-"tmp/rand2_"
+mdp<-loadMDP(prefix, verbose = T)
+g<-policyIteAve(mdp, "Reward", "Duration", maxIte = 4)
+p<-getPolicy(mdp, sId=1) 
 

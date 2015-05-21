@@ -127,7 +127,8 @@ policyIteAve<-function(mdp, w, dur, maxIte=100) {
 	iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	g<-mdp$ptr$policyIte(1, as.integer(maxIte), as.integer(iW), as.integer(iDur), rate=0, rateBase=1)
-	message(mdp$ptr$getLog())
+	#message(mdp$ptr$getLog())
+	cat(mdp$ptr$getLog())
 	return(g)
 }
 
@@ -151,7 +152,7 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1, maxIte = 100)
 	iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	g<-mdp$ptr$policyIte(0, as.integer(maxIte), as.integer(iW), as.integer(iDur), rate, rateBase)
-	message(mdp$ptr$getLog())
+	cat(mdp$ptr$getLog())
 	invisible()
 }
 
@@ -201,7 +202,7 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, ep
            as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(termValues),
            as.numeric(g), as.numeric(0), as.numeric(1) )
 	}
-	message(mdp$ptr$getLog())
+	cat(mdp$ptr$getLog())
 	invisible(NULL)
 }
 

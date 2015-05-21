@@ -6,12 +6,13 @@
 \usage{
 randomHMDP(prefix = "", levels = 3, timeHorizon = c(Inf, 3, 4),
   states = c(2, 4, 5), actions = c(1, 2), childProcessPr = 0.5,
-  externalProcessPr = 0, rewards = c(0, 100), durations = c(1, 10))
+  externalProcessPr = 0, rewards = c(0, 100), durations = c(1, 10),
+  rewardName = "Reward", durationName = "Duration")
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to til file(s).}
 
-\item{levels}{Number of levels.}
+\item{levels}{Maximum number of levels. Set childProcessPr=1 if want exact this number of levels.}
 
 \item{timeHorizon}{The time horizon for each level (vector). For the founder the timehorizon can be Inf.}
 
@@ -26,6 +27,10 @@ randomHMDP(prefix = "", levels = 3, timeHorizon = c(Inf, 3, 4),
 \item{rewards}{Min and max reward used.}
 
 \item{durations}{Min and max duration used.}
+
+\item{rewardName}{Weight name used for reward.}
+
+\item{durationName}{Weight name used for duration.}
 }
 \description{
 Generate a "random" HMDP stored in a set of binary files.
