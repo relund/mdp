@@ -47,7 +47,7 @@ idx HMDPReader::ReadBinary(string fileName, T *&p) {
 	// read idx
 	file.open(fileName.c_str() ,ios::in|ios::binary|ios::ate);    // open binary file for reading with pointer at end of file to get filesize
 	if(!file) {
-		pHMDP->log << "Problems opening file " << fileName << "\n" << endl;
+		if (fileName.find("externalProcesses.bin")==string::npos) pHMDP->log << "Problems opening file " << fileName << "\n" << endl;
 		return(0);
 	}
 	fileSize = file.tellg();
@@ -419,6 +419,7 @@ void HMDPReader::AddExternal(string externalFile) {
         if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
         ++ptr;
     }
+    delete [] lbl;
     // showing contents:
     /*std::map<string,string>::iterator it;
     std::cout << "mymap contains:\n";
