@@ -336,7 +336,7 @@ private:
     FILE* pExternalProcessesFile;
 
 	vector<int> iHMDP; ///< Index of the HMDP state (use int since store int in binary file).
-    vector<int> sId;   ///< Containing the state id's (used to find the state id the action is defined under)
+   vector<int> sId;   ///< Containing the state id's (used to find the state id the action is defined under)
 	int sTotal; ///< Total number of states.
 	int aTotal; ///< Total number of actions.
 	int aCtr; ///< current action at current state
