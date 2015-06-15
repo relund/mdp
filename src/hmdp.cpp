@@ -829,7 +829,7 @@ void HMDP::ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
                     w(iteL) = w(iteZ);
 		}
 	}
-	if (crit==DiscountedReward && timeHorizon>=INFINT) log << " " << i+1;
+	if (crit==DiscountedReward && timeHorizon>=INFINT) log << " " << i;
 	timer.StopTimer();
 	log << " Finished. Cpu time " << timer.ElapsedTime("sec") << " sec." << endl;
 }

@@ -631,20 +631,10 @@ class HMDP
 //     * stored as pred (negative if arc, positive if harc). If zero then not found.
 //     */
 //    int FindAction(idx iS, idx idxA);
-//
-//
-//    /** Calculate rentention payoff (RPO) for a state. Normally run
-//     * after an optimal policy has been found.
-//     * \param iS The index of the state we consider in \code states.
-//     * \param idxW The index of weights to calculate.
-//     * \param idxA The action index we calculate the RPO with respect to..
-//     * \return A vector of the same size as the states containing the RPO values.
-//     */
-//    flt CalcRPO(idx iS, idx idxW, idx idxA) {
-//        int idxHArc = FindAction(iS,idxA);
-//        return HT.CalcRPO(H,idxW,idxMult,idxHArc);
-//    }
-//
+
+
+
+
 //
 //    /** Calculate rentention payoff (RPO) for a state (discount criterion). Normally run
 //     * after an optimal policy has been found.
@@ -1189,6 +1179,64 @@ class HMDP
      * the cost then the rewards at idxW must be multiplied with -1.
      */
     void CalcPolicy(Crit crit, idx idxW = 0, flt g = 0, idx idxDur = 0, flt rate = 0, flt rateBase = 1);
+
+
+
+    /** Calculate rentention payoff (RPO) for a state. Normally run
+     * after an optimal policy has been found.
+     * \param iS The id of the state we consider in \code states.
+     * \param idxW The index of weights to calculate.
+     * \param idxA The action index we calculate the RPO with respect to (same size as iS).
+     * \param g The average reward (only used in criterion is AverageReward).
+     * \param idxDur The action duration index, i.e. the discout rate for duration $d$ is $\exp(-rate/rateBase*d)$.
+     * \param rate The interest rate.
+     * \param rateBase The time-horizon the rate is valid over.
+     * \return A vector of the same size as the states containing the RPO values.
+     */
+    vector<flt> CalcRPO(Crit crit, vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g = 0, idx idxDur = 0, flt rate = 0, flt rateBase = 1) {
+        flt wA = 0;         // weight the idxA
+        flt wMax = -INF;    // max weight of the prececessor not equal idxA
+        flt wTmp;      // weight to compare
+        flt dB = exp(-rate/rateBase);      // the discount base   //  cout<< "r:" << rate << " b:" << rateBase << endl;
+        vector<flt> result;
+
+        for(idx i=0; i<iS.size(); ++i) {
+            state_iterator iteS = GetIte(iS[i]);
+            action_iterator iteAA = GetIte(iteS, idxA[i]);
+            if ( (GetActionSize(iteS)==0) | (GetActionSize(iteS)==1) ) {
+                result.push_back(0);
+                return result;
+            }
+            for (action_iterator iteA = action_begin(iteS); iteA!=action_end(iteS); ++iteA) { //cout << "    iA: " << GetIdx(iteS,iteA) << " w=" << vec2String(iteA->w) << " ";
+                wTmp=0;
+                bool isMinInf = false;
+                for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) { //cout << "      t: w(" << iteT->id << ")=" << w(GetIte(iteT->id)) << endl;
+                    if ( w(GetIte(iteT->id) ) <= -INF) {
+                        wTmp= -INF;
+                        isMinInf = true;
+                        break;
+                    }
+                    wTmp += w( GetIte(iteT->id) ) * pr(iteT);
+                }
+                if (isMinInf) continue;
+                switch(crit){
+                    case AverageReward: wTmp += w(iteA,idxW)-w(iteA,idxDur)*g; break;
+                    case Reward: wTmp += w(iteA,idxW); break;
+                    case DiscountedReward: wTmp = wTmp*pow(dB,w(iteA,idxDur)) + w(iteA,idxW); break;
+                    case TransPr: wTmp = wTmp; break;
+                    case TransPrDiscounted: wTmp = wTmp*pow(dB,w(iteA,idxDur)); break;
+                    default: log << "Criterion not defined!" << endl; break;
+                }
+                if (iteA==iteAA) {
+                    wA = wTmp;
+                    continue;
+                }
+                wMax = max(wMax,wTmp);
+            }
+            result.push_back(wA - wMax);
+        }
+        return result;
+    }
 
 
     /** Policy iteration algorithm (infinite time-horizon).

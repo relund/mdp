@@ -53,6 +53,21 @@ void RunCalcPolicy(HMDP* hmdp, idx crit, idx idxW, flt g, idx idxD, flt rate, fl
 }
 
 
+
+/** Function to call since Rcpp cannot handle enum types. */
+vector<flt> RunCalcRPO(HMDP* hmdp, idx crit, vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, 
+                idx idxDur, flt rate, flt rateBase) 
+{
+   if (crit==0)
+      return hmdp->CalcRPO(HMDP::AverageReward, iS, idxW, idxA, g, idxDur, rate, rateBase);
+   if (crit==1)
+      return hmdp->CalcRPO(HMDP::DiscountedReward, iS, idxW, idxA, 0, idxDur, rate, rateBase);
+   if (crit==2)
+      return hmdp->CalcRPO(HMDP::Reward, iS, idxW, idxA);
+   return vector<flt>();
+}
+
+
 idx GetStateSizeStage(HMDP* hmdp, string stageStr) {return hmdp->GetStateSize(stageStr);}
 idx GetStateSize(HMDP* hmdp) {return hmdp->GetStateSize();}
 idx GetActionSize(HMDP* hmdp) {return hmdp->GetActionSize();}
@@ -125,6 +140,7 @@ RCPP_MODULE(HMDPModule){
    .method("policyIte", RunPolicyIte)
    .method("policyIteFixedPolicy", RunPolicyIteFixedPolicy)
    .method("calcPolicy", RunCalcPolicy)
+   .method("calcRPO", RunCalcRPO)
    .method("getStateSizeStage", GetStateSizeStage)
    .method("getStateSize", GetStateSize)
    .method("getActionSize", GetActionSize)

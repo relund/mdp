@@ -56,7 +56,6 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 
 
 
-
 #' Internal function. Check if the indexes given are okay. Should not be used except you know what you are doing
 #'
 #' @aliases .checkWDurIdx
@@ -411,6 +410,45 @@ calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0.1
 	invisible(NULL)
 }
 
+
+#' Calculate the rentention payoff (RPO) or opportunity cost for some states.
+#'
+#' The RPO is defined as the difference between
+#' the weight of the state when using action \code{iA} and the maximum
+#' weight of the node when using another predecessor different from \code{iA}.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param w The label of the weight/reward we calculate RPO for.
+#' @param iA  The action index we calculate the RPO with respect to (same size as sId).
+#' @param sId Vector of id's of the states we want to retrive.
+#' @param criterion The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.
+#' @param dur The label of the duration/time such that discount rates can be calculated.
+#' @param rate The interest rate.
+#' @param rateBase The time-horizon the rate is valid over.
+#' @param g The optimal gain (g) calculated (used if \code{criterion = "average"}).
+#' @return The rpo (matrix/data frame).
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @export
+calcRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
+                    ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
+                  criterion="expected", dur = "", rate = 0.1, rateBase = 1, g = 0) {
+   iW<-getWIdx(mdp,w)
+   iDur<-getWIdx(mdp,dur)
+   .checkWIdx(iW,length(mdp$weightNames))
+   maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
+   if (max(sId)>=maxS | min(sId)<0)
+      stop("Out of range (sId). Need to be a subset of 0,...,",maxS-1,"!")
+   if (length(sId)==length(iA))
+      stop("Vectors sId and iA must have same length!")
+   rpo<-NA
+   if (criterion=="expected") rpo<-mdp$ptr$calcRPO(2, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
+   if (criterion=="discount") rpo<-mdp$ptr$calcRPO(1, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
+   if (criterion=="average")  rpo<-mdp$ptr$calcRPO(0, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
+   rpo<-cbind(sId=sId, rpo=rpo)
+   return(rpo)
+}
+
+
 # #' Set the weight of an action.
 # #'
 # #' @param mdp The MDP loaded using \link{loadMDP}.
@@ -429,43 +467,10 @@ calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0.1
 # 	invisible(NULL)
 # }
 # 
-# 
-# #' Calculate the rentention payoff (RPO) or opportunity cost for some states.
-# #'
-# #' The RPO is defined as the difference between
-# #' the weight of the state when using action \code{iA} and the maximum
-# #' weight of the node when using another predecessor different from \code{iA}.
-# #'
-# #' @param mdp The MDP loaded using \link{loadMDP}.
-# #' @param w The label of the weight we calculate RPO for.
-# #' @param iA  The action index we calculate the RPO with respect to.
-# #' @param sId Vector of id's of the states we want to retrive.
-# #' @param criterion The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.
-# #' @param dur The label of the duration/time such that discount rates can be calculated.
-# #' @param rate The interest rate.
-# #' @param rateBase The time-horizon the rate is valid over.
-# #' @param g The optimal gain (g) calculated (used if \code{criterion = "average"}).
-# #' @return The rpo (matrix/data frame).
-# #' @author Lars Relund \email{lars@@relund.dk}
-# #' @export
-# calcRPO<-function(mdp, w, iA, sId = 1:mdp$states-1, criterion="expected", dur = 0, rate = 0.1, rateBase = 1, g = 0) {
-# 	iW<-getWIdx(mdp,w)
-# 	iDur<-getWIdx(mdp,dur)
-# 	.checkWIdx(iW,length(mdp$weightNames))
-# 	if (max(sId)>=mdp$states | min(sId)<0)
-# 		stop("Out of range (sId). Need to be a subset of 0, ...,",mdp$states-1,"!")
-# 	rpo<-NA
-# 	if (criterion=="expected") rpo<-.Call("MDP_CalcRPO", mdp$ptr, as.integer(iW),
-# 		as.integer(iA), as.integer(sId), PACKAGE="MDP")
-# 	if (criterion=="discount") rpo<-.Call("MDP_CalcRPODiscount", mdp$ptr, as.integer(iW),
-# 		as.integer(iA), as.integer(sId), as.integer(iDur), as.numeric(rate),
-# 		as.numeric(rateBase), PACKAGE="MDP")
-# 	if (criterion=="average") rpo<-.Call("MDP_CalcRPOAve", mdp$ptr, as.integer(iW),
-# 		as.integer(iA), as.integer(sId), as.integer(iDur), as.numeric(g), PACKAGE="MDP")
-# 	rpo<-cbind(sId=sId, rpo=rpo)
-# 	return(rpo)
-# }
-#
+
+
+
+
 #
 #
 #

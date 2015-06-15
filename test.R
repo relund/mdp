@@ -81,7 +81,9 @@ binInfoStates(prefix)
 binInfoActions(prefix)
 mdp<-loadMDP(prefix, verbose = T)
 g<-policyIteAve(mdp, "Reward", "Time", maxIte = 5)
-policy<-getPolicy(mdp)
+getPolicy(mdp)
+valueIte(mdp, "Reward", "Time", rate = 0.1)
+getPolicy(mdp)
 
 
 l<-infoMDP(mdp, sId=c(9,15), withHarc = F, withDF = F)
@@ -192,7 +194,7 @@ for (i in 1:3) {
 i=0
 prefix=paste("tmp/rand",i,"_",sep="")
 do.call(file.remove,list(list.files(pattern = prefix)))
-randomHMDP(prefix, levels=3, timeHorizon=c(Inf,5,5), states=c(3,3,4), actions=c(1,1), 
+randomHMDP(prefix, levels=3, timeHorizon=c(5,5,5), states=c(3,3,4), actions=c(1,1), 
            childProcessPr = 1, externalProcessPr=1, rewards=c(0,100), durations=c(1,5) )
 mdp<-loadMDP(prefix, verbose = T)
 g<-policyIteAve(mdp, "Reward", "Duration", maxIte = 10)
