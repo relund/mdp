@@ -365,6 +365,71 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
 }
 
 
+#' Modify the current policy by setting policy action of states. 
+#' 
+#' If the policy does not contain all states then the actions from the previous optimal 
+#' policy are used.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param policy A data frame with two columns state id and action index.
+#' @return Nothing.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @export
+setPolicy<-function(mdp, policy) {
+   if (dim(policy)[2]!=2) stop("You must specify two columns in policy.")
+   mdp$ptr$setPolicy(as.integer(policy[,1]),as.integer(policy[,2]))
+	invisible(NULL)
+}
+
+
+#' Calculate weights based on current policy. Normally run after an optimal policy has been found.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param wLbl The label of the weight we consider.
+#' @param criterion The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.
+#' @param durLbl The label of the duration/time such that discount rates can be calculated.
+#' @param rate The interest rate.
+#' @param rateBase The time-horizon the rate is valid over.
+#' @param termValues The terminal values used (values of the last stage in the MDP).
+#' @return Nothing.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example tests/machine.Rex
+#' @export
+calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0.1, rateBase = 1, termValues=NULL) {
+	iW<-getWIdx(mdp,wLbl)
+	if (!is.null(durLbl)) iDur<-getWIdx(mdp,durLbl)
+	.checkWIdx(iW,length(mdp$weightNames))
+	if (mdp$timeHorizon<Inf) {
+		if (is.null(termValues)) stop("Terminal values must be specified under finite time-horizon!")
+		if (criterion=="expected") mdp$ptr$calcPolicy(2,iW,0,1,rate,rateBase)
+		if (criterion=="discount") mdp$ptr$calcPolicy(1,iW,0,iDur,rate,rateBase)
+	} else {
+		if (criterion=="discount") mdp$ptr$policyIteFixedPolicy(1,iW,iDur,rate,rateBase)
+		if (criterion=="average") return( mdp$ptr$policyIteFixedPolicy(0,iW,iDur,rate,rateBase) )
+		#if (criterion=="expected") .Call("MDP_CalcWeightsFinite", mdp$ptr, as.integer(iW), as.numeric(termValues), PACKAGE="MDP")
+	}
+	invisible(NULL)
+}
+
+# #' Set the weight of an action.
+# #'
+# #' @param mdp The MDP loaded using \link{loadMDP}.
+# #' @param w The weight.
+# #' @param sId The state id of the state.
+# #' @param idxA The action index.
+# #' @param wLbl The label of the weight we consider.
+# #' @return Nothing.
+# #' @author Lars Relund \email{lars@@relund.dk}
+# #' @example tests/machine.Rex
+# #' @export
+# setActionWeight<-function(mdp, w, sId, iA, wLbl) {
+# 	iW<-getWIdx(mdp,wLbl)
+# 	
+# 	.Call("MDP_SetActionW", mdp$ptr, as.numeric(w), as.integer(sId), as.integer(iA), as.integer(iW), PACKAGE="MDP")
+# 	invisible(NULL)
+# }
+# 
+# 
 # #' Calculate the rentention payoff (RPO) or opportunity cost for some states.
 # #'
 # #' The RPO is defined as the difference between
@@ -402,36 +467,6 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
 # }
 #
 #
-# #' Calculate weights based on current policy. Normally run after an optimal policy has been found.
-# #'
-# #' @param mdp The MDP loaded using \link{loadMDP}.
-# #' @param w The label of the weight we consider.
-# #' @param criterion The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.
-# #' @param dur The label of the duration/time such that discount rates can be calculated.
-# #' @param rate The interest rate.
-# #' @param rateBase The time-horizon the rate is valid over.
-# #' @param termValues The terminal values used (values of the last stage in the MDP).
-# #' @return Nothing.
-# #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
-# #' @export
-# calcWeights<-function(mdp, w, criterion="expected", dur = NULL, rate = 0.1, rateBase = 1, termValues=NULL) {
-# 	iW<-getWIdx(mdp,w)
-# 	if (!is.null(dur)) iDur<-getWIdx(mdp,dur)
-# 	.checkWIdx(iW,length(mdp$weightNames))
-# 	if (mdp$timeHorizon<Inf) {
-# 		if (is.null(termValues)) stop("Terminal values must be specified under finite time-horizon!")
-# 		if (criterion=="expected") .Call("MDP_CalcWeightsFinite", mdp$ptr, as.integer(iW), as.numeric(termValues), PACKAGE="MDP")
-# 		if (criterion=="discount") .Call("MDP_CalcWeightsFiniteDiscount", mdp$ptr, as.integer(iW), as.integer(iDur),
-# 			as.numeric(rate), as.numeric(rateBase), as.numeric(termValues), PACKAGE="MDP")
-# 	} else {
-# 		if (criterion=="discount") .Call("MDP_CalcWeightsInfDiscount", mdp$ptr, as.integer(iW), as.integer(iDur),
-# 			as.numeric(rate), as.numeric(rateBase), PACKAGE="MDP")
-# 		if (criterion=="average") return(.Call("MDP_CalcWeightsInfAve", mdp$ptr, as.integer(iW), as.integer(iDur), PACKAGE="MDP"))
-# 		if (criterion=="expected") .Call("MDP_CalcWeightsFinite", mdp$ptr, as.integer(iW), as.numeric(termValues), PACKAGE="MDP")
-# 	}
-# 	invisible(NULL)
-# }
 #
 #
 # #' Fix the action of a state. That is, the other actions are removed from the HMDP.
@@ -483,19 +518,6 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
 # }
 #
 #
-# #' Set the action of a state to be in the current policy.
-# #'
-# #' @param mdp The MDP loaded using \link{loadMDP}.
-# #' @param sId The state id of the state.
-# #' @param iA  The action index of the state.
-# #' @return Nothing.
-# #' @author Lars Relund \email{lars@@relund.dk}
-# #' @export
-# setPolicyAction<-function(mdp, sId, iA) {
-# 	.Call("MDP_SetPolicyAction", mdp$ptr, as.integer(sId), as.integer(iA), PACKAGE="MDP")
-# 	invisible(NULL)
-# }
-#
 #
 # #' Set the current policy.
 # #'
@@ -528,23 +550,6 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
 # 	invisible(NULL)
 # }
 #
-# #' Set the weight of an action.
-# #'
-# #' @param mdp The MDP loaded using \link{loadMDP}.
-# #' @param w The weight.
-# #' @param sId The state id of the state.
-# #' @param iA The action index.
-# #' @param wLbl The label of the weight we consider.
-# #' @return Nothing.
-# #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
-# #' @export
-# setActionWeight<-function(mdp, w, sId, iA, wLbl) {
-# 	iW<-getWIdx(mdp,wLbl)
-# 	.Call("MDP_SetActionW", mdp$ptr, as.numeric(w), as.integer(sId), as.integer(iA), as.integer(iW), PACKAGE="MDP")
-# 	invisible(NULL)
-# }
-
 #
 # #' Return ids for states in a stage.
 # #'

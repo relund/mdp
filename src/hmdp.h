@@ -544,6 +544,15 @@ class HMDP
      */
     flt SetGetActionPr(const flt & pr, const idx & iS, const idx & iA, const idx & iSTail);
 
+    /** Set the action of the policy.
+     * \param iS The id of the state we consider in \code states.
+     * \param iA The action index.
+     */
+    void SetPolicy(vector<idx> iS, vector<idx> iA) {
+        for (idx i=0; i<iS.size(); ++i)
+            states[iS[i]].pred = iA[i];
+    }
+
 // Print functions -------------------
 
     /** Print the HMDP, i.e. its states and actions. */
@@ -682,14 +691,6 @@ class HMDP
 //    }
 //
 //
-//    /** Set the action of the policy.
-//     * \param iS The index of the state we consider in \code states.
-//     * \param iA The action index.
-//     */
-//    void SetPolicyAction(idx iS, idx iA) {
-//        int idxHArc = FindAction(iS,iA);
-//        H.SetPred(idxHArc,idxPred);
-//    }
 //
 //
 
@@ -1202,6 +1203,18 @@ class HMDP
      */
     flt PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, const flt rate=0, const flt rateBase=1);
 
+
+    /** Policy iteration algorithm (infinite time-horizon) given a fixed policy.
+     * \param crit Criterion used (enum type).
+     * \param maxIte The max number of iterations. The model may loop if not unichain.
+     * \param idxW Index of the weight used as nominator.
+     * \param idxD The denominator we want to maximize the weight over.
+     * \param rate The interest rate.
+     * \param rateBase The time-horizon the rate is valid over.
+     * \return g The gain.
+     * \post Use \code GetLog to see the optimization log.
+     */
+    flt PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const flt rate=0, const flt rateBase=1);
 
      /** Value iteration algorithm.
      *

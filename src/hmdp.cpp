@@ -720,6 +720,72 @@ flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, con
 	return -INF;
 }
 
+
+//-----------------------------------------------------------------------------
+
+flt HMDP::PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const flt rate, const flt rateBase) {
+	ResetLog();
+	if (timeHorizon<INFINT) {
+		log << "Policy iteration can only be done on infinite time-horizon HMDPs!" << endl;
+		return -INF;
+	}
+    log << "Run policy iteration (given a fixed policy) ";
+	switch (crit) {
+        case AverageReward: log << "under average reward criterion using \nreward '" <<
+            GetWName(idxW) << "' over '" << GetWName(idxD) << "'. Iterations (g):" << endl;
+            break;
+        case DiscountedReward: log << "using quantity '" << GetWName(idxW)
+            << "' under discounting criterion \nwith '" << GetWName(idxD)
+            << "' as duration using interest rate " << rate
+            << " and a rate basis equal " << rateBase << ". \nIteration(s):";
+            break;
+        default: log << "Criterion not defined for policy iteration!" << endl; return -INF;
+	}
+	MatAlg matAlg; // Matrix routines
+	ExternalResetActions(idxW, idxD);
+	timer.StartTimer();
+	SetStateWStage("1", (flt)0);
+	int rows = GetStateSize("0");
+	MatSimple<double> r(rows,1),   // Matrix of founder rewards
+				   w(rows,1),      // Matrix of weights (the unknown)
+				   d(rows,1),      // Matrix of denominator values
+				   P(rows,rows);   // Matrix of prob values
+	MatSimple<double> I(rows,true); // identity
+	flt g = 0;
+	okay = true;
+
+    // find rewards, dur, trans pr at founder given policy
+    if (crit==AverageReward) {
+        FounderW(Reward, r, idxW);
+        FounderPr(TransPr,P);
+        FounderW(Reward, d, idxD);
+    }
+    else {
+        FounderW(crit, r, idxW,g,idxD,rate,rateBase); //cout << "r mat: " << r << endl;
+        FounderPr(TransPrDiscounted,P,idxD,rate,rateBase); //cout << "P mat: " << P << endl;
+    }
+    // If AverageReward solve equations h = r - dg + Ph where r, d and P have been calculated for the founder. This is equivalent to solving (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equivalent to solving Qw = r (equation (8.6.8) in Puterman) where last col in (I-P) replaced with d.
+    // If DiscountedReward solve equations w = r + Pw -> (I-P)w = r
+    matAlg.IMinusP(P);  // Set P := I-P
+    if (crit==AverageReward) for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
+    if (matAlg.LASolve(P,w,r)) {g = -INF; log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; return -INF;}
+    if (crit==AverageReward) {
+        g = w(rows-1,0);
+    }
+    state_iterator iteL; idx j;
+    for (iteL=state_begin("1"), j=0; iteL!=state_end("1"); ++iteL, ++j) {
+        if (j<(idx)rows-1 ) HMDP::w(iteL) = w(j,0);
+        else if (crit==DiscountedReward) HMDP::w(iteL) = w(j,0);
+    }
+    // calc weights policy
+    CalcPolicy(crit, idxW, g, idxD, rate, rateBase);
+
+	log << "finished. Cpu time: " << timer.ElapsedTime("sec") << " sec." << endl;
+	if (crit==AverageReward) return g; //cout << "Rewards: " << vec2String(GetStageW("0")) << endl;
+	return -INF;
+}
+
+
 // ----------------------------------------------------------------------------
 
 void HMDP::ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
