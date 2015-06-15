@@ -5,7 +5,7 @@ date: '`r Sys.Date()`'
 output:
   html_document: default
   pdf_document:
-    keep_tex: yes
+    keep_tex: no
 bibliography: mdp_examples_files/litt.bib
 vignette: |
   %\VignetteIndexEntry{MDP examples} 
@@ -377,19 +377,19 @@ getPolicy(mdp)     # optimal policy for each sId
 First note that the we optimize the MDP for a specific interest rate which
 according to a rate basis, i.e. if the rate is 0.1 and the rate base is 4 then
 the discount rate over one time unit is $\exp(-0.1/4) =
-`r round(exp(-0.1/4),4)}`. The discount rate over t time units then becomes
+`r round(exp(-0.1/4),4)`$. The discount rate over t time units then becomes
 $$
-	\delta(t) = \exp(-`rate}/`rateBase})^{t}.
+	\delta(t) = \exp(-rate/rateBase)^{t}.
 $$
-Second, the parameter `times} denote an upper bound on the number of iterations.
-Finally, the parameter `eps} denote the $\epsilon$ for stopping the algorithm. If
+Second, the parameter `maxIte` denote an upper bound on the number of iterations.
+Finally, the parameter `eps` denote the $\epsilon$ for stopping the algorithm. If
 the maximum difference between the expected discounted reward of 2 states is
 below $\epsilon$ then the algorithm stops, i.e the policy becomes epsilon
 optimal (see @Puterman94 p161).
 
 Let us have a look at how value iteration performs for each iteration.
 
-```{r Value ite steps (sow rep), echo=TRUE, results=hide}
+```{r Value ite steps (sow rep), echo=TRUE, results='hide'}
 termValues<-c(0,0,0)
 iterations<-1:211
 df<-data.frame(n=iterations,a1=NA,V1=NA,D1=NA,a2=NA,V2=NA,D2=NA,a3=NA,V3=NA,D3=NA)
@@ -410,18 +410,22 @@ for (i in iterations) {
 	df[i,]<-res
 	termValues<-a$reward
 }
+```
+
+```{r}
 df[c(1:3,51:53,151:153,210:211),]
 ```
+
 
 Note value iteration converges very slowly to the optimal value.
 
 Another optimization technique is policy iteration which finds an optimal
 policy. Let us solve the MDP under the expected discount criterion.
 
-```{r Policy ite discount (sow rep),echo=true}
+```{r Policy ite discount (sow rep), echo=TRUE}
 policyIteDiscount(mdp, wLbl, durLbl, rate, rateBase)
 policy<-getPolicy(mdp)
-rpo<-calcRPO(mdp, wLbl, iA=0, criterion="discount", dur=durLbl, rate=rate, rateBase=rateBase)
+rpo<-calcRPO(mdp, wLbl, iA=c(0,0,0), criterion="discount", dur=durLbl, rate=rate, rateBase=rateBase)
 policy<-merge(policy,rpo)
 policy
 ```
@@ -442,7 +446,7 @@ can maximize the average reward over time:
 ```{r Policy ite ave reward over time (sow rep),echo=true}
 g<-policyIteAve(mdp, wLbl, durLbl)
 policy<-getPolicy(mdp)
-rpo<-calcRPO(mdp, wLbl, iA=0, criterion="average", dur=durLbl, rate=rate, rateBase=rateBase)
+rpo<-calcRPO(mdp, wLbl, iA=c(0,0,0), criterion="average", dur=durLbl, rate=rate, rateBase=rateBase)
 policy<-merge(policy,rpo)
 policy
 ```
@@ -452,11 +456,11 @@ compared to the `big litter` state.
 
 We may also maximize the average reward over piglets:
 
-```{r Policy ite ave reward over litter(sow rep),echo=true}
+```{r Policy ite ave reward over litter(sow rep), echo=TRUE}
 durLbl<-"Piglets"
 g<-policyIteAve(mdp, wLbl, dur=durLbl)
 policy<-getPolicy(mdp)
-rpo<-calcRPO(mdp, wLbl, iA=0, criterion="average", dur=durLbl, rate=rate, rateBase=rateBase)
+rpo<-calcRPO(mdp, wLbl, iA=c(0,0,0), criterion="average", dur=durLbl, rate=rate, rateBase=rateBase)
 policy<-merge(policy,rpo)
 policy
 ```

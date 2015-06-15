@@ -656,12 +656,12 @@ flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, con
     log << "Run policy iteration ";
 	switch (crit) {
         case AverageReward: log << "under average reward criterion using \nreward '" <<
-            GetWName(idxW) << "' over '" << GetWName(idxD) << "'. Iterations (g):" << endl;
+            GetWName(idxW) << "' over '" << GetWName(idxD) << "'. Iterations (g): " << endl;
             break;
         case DiscountedReward: log << "using quantity '" << GetWName(idxW)
             << "' under discounting criterion \nwith '" << GetWName(idxD)
             << "' as duration using interest rate " << rate
-            << " and a rate basis equal " << rateBase << ". \nIteration(s):";
+            << " and a rate basis equal " << rateBase << ". \nIteration(s): ";
             break;
         default: log << "Criterion not defined for policy iteration!" << endl; return -INF;
 	}
@@ -710,7 +710,9 @@ flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, con
 		newPred = CalcOptPolicy(crit, idxW, g, idxD, rate, rateBase);
 		if (!okay) {g=-INF; break;}   // something went wrong (see the log)
 		if (!newPred) {
-			log << k+1 << " (" << g << ") "; if (verbose) log << endl;
+			log << k+1;
+			if (crit==AverageReward) log << " (" << g << ") "; else log << " ";
+			if (verbose) log << endl;
 			break;    // optimal strategy found
 		}
 		if (k>=maxIte) { log << "\nReached upper limit of iterations! Seems to loop. \nIs the model fulfilling the model assumptions (e.g. unichain)?\n"; break;}
@@ -819,15 +821,15 @@ void HMDP::ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
 		w(iteS) = *iteV;
 	}
 	idx i;
-	for (i=0; i<maxIte; ++i) { //cout << "Ite: " << i+1 << endl;
+	for (i=1;; ++i) { //cout << "Ite: " << i+1 << endl;
         CalcOptPolicy(crit,idxW,g,idxDur,rate,rateBase);
 		if (crit==DiscountedReward)
             if(MaxDiffFounder()<epsilon) break;
-		if (i<maxIte-1) {    // set next last stage values to stage zero values
+		if (i<maxIte) {    // set next last stage values to stage zero values
             for (state_iterator iteZ = state_begin(stageZeroStr), iteL=state_begin(stageLastStr);
                 iteZ!=state_end(stageZeroStr); ++iteZ, ++iteL)
                     w(iteL) = w(iteZ);
-		}
+		} else break;
 	}
 	if (crit==DiscountedReward && timeHorizon>=INFINT) log << " " << i;
 	timer.StopTimer();

@@ -13,3 +13,4 @@ Sweavel.sty
 *.synctex.gz
 inst/doc
 vignettes/graphic/*
+tmp

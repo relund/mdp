@@ -438,7 +438,7 @@ calcRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStat
    maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
    if (max(sId)>=maxS | min(sId)<0)
       stop("Out of range (sId). Need to be a subset of 0,...,",maxS-1,"!")
-   if (length(sId)==length(iA))
+   if (length(sId)!=length(iA))
       stop("Vectors sId and iA must have same length!")
    rpo<-NA
    if (criterion=="expected") rpo<-mdp$ptr$calcRPO(2, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
