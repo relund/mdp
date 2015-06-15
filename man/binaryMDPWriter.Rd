@@ -38,8 +38,8 @@ The functions which can be used are:
 
 \item{\code{endStage()}: }{Ends a (sub)process.}
 
-\item{\code{state(label=NULL)}: }{Starts a state. Returns (invisible) the states index number
-  sIdx.}
+\item{\code{state(label=NULL)}: }{Starts a state. Returns (invisible) the states id number
+  which can be used for later reference given scope 3.}
 
 \item{\code{endState()}: }{Ends a stage.}
 
@@ -58,7 +58,9 @@ The functions which can be used are:
   below), Finally \code{termStates} must specify the number of states at the last stage in the
   external process. Note that inside an \code{includeProcess ... endIncludeProcess} you must
   specify the father jump actions of the last stage in the external process. An external process
-  is represented using its first and last stage, together with its jump actions.}
+  is represented using its first and last stage, together with its jump actions. Returns
+  (invisible) the state id's of the first stage in the external process which can be used for
+  later reference given scope 3.}
 
 \item{\code{endIncludeProcess()}: }{Ends an includeProcess.}
 

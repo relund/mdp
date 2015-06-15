@@ -227,8 +227,9 @@ public:
      * \param label The label of the action.
      * \param termStates Number of states at the last stage in the external process.
      */
-    void IncludeProcess(const string &prefix, const vector<int> &scope, const vector<int> &index,
+    vector<int> IncludeProcess(const string &prefix, const vector<int> &scope, const vector<int> &index,
                    const vector<flt> &prob, const vector<flt> &weights, const string &label, const int &termStates){
+        vector<int> ids;
         aTotal++;
         aCtr++;
         iHMDP.push_back(aCtr);
@@ -247,11 +248,12 @@ public:
             WriteBinary(pExternalProcessesFile, prefix);
             //WriteBinary(pExternalProcessesFile, ToString<int>(-1));
             for (int i=0; i<=maxIdx; ++i) {
-                State(lbl);
+                ids.push_back( State(lbl) );
                   Action(scp, idx, pr, w, lbl, true);
                 EndState();
             }
           EndStage();
+          return ids;
     }
 
     /** End include process. */

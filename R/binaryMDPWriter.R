@@ -20,8 +20,8 @@
 #'   
 #'   \item{\code{endStage()}: }{Ends a (sub)process.}
 #'   
-#'   \item{\code{state(label=NULL)}: }{Starts a state. Returns (invisible) the states index number
-#'   sIdx.}
+#'   \item{\code{state(label=NULL)}: }{Starts a state. Returns (invisible) the states id number
+#'   which can be used for later reference given scope 3.}
 #'   
 #'   \item{\code{endState()}: }{Ends a stage.}
 #'   
@@ -40,7 +40,9 @@
 #'   below), Finally \code{termStates} must specify the number of states at the last stage in the
 #'   external process. Note that inside an \code{includeProcess ... endIncludeProcess} you must
 #'   specify the father jump actions of the last stage in the external process. An external process
-#'   is represented using its first and last stage, together with its jump actions.}
+#'   is represented using its first and last stage, together with its jump actions. Returns 
+#'   (invisible) the state id's of the first stage in the external process which can be used for 
+#'   later reference given scope 3.}
 #'   
 #'   \item{\code{endIncludeProcess()}: }{Ends an includeProcess.}
 #'   
@@ -190,6 +192,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 	}
 
    includeProcess<-function(prefix, label=NULL, weights, prob, termStates){     # prop contain tripeles (scope,idx,prob) - Here all scope must be 2!!
+      stateId<-NULL # to store state id's
       #cat("action:\n")
       #print(weights)
       #print(prob)
@@ -221,13 +224,13 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
         writeBin(c(paste(idx,collapse=","), prefix), fExt)  # store the external process' name
         pr<-as.numeric( t(matrix(c(rep(1,termStates), 1:termStates-1, rep(1/termStates,termStates)), ncol=3)) )
         for (i in 0:maxId) {  # create the states in the first stage (with no actions)
-           state()
+           stateId<-c(stateId,state())
              action(weights=rep(0,length(weights)), prob=pr, end=TRUE) # dummy action of external process with transition to all terminal states
            endState()
         }
         endStage()
         # now the user has to include the last stage using the normal syntax
-      invisible(NULL)
+        invisible(stateId)
    }
 
    endIncludeProcess<-function() {
