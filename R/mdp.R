@@ -215,22 +215,45 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, ep
 #' @param actionLabels Add action labels of policy.
 #' @param actionIdx Add action index.
 #' @param rewards Add rewards calculated for each state.
+#' @param stateStr Add the state string for each state.
 #' @return The policy (data frame).
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example tests/machine.Rex
 #' @export
 getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                        ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
-                    stageStr = NULL, stateLabels = TRUE, actionLabels = TRUE, actionIdx = TRUE, rewards = TRUE) {
+                    stageStr = NULL, stateLabels = TRUE, actionLabels = TRUE, actionIdx = TRUE, 
+                    rewards = TRUE, stateStr = FALSE) {
 	if (!is.null(stageStr)) sId = mdp$ptr$getStateIdsStages(stageStr)
    maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
 	if (max(sId)>=maxS | min(sId)<0)
 		stop("Out of range (sId). Need to be a subset of 0,...,",maxS-1,"!")
-   policy <- data.frame(sId = sId)
-   if (stateLabels) policy = cbind(policy, stateLabel = mdp$ptr$getStateLabel(sId), stringsAsFactors = FALSE )
-   if (actionIdx) policy = cbind(policy, aIdx = mdp$ptr$getPolicy(sId) )
-   if (actionLabels) policy = cbind(policy, actionLabel = mdp$ptr$getPolicyLabel(sId), stringsAsFactors = FALSE )
-   policy = cbind(policy, reward = mdp$ptr$getPolicyW(sId) )
+   cols <- 1 + stateLabels + actionIdx + actionLabels + rewards + stateStr
+   policy<-data.frame(matrix(NA, nrow = length(sId), ncol = cols))
+   cols<-1
+   policy[,cols] <- sId
+   colNames = "sId"; cols = cols + 1
+   if (stateStr) {
+      policy[,cols]<-mdp$ptr$getStateStr(sId)
+      colNames = c(colNames, "stateStr"); cols = cols + 1
+   }
+   if (stateLabels) {
+      policy[,cols] = mdp$ptr$getStateLabel(sId); 
+      colNames = c(colNames, "stateLabel"); cols = cols + 1
+   }
+   if (actionIdx) {
+      policy[,cols] = mdp$ptr$getPolicy(sId) 
+      colNames = c(colNames, "aIdx"); cols = cols + 1       
+   }
+   if (actionLabels) {
+      policy[,cols] = mdp$ptr$getPolicyLabel(sId)
+      colNames = c(colNames, "actionLabel"); cols = cols + 1
+   }
+   if (rewards) {
+      policy[,cols] = mdp$ptr$getPolicyW(sId) 
+      colNames = c(colNames, "weight"); cols = cols + 1
+   }
+   colnames(policy) <- colNames
 	return(policy)
 }
 
@@ -444,6 +467,7 @@ calcRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStat
    if (criterion=="expected") rpo<-mdp$ptr$calcRPO(2, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
    if (criterion=="discount") rpo<-mdp$ptr$calcRPO(1, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
    if (criterion=="average")  rpo<-mdp$ptr$calcRPO(0, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
+   rpo[rpo <= -1.8e+16]<-NA # less than 2 actions
    rpo<-cbind(sId=sId, rpo=rpo)
    return(rpo)
 }

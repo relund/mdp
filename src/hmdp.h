@@ -1194,18 +1194,19 @@ class HMDP
      * \return A vector of the same size as the states containing the RPO values.
      */
     vector<flt> CalcRPO(Crit crit, vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g = 0, idx idxDur = 0, flt rate = 0, flt rateBase = 1) {
-        flt wA = 0;         // weight the idxA
-        flt wMax = -INF;    // max weight of the prececessor not equal idxA
-        flt wTmp;      // weight to compare
+        flt wA;      // weight the idxA
+        flt wMax;    // max weight of the prececessor not equal idxA
+        flt wTmp;    // weight to compare
         flt dB = exp(-rate/rateBase);      // the discount base   //  cout<< "r:" << rate << " b:" << rateBase << endl;
         vector<flt> result;
 
         for(idx i=0; i<iS.size(); ++i) {
+            wMax = wA = -INF;
             state_iterator iteS = GetIte(iS[i]);
             action_iterator iteAA = GetIte(iteS, idxA[i]);
             if ( (GetActionSize(iteS)==0) | (GetActionSize(iteS)==1) ) {
-                result.push_back(0);
-                return result;
+                result.push_back(-INF);
+                continue;
             }
             for (action_iterator iteA = action_begin(iteS); iteA!=action_end(iteS); ++iteA) { //cout << "    iA: " << GetIdx(iteS,iteA) << " w=" << vec2String(iteA->w) << " ";
                 wTmp=0;

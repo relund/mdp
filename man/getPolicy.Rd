@@ -7,7 +7,8 @@
 getPolicy(mdp, sId = ifelse(mdp$timeHorizon >= Inf, mdp$founderStatesLast + 1,
   1):ifelse(mdp$timeHorizon >= Inf, mdp$states + mdp$founderStatesLast,
   mdp$states) - 1, stageStr = NULL, stateLabels = TRUE,
-  actionLabels = TRUE, actionIdx = TRUE, rewards = TRUE)
+  actionLabels = TRUE, actionIdx = TRUE, rewards = TRUE,
+  stateStr = FALSE)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -23,6 +24,8 @@ getPolicy(mdp, sId = ifelse(mdp$timeHorizon >= Inf, mdp$founderStatesLast + 1,
 \item{actionIdx}{Add action index.}
 
 \item{rewards}{Add rewards calculated for each state.}
+
+\item{stateStr}{Add the state string for each state.}
 }
 \value{
 The policy (data frame).
