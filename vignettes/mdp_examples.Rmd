@@ -3,14 +3,12 @@ title: "The MDP package in R (some examples)"
 author: "Lars Relund <lars@relund.dk>"
 date: '`r Sys.Date()`'
 output:
-  html_document: default
-  pdf_document:
-    keep_tex: no
+  html_document
 bibliography: mdp_examples_files/litt.bib
-vignette: |
+vignette: >
   %\VignetteIndexEntry{MDP examples} 
-  %\VignetteEngine{knitr::rmarkdown} 
   \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown} 
 ---
 
 # Introduction
@@ -39,7 +37,7 @@ to a transition to state number 0 or 1 at stage 4 with a certain probability
 greater than zero.
 
 ![Figure 1: A state-expanded hypergraph for an MDP.](mdp_examples_files/state_hgf.png)
-*Figure 1: A state-expanded hypergraph for an MDP with time horizon $N=5$. At stage $n$ each node $v_{n,i}$ corresponds to a state in $\mathcal{S}_n$. The hyperarcs correspond to actions, e.g. if the system at stage $3$ is in state number 1 then there are two possible actions. Action `mt} results in a deterministic transition to state zero (because there is only one tail) at stage $4$ and `nmt` results in a transition to either state number 1 or 2 with a certain probability.*
+*Figure 1: A state-expanded hypergraph for an MDP with time horizon $N=5$. At stage $n$ each node $v_{n,i}$ corresponds to a state in $\mathcal{S}_n$. The hyperarcs correspond to actions, e.g. if the system at stage $3$ is in state number 1 then there are two possible actions. Action `mt` results in a deterministic transition to state zero (because there is only one tail) at stage $4$ and `nmt` results in a transition to either state number 1 or 2 with a certain probability.*
 
 States and actions can be identified using either an *unique id* or *state vector*
 $\nu$. In an ordinary MDP the index vector consists of the stage and state
@@ -606,6 +604,9 @@ policy
 
 
 
+```{r Delete bin, include=FALSE}
+do.call(file.remove,list(list.files(pattern = ".bin")))
+```
 
 
 
