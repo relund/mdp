@@ -132,6 +132,7 @@ RCPP_MODULE(HMDPModule){
    .field_readonly("okay", &HMDP::okay)
    .field_readonly("levels", &HMDP::levels)
    .field_readonly("wNames", &HMDP::weightNames)
+   .field_readonly("externalProc", &HMDP::externalProc)
    .field("verbose", &HMDP::verbose)
 
    .method("getLog", &HMDP::GetLog)
@@ -143,6 +144,7 @@ RCPP_MODULE(HMDPModule){
    .method("calcRPO", RunCalcRPO)
    .method("getStateSizeStage", GetStateSizeStage)
    .method("getStateSize", GetStateSize)
+   .method("getExternalInfo", &HMDP::GetExternalInfo)
    .method("getActionSize", GetActionSize)
    .method("getActionInfo", GetActionInfo)
    .method("getIds", &HMDP::GetIds)

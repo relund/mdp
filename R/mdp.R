@@ -47,9 +47,13 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 	actions <- mdp$getActionSize()
 	levels <- mdp$levels
 	weightNames <- mdp$wNames
-	v<-list(binNames=binNames, timeHorizon=timeHorizon, states=states,
-		founderStatesLast=founderStatesLast,
-		actions=actions, levels=levels, weightNames=weightNames, ptr=mdp)
+	v<-list(binNames=binNames, timeHorizon=timeHorizon, states=states, 
+	     founderStatesLast=founderStatesLast, actions=actions, levels=levels, 
+	     weightNames=weightNames, ptr=mdp)
+	if (mdp$externalProc) {
+	   v$external <- as.data.frame(matrix(mdp$getExternalInfo(),ncol = 2, byrow = TRUE))
+	   colnames(v$external) <- c("stageStr","prefix")
+	}
 	class(v)<-c("MDP:C++")
 	return(v)
 }

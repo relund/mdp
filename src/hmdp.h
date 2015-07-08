@@ -1125,6 +1125,18 @@ class HMDP
         return val;
     }
 
+    /** Return the external processes info in the format (stageStr, external proc prefix, ...)
+     */
+    vector<string> GetExternalInfo() {
+        vector<string> val;
+        map<string,string>::iterator it;
+        for (it=external.begin(); it!=external.end(); ++it) {
+            val.push_back(it->first);
+            val.push_back(it->second);
+        }
+        return val;
+    }
+
 
 // Accessors (get/set functions for the algorithms, return by reference)
 
