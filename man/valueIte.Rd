@@ -5,7 +5,7 @@
 \title{Perform value iteration on the MDP.}
 \usage{
 valueIte(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10,
-  eps = 1e-05, termValues = NULL, g = NULL)
+  eps = 1e-05, termValues = NULL, g = NULL, getLog = TRUE)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -25,6 +25,8 @@ valueIte(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10,
 \item{termValues}{The terminal values used (values of the last stage in the MDP).}
 
 \item{g}{Average reward. If specified then do a single iteration using the opdate equations under average reward criterion with the specified g value.}
+
+\item{getLog}{Output the log messages.}
 }
 \value{
 NULL (invisible)

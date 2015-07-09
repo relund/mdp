@@ -72,6 +72,7 @@ idx GetStateSizeStage(HMDP* hmdp, string stageStr) {return hmdp->GetStateSize(st
 idx GetStateSize(HMDP* hmdp) {return hmdp->GetStateSize();}
 idx GetActionSize(HMDP* hmdp) {return hmdp->GetActionSize();}
 
+string GetNextStageStr(HMDP* hmdp, string stageStr) {return hmdp->GetNextStageStr(stageStr);}
 
 /** Get state ids of a vector of stage strings. */
 vector<idx> GetStateIdsStages(HMDP* hmdp, vector<string> stages) {
@@ -142,6 +143,7 @@ RCPP_MODULE(HMDPModule){
    .method("policyIteFixedPolicy", RunPolicyIteFixedPolicy)
    .method("calcPolicy", RunCalcPolicy)
    .method("calcRPO", RunCalcRPO)
+   .method("getNextStageStr", GetNextStageStr)
    .method("getStateSizeStage", GetStateSizeStage)
    .method("getStateSize", GetStateSize)
    .method("getExternalInfo", &HMDP::GetExternalInfo)

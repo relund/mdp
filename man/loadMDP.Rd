@@ -8,7 +8,7 @@ using the external C++ library.}
 loadMDP(prefix = "", binNames = c("stateIdx.bin", "stateIdxLbl.bin",
   "actionIdx.bin", "actionIdxLbl.bin", "actionWeight.bin",
   "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin"),
-  eps = 1e-05, check = TRUE, verbose = FALSE)
+  eps = 1e-05, check = TRUE, verbose = FALSE, getLog = TRUE)
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to \code{binNames}. Used to identify a specific model.}
@@ -21,6 +21,8 @@ files storing the model.}
 \item{check}{Check if the MDP seems correct.}
 
 \item{verbose}{More output when running algorithms.}
+
+\item{getLog}{Output the log messages.}
 }
 \value{
 A list containing relevant information about the model and a pointer \code{ptr} to the model rc object in memory.

@@ -8,7 +8,7 @@ getPolicy(mdp, sId = ifelse(mdp$timeHorizon >= Inf, mdp$founderStatesLast + 1,
   1):ifelse(mdp$timeHorizon >= Inf, mdp$states + mdp$founderStatesLast,
   mdp$states) - 1, stageStr = NULL, stateLabels = TRUE,
   actionLabels = TRUE, actionIdx = TRUE, rewards = TRUE,
-  stateStr = FALSE)
+  stateStr = FALSE, external = NULL, ...)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -26,6 +26,14 @@ getPolicy(mdp, sId = ifelse(mdp$timeHorizon >= Inf, mdp$founderStatesLast + 1,
 \item{rewards}{Add rewards calculated for each state.}
 
 \item{stateStr}{Add the state string for each state.}
+
+\item{external}{A vector of stage strings corresponding to external processes we want the optimal policy of.}
+
+\item{...}{Parameters passed on when find the optimal policy of the external processes.
+
+Note if external is specified then it must contain stage strings from mdp$external. Moreover you
+must specify further arguments passed on to valueIte used for recreating the optimal policy e.g.
+the g value and the label for reward and duration. See the vignette about external processes.}
 }
 \value{
 The policy (data frame).

@@ -12,7 +12,8 @@ vignette: >
 ```{r ini, echo=FALSE, results='hide', message=FALSE}
 library(MDP2)
 library(knitr)
-opts_knit$set(width=90, formatR.arrow=F, concordance=TRUE, global.par=TRUE)
+options(width=100)
+opts_knit$set(formatR.arrow=F, concordance=TRUE, global.par=TRUE)
 #options(width = 120)
 par(mar=c(0,0,0,0))
 opts_chunk$set(out.width='100%', fig.width=15, fig.height=7, fig.path='graphic/', fig.align='center', fig.show='hold')
@@ -440,50 +441,62 @@ plotHypergraph(gridDim = gridDim, showGrid = F, devOff = F, states = states, act
 Note that the states in the first stage of the external process which have a transition from the father is automatically defined. That is, the HMDP with external processes contain first and last stage of the external processes and dummy actions from the first stage to the last stage. Moreover, the states corresponding to the first stage of an external process is automatically given the label corresponding to the stage index:
 
 ```{r stageStr}
-infoMDP(mdpExt, sId = c(16:17,10,6))$stateDF
+infoMDP(mdpExt, stageStr = mdpExt$external$stageStr)$stateDF
 ```
 
-Let us try to experiment using policy iteration. First we use the full HMDP:
+Let us try to experiment using policy iteration. We solve useing the full HMDP and the HMDP with external processes:
 
 ```{r testHMDP}
-policyIteAve(mdpFull, "Reward", "Time", maxIte = 100)
-getPolicy(mdpFull,c(27,26,25,20,19,5:13))
+gFull<-policyIteAve(mdpFull, "Reward", "Time")
+gExt<-policyIteAve(mdpExt, "Reward", "Time")
+gFull == gExt
 ```
 
-Now let us try to solve the same model using external processes:
+Note that memory of the external processes is allocated and deallocated when needed. Indeed since process 1 is used two times in a row a reallocation is not done. If we compare the policies we get:
 
 ```{r testExt}
-g<-policyIteAve(mdpExt, "Reward", "Time", maxIte = 5)
-getPolicy(mdpExt,c(18))
+idx <- data.frame(full=c(0:5,14:18,20:28), ext=0:19)
+polFull<-getPolicy(mdpFull,sId = idx$full)
+polExt<-getPolicy(mdpExt, sId = idx$ext)
+polFull
+polFull$weight == polExt$weight
 ```
 
-Note that memory of the external processes is allocated and deallocated when needed. Indeed since process 1 is used two times in a row a reallocation is not done. Note that you are only able to get the optimal policy of the loaded HMDP. However, if we want to get the optimal policy of the external processes we can do that by loading the processes and assigning rewards of the last stage as the terminal rewards:
+Note here we only get the optimal policy of the loaded HMDP when consider external processes. However, if we want to get the optimal policy of the external processes we can do that by loading the processes and assigning rewards of the last stage as the terminal rewards:
 
 ```{r policyExt}
 # process 1 optimal policy - external at stage "0,0,0,0,0,1,0"
 lastStage<-"0,0,0,0,0,1,1"
-termValues <- getPolicy(mdpExt, stageStr = lastStage)$reward
-valueIte(mdp1, 'Reward', 'Time', termValues=termValues, g=g)
-getPolicy(mdp1,c(3,4))
+termValues <- getPolicy(mdpExt, stageStr = lastStage)$weight
+valueIte(mdp1, 'Reward', 'Time', termValues=termValues, g=gExt)
+polFull<-getPolicy(mdpFull,sId = 22:26)
+polExt<-getPolicy(mdp1)
+cbind(polFull,polExt)
 
 # process 1 optimal policy - external at stage "0,0,0,1,0,0,0"
 lastStage<-"0,0,0,1,0,0,1"
-termValues <- getPolicy(mdpExt, stageStr = lastStage)$reward
-valueIte(mdp1, 'Reward', 'Time', termValues=termValues, g=g)
-getPolicy(mdp1,c(3,4))
+termValues <- getPolicy(mdpExt, stageStr = lastStage)$weight
+valueIte(mdp1, 'Reward', 'Time', termValues=termValues, g=gExt)
+polFull<-getPolicy(mdpFull,sId = 15:18)
+polExt<-getPolicy(mdp1, sId=0:3)
+cbind(polFull,polExt)
 
 # process 2 optimal policy - external at stage "0,0,0,1,1,0,0"
 lastStage<-"0,0,0,1,1,0,1"
-termValues <- getPolicy(mdpExt, stageStr = lastStage)$reward
-valueIte(mdp2, 'Reward', 'Time', termValues=termValues, g=g)
-getPolicy(mdp2,c(3:10))
+termValues <- getPolicy(mdpExt, stageStr = lastStage)$weight
+valueIte(mdp2, 'Reward', 'Time', termValues=termValues, g=gExt)
+polFull<-getPolicy(mdpFull,sId = 3:14)
+polExt<-getPolicy(mdp2)
+cbind(polFull,polExt)
 ```
 
-Some assumptions that must hold:
+In fact we can use `getPolicy` directly to get the above results
 
-* External processes must use the standard names of the binary files with a given prefix.
-* External processes must be defined with the same weight labels.
+```{r policyExt getPolicy}
+getPolicy(mdpExt, external = mdpExt$external$stageStr, w = 'Reward', dur = 'Time', g = gExt)
+```
 
+Note you have to add arguments to `getPolicy` needed when `valueIte` is called.
 
 # Examples using C++
 
@@ -581,6 +594,13 @@ policyIteAve(mdp, "Reward", "Time", maxIte = 5)
 getPolicy(mdp)
 ```
 
+
+# Assumptions
+
+Some assumptions that must hold:
+
+* External processes must use the standard names of the binary files with a given prefix.
+* External processes must be defined with the same weight labels.
 
 
 

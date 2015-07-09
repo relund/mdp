@@ -7,13 +7,15 @@
 #' @param eps The sum of the transition probabilities must at most differ eps from one.
 #' @param check Check if the MDP seems correct.
 #' @param verbose More output when running algorithms.
+#' @param getLog Output the log messages.
+#' 
 #' @return A list containing relevant information about the model and a pointer \code{ptr} to the model rc object in memory.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example tests/machine.Rex
 #' @export
 loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"),
-	eps = 0.00001, check = TRUE, verbose=FALSE)
+	eps = 0.00001, check = TRUE, verbose=FALSE, getLog = TRUE)
 {
 	binNames<-paste(prefix,binNames,sep="")
 	if (!is.logical(verbose)) verbose = FALSE
@@ -24,7 +26,7 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 		rm(mdp)
 		return(invisible(NULL))
 	}
-	else message(mdp$getLog())
+	else if (getLog) message(mdp$getLog())
 
 	if (check) {
 	   msg<-mdp$checkHMDP(as.numeric(eps))
@@ -32,7 +34,7 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
          stop(mdp$getLog(), call. = FALSE)
          return(invisible(NULL))
       }
-	   else message(mdp$getLog())
+	   else if (getLog) message(mdp$getLog())
 	}
 
 	timeHorizon = mdp$timeHorizon
@@ -51,7 +53,7 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 	     founderStatesLast=founderStatesLast, actions=actions, levels=levels, 
 	     weightNames=weightNames, ptr=mdp)
 	if (mdp$externalProc) {
-	   v$external <- as.data.frame(matrix(mdp$getExternalInfo(),ncol = 2, byrow = TRUE))
+	   v$external <- as.data.frame(matrix(mdp$getExternalInfo(),ncol = 2, byrow = TRUE), stringsAsFactors=FALSE)
 	   colnames(v$external) <- c("stageStr","prefix")
 	}
 	class(v)<-c("MDP:C++")
@@ -174,12 +176,15 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1, maxIte = 100)
 #' @param eps Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see [1] p161).
 #' @param termValues The terminal values used (values of the last stage in the MDP).
 #' @param g Average reward. If specified then do a single iteration using the opdate equations under average reward criterion with the specified g value.
+#' @param getLog Output the log messages.
+#' 
 #' @return NULL (invisible)
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
 #' @example tests/machine.Rex
 #' @export
-valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, eps = 0.00001, termValues = NULL, g=NULL) {
+valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, eps = 0.00001, 
+                   termValues = NULL, g=NULL, getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
 	iDur<-NULL
 	if (!is.null(dur)) iDur<-getWIdx(mdp,dur)
@@ -205,7 +210,7 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, ep
            as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(termValues),
            as.numeric(g), as.numeric(0), as.numeric(1) )
 	}
-	cat(mdp$ptr$getLog())
+	if (getLog) cat(mdp$ptr$getLog())
 	invisible(NULL)
 }
 
@@ -220,6 +225,13 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, ep
 #' @param actionIdx Add action index.
 #' @param rewards Add rewards calculated for each state.
 #' @param stateStr Add the state string for each state.
+#' @param external A vector of stage strings corresponding to external processes we want the optimal policy of.
+#' @param ... Parameters passed on when find the optimal policy of the external processes.
+#' 
+#' Note if external is specified then it must contain stage strings from mdp$external. Moreover you 
+#' must specify further arguments passed on to valueIte used for recreating the optimal policy e.g. 
+#' the g value and the label for reward and duration. See the vignette about external processes. 
+#' 
 #' @return The policy (data frame).
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example tests/machine.Rex
@@ -227,7 +239,7 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, ep
 getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                        ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
                     stageStr = NULL, stateLabels = TRUE, actionLabels = TRUE, actionIdx = TRUE, 
-                    rewards = TRUE, stateStr = FALSE) {
+                    rewards = TRUE, stateStr = FALSE, external = NULL, ...) {
 	if (!is.null(stageStr)) sId = mdp$ptr$getStateIdsStages(stageStr)
    maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
 	if (max(sId)>=maxS | min(sId)<0)
@@ -258,6 +270,20 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
       colNames = c(colNames, "weight"); cols = cols + 1
    }
    colnames(policy) <- colNames
+   
+   if (!is.null(external)) {
+      policy <- list(main=policy)
+      for (s in external) {
+         prefix <- subset(mdpExt$external, stageStr == s, select = "prefix", drop = TRUE)
+         lastStage<-mdp$ptr$getNextStageStr(s)
+         termValues <- getPolicy(mdp, stageStr = lastStage)$weight
+         extMDP<-loadMDP(prefix, getLog = FALSE)
+         valueIte(extMDP, termValues=termValues, getLog = FALSE, ...)
+         extPolicy<-getPolicy(extMDP)
+         policy[[s]]<-extPolicy
+         rm(extMDP)
+      }
+   }
 	return(policy)
 }
 
