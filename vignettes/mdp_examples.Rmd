@@ -2,13 +2,12 @@
 title: "The MDP package in R (some examples)"
 author: "Lars Relund <lars@relund.dk>"
 date: '`r Sys.Date()`'
-output:
-  html_document
-bibliography: mdp_examples_files/litt.bib
+bibliography: mdp_example_files/litt.bib
+output: pdf_document
 vignette: >
-  %\VignetteIndexEntry{MDP examples} 
-  \usepackage[utf8]{inputenc}
-  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteIndexEntry{MDP examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # Introduction
@@ -36,7 +35,7 @@ transition to state number zero at stage 4 and action `nmt` corresponds
 to a transition to state number 0 or 1 at stage 4 with a certain probability
 greater than zero.
 
-![Figure 1: A state-expanded hypergraph for an MDP.](mdp_examples_files/state_hgf.png)
+![Figure 1: A state-expanded hypergraph for an MDP.](mdp_example_files/state_hgf.png)
 *Figure 1: A state-expanded hypergraph for an MDP with time horizon $N=5$. At stage $n$ each node $v_{n,i}$ corresponds to a state in $\mathcal{S}_n$. The hyperarcs correspond to actions, e.g. if the system at stage $3$ is in state number 1 then there are two possible actions. Action `mt` results in a deterministic transition to state zero (because there is only one tail) at stage $4$ and `nmt` results in a transition to either state number 1 or 2 with a certain probability.*
 
 States and actions can be identified using either an *unique id* or *state vector*
@@ -67,7 +66,7 @@ always defined by a stage, state and action of the parent process we have that
 for instance a state at level 1 have an index vector
 $\nu=(n_{0},s_{0},a_{0},n_{1},s_{1})$.
 
-![Figure 2: A state-expanded hypergraph for an HMDP.](mdp_examples_files/hmdp_index.png)
+![Figure 2: A state-expanded hypergraph for an HMDP.](mdp_example_files/hmdp_index.png)
 *Figure 2: A hypergraph representation of the first stage of a hierarchical MDP. Level 0 indicate the
 founder level, and the nodes indicates states at the different levels. A child
 process (oval box) is represented using its state-expanded hypergraph (hyperarcs
@@ -523,7 +522,7 @@ are provided in a csv file. To ease the understanding we provide 2 functions
 for reading from the csv:
 
 ```{r Generate cow MDP functions,echo=true}
-cowDf<-read.csv("mdp_examples_files/cow.csv")
+cowDf<-read.csv("mdp_example_files/cow.csv")
 head(cowDf)
 
 lev1W<-function(s0Idx,n1Idx,s1Idx,a1Lbl) {
@@ -605,7 +604,7 @@ policy
 
 
 ```{r Delete bin, include=FALSE}
-do.call(file.remove,list(list.files(pattern = ".bin")))
+#do.call(file.remove,list(list.files(pattern = ".bin")))
 ```
 
 
