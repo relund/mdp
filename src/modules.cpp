@@ -158,5 +158,6 @@ RCPP_MODULE(HMDPModule){
    .method("getStateLabel", &HMDP::GetStateLabel)
    .method("getPolicyW", &HMDP::GetPolicyW)
    .method("setPolicy", &HMDP::SetPolicy)
+   .method("save2Binary", &HMDP::Save2Binary)
    ;
 }

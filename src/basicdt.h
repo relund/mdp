@@ -86,6 +86,20 @@ string inline vec2String(const vector<T>& v) {
 }
 
 
+/** convert a string of comma separated numbers to a vector. */
+template <typename T>
+vector<T> inline string2vec(const string str) {
+    vector<T> vect;
+    stringstream ss(str);
+    T i;
+    while (ss >> i)
+    {
+        vect.push_back(i);
+        if (ss.peek() == ',') ss.ignore();
+    }
+    return vect;
+}
+
 
 /** Global function for converting a flt to a string */
 /*inline string flt2String(const flt i)

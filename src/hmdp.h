@@ -32,6 +32,7 @@ class HMDPTrans {
     friend class HMDPReader;
     friend class HMDPAction;
     friend class HMDP;
+    friend class HMDPSave;
 
 public:
     /** Create new HMDPTrans. */
@@ -65,6 +66,7 @@ class HMDPAction {
     friend class HMDPReader;
     friend class HMDPState;
     friend class HMDP;
+    friend class HMDPSave;
 
  public:
 
@@ -132,7 +134,6 @@ class HMDPAction {
         for(idx i=0; i<trans.size(); ++i) trans[i].pr = val;
     }
 
-
     /** Set transition probability of an existing trans
      * \param id Index of transition state.
      * \param pr The probability.
@@ -157,9 +158,6 @@ class HMDPAction {
         sort(trans.begin(), trans.end());
     }
 
-
-
-
     typedef vector<HMDPTrans>::iterator trans_iterator;
     typedef vector<HMDPTrans>::const_iterator const_trans_iterator;
     trans_iterator begin() { return trans.begin(); }
@@ -177,6 +175,7 @@ private:
 class HMDPState {
     friend class HMDPReader;
     friend class HMDP;
+    friend class HMDPSave;
 
  private:
     HMDPState(const string & lbl) {
@@ -240,6 +239,7 @@ class HMDP
 {
  public:
     friend class HMDPReader;
+    friend class HMDPSave;
 
     enum Crit {DiscountedReward, AverageReward, Reward, TransPr, TransPrDiscounted};    ///< Criterion used.
 
@@ -339,6 +339,12 @@ class HMDP
 //    //HMDP(uInt levels, uInt timeHorizon);
 //
 //
+
+    /** Save the HMDP to binary files.
+     * \param prefix Prefix of the binary files.
+     */
+    void Save2Binary(string prefix);
+
 
     /** Given a set of external process states corresponding to the first stage in the external process,
      * add the stage label of each external process to the states/nodes as its label.
@@ -915,7 +921,6 @@ class HMDP
         return stateStr;
     }
 
-
     /** State strings of state ids. */
     vector<string> GetStatesStr(vector<idx> & sId) {
         vector<string> v;
@@ -1145,7 +1150,7 @@ class HMDP
     flt & w(state_iterator iteS, idx iA, idx iW) {return iteS->actions[iA].w[iW];}
     flt & pr(trans_iterator iteT) {return iteT->pr;}
     int & pred(state_iterator iteS) {return iteS->pred;}
-
+    string & label(state_iterator iteS) {return iteS->label;}
 
 
 
@@ -1496,6 +1501,76 @@ private:
 
 // -----------------------------------------------------------------------------
 
+/** Class for saving the HMDP in memory to binary files.
+
+ The log can be accessed using the log variable.
+ */
+class HMDPSave
+{
+public:
+
+    /** Set the pointer to the hypergraph we want to read data to.
+     * \param prefix Prefix used for the binary files.
+     * \param hmdp HMDP model.
+     */
+    HMDPSave(string prefix, HMDP * pHMDP);
+
+    /** Deconstructor. */
+    ~HMDPSave();
+
+private:
+
+    /** Write value to binary file. */
+    void WriteBinary(FILE* pFile, const vector<int> &vec) {
+        fwrite(&vec[0], sizeof(int), vec.size(), pFile);
+        //cout << "W (v(int)): "; for(idx ii=0; ii < vec.size(); ii++) cout << vec[ii] << " " << flush; cout << endl;
+    }
+
+    /** Write value to binary file. */
+    void WriteBinary(FILE* pFile, const vector<flt> &vec) {
+        fwrite(&vec[0], sizeof(flt), vec.size(), pFile);
+        //cout << "W (v(flt)): "; for(idx ii=0; ii < vec.size(); ii++) cout << vec[ii] << " " << flush; cout << endl;
+    }
+
+    /** Write value to binary file. */
+    void WriteBinary(FILE* pFile, const int i) {
+        fwrite(&i, sizeof(int), 1, pFile);
+        //cout << "W (int): " << i << flush; cout << endl;
+    }
+
+    /** Write value to binary file. */
+    void WriteBinary(FILE* pFile, const flt i) {
+        fwrite(&i, sizeof(flt), 1, pFile);
+        //cout << "W (flt): " << i << flush; cout << endl;
+    }
+
+    /** Write value to binary file. */
+    void WriteBinary(FILE* pFile, const string &str) {
+        fwrite(str.c_str(), sizeof(char), str.length()+1, pFile);   // add the null character also
+        //cout << "W (string): " << str << flush; cout << endl;
+    }
+
+    /** Write the model to binary files. */
+    void CreateBinaryFiles();
+
+public:
+    ostringstream log;
+private:
+    FILE* pStateIdxFile;
+    FILE* pStateIdxLblFile;
+    FILE* pActionIdxFile;
+    FILE* pActionIdxLblFile;
+    FILE* pActionWFile;
+    FILE* pActionWLblFile;
+    FILE* pTransProbFile;
+    FILE* pExternalProcessesFile;
+
+    HMDP * pHMDP;         ///< Pointer to the HMDP.
+	int sId; ///< Total number of states.
+	int aId; ///< Total number of actions.
+	int wLblLth; ///< Number of weight labels
+    Timer timer; ///< Cpu measurement
+};
 
 
 #endif // HMDP_H

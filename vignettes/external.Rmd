@@ -16,7 +16,7 @@ options(width=100)
 opts_knit$set(formatR.arrow=F, concordance=TRUE, global.par=TRUE)
 #options(width = 120)
 par(mar=c(0,0,0,0))
-opts_chunk$set(out.width='100%', fig.width=15, fig.height=7, fig.path='graphic/', fig.align='center', fig.show='hold')
+opts_chunk$set(out.width='100%', fig.width=15, fig.height=7, fig.path='graphic/', fig.align='center', fig.show='hold', fig.retina = 1)
 ```
 
 In this vignette we give a few examples on how to generate a MDP with external processes. An
@@ -608,5 +608,5 @@ Some assumptions that must hold:
 
 ```{r Delete bin, include=FALSE}
 #unlink("./graphi*", recursive = T, force = T)
-do.call(file.remove,list(list.files(pattern = ".bin")))
+#do.call(file.remove,list(list.files(pattern = ".bin")))
 ```

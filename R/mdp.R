@@ -502,6 +502,22 @@ calcRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStat
    return(rpo)
 }
 
+#' Save the MDP to binary files
+#' 
+#' Currently do not save external files.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param prefix A character string with the prefix added to \code{binNames}. Used to identify a specific model.
+#' @param getLog Output the log as a message.
+#' 
+#' @return The rpo (matrix/data frame).
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @export
+saveMDP<-function(mdp,prefix="", getLog=TRUE) {
+   mdp$ptr$save2Binary(prefix)
+   if (getLog) message(mdp$ptr$getLog())
+}
+
 
 # #' Set the weight of an action.
 # #'

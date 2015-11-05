@@ -207,11 +207,33 @@ randomHMDP(prefix, levels=3, timeHorizon=c(Inf,5,10,3,3), states=c(2,5,10,10,10)
            childProcessPr = 0.5, externalProcessPr=0.1, rewards=c(0,100), durations=c(1,5) )
 
 
-
-
-
 prefix<-"tmp/rand2_"
 mdp<-loadMDP(prefix, verbose = T)
 g<-policyIteAve(mdp, "Reward", "Duration", maxIte = 4)
 p<-getPolicy(mdp, sId=1) 
 
+
+randomHMDP("test_", levels=2)
+mdp<-loadMDP("test_", verbose = T)
+policyIteAve(mdp, "Reward", "Duration", maxIte = 10)
+calcWeights(mdp,"Reward","average","Duration")
+pol<-getPolicy(mdp)
+newPolicy<-pol[,c(1,3)]
+newPolicy$aIdx<-0
+setPolicy(mdp,policy = newPolicy)
+getPolicy(mdp)
+calcWeights(mdp,"Reward","average","Duration")
+
+
+
+mdp1<-loadMDP("hmdp_")
+policyIteAve(mdp1, "Reward", "Time")
+saveMDP(mdp1,"test_")
+binInfoStates("hmdp_")
+binInfoStates("test_")
+binInfoActions("hmdp_")
+binInfoActions("test_")
+
+
+mdp2<-loadMDP("test_")
+policyIteAve(mdp2, "Reward", "Time")

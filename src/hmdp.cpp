@@ -969,3 +969,115 @@ uSInt HMDP::Check(flt eps) {
     log << "(" << timer.ElapsedTime("sec") << " sec.)" << endl;
     return msg;
 }
+
+// ----------------------------------------------------------------------------
+
+void HMDP::Save2Binary(string prefix){
+    HMDPSave hmdpSave(prefix, this);
+    ResetLog();
+    log << hmdpSave.log.str();
+}
+
+// ----------------------------------------------------------------------------
+
+HMDPSave::HMDPSave(string prefix, HMDP * pHMDP){
+    string stateIdxFileN = prefix + "stateIdx.bin";
+    string stateIdxLblFileN = prefix + "stateIdxLbl.bin";
+    string actionIdxFileN = prefix + "actionIdx.bin";
+    string actionIdxLblFileN = prefix + "actionIdxLbl.bin";
+    string actionWFileN = prefix + "actionWeight.bin";
+    string actionWLblFileN = prefix + "actionWeightLbl.bin";
+    string transProbFileN = prefix + "transProb.bin";
+    string externalProcessesFileN = prefix + "externalProcesses.bin";
+    this->pHMDP = pHMDP;
+
+    pStateIdxFile = fopen(stateIdxFileN.c_str(), "wb");
+    pStateIdxLblFile = fopen(stateIdxLblFileN.c_str(), "wb");
+    pActionIdxFile = fopen(actionIdxFileN.c_str(), "wb");
+    pActionIdxLblFile = fopen(actionIdxLblFileN.c_str(), "wb");
+    pActionWFile = fopen(actionWFileN.c_str(), "wb");
+    pActionWLblFile = fopen(actionWLblFileN.c_str(), "wb");
+    pTransProbFile = fopen(transProbFileN.c_str(), "wb");
+    pExternalProcessesFile = fopen(externalProcessesFileN.c_str(), "wb");
+
+    CreateBinaryFiles();
+}
+
+// ----------------------------------------------------------------------------
+
+void HMDPSave::CreateBinaryFiles() {
+    timer.StartTimer();
+    HMDP::state_iterator iteS;
+    sId = 0;
+    if (pHMDP->timeHorizon>=INFINT) {   // assume that level "1" starts with sId=0!!
+        pair<idx,idx> pN = pHMDP->stages["1"];
+        iteS = pHMDP->state_begin() + pN.second;   // drop the first states at stage "1"
+        sId = pN.second;
+    }
+    else {
+        iteS = pHMDP->state_begin();
+    }
+    idx startSId = sId;
+
+    aId = 0;
+    for(; iteS!=pHMDP->state_end(); ++iteS, ++sId) {
+        WriteBinary(pStateIdxFile, string2vec<int>(pHMDP->GetStateStr(sId)) );
+        WriteBinary(pStateIdxFile, (int)-1);
+        if (iteS->label.length()>0) {
+            WriteBinary(pStateIdxLblFile, ToString<int>(sId));
+            WriteBinary(pStateIdxLblFile, iteS->label);
+        }
+        for (HMDP::action_iterator iteA = pHMDP->action_begin(iteS); iteA!=pHMDP->action_end(iteS); ++iteA, ++aId) {
+            WriteBinary(pActionIdxFile, sId);
+            for (HMDP::trans_iterator iteT = pHMDP->trans_begin(iteA); iteT!=pHMDP->trans_end(iteA); ++iteT) {
+                if (iteT->id>=startSId) {
+                    WriteBinary(pActionIdxFile, (int)3);     // use scope 3
+                    WriteBinary(pActionIdxFile, (int)iteT->id-(int)startSId);
+                }
+                else {
+                    vector<idx> iHMDP = string2vec<idx>(pHMDP->GetStateStr(iteT->id));
+                    int level=pHMDP->GetLevel(iHMDP);
+                    if (level==0) WriteBinary(pActionIdxFile, (int)1);
+                    if (level==1) WriteBinary(pActionIdxFile, (int)0);
+                    WriteBinary(pActionIdxFile, (int)iteT->id);
+                }
+                WriteBinary(pTransProbFile, iteT->pr);
+            }
+            WriteBinary(pActionIdxFile, (int)-1);
+            WriteBinary(pTransProbFile, (flt)-1);
+            if (iteA->label.length()>0) {
+                WriteBinary(pActionIdxLblFile, ToString<int>(aId));
+                WriteBinary(pActionIdxLblFile, iteA->label);
+            }
+            WriteBinary(pActionWFile, iteA->GetW());
+        }
+    }
+    wLblLth=pHMDP->weightNames.size();
+    for (idx i=0;i<pHMDP->weightNames.size();i++) WriteBinary(pActionWLblFile, pHMDP->weightNames[i]);
+    map<string,string>::iterator it;
+    for (it=pHMDP->external.begin(); it!=pHMDP->external.end(); ++it) {
+        WriteBinary(pExternalProcessesFile,it->first);
+        WriteBinary(pExternalProcessesFile,it->second);
+    }
+    timer.StopTimer();
+    log << "Create binary files of HMDP in memory ...\n\n";
+    log << "  Statistics:\n";
+    log << "    states : " << sId << "\n";
+    log << "    actions: " << aId << "\n";
+    log << "    weights: " << wLblLth << "\n\n";
+    log << "  Closing binary MDP writer.\n\n";
+    log << "  Total time for writing to binary files: " << timer.ElapsedTime("sec") << " sec.\n\n";
+}
+
+// ----------------------------------------------------------------------------
+
+HMDPSave::~HMDPSave() {
+  fclose(pStateIdxFile);
+  fclose(pStateIdxLblFile);
+  fclose(pActionIdxFile);
+  fclose(pActionIdxLblFile);
+  fclose(pActionWFile);
+  fclose(pActionWLblFile);
+  fclose(pTransProbFile);
+  fclose(pExternalProcessesFile);
+}
