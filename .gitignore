@@ -11,6 +11,5 @@ src/*.dll
 *concordance.tex
 Sweavel.sty
 *.synctex.gz
-inst/doc
-vignettes/graphic/*
+vignettes/graphic
 tmp
