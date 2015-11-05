@@ -6,12 +6,10 @@ Description: Using this package you can create and optimize (semi) MDPs with
     MDPs can be modelled.
 Version: 2.0.0
 Date: 2013-08-15
-Authors@R: person("Lars", "Relund", email = "lars@relund.dk",
-  role = c("aut", "cre"))
+Authors@R: person("Lars", "Relund", email = "lars@relund.dk", role = c("aut", "cre"))
 URL: https://github.com/relund/mdp/
 BugReports: https://github.com/relund/mdp/issues
-Depends: 
-    R (>= 3.1.0),
+Depends: R (>= 3.1.0),
     Rcpp,
     plyr
 Suggests: XML,
