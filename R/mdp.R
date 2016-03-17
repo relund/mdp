@@ -183,7 +183,7 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1, maxIte = 100)
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
 #' @example tests/machine.Rex
 #' @export
-valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 10, eps = 0.00001, 
+valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 100, eps = 0.00001, 
                    termValues = NULL, g=NULL, getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
 	iDur<-NULL
