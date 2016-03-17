@@ -829,11 +829,13 @@ void HMDP::ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
             for (state_iterator iteZ = state_begin(stageZeroStr), iteL=state_begin(stageLastStr);
                 iteZ!=state_end(stageZeroStr); ++iteZ, ++iteL)
                     w(iteL) = w(iteZ);
-		} else break;
+		}
+		else break;
 	}
 	if (crit==DiscountedReward && timeHorizon>=INFINT) log << " " << i;
 	timer.StopTimer();
 	log << " Finished. Cpu time " << timer.ElapsedTime("sec") << " sec." << endl;
+	if (i==maxIte) log << "Reached upper limit of iterations! Should the limit be increased or \nis the model fulfilling the model assumptions (e.g. no periodicity)?\n";
 }
 
 // ----------------------------------------------------------------------------
