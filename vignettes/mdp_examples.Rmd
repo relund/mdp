@@ -10,6 +10,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include=FALSE}
+Sys.setenv(LANG='en_US.UTF-8')   # hack to make compiling of the BibTeX work!
+```
+
+
 # Introduction
 
 The MDP package in R is a package for solving Markov decision processes (MDPs)

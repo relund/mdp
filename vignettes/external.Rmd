@@ -500,99 +500,99 @@ Note you have to add arguments to `getPolicy` needed when `valueIte` is called.
 
 # Examples using C++
 
-We test external processes using the binaryMDPWriter on the C++ side. We link to code defined in the `MDP2` package using `Rcpp::depends` attribute. Let us try to build a simple HMDP with one external process:
+<!-- We test external processes using the binaryMDPWriter on the C++ side. We link to code defined in the `MDP2` package using `Rcpp::depends` attribute. Let us try to build a simple HMDP with one external process: -->
 
-```{r test, engine='Rcpp'}
-// [[Rcpp::depends(MDP2)]]
-#include <Rcpp.h>
-#include <binaryMDPWriter.h>
-using namespace Rcpp;
+<!-- ```{r test, engine='Rcpp'} -->
+<!-- // [[Rcpp::depends(MDP2)]] -->
+<!-- #include <Rcpp.h> -->
+<!-- #include <binaryMDPWriter.h> -->
+<!-- using namespace Rcpp; -->
 
-template <typename T>
-vector<T> vA(vector<T> & v, T val) {
-   v.assign(1,val);
-   return v;
-}
+<!-- template <typename T> -->
+<!-- vector<T> vA(vector<T> & v, T val) { -->
+<!--    v.assign(1,val); -->
+<!--    return v; -->
+<!-- } -->
 
-template <typename T>
-vector<T> vA(vector<T> & v, T val1, T val2) {
-   v.clear();
-   v.push_back(val1);
-   v.push_back(val2);
-   return v;
-}
+<!-- template <typename T> -->
+<!-- vector<T> vA(vector<T> & v, T val1, T val2) { -->
+<!--    v.clear(); -->
+<!--    v.push_back(val1); -->
+<!--    v.push_back(val2); -->
+<!--    return v; -->
+<!-- } -->
 
-// [[Rcpp::export]]
-void buildHMDP() {
-vector<int> idx, scp;
-vector<double> pr,w;
-vector<string> lbl;
+<!-- // [[Rcpp::export]] -->
+<!-- void buildHMDP() { -->
+<!-- vector<int> idx, scp; -->
+<!-- vector<double> pr,w; -->
+<!-- vector<string> lbl; -->
 
-BinaryMDPWriter W("ext_");
-lbl.push_back("Reward"); lbl.push_back("Time");
-W.SetWeights(lbl);
-W.Process();
-   W.Stage();
-      W.State("M0");
-         W.Action(vA(scp,2), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)0,(flt)1), "A0", false);
-            W.Process();
-               W.Stage();
-                  W.State("D");
-                     W.Action(vA(scp,1,1), vA(idx,0,1), vA(pr,0.5,0.5), vA(w,(flt)0,(flt)1), "A0", true);
-                        W.IncludeProcess("proc1_", vA(scp,2), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)0,(flt)1), "A1", 3);
-                           W.Stage();
-                              W.State("good");
-                                 W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)30,(flt)1), "rep", true);
-                              W.EndState();
-                              W.State("average");
-                                 W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)10,(flt)1), "rep", true);
-                              W.EndState();
-                              W.State("not working");
-                                 W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)5,(flt)1), "rep", true);
-                              W.EndState();
-                           W.EndStage();
-                        W.EndIncludeProcess();
-                  W.EndState();
-               W.EndStage();
-               W.Stage();
-                  W.State("C0");
-                     W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)4,(flt)1), "A0", true);
-                  W.EndState();
-                  W.State("C1");
-                     W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)1,(flt)1), "A0", true);
-                  W.EndState();
-               W.EndStage();
-            W.EndProcess();
-         W.EndAction();
-      W.EndState();
-   W.EndStage();
-W.EndProcess();
-W.CloseWriter();
-}
-```
+<!-- BinaryMDPWriter W("ext_"); -->
+<!-- lbl.push_back("Reward"); lbl.push_back("Time"); -->
+<!-- W.SetWeights(lbl); -->
+<!-- W.Process(); -->
+<!--    W.Stage(); -->
+<!--       W.State("M0"); -->
+<!--          W.Action(vA(scp,2), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)0,(flt)1), "A0", false); -->
+<!--             W.Process(); -->
+<!--                W.Stage(); -->
+<!--                   W.State("D"); -->
+<!--                      W.Action(vA(scp,1,1), vA(idx,0,1), vA(pr,0.5,0.5), vA(w,(flt)0,(flt)1), "A0", true); -->
+<!--                         W.IncludeProcess("proc1_", vA(scp,2), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)0,(flt)1), "A1", 3); -->
+<!--                            W.Stage(); -->
+<!--                               W.State("good"); -->
+<!--                                  W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)30,(flt)1), "rep", true); -->
+<!--                               W.EndState(); -->
+<!--                               W.State("average"); -->
+<!--                                  W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)10,(flt)1), "rep", true); -->
+<!--                               W.EndState(); -->
+<!--                               W.State("not working"); -->
+<!--                                  W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)5,(flt)1), "rep", true); -->
+<!--                               W.EndState(); -->
+<!--                            W.EndStage(); -->
+<!--                         W.EndIncludeProcess(); -->
+<!--                   W.EndState(); -->
+<!--                W.EndStage(); -->
+<!--                W.Stage(); -->
+<!--                   W.State("C0"); -->
+<!--                      W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)4,(flt)1), "A0", true); -->
+<!--                   W.EndState(); -->
+<!--                   W.State("C1"); -->
+<!--                      W.Action(vA(scp,0), vA(idx,0), vA(pr,(flt)1), vA(w,(flt)1,(flt)1), "A0", true); -->
+<!--                   W.EndState(); -->
+<!--                W.EndStage(); -->
+<!--             W.EndProcess(); -->
+<!--          W.EndAction(); -->
+<!--       W.EndState(); -->
+<!--    W.EndStage(); -->
+<!-- W.EndProcess(); -->
+<!-- W.CloseWriter(); -->
+<!-- } -->
+<!-- ``` -->
 
-We try to build the HMDP:
+<!-- We try to build the HMDP: -->
 
-```{r build}
-buildHMDP()
-```
+<!-- ```{r build} -->
+<!-- buildHMDP() -->
+<!-- ``` -->
 
-We assume that we use the same process `proc1_` as in the previous section.
-Let us have a look at the binary file:
+<!-- We assume that we use the same process `proc1_` as in the previous section. -->
+<!-- Let us have a look at the binary file: -->
 
-```{r bin c++}
-fileN<-"ext_externalProcesses.bin"
-readBin(fileN, character(),n=file.info(fileN)$size)
-```
+<!-- ```{r bin c++} -->
+<!-- fileN<-"ext_externalProcesses.bin" -->
+<!-- readBin(fileN, character(),n=file.info(fileN)$size) -->
+<!-- ``` -->
 
-Finally, we try to solve it using 
+<!-- Finally, we try to solve it using -->
 
-```{r policyIte}
-prefix<-"ext_"
-mdp<-loadMDP(prefix, verbose = T)
-policyIteAve(mdp, "Reward", "Time", maxIte = 5)
-getPolicy(mdp)
-```
+<!-- ```{r policyIte} -->
+<!-- prefix<-"ext_" -->
+<!-- mdp<-loadMDP(prefix, verbose = T) -->
+<!-- policyIteAve(mdp, "Reward", "Time", maxIte = 5) -->
+<!-- getPolicy(mdp) -->
+<!-- ``` -->
 
 
 # Assumptions
