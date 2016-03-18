@@ -4,7 +4,8 @@
 \alias{policyIteDiscount}
 \title{Perform policy iteration (discounted reward criterion) on the MDP.}
 \usage{
-policyIteDiscount(mdp, w, dur, rate = 0.1, rateBase = 1, maxIte = 100)
+policyIteDiscount(mdp, w, dur, rate = 0.1, rateBase = 1,
+  discountFactor = NULL, maxIte = 100)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -16,6 +17,8 @@ policyIteDiscount(mdp, w, dur, rate = 0.1, rateBase = 1, maxIte = 100)
 \item{rate}{The interest rate.}
 
 \item{rateBase}{The time-horizon the rate is valid over.}
+
+\item{discountFactor}{The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
 
 \item{maxIte}{Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.}
 }

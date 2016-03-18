@@ -147,15 +147,20 @@ policyIteAve<-function(mdp, w, dur, maxIte=100) {
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
+#' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
 #' @param maxIte Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
 #' @export
-policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1, maxIte = 100) {
+policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1, discountFactor = NULL, maxIte = 100) {
 	iW<-getWIdx(mdp,w)
 	iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
+	if (!is.null(discountFactor)) {
+	   rateBase<-1
+	   rate<- -log(discountFactor)
+	}
 	g<-mdp$ptr$policyIte(0, as.integer(maxIte), as.integer(iW), as.integer(iDur), rate, rateBase)
 	cat(mdp$ptr$getLog())
 	invisible()
@@ -172,6 +177,7 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1, maxIte = 100)
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate Interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
+#' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
 #' @param maxIte The max number of iterations value iteration is performed.
 #' @param eps Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see [1] p161).
 #' @param termValues The terminal values used (values of the last stage in the MDP).
@@ -183,12 +189,16 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1, maxIte = 100)
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
 #' @example tests/machine.Rex
 #' @export
-valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, maxIte = 100, eps = 0.00001, 
+valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, discountFactor = NULL, maxIte = 100, eps = 0.00001, 
                    termValues = NULL, g=NULL, getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
 	iDur<-NULL
 	if (!is.null(dur)) iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
+	if (!is.null(discountFactor)) {
+	   rateBase<-1
+	   rate<- -log(discountFactor)
+	}
 	if (is.null(termValues)) termValues<-rep(0,mdp$founderStatesLast)
 	if (is.null(g)) {
    	if (mdp$timeHorizon>=Inf) {
