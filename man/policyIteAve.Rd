@@ -4,7 +4,7 @@
 \alias{policyIteAve}
 \title{Perform policy iteration (average reward criterion) on the MDP.}
 \usage{
-policyIteAve(mdp, w, dur, maxIte = 100)
+policyIteAve(mdp, w, dur, maxIte = 100, getLog = TRUE)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -14,6 +14,8 @@ policyIteAve(mdp, w, dur, maxIte = 100)
 \item{dur}{The label of the duration/time such that discount rates can be calculated.}
 
 \item{maxIte}{Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.}
+
+\item{getLog}{Output the log messages.}
 }
 \value{
 The optimal gain (g) calculated.

@@ -16,7 +16,7 @@ getTransPr<-function(a,i) {
    return(stop("Error"))
 }
 
-w<-binaryMDPWriter("hct611_")
+w<-binaryMDPWriter("hct611_", getLog = FALSE)
 w$setWeights(c("Duration","Net reward"))
 w$process()
    w$stage()

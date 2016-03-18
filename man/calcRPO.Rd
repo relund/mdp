@@ -6,8 +6,9 @@
 \usage{
 calcRPO(mdp, w, iA, sId = ifelse(mdp$timeHorizon >= Inf, mdp$founderStatesLast
   + 1, 1):ifelse(mdp$timeHorizon >= Inf, mdp$states + mdp$founderStatesLast,
-  mdp$states) - 1, criterion = "expected", dur = "", rate = 0.1,
-  rateBase = 1, g = 0)
+  mdp$states) - 1, criterion = "expected", dur = "", rate = 0,
+  rateBase = 1, discountFactor = NULL, g = 0,
+  discountMethod = "continuous")
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -26,7 +27,11 @@ calcRPO(mdp, w, iA, sId = ifelse(mdp$timeHorizon >= Inf, mdp$founderStatesLast
 
 \item{rateBase}{The time-horizon the rate is valid over.}
 
+\item{discountFactor}{The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
+
 \item{g}{The optimal gain (g) calculated (used if \code{criterion = "average"}).}
+
+\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.}
 }
 \value{
 The rpo (matrix/data frame).

@@ -50,7 +50,7 @@ transPr<-function(a,rowId) {
    }
    return(NULL)
 }
-w<-binaryMDPWriter("hct67_")
+w<-binaryMDPWriter("hct67_", getLog = FALSE)
 w$setWeights(c("Duration","Net reward"))
 w$process()
    w$stage()

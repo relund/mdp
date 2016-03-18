@@ -373,12 +373,12 @@ class HMDP
      * \param idxW Index of the weight used.
      * \param idxD Index of duration.
      * \param g Current average reward.
-     * \param rate The interest rate.
-     * \param rateBase The time-horizon the rate is valid over.
+     * \param discountF The discount factor for one time unit.
+     *
      * \return True if a new policy of the external process is found.
      */
     bool ExternalStatesUpdate(Crit crit, state_iterator iteS, string & curPrefix, HMDPPtr & pExt,
-        const idx & idxW, const idx & idxD, const flt & g, const flt & rate, const flt & rateBase);
+        const idx & idxW, const idx & idxD, const flt & g, const flt & discountF);
 
 
     /** Copy values between the HMDP and the external process.
@@ -841,11 +841,11 @@ class HMDP
      * \param pairOne Iterator pair pointing to stage one at founder level.
      * \note Modify the weights stored in the states of the HMDP.
      */
-    void FounderW(Crit crit, MatSimple<double> &w, const idx &idxW, flt g = 0, idx idxD = 0, flt rate = 0, flt rateBase = 1)
+    void FounderW(Crit crit, MatSimple<double> &w, const idx &idxW, flt g = 0, idx idxD = 0, flt discountF = 1)
     {
         //cout << "FounderW: idxW=" << idxW << " idxD=" << idxD << endl;
         SetStateWStage("1",0);
-        CalcPolicy(crit, idxW, g , idxD, rate, rateBase);
+        CalcPolicy(crit, idxW, g , idxD, discountF);
         SetMatrixVal(w,"0");
     }
 
@@ -853,14 +853,14 @@ class HMDP
     /** Calculate the transition probabilities of the founder states given a specific policy.
      * \note Modify the state weights.
      */
-    void FounderPr(Crit crit, MatSimple<double> &P, idx idxD = 0, flt rate = 0, flt rateBase = 1) {
+    void FounderPr(Crit crit, MatSimple<double> &P, idx idxD = 0, flt discountF = 1) {
         idx r,c;
         state_iterator iteS, iteZero;
         SetStateWStage("1", 0);
         for (iteS = state_begin("1"), c=0; iteS!=state_end("1"); ++iteS, ++c) {
             w(iteS) = 1;
             if (c>0) w(iteS-1) = 0; // restore previous
-            CalcPolicy(crit,0,0,idxD,rate,rateBase);
+            CalcPolicy(crit,0,0,idxD,discountF);
             for (iteZero=state_begin("0"), r=0; iteZero!=state_end("0"); ++iteZero, ++r) { //cout << "WiteZ=" << w(iteZero) << " r=" << r << " c=" << c << endl;
                 P(r,c) = w(iteZero);
             }
@@ -1168,9 +1168,8 @@ class HMDP
      * \param crit Criterion used (enum type must be AverageReward, Reward, DiscountedReward, TransPr).
      * \param idxW The action weight index we want to optimize.
      * \param g The average reward (only used in criterion is AverageReward).
-     * \param idxDur The action duration index, i.e. the discout rate for duration $d$ is $\exp(-rate/rateBase*d)$.
-     * \param rate The interest rate.
-     * \param rateBase The time-horizon the rate is valid over.
+     * \param idxDur The action duration index.
+     * \param discountF The discount factor for one time unit.
      *
      * \note The last three parameters is only used if criterion is DiscountedReward.
      * If we are minimizing the weights, i.e. if the goal is to minimize
@@ -1178,7 +1177,7 @@ class HMDP
      * \return True if a new policy is found. Remember to reset the predecessors if no old policy before
      * running this method!
      */
-    bool CalcOptPolicy(Crit crit, idx idxW = 0, flt g = 0, idx idxDur = 0, flt rate = 0, flt rateBase = 1);
+    bool CalcOptPolicy(Crit crit, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
 
     /** Calculates weights based on the current policy of a single stage of the founder.
@@ -1187,15 +1186,14 @@ class HMDP
      * \param crit Criterion used (enum type must be AverageReward, Reward, DiscountedReward, TransPr).
      * \param idxW The action weight index we want to optimize.
      * \param g The average reward (only used in criterion is AverageReward).
-     * \param idxDur The action duration index, i.e. the discout rate for duration $d$ is $\exp(-rate/rateBase*d)$.
-     * \param rate The interest rate.
-     * \param rateBase The time-horizon the rate is valid over.
+     * \param idxDur The action duration index.
+     * \param discountF The discount factor for one time unit.
      *
-     * \note The last three parameters is only used if criterion is DiscountedReward.
+     * \note The last two parameters is only used if criterion is DiscountedReward.
      * If we are minimizing the weights, i.e. if the goal is to minimize
      * the cost then the rewards at idxW must be multiplied with -1.
      */
-    void CalcPolicy(Crit crit, idx idxW = 0, flt g = 0, idx idxDur = 0, flt rate = 0, flt rateBase = 1);
+    void CalcPolicy(Crit crit, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
 
 
@@ -1205,16 +1203,16 @@ class HMDP
      * \param idxW The index of weights to calculate.
      * \param idxA The action index we calculate the RPO with respect to (same size as iS).
      * \param g The average reward (only used in criterion is AverageReward).
-     * \param idxDur The action duration index, i.e. the discout rate for duration $d$ is $\exp(-rate/rateBase*d)$.
-     * \param rate The interest rate.
-     * \param rateBase The time-horizon the rate is valid over.
+     * \param idxDur The action duration index.
+     * \param discountF The discount factor for one time unit.
+     *
      * \return A vector of the same size as the states containing the RPO values.
      */
-    vector<flt> CalcRPO(Crit crit, vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g = 0, idx idxDur = 0, flt rate = 0, flt rateBase = 1) {
+    vector<flt> CalcRPO(Crit crit, vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g = 0, idx idxDur = 0, flt discountF = 1) {
         flt wA;      // weight the idxA
         flt wMax;    // max weight of the prececessor not equal idxA
         flt wTmp;    // weight to compare
-        flt dB = exp(-rate/rateBase);      // the discount base   //  cout<< "r:" << rate << " b:" << rateBase << endl;
+        flt dB = discountF;      // the discount base   //  cout<< "r:" << rate << " b:" << rateBase << endl;
         vector<flt> result;
 
         for(idx i=0; i<iS.size(); ++i) {
@@ -1262,12 +1260,12 @@ class HMDP
      * \param maxIte The max number of iterations. The model may loop if not unichain.
      * \param idxW Index of the weight used as nominator.
      * \param idxD The denominator we want to maximize the weight over.
-     * \param rate The interest rate.
-     * \param rateBase The time-horizon the rate is valid over.
+     * \param discountF The discount factor for one time unit.
+     *
      * \return g The gain.
      * \post Use \code GetLog to see the optimization log.
      */
-    flt PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, const flt rate=0, const flt rateBase=1);
+    flt PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, const flt discountF = 1);
 
 
     /** Policy iteration algorithm (infinite time-horizon) given a fixed policy.
@@ -1275,12 +1273,12 @@ class HMDP
      * \param maxIte The max number of iterations. The model may loop if not unichain.
      * \param idxW Index of the weight used as nominator.
      * \param idxD The denominator we want to maximize the weight over.
-     * \param rate The interest rate.
-     * \param rateBase The time-horizon the rate is valid over.
+     * \param discountF The discount factor for one time unit.
+     *
      * \return g The gain.
      * \post Use \code GetLog to see the optimization log.
      */
-    flt PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const flt rate=0, const flt rateBase=1);
+    flt PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const flt discountF = 1);
 
      /** Value iteration algorithm.
      *
@@ -1292,13 +1290,13 @@ class HMDP
      * \param idxDur Index of duration such that discount rates can be calculated.
      * \param termValues Terminal values used at founder level.
      * \param g The average gain.
-     * \param rate The interest rate.
-     * \param rateBase The time-horizon the rate is valid over.
+     * \param discountF The discount factor for one time unit.
+     *
      * \post Use \code GetLog to see the optimization log.
      */
     void ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
      const idx idxDur, vector<flt> & termValues,
-     const flt g, const flt rate, const flt rateBase);
+     const flt g, const flt discountF);
 
 
 // Algorithm sub-functions ---------------------------------------------------

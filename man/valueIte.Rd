@@ -4,9 +4,9 @@
 \alias{valueIte}
 \title{Perform value iteration on the MDP.}
 \usage{
-valueIte(mdp, w, dur = NULL, rate = 0.1, rateBase = 1,
+valueIte(mdp, w, dur = NULL, rate = 0, rateBase = 1,
   discountFactor = NULL, maxIte = 100, eps = 1e-05, termValues = NULL,
-  g = NULL, getLog = TRUE)
+  g = NULL, getLog = TRUE, discountMethod = "continuous")
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -30,6 +30,8 @@ valueIte(mdp, w, dur = NULL, rate = 0.1, rateBase = 1,
 \item{g}{Average reward. If specified then do a single iteration using the opdate equations under average reward criterion with the specified g value.}
 
 \item{getLog}{Output the log messages.}
+
+\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.}
 }
 \value{
 NULL (invisible)

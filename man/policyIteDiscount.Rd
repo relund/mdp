@@ -4,8 +4,9 @@
 \alias{policyIteDiscount}
 \title{Perform policy iteration (discounted reward criterion) on the MDP.}
 \usage{
-policyIteDiscount(mdp, w, dur, rate = 0.1, rateBase = 1,
-  discountFactor = NULL, maxIte = 100)
+policyIteDiscount(mdp, w, dur, rate = 0, rateBase = 1,
+  discountFactor = NULL, maxIte = 100, discountMethod = "continuous",
+  getLog = TRUE)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -21,6 +22,10 @@ policyIteDiscount(mdp, w, dur, rate = 0.1, rateBase = 1,
 \item{discountFactor}{The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
 
 \item{maxIte}{Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.}
+
+\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.}
+
+\item{getLog}{Output the log messages.}
 }
 \value{
 Nothing.

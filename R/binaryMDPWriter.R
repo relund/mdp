@@ -99,7 +99,8 @@
 #' @example tests/binaryMDPWriter.Rex
 #' @export
 binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
-	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"))
+	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"),
+	getLog = TRUE)
 {
 	setWeights<-function(labels,...){
 		if (wFixed) stop("Weights already added!")
@@ -243,11 +244,13 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
    }
 
 	closeWriter<-function(){
-		cat("\n  Statistics:\n")
-		cat("    states :",sRowId+1,"\n")
-		cat("    actions:",aRowId+1,"\n")
-		cat("    weights:",wCtr,"\n\n")
-		cat("  Closing binary MDP writer.\n\n")
+	   if (getLog) {
+	      cat("\n  Statistics:\n")
+	      cat("    states :",sRowId+1,"\n")
+	      cat("    actions:",aRowId+1,"\n")
+	      cat("    weights:",wCtr,"\n\n")
+	      cat("  Closing binary MDP writer.\n\n") 
+	   }
 		close(fS)
 		close(fSLbl)
 		close(fA)

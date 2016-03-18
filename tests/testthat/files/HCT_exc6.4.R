@@ -30,7 +30,7 @@ transPr<-function(i,a) {
 } 
 
 # Build the model which is stored in a set of binary files
-w<-binaryMDPWriter("hct64_")
+w<-binaryMDPWriter("hct64_", getLog = FALSE)
 w$setWeights(c("Duration","Net reward"))
 w$process()
    w$stage()

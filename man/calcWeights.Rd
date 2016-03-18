@@ -4,8 +4,9 @@
 \alias{calcWeights}
 \title{Calculate weights based on current policy. Normally run after an optimal policy has been found.}
 \usage{
-calcWeights(mdp, wLbl, criterion = "expected", durLbl = NULL, rate = 0.1,
-  rateBase = 1, termValues = NULL)
+calcWeights(mdp, wLbl, criterion = "expected", durLbl = NULL, rate = 0,
+  rateBase = 1, discountFactor = NULL, termValues = NULL,
+  discountMethod = "continuous")
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -20,7 +21,11 @@ calcWeights(mdp, wLbl, criterion = "expected", durLbl = NULL, rate = 0.1,
 
 \item{rateBase}{The time-horizon the rate is valid over.}
 
+\item{discountFactor}{The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
+
 \item{termValues}{The terminal values used (values of the last stage in the MDP).}
+
+\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.}
 }
 \value{
 Nothing.

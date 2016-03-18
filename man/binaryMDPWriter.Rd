@@ -8,7 +8,8 @@ files.}
 \usage{
 binaryMDPWriter(prefix = "", binNames = c("stateIdx.bin", "stateIdxLbl.bin",
   "actionIdx.bin", "actionIdxLbl.bin", "actionWeight.bin",
-  "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin"))
+  "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin"),
+  getLog = TRUE)
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to \code{binNames}.}

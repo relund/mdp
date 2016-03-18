@@ -123,17 +123,19 @@ getWIdx<-function(mdp, wLbl) {
 #' @param w The label of the weight we optimize.
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param maxIte Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.
+#' @param getLog Output the log messages.
+#' 
 #' @return The optimal gain (g) calculated.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
 #' @export
-policyIteAve<-function(mdp, w, dur, maxIte=100) {
+policyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
 	iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
-	g<-mdp$ptr$policyIte(1, as.integer(maxIte), as.integer(iW), as.integer(iDur), rate=0, rateBase=1)
+	g<-mdp$ptr$policyIte(1, as.integer(maxIte), as.integer(iW), as.integer(iDur), discountFactor=1)
 	#message(mdp$ptr$getLog())
-	cat(mdp$ptr$getLog())
+	if (getLog) cat(mdp$ptr$getLog())
 	return(g)
 }
 
@@ -149,20 +151,24 @@ policyIteAve<-function(mdp, w, dur, maxIte=100) {
 #' @param rateBase The time-horizon the rate is valid over.
 #' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
 #' @param maxIte Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.
+#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.
+#' @param getLog Output the log messages.
+#' 
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
 #' @export
-policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1, discountFactor = NULL, maxIte = 100) {
+policyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
+                            discountMethod="continuous", getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
 	iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
-	if (!is.null(discountFactor)) {
-	   rateBase<-1
-	   rate<- -log(discountFactor)
+	if (is.null(discountFactor)) {
+	   if (discountMethod=="continuous") discountFactor<-exp(-rate/rateBase)
+	   if (discountMethod=="discrete") discountFactor<-1/(1 + rate/rateBase)
 	}
-	g<-mdp$ptr$policyIte(0, as.integer(maxIte), as.integer(iW), as.integer(iDur), rate, rateBase)
-	cat(mdp$ptr$getLog())
+	g<-mdp$ptr$policyIte(0, as.integer(maxIte), as.integer(iW), as.integer(iDur), discountFactor)
+	if (getLog) cat(mdp$ptr$getLog())
 	invisible()
 }
 
@@ -183,21 +189,22 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0.1, rateBase = 1, discountFacto
 #' @param termValues The terminal values used (values of the last stage in the MDP).
 #' @param g Average reward. If specified then do a single iteration using the opdate equations under average reward criterion with the specified g value.
 #' @param getLog Output the log messages.
+#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.
 #' 
 #' @return NULL (invisible)
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
 #' @example tests/machine.Rex
 #' @export
-valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, discountFactor = NULL, maxIte = 100, eps = 0.00001, 
-                   termValues = NULL, g=NULL, getLog = TRUE) {
+valueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
+                   eps = 1e-05, termValues = NULL, g=NULL, getLog = TRUE, discountMethod="continuous") {
 	iW<-getWIdx(mdp,w)
 	iDur<-NULL
 	if (!is.null(dur)) iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
-	if (!is.null(discountFactor)) {
-	   rateBase<-1
-	   rate<- -log(discountFactor)
+	if (is.null(discountFactor)) {
+	   if (discountMethod=="continuous") discountFactor<-exp(-rate/rateBase)
+	   if (discountMethod=="discrete") discountFactor<-1/(1 + rate/rateBase)
 	}
 	if (is.null(termValues)) termValues<-rep(0,mdp$founderStatesLast)
 	if (is.null(g)) {
@@ -205,20 +212,20 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0.1, rateBase = 1, discountFactor 
    		if (is.null(iDur)) stop("A duration index must be specified under infinite time-horizon!")
    	   mdp$ptr$valueIte(0, as.integer(maxIte),
    			as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(termValues),
-   			as.numeric(0),	as.numeric(rate), as.numeric(rateBase) )
+   			as.numeric(0),	as.numeric(discountFactor) )
    	} else {
    		if (!is.null(iDur)) mdp$ptr$valueIte(0, as.integer(1),
                 as.numeric(0), as.integer(iW), as.integer(iDur), as.numeric(termValues),
-                as.numeric(0), as.numeric(rate), as.numeric(rateBase) )
+                as.numeric(0), as.numeric(discountFactor) )
    		if (is.null(iDur)) mdp$ptr$valueIte(2, as.integer(1),
                as.numeric(0), as.integer(iW), as.integer(0), as.numeric(termValues),
-               as.numeric(0), as.numeric(0), as.numeric(1) )
+               as.numeric(0), as.numeric(1) )
    	}
 	} else {  # value ite under ave reward criterion
 	   if (is.null(iDur)) stop("A duration index must be specified under average reward criterion!")
 	   mdp$ptr$valueIte(1, as.integer(1),
            as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(termValues),
-           as.numeric(g), as.numeric(0), as.numeric(1) )
+           as.numeric(g), as.numeric(1) )
 	}
 	if (getLog) cat(mdp$ptr$getLog())
 	invisible(NULL)
@@ -452,22 +459,30 @@ setPolicy<-function(mdp, policy) {
 #' @param durLbl The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
+#' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
 #' @param termValues The terminal values used (values of the last stage in the MDP).
+#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.
+#' 
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example tests/machine.Rex
 #' @export
-calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0.1, rateBase = 1, termValues=NULL) {
+calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0, rateBase = 1, 
+                      discountFactor = NULL, termValues = NULL, discountMethod = "continuous") {
 	iW<-getWIdx(mdp,wLbl)
 	if (!is.null(durLbl)) iDur<-getWIdx(mdp,durLbl)
 	.checkWIdx(iW,length(mdp$weightNames))
+	if (is.null(discountFactor)) {
+	   if (discountMethod=="continuous") discountFactor<-exp(-rate/rateBase)
+	   if (discountMethod=="discrete") discountFactor<-1/(1 + rate/rateBase)
+	}
 	if (mdp$timeHorizon<Inf) {
 		if (is.null(termValues)) stop("Terminal values must be specified under finite time-horizon!")
-		if (criterion=="expected") mdp$ptr$calcPolicy(2,iW,0,1,rate,rateBase)
-		if (criterion=="discount") mdp$ptr$calcPolicy(1,iW,0,iDur,rate,rateBase)
+		if (criterion=="expected") mdp$ptr$calcPolicy(2,iW,0,1,discountFactor)
+		if (criterion=="discount") mdp$ptr$calcPolicy(1,iW,0,iDur,discountFactor)
 	} else {
-		if (criterion=="discount") mdp$ptr$policyIteFixedPolicy(1,iW,iDur,rate,rateBase)
-		if (criterion=="average") return( mdp$ptr$policyIteFixedPolicy(0,iW,iDur,rate,rateBase) )
+		if (criterion=="discount") mdp$ptr$policyIteFixedPolicy(1,iW,iDur,discountFactor)
+		if (criterion=="average") return( mdp$ptr$policyIteFixedPolicy(0,iW,iDur,discountFactor) )
 		#if (criterion=="expected") .Call("MDP_CalcWeightsFinite", mdp$ptr, as.integer(iW), as.numeric(termValues), PACKAGE="MDP")
 	}
 	invisible(NULL)
@@ -488,25 +503,33 @@ calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0.1
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
+#' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
 #' @param g The optimal gain (g) calculated (used if \code{criterion = "average"}).
+#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.
+#' 
 #' @return The rpo (matrix/data frame).
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @export
 calcRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                     ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
-                  criterion="expected", dur = "", rate = 0.1, rateBase = 1, g = 0) {
+                  criterion="expected", dur = "", rate = 0, rateBase = 1, discountFactor = NULL, 
+                  g = 0, discountMethod="continuous") {
    iW<-getWIdx(mdp,w)
    iDur<-getWIdx(mdp,dur)
    .checkWIdx(iW,length(mdp$weightNames))
+   if (is.null(discountFactor)) {
+      if (discountMethod=="continuous") discountFactor<-exp(-rate/rateBase)
+      if (discountMethod=="discrete") discountFactor<-1/(1 + rate/rateBase)
+   }
    maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
    if (max(sId)>=maxS | min(sId)<0)
       stop("Out of range (sId). Need to be a subset of 0,...,",maxS-1,"!")
    if (length(sId)!=length(iA))
       stop("Vectors sId and iA must have same length!")
    rpo<-NA
-   if (criterion=="expected") rpo<-mdp$ptr$calcRPO(2, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
-   if (criterion=="discount") rpo<-mdp$ptr$calcRPO(1, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
-   if (criterion=="average")  rpo<-mdp$ptr$calcRPO(0, as.integer(sId), iW, as.integer(iA), g, iDur, rate, rateBase)
+   if (criterion=="expected") rpo<-mdp$ptr$calcRPO(2, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
+   if (criterion=="discount") rpo<-mdp$ptr$calcRPO(1, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
+   if (criterion=="average")  rpo<-mdp$ptr$calcRPO(0, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
    rpo[rpo <= -1.8e+16]<-NA # less than 2 actions
    rpo<-cbind(sId=sId, rpo=rpo)
    return(rpo)

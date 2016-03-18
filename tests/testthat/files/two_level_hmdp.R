@@ -1,5 +1,5 @@
 # A small HMDP with two levels
-w<-binaryMDPWriter("2lev_")
+w<-binaryMDPWriter("2lev_", getLog = FALSE)
 w$setWeights(c("Duration","Net reward","Items"))
 w$process()
 	w$stage()

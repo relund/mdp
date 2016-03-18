@@ -15,7 +15,7 @@ xi<-matrix(c(
    ), nrow=5, byrow=T)
 
 
-w<-binaryMDPWriter("hct73_")
+w<-binaryMDPWriter("hct73_", getLog = FALSE)
 w$setWeights(c("Duration","Net reward"))
 w$process()
    w$stage()

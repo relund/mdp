@@ -5,7 +5,7 @@
 
 ## Create the MDP using a dummy replacement node
 prefix<-"machine1_"
-w <- binaryMDPWriter(prefix)
+w <- binaryMDPWriter(prefix, getLog = FALSE)
 w$setWeights(c("Net reward"))
 w$process()
 	w$stage()   # stage n=0

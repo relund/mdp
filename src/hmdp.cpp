@@ -542,7 +542,7 @@ void HMDP::ExternalResetStates() {
 // ----------------------------------------------------------------------------
 
 bool HMDP::ExternalStatesUpdate(Crit crit, state_iterator iteS, string & curPrefix, HMDPPtr & pExt,
-     const idx & idxW, const idx & idxD, const flt & g, const flt & rate, const flt & rateBase)
+     const idx & idxW, const idx & idxD, const flt & g, const flt & discountF)
 {
     //cout << "ExtStatesU: idxD=" << idxD << endl;
     string stageStr = iteS->label;     // external stage in HMDP corresponding to first stage in external
@@ -551,7 +551,7 @@ bool HMDP::ExternalStatesUpdate(Crit crit, state_iterator iteS, string & curPref
     if (!okay) return false;
     string stageNextStr = GetNextStageStr(stageStr);  // external stage in HMDP corresponding to last stage in external
     vector<flt> rewards = GetStageW(stageNextStr);   // get the rewards from external nodes corresponding to last stage //cout << "next stage: " << stageNextStr << endl; //cout << "Start valueIte\n";
-    pExt->ValueIte(crit, 1, 0, idxW, idxD, rewards, g, rate, rateBase);
+    pExt->ValueIte(crit, 1, 0, idxW, idxD, rewards, g, discountF);
     string stageZeroExtStr = "0"; // first stage in external //cout << "Copy from external:" << endl;
     ExternalCopyWState(stageStr, stageZeroExtStr, pExt, false);   // copy rewards to the HMDP //cout << "Update actions:" << endl;
     bool newPred = ExternalSetActions(stageStr, pExt, idxW, idxD);
@@ -646,7 +646,7 @@ bool HMDP::ExternalSetActions(string stageStr, const HMDPPtr & pExt, const idx &
 
 //-----------------------------------------------------------------------------
 
-flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, const flt rate, const flt rateBase) {
+flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, const flt discountF) {
 	//cout << "PolicyIte: idxD=" << idxD << endl;
 	ResetLog();
 	if (timeHorizon<INFINT) {
@@ -660,8 +660,8 @@ flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, con
             break;
         case DiscountedReward: log << "using quantity '" << GetWName(idxW)
             << "' under discounting criterion \nwith '" << GetWName(idxD)
-            << "' as duration using interest rate " << rate
-            << " and a rate basis equal " << rateBase << ". \nIteration(s): ";
+            << "' as duration using discount factor " << discountF
+            << ". \nIteration(s): ";
             break;
         default: log << "Criterion not defined for policy iteration!" << endl; return -INF;
 	}
@@ -679,7 +679,7 @@ flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, con
 	okay = true;
 	bool newPred;
 	SetPred(0); // default policy
-	if (externalProc) CalcOptPolicy(crit, idxW, g, idxD, rate, rateBase);   // if external processes we have to find the optimal policy of the external processes and set external action w and trans pr
+	if (externalProc) CalcOptPolicy(crit, idxW, g, idxD, discountF);   // if external processes we have to find the optimal policy of the external processes and set external action w and trans pr
 	for (idx k=1; ; ++k) { //cout << endl << "IteP:" << k << endl;
 		if (verbose) log << endl; log << k << " "; if (verbose) log << endl;
 		// find rewards, dur, trans pr at founder given policy
@@ -689,8 +689,8 @@ flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, con
             FounderW(Reward, d, idxD);
         }
         else {
-            FounderW(crit, r, idxW,g,idxD,rate,rateBase); //cout << "r mat: " << r << endl;
-            FounderPr(TransPrDiscounted,P,idxD,rate,rateBase); //cout << "P mat: " << P << endl;
+            FounderW(crit, r, idxW,g,idxD,discountF); //cout << "r mat: " << r << endl;
+            FounderPr(TransPrDiscounted,P,idxD,discountF); //cout << "P mat: " << P << endl;
         }
 		// If AverageReward solve equations h = r - dg + Ph where r, d and P have been calculated for the founder. This is equivalent to solving (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equivalent to solving Qw = r (equation (8.6.8) in Puterman) where last col in (I-P) replaced with d.
 		// If DiscountedReward solve equations w = r + Pw -> (I-P)w = r
@@ -707,7 +707,7 @@ flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, con
             else if (crit==DiscountedReward) HMDP::w(iteL) = w(j,0);
 		}
 		// update policy
-		newPred = CalcOptPolicy(crit, idxW, g, idxD, rate, rateBase);
+		newPred = CalcOptPolicy(crit, idxW, g, idxD, discountF);
 		if (!okay) {g=-INF; break;}   // something went wrong (see the log)
 		if (!newPred) {
 			log << k+1;
@@ -725,7 +725,7 @@ flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, con
 
 //-----------------------------------------------------------------------------
 
-flt HMDP::PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const flt rate, const flt rateBase) {
+flt HMDP::PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const flt discountF) {
 	ResetLog();
 	if (timeHorizon<INFINT) {
 		log << "Policy iteration can only be done on infinite time-horizon HMDPs!" << endl;
@@ -738,8 +738,8 @@ flt HMDP::PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const 
             break;
         case DiscountedReward: log << "using quantity '" << GetWName(idxW)
             << "' under discounting criterion \nwith '" << GetWName(idxD)
-            << "' as duration using interest rate " << rate
-            << " and a rate basis equal " << rateBase << ". \nIteration(s):";
+            << "' as duration using discount factor " << discountF
+            << ". \nIteration(s):";
             break;
         default: log << "Criterion not defined for policy iteration!" << endl; return -INF;
 	}
@@ -763,8 +763,8 @@ flt HMDP::PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const 
         FounderW(Reward, d, idxD);
     }
     else {
-        FounderW(crit, r, idxW,g,idxD,rate,rateBase); //cout << "r mat: " << r << endl;
-        FounderPr(TransPrDiscounted,P,idxD,rate,rateBase); //cout << "P mat: " << P << endl;
+        FounderW(crit, r, idxW,g,idxD,discountF); //cout << "r mat: " << r << endl;
+        FounderPr(TransPrDiscounted,P,idxD,discountF); //cout << "P mat: " << P << endl;
     }
     // If AverageReward solve equations h = r - dg + Ph where r, d and P have been calculated for the founder. This is equivalent to solving (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equivalent to solving Qw = r (equation (8.6.8) in Puterman) where last col in (I-P) replaced with d.
     // If DiscountedReward solve equations w = r + Pw -> (I-P)w = r
@@ -780,7 +780,7 @@ flt HMDP::PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const 
         else if (crit==DiscountedReward) HMDP::w(iteL) = w(j,0);
     }
     // calc weights policy
-    CalcPolicy(crit, idxW, g, idxD, rate, rateBase);
+    CalcPolicy(crit, idxW, g, idxD, discountF);
 
 	log << "finished. Cpu time: " << timer.ElapsedTime("sec") << " sec." << endl;
 	if (crit==AverageReward) return g; //cout << "Rewards: " << vec2String(GetStageW("0")) << endl;
@@ -792,7 +792,7 @@ flt HMDP::PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const 
 
 void HMDP::ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
      const idx idxDur, vector<flt> & termValues,
-     const flt g, const flt rate, const flt rateBase)
+     const flt g, const flt discountF)
 {
 	ResetLog();
 	log << "Run value iteration with epsilon = " << epsilon  << " at most "
@@ -803,8 +803,8 @@ void HMDP::ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
             break;
         case Reward: log << " under reward criterion." << endl; break;
         case DiscountedReward: log << " under expected discounted reward criterion \nwith '" <<
-            GetWName(idxDur) << "' as duration using interest rate " << rate <<
-            " and rate basis " << rateBase << ".\nIterations:"; break;
+            GetWName(idxDur) << "' as duration using discount factor " << discountF <<
+            ".\nIterations:"; break;
         default: log << "Criterion not defined for value iteration!" << endl; return;
 	}
 	timer.StartTimer();
@@ -822,7 +822,7 @@ void HMDP::ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
 	}
 	idx i;
 	for (i=1;; ++i) { //cout << "Ite: " << i+1 << endl;
-        CalcOptPolicy(crit,idxW,g,idxDur,rate,rateBase);
+        CalcOptPolicy(crit,idxW,g,idxDur,discountF);
 		if (crit==DiscountedReward)
             if(MaxDiffFounder()<epsilon) break;
 		if (i<maxIte) {    // set next last stage values to stage zero values
@@ -835,25 +835,25 @@ void HMDP::ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
 	if (crit==DiscountedReward && timeHorizon>=INFINT) log << " " << i;
 	timer.StopTimer();
 	log << " Finished. Cpu time " << timer.ElapsedTime("sec") << " sec." << endl;
-	if (i==maxIte & maxIte!=1) log << "Reached upper limit of iterations! Should the limit be increased or \nis the model fulfilling the model assumptions (e.g. no periodicity)?\n";
+	if ( (i==maxIte) & (maxIte!=1) ) log << "Reached upper limit of iterations! Should the limit be increased or \nis the model fulfilling the model assumptions (e.g. no periodicity)?\n";
 }
 
 // ----------------------------------------------------------------------------
 
-bool HMDP::CalcOptPolicy(Crit crit, idx idxW, flt g, idx idxDur, flt rate, flt rateBase) {
+bool HMDP::CalcOptPolicy(Crit crit, idx idxW, flt g, idx idxDur, flt discountF) {
 	//cout << "CalcOptP: idxD=" << idxDur << endl;
 	flt wTmp;      // weight to compare
 	bool newPred = false;       // true if the stored pred change in a node
 	bool isMinInf;      // true if a hyperarc gives -INF in the head node
 	int oldPred;
 	string externalPrefix; // prefix of the external process in memory
-	flt dB = exp(-rate/rateBase);      // the discount base     // cout << "dB=" << dB << endl;
+	flt dB = discountF;      // the discount base     // cout << "dB=" << dB << endl;
 	HMDP * pExtProc = NULL;    // pointer to external process
     ExternalResetStates();  // set state weight to -INF
     // scan states according to the valid ordering
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
        if ( ExternalState(iteS) ) { //cout << "State " << GetId(iteS) << " is external\n";
-            if (iteS->w== -INF) newPred = ExternalStatesUpdate(crit, iteS, externalPrefix, pExtProc, idxW, idxDur, g, rate, rateBase);
+            if (iteS->w== -INF) newPred = ExternalStatesUpdate(crit, iteS, externalPrefix, pExtProc, idxW, idxDur, g, discountF);
             if (!okay) return false;
             pred(iteS) = 0;
         }
@@ -896,10 +896,10 @@ bool HMDP::CalcOptPolicy(Crit crit, idx idxW, flt g, idx idxDur, flt rate, flt r
 
 // ----------------------------------------------------------------------------
 
-void HMDP::CalcPolicy(Crit crit, idx idxW, flt g, idx idxDur, flt rate, flt rateBase) {
+void HMDP::CalcPolicy(Crit crit, idx idxW, flt g, idx idxDur, flt discountF) {
 	//cout << "CalcP: idxW=" << idxW << " idxD=" << idxDur << endl;
 	flt wTmp;      // weight to compare
-	flt dB = exp(-rate/rateBase);      // the discount base   //  cout<< "r:" << rate << " b:" << rateBase << endl;
+	flt dB = discountF;      // the discount base   //  cout<< "r:" << rate << " b:" << rateBase << endl;
     // scan states according to the valid ordering
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         //cout << "State " << GetId(iteS) << " is normal with wPred=" << w(iteS) << endl;

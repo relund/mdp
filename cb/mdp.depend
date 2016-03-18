@@ -60,23 +60,23 @@
 	<R_ext/Lapack.h>
 	<R_ext/BLAS.h>
 
-1421540106 c:\program files\r\r-3.1.3\include\r_ext\lapack.h
+1421536506 c:\program files\r\r-3.1.3\include\r_ext\lapack.h
 	<R_ext/RS.h>
 	<R_ext/Complex.h>
 	<R_ext/BLAS.h>
 
-1362528136 c:\program files\r\r-3.1.3\include\r_ext\rs.h
+1362524536 c:\program files\r\r-3.1.3\include\r_ext\rs.h
 	<string.h>
 	<Rconfig.h>
 	<R_ext/Error.h>
 
-1425912532 c:\program files\r\r-3.1.3\include\rconfig.h
+1425908932 c:\program files\r\r-3.1.3\include\rconfig.h
 
-1365026702 c:\program files\r\r-3.1.3\include\r_ext\error.h
+1365023102 c:\program files\r\r-3.1.3\include\r_ext\error.h
 
-1344981906 c:\program files\r\r-3.1.3\include\r_ext\complex.h
+1344978306 c:\program files\r\r-3.1.3\include\r_ext\complex.h
 
-1350684306 c:\program files\r\r-3.1.3\include\r_ext\blas.h
+1350680706 c:\program files\r\r-3.1.3\include\r_ext\blas.h
 	<R_ext/RS.h>
 	<R_ext/Complex.h>
 
@@ -124,10 +124,10 @@
 	<R_ext/Lapack.h>
 	<R_ext/BLAS.h>
 
-1436788006 source:c:\work\github\mdp\src\hmdp.cpp
+1458302219 source:c:\work\github\mdp\src\hmdp.cpp
 	"hmdp.h"
 
-1436786189 c:\work\github\mdp\src\hmdp.h
+1458302219 c:\work\github\mdp\src\hmdp.h
 	<fstream>
 	<vector>
 	<string>
@@ -143,7 +143,7 @@
 	<stdlib.h>
 	<stdio.h>
 
-1430315062 c:\work\github\mdp\src\timer.h
+1430311462 c:\work\github\mdp\src\timer.h
 	<stdint.h>
 	<limits>
 	<iostream>
@@ -153,22 +153,22 @@
 	<time.h>
 	<sys/time.h>
 
-1436788117 c:\work\github\mdp\src\basicdt.h
+1436784517 c:\work\github\mdp\src\basicdt.h
 	<sstream>
 	<vector>
 
-1430315062 c:\work\github\mdp\src\matrix.h
+1430311462 c:\work\github\mdp\src\matrix.h
 	"basicdt.h"
 	<iostream>
 
-1430315062 c:\work\github\mdp\src\matalg.h
+1430311462 c:\work\github\mdp\src\matalg.h
 	"basicdt.h"
 	"matrix.h"
 	<iostream>
 	<R_ext/Lapack.h>
 	<R_ext/BLAS.h>
 
-1436786940 source:c:\work\github\mdp\cb\main.cpp
+1436783340 source:c:\work\github\mdp\cb\main.cpp
 	<iostream>
 	"../src/hmdp.h"
 
