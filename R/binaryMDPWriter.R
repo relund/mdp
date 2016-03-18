@@ -3,7 +3,7 @@
 #' files.
 #'
 #' Binary files are efficent for storing large models. Compared to the HMP (XML)
-#' format the binary files use less storage space and loading the model is faster.
+#' format the binary files use less storage space and loads the model faster.
 #'
 #' The functions which can be used are: 
 #' \itemize{
@@ -25,9 +25,13 @@
 #'   
 #'   \item{\code{endState()}: }{Ends a stage.}
 #'   
-#'   \item{\code{action(label=NULL, weights, prob, ...)}: }{Starts an action. Parameter
-#'   \code{weights} must be a vector of action weights, \code{prob} must contain triples of
-#'   (scope,idx,pr) (see the description of actionIdx.bin below), \code{...} is currently not used.}
+#'   \item{\code{action(scope=NULL, index=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...)}: }
+#'   {Starts an action. Parameter
+#'   \code{weights} must be a vector of action weights. There are two ways to enter transition prob 
+#'   1) \code{prob} contains triples of (scope,idx,pr), 
+#'   2) \code{scope}, \code{index} and \code{pr} are equal size vectors with scope, index and prob
+#'    (see the description of actionIdx.bin below)
+#'   \code{...} is currently not used.}
 #'   
 #'   \item{\code{endAction()}: }{Ends an action.}
 #'   
@@ -155,8 +159,8 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		invisible(NULL)
 	}
 
-	action<-function(label=NULL, weights, prob, end=FALSE, ...){     # prop contain tripeles (scope,idx,prob)
-		#cat("action:\n")
+	action<-function(scope=NULL, index=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...){     # prop contain tripeles (scope,idx,prob)
+	   #cat("action:\n")
 		#print(weights)
 		#print(prob)
 		#if (is.null(label) | label=="") stop("label = null");
@@ -167,22 +171,20 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		#cat(paste("a: sId=",sIdx[length(sIdx)],"|",sep=""))
 		scpIdx<-NULL
 		aRowId<<- aRowId+1
-		for (i in 0:(length(prob)/3-1)) scpIdx<-c(scpIdx,prob[1:2+3*i])
-		probs<-prob[1:(length(prob)/3)*3]
-#        if (any(scpIdx<0) | any(probs<0)) {
-#            print(label)
-#            print(prob)
-#            print(scpIdx)
-#            print(probs)
-#            stop()
-#        }
-		writeBin(as.integer(c(sIdx[length(sIdx)],scpIdx,-1)), fA)
-		if (!is.null(label)) writeBin(c(as.character(aRowId),label), fALbl)   # aRowId added before label
-		writeBin(as.numeric(c(probs,-1)), fTransP)
+   	if (!is.null(prob)) {
+   		for (i in 0:(length(prob)/3-1)) scpIdx<-c(scpIdx,prob[1:2+3*i])
+   		probs<-prob[1:(length(prob)/3)*3]
+   		writeBin(as.integer(c(sIdx[length(sIdx)],scpIdx,-1)), fA)
+   		writeBin(as.numeric(c(probs,-1)), fTransP)
+   		#cat("end action\n")
+		} else if (!is.null(pr)) {
+		   writeBin(as.integer(c(sIdx[length(sIdx)],scope,-1)), fA)
+		   writeBin(as.numeric(c(pr,-1)), fTransP)
+	   }
 		writeBin(as.numeric(weights), fACost)
-		#cat("end action\n")
+		if (!is.null(label)) writeBin(c(as.character(aRowId),label), fALbl)   # aRowId added before label
 		if (end) endAction()
-		invisible(NULL)
+	   invisible(NULL)
 	}
 
 	endAction<-function(){

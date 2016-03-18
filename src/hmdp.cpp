@@ -835,7 +835,7 @@ void HMDP::ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
 	if (crit==DiscountedReward && timeHorizon>=INFINT) log << " " << i;
 	timer.StopTimer();
 	log << " Finished. Cpu time " << timer.ElapsedTime("sec") << " sec." << endl;
-	if (i==maxIte) log << "Reached upper limit of iterations! Should the limit be increased or \nis the model fulfilling the model assumptions (e.g. no periodicity)?\n";
+	if (i==maxIte & maxIte!=1) log << "Reached upper limit of iterations! Should the limit be increased or \nis the model fulfilling the model assumptions (e.g. no periodicity)?\n";
 }
 
 // ----------------------------------------------------------------------------

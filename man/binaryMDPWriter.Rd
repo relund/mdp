@@ -20,7 +20,7 @@ A list of functions.
 }
 \description{
 Binary files are efficent for storing large models. Compared to the HMP (XML)
-format the binary files use less storage space and loading the model is faster.
+format the binary files use less storage space and loads the model faster.
 }
 \details{
 The functions which can be used are: 
@@ -43,9 +43,13 @@ The functions which can be used are:
   
   \item{\code{endState()}: }{Ends a stage.}
   
-  \item{\code{action(label=NULL, weights, prob, ...)}: }{Starts an action. Parameter
-  \code{weights} must be a vector of action weights, \code{prob} must contain triples of
-  (scope,idx,pr) (see the description of actionIdx.bin below), \code{...} is currently not used.}
+  \item{\code{action(scope=NULL, index=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...)}: }
+  {Starts an action. Parameter
+  \code{weights} must be a vector of action weights. There are two ways to enter transition prob 
+  1) \code{prob} contains triples of (scope,idx,pr), 
+  2) \code{scope}, \code{index} and \code{pr} are equal size vectors with scope, index and prob
+   (see the description of actionIdx.bin below)
+  \code{...} is currently not used.}
   
   \item{\code{endAction()}: }{Ends an action.}
   
