@@ -1,3 +1,6 @@
+## Example 6.1.1 in Tijms, H.C., "A first course in stochastic models", John Wiley & Sons Ltd, 2003.
+## The semi-MDP is specified using binaryMDPWriter and actions with prob
+
 N<-5; Cf<- -10; Cp<-c(0,-7,-7,-5) # use negative numbers since optimize reward
 Q <- matrix(c(
    0.90, 0.10, 0, 0, 0,
@@ -8,11 +11,9 @@ Q <- matrix(c(
 transPr0<-data.frame(i=rep(1:(N-1), times=N), scope=1, j=rep(1:N,each=4)-1, pr=as.vector(Q))
 transPr0<-transPr0[transPr0$pr>0,]  # remove transitions with zero pr
 transPr1<-data.frame(i=2:(N-1), scope=1, j=1-1, pr=rep(1, times=N-2))
-transPr2<-data.frame(i=c(N,N+1), scope=1, j=c(N+1,1)-1, pr=c(1,1))
 getTransPr<-function(a,i) {
    if (a==0) return(as.vector(as.matrix(t(transPr0[transPr0$i==i,c(2,3,4)]))) )
    if (a==1) return(as.vector(as.matrix(t(transPr1[transPr1$i==i,c(2,3,4)]))))
-   if (a==2) return(as.vector(as.matrix(t(transPr2[transPr2$i==i,c(2,3,4)]))))
    return(stop("Error"))
 }
 

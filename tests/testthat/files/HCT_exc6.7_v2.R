@@ -1,5 +1,5 @@
 ## Excercise 6.7 in Tijms, H.C., "A first course in stochastic models", John Wiley & Sons Ltd, 2003.
-## The semi-MDP is specified using binaryMDPWriter and actions with prob
+## The semi-MDP is specified using binaryMDPWriter and actions with index and pr
 
 MVal<-5
 K<-200
@@ -43,25 +43,38 @@ for (i in 1:length(states$s)) {
 transPr<-function(a,rowId) {
    if (a==0) {
       idx<-which(a0TransPr[rowId,]>0)
-      pr<-rbind(1,idx-1,a0TransPr[rowId,idx])
-      return(as.vector(pr))
+      pr<-a0TransPr[rowId,idx]
+      return(pr)
    }
    if (a==1) {
       idx<-which(a1TransPr[rowId,]>0)
-      pr<-rbind(1,idx-1,a1TransPr[rowId,idx])
-      return(as.vector(pr))
+      pr<-a1TransPr[rowId,idx]
+      return(pr)
    }
    return(NULL)
 }
-w<-binaryMDPWriter("hct67_", getLog = FALSE)
+
+idx<-function(a,rowId) {
+   if (a==0) {
+      idx<-which(a0TransPr[rowId,]>0)
+      return(idx-1)
+   }
+   if (a==1) {
+      idx<-which(a1TransPr[rowId,]>0)
+      return(idx-1)
+   }
+   return(NULL)
+}
+
+w<-binaryMDPWriter("hct67v2_", getLog = FALSE)
 w$setWeights(c("Duration","Net reward"))
 w$process()
    w$stage()
       for (ii in 1:length(states$j)) {
          j<-states$j[ii]; s<-states$s[ii]
          w$state(label=states$label[ii])
-            w$action(label="0", weights=c(1, -states$a0cost[ii]), prob=transPr(0,ii), end=T)
-            w$action(label="1", weights=c(1, -states$a1cost[ii]), prob=transPr(1,ii), end=T)
+            w$action(label="0", weights=c(1, -states$a0cost[ii]), pr=transPr(0,ii), index=idx(0,ii), end=T)
+            w$action(label="1", weights=c(1, -states$a1cost[ii]), pr=transPr(1,ii), index=idx(1,ii), end=T)
          w$endState()
       }
    w$endStage()

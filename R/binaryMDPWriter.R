@@ -29,11 +29,11 @@
 #'   {Starts an action. Parameter
 #'   \code{weights} must be a vector of action weights. There are two ways to enter transition prob 
 #'   1) \code{prob} contains triples of (scope,idx,pr), 
-#'   2) \code{scope}, \code{index} and \code{pr} are equal size vectors with scope, index and prob
-#'    (see the description of actionIdx.bin below)
+#'   2) Vectors \code{index} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
+#'    (see the description of actionIdx.bin below). If \code{end=TRUE} then an \code{endAction()} is not nesseary. 
 #'   \code{...} is currently not used.}
 #'   
-#'   \item{\code{endAction()}: }{Ends an action.}
+#'   \item{\code{endAction()}: }{Ends an action. Do not use if you set \code{end=TRUE} when you specify an action.}
 #'   
 #'   \item{\code{includeProcess(prefix, label=NULL, weights, prob, termStates)}: }{Include an 
 #'   external process. External processes will only be loaded in memory when needed. That is,
@@ -179,7 +179,11 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
    		writeBin(as.numeric(c(probs,-1)), fTransP)
    		#cat("end action\n")
 		} else if (!is.null(pr)) {
-		   writeBin(as.integer(c(sIdx[length(sIdx)],scope,-1)), fA)
+		   if (is.null(scope)) scope<-rep(1,length(pr))
+		   i<-1:length(pr)-1
+		   scpIdx[1+i*2]<-scope
+		   scpIdx[2+i*2]<-index
+		   writeBin(as.integer(c(sIdx[length(sIdx)],scpIdx,-1)), fA)
 		   writeBin(as.numeric(c(pr,-1)), fTransP)
 	   }
 		writeBin(as.numeric(weights), fACost)

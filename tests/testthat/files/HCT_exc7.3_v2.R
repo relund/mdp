@@ -1,6 +1,6 @@
 ## Excercise 7.3 in Tijms, H.C., "A first course in stochastic models", John Wiley & Sons Ltd, 2003.
-## The semi-MDP is specified using binaryMDPWriter and actions with prob
-## 
+## The semi-MDP is specified using binaryMDPWriter and actions with index and pr
+
 tau<-matrix(c(
    NA, 3, 6, 3, 2,
    4, NA, 1, 7, 5,
@@ -17,7 +17,7 @@ xi<-matrix(c(
    ), nrow=5, byrow=T)
 
 
-w<-binaryMDPWriter("hct73_", getLog = FALSE)
+w<-binaryMDPWriter("hct73v2_", getLog = FALSE)
 w$setWeights(c("Duration","Net reward"))
 w$process()
    w$stage()
@@ -25,7 +25,7 @@ w$process()
          w$state(label=i)
             for (a in 1:5) {
                if (a!=i) {
-                  w$action(label=a, weights=c(tau[i,a], xi[i,a]), prob=c(1,a-1,1), end=T)
+                  w$action(label=a, weights=c(tau[i,a], xi[i,a]), index=a-1, pr=1, end=T)
                }
             }
          w$endState()
