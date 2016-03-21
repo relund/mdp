@@ -32,7 +32,8 @@ The functions which can be used are:
   
   \item{\code{process()}: }{Starts a (sub)process. May also be used to specify a traditional MDP 
   using matrices (MDPtoolbox style). The style is as follows: P is a list of matrices (one for 
-  each action) each of size SxS (S = number of states), R is a matrix of size SxA (A = number of 
+  each action) each of size SxS (S = number of states). Each row must sum to one if used or all 
+  entries in a row must be zero if not used. R is a matrix of size SxA (A = number of 
   actions) and D is a matrix of size SxA with durations (optional if not specified assume all 
   durations are 1).}
   
