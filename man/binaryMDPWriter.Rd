@@ -48,7 +48,7 @@ The functions which can be used are:
   {Starts an action. Parameter
   \code{weights} must be a vector of action weights. There are two ways to enter transition prob 
   1) \code{prob} contains triples of (scope,idx,pr), 
-  2) \code{scope}, \code{index} and \code{pr} are equal size vectors with scope, index and prob
+  2) Vectors \code{index} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
    (see the description of actionIdx.bin below)
   \code{...} is currently not used.}
   
