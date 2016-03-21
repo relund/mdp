@@ -1,5 +1,5 @@
 library(MDP2)
-context("check optimality")
+context("Check optimality")
 cleanUp<-function() unlink("*.bin")
 
 

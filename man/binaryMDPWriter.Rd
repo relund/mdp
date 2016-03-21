@@ -30,7 +30,11 @@ The functions which can be used are:
   \code{labels} is a vector of label names, \code{...} are not used. The function must be called
   before starting building the model.}
   
-  \item{\code{process()}: }{Starts a (sub)process.}
+  \item{\code{process()}: }{Starts a (sub)process. May also be used to specify a traditional MDP 
+  using matrices (MDPtoolbox style). The style is as follows: P is a list of matrices (one for 
+  each action) each of size SxS (S = number of states), R is a matrix of size SxA (A = number of 
+  actions) and D is a matrix of size SxA with durations (optional if not specified assume all 
+  durations are 1).}
   
   \item{\code{endProcess()}: }{Ends a (sub)process.}
   
@@ -49,10 +53,10 @@ The functions which can be used are:
   \code{weights} must be a vector of action weights. There are two ways to enter transition prob 
   1) \code{prob} contains triples of (scope,idx,pr), 
   2) Vectors \code{index} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
-   (see the description of actionIdx.bin below)
+   (see the description of actionIdx.bin below). If \code{end=TRUE} then an \code{endAction()} is not nesseary. 
   \code{...} is currently not used.}
   
-  \item{\code{endAction()}: }{Ends an action.}
+  \item{\code{endAction()}: }{Ends an action. Do not use if you set \code{end=TRUE} when you specify an action.}
   
   \item{\code{includeProcess(prefix, label=NULL, weights, prob, termStates)}: }{Include an 
   external process. External processes will only be loaded in memory when needed. That is,

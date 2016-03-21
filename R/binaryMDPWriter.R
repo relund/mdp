@@ -11,7 +11,11 @@
 #'   \code{labels} is a vector of label names, \code{...} are not used. The function must be called
 #'   before starting building the model.}
 #'   
-#'   \item{\code{process()}: }{Starts a (sub)process.}
+#'   \item{\code{process()}: }{Starts a (sub)process. May also be used to specify a traditional MDP 
+#'   using matrices (MDPtoolbox style). The style is as follows: P is a list of matrices (one for 
+#'   each action) each of size SxS (S = number of states), R is a matrix of size SxA (A = number of 
+#'   actions) and D is a matrix of size SxA with durations (optional if not specified assume all 
+#'   durations are 1).}
 #'   
 #'   \item{\code{endProcess()}: }{Ends a (sub)process.}
 #'   
@@ -110,10 +114,25 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		invisible(NULL)
 	}
 
-	process<-function(){
+	process<-function(P=NULL, R=NULL, D=NULL){
 		if (!wFixed) stop("Weights must be added using 'setWeights' before starting building the HMDP!")
-		dCtr<<- -1  # reset stage ctr
-		sIdx<<-c(sIdx,NA)
+	   dCtr<<- -1  # reset stage ctr
+	   sIdx<<-c(sIdx,NA)
+	   if (!is.null(P) & !is.null(R)) { # MDP specified using MDPtoolbox style
+	      if (is.null(D)) D<-matrix(1,nrow = nrow(R), ncol = ncol(R))
+	      stage()
+	         for (i in 1:nrow(R)) {
+	            state(label=i)
+	               for (j in 1:ncol(R)) {
+	                  jIdx<-which(P[[j]][i,]>0)
+	                  if (length(jIdx)==0) next
+	                  action(label=j, pr=P[[j]][i,jIdx], index = jIdx-1, weights = c(D[i,j],R[i,j]), end = TRUE)
+	               }
+	            endState()
+	         }
+	      endStage()
+	      endProcess()
+	   }
 		invisible(NULL)
 	}
 
