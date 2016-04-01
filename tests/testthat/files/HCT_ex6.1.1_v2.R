@@ -1,5 +1,5 @@
 ## Example 6.1.1 in Tijms, H.C., "A first course in stochastic models", John Wiley & Sons Ltd, 2003.
-## The semi-MDP is specified using binaryMDPWriter and actions with index and pr
+## The semi-MDP is specified using binaryMDPWriter and actions with id and pr
 
 
 N<-5; Cf<- -10; Cp<-c(0,-7,-7,-5) # use negative numbers since optimize reward
@@ -28,16 +28,16 @@ w$setWeights(c("Duration","Net reward"))
 w$process()
    w$stage()
       w$state(label="i=1")
-         w$action(label="no repair", weights=c(1,0), index=getIdx(a=0,i=1), pr=getTransPr(a=0,i=1), end=T)
+         w$action(label="no repair", weights=c(1,0), id=getIdx(a=0,i=1), pr=getTransPr(a=0,i=1), end=T)
       w$endState()
       for (ii in 2:(N-1) ) {
       w$state(label=paste("i=",ii,sep=""))
-         w$action(label="no repair", weights=c(1,0), index=getIdx(a=0,i=ii), pr=getTransPr(a=0,i=ii), end=T)
-         w$action(label="preventive repair", weights=c(1,Cp[ii]), index=getIdx(a=1,i=ii), pr=getTransPr(a=1,i=ii), end=T)
+         w$action(label="no repair", weights=c(1,0), id=getIdx(a=0,i=ii), pr=getTransPr(a=0,i=ii), end=T)
+         w$action(label="preventive repair", weights=c(1,Cp[ii]), id=getIdx(a=1,i=ii), pr=getTransPr(a=1,i=ii), end=T)
       w$endState()
       }
       w$state(label=paste("i=",N,sep=""))
-         w$action(label="forced repair", weights=c(2,Cf), index=0, pr=1, end=T)
+         w$action(label="forced repair", weights=c(2,Cf), id=0, pr=1, end=T)
       w$endState()
    w$endStage()
 w$endProcess()

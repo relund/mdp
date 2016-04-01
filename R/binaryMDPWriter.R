@@ -30,11 +30,11 @@
 #'   
 #'   \item{\code{endState()}: }{Ends a stage.}
 #'   
-#'   \item{\code{action(scope=NULL, index=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...)}: }
+#'   \item{\code{action(scope=NULL, id=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...)}: }
 #'   {Starts an action. Parameter
 #'   \code{weights} must be a vector of action weights. There are two ways to enter transition prob 
-#'   1) \code{prob} contains triples of (scope,idx,pr), 
-#'   2) Vectors \code{index} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
+#'   1) \code{prob} contains triples of (scope,id,pr), 
+#'   2) Vectors \code{id} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
 #'    (see the description of actionIdx.bin below). If \code{end=TRUE} then an \code{endAction()} is not nesseary. 
 #'   \code{...} is currently not used.}
 #'   
@@ -127,7 +127,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 	               for (j in 1:ncol(R)) {
 	                  jIdx<-which(P[[j]][i,]>0)
 	                  if (length(jIdx)==0) next
-	                  action(label=j, pr=P[[j]][i,jIdx], index = jIdx-1, weights = c(D[i,j],R[i,j]), end = TRUE)
+	                  action(label=j, pr=P[[j]][i,jIdx], id = jIdx-1, weights = c(D[i,j],R[i,j]), end = TRUE)
 	               }
 	            endState()
 	         }
@@ -180,7 +180,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		invisible(NULL)
 	}
 
-	action<-function(scope=NULL, index=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...){     # prop contain tripeles (scope,idx,prob)
+	action<-function(scope=NULL, id=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...){     # prop contain tripeles (scope,idx,prob)
 	   #cat("action:\n")
 		#print(weights)
 		#print(prob)
@@ -202,7 +202,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 		   if (is.null(scope)) scope<-rep(1,length(pr))
 		   i<-1:length(pr)-1
 		   scpIdx[1+i*2]<-scope
-		   scpIdx[2+i*2]<-index
+		   scpIdx[2+i*2]<-id
 		   writeBin(as.integer(c(sIdx[length(sIdx)],scpIdx,-1)), fA)
 		   writeBin(as.numeric(c(pr,-1)), fTransP)
 	   }

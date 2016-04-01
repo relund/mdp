@@ -1,5 +1,5 @@
 ## Excercise 6.7 in Tijms, H.C., "A first course in stochastic models", John Wiley & Sons Ltd, 2003.
-## The semi-MDP is specified using binaryMDPWriter and actions with index and pr
+## The semi-MDP is specified using binaryMDPWriter and actions with id and pr
 
 MVal<-5
 K<-200
@@ -73,8 +73,8 @@ w$process()
       for (ii in 1:length(states$j)) {
          j<-states$j[ii]; s<-states$s[ii]
          w$state(label=states$label[ii])
-            w$action(label="0", weights=c(1, -states$a0cost[ii]), pr=transPr(0,ii), index=idx(0,ii), end=T)
-            w$action(label="1", weights=c(1, -states$a1cost[ii]), pr=transPr(1,ii), index=idx(1,ii), end=T)
+            w$action(label="0", weights=c(1, -states$a0cost[ii]), pr=transPr(0,ii), id=idx(0,ii), end=T)
+            w$action(label="1", weights=c(1, -states$a1cost[ii]), pr=transPr(1,ii), id=idx(1,ii), end=T)
          w$endState()
       }
    w$endStage()

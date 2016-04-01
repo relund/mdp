@@ -49,11 +49,11 @@ The functions which can be used are:
   
   \item{\code{endState()}: }{Ends a stage.}
   
-  \item{\code{action(scope=NULL, index=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...)}: }
+  \item{\code{action(scope=NULL, id=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...)}: }
   {Starts an action. Parameter
   \code{weights} must be a vector of action weights. There are two ways to enter transition prob 
-  1) \code{prob} contains triples of (scope,idx,pr), 
-  2) Vectors \code{index} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
+  1) \code{prob} contains triples of (scope,id,pr), 
+  2) Vectors \code{id} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
    (see the description of actionIdx.bin below). If \code{end=TRUE} then an \code{endAction()} is not nesseary. 
   \code{...} is currently not used.}
   

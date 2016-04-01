@@ -1,5 +1,5 @@
 ## Excercise 7.3 in Tijms, H.C., "A first course in stochastic models", John Wiley & Sons Ltd, 2003.
-## The semi-MDP is specified using binaryMDPWriter and actions with index and pr
+## The semi-MDP is specified using binaryMDPWriter and actions with id and pr
 
 tau<-matrix(c(
    NA, 3, 6, 3, 2,
@@ -25,7 +25,7 @@ w$process()
          w$state(label=i)
             for (a in 1:5) {
                if (a!=i) {
-                  w$action(label=a, weights=c(tau[i,a], xi[i,a]), index=a-1, pr=1, end=T)
+                  w$action(label=a, weights=c(tau[i,a], xi[i,a]), id=a-1, pr=1, end=T)
                }
             }
          w$endState()

@@ -1,5 +1,5 @@
 ## Excercise 6.4 in Tijms, H.C., "A first course in stochastic models", John Wiley & Sons Ltd, 2003.
-## The semi-MDP is specified using binaryMDPWriter and actions with index and pr
+## The semi-MDP is specified using binaryMDPWriter and actions with id and pr
 
 p<-c(1/8, 1/2, 1/4, 1/8)
 states<-0:4
@@ -50,12 +50,12 @@ w$setWeights(c("Duration","Net reward"))
 w$process()
    w$stage()
       w$state(label=0)
-         w$action(label=a0, weights=c(1,-cost(0,0)), pr=transPr(0,0), index=idx(0,0), end=T)
+         w$action(label=a0, weights=c(1,-cost(0,0)), pr=transPr(0,0), id=idx(0,0), end=T)
       w$endState()
       for (i in 1:4 ) {
       w$state(label=i)
-         w$action(label=a0, weights=c(1,-cost(i,0)), pr=transPr(i,0), index=idx(i,0), end=T)
-         w$action(label=a1, weights=c(1,-cost(i,1)), pr=transPr(i,1), index=idx(i,1), end=T)
+         w$action(label=a0, weights=c(1,-cost(i,0)), pr=transPr(i,0), id=idx(i,0), end=T)
+         w$action(label=a1, weights=c(1,-cost(i,1)), pr=transPr(i,1), id=idx(i,1), end=T)
       w$endState()
       }
    w$endStage()
