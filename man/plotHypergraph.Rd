@@ -5,7 +5,7 @@
 \title{Plot parts of the state expanded hypergraph (experimental).}
 \usage{
 plotHypergraph(gridDim, states = NULL, actions = NULL, showGrid = FALSE,
-  fileN = NULL, devOff = TRUE)
+  fileN = NULL, devOff = TRUE, ...)
 }
 \arguments{
 \item{gridDim}{A 2-dim vector (rows,cols) representing the size of the grid.}
@@ -13,7 +13,7 @@ plotHypergraph(gridDim, states = NULL, actions = NULL, showGrid = FALSE,
 \item{states}{A data frame containing 3 columns: sId = state id, gId = grid id and label = text 
 to be plotted.}
 
-\item{actions}{A data frame with a column for each action of type (head, tail1, 
+\item{actions}{A data frame with a columns in the following order for each action of type (head, tail1, 
 tail2,...,label,lwd,lty,col,highlight), since number of tails may differ NAs may appear. Each 
 number (head and tails) must correspond to a state id. Column label contains labels = text to 
 be plotted (important must appear after the last tail column). Next columns is the line width, 
@@ -25,6 +25,8 @@ hyperarc (useful if want to show the policy).}
 \item{fileN}{If specified the plot will be saved as a pdf file.}
 
 \item{devOff}{If false do not make a dev.off(), i.e. you can add more graphic to the file.}
+
+\item{...}{Graphical parameters e.g. \code{cex=0.5} to control text size.}
 }
 \description{
 A plot is created based on a grid. Each grid point is numbered from left to right and topdown,
