@@ -199,6 +199,7 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
    		writeBin(as.numeric(c(probs,-1)), fTransP)
    		#cat("end action\n")
 		} else if (!is.null(pr)) {
+		   #cat("pr:",paste0(pr,collapse = ",")," id:",paste0(id,collapse = ",")," w:",paste0(weights,collapse = ","),"\n"); cat
 		   if (is.null(scope)) scope<-rep(1,length(pr))
 		   i<-1:length(pr)-1
 		   scpIdx[1+i*2]<-scope
