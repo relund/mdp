@@ -349,7 +349,7 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
          stateDF=ldply(
             .data=l,
             .fun = function(x) {
-               data.frame(sId=x$sId, stateStr = x$stateStr, label = x$label)
+               data.frame(sId=x$sId, stateStr = x$stateStr, label = x$label, stringsAsFactors = FALSE)
             }
          )
          actionDF=ldply(
@@ -361,7 +361,7 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
                      data.frame(sId = x$sId, aIdx=y$aIdx, label = y$label,
                                 weights = paste(y$weights, collapse = ","),
                                 trans=paste(y$trans,collapse = ","),
-                                pr = paste(y$pr, collapse = ",") )
+                                pr = paste(y$pr, collapse = ","), stringsAsFactors = FALSE)
                   }
                )
             }
@@ -372,7 +372,7 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
             .data=l,
             .fun = function(x) { 
                s <- rbind( scan(text=x$stateStr,, sep=",", quiet = TRUE) )
-               data.frame(sId=x$sId, label=x$label, s)
+               data.frame(sId=x$sId, label=x$label, s, stringsAsFactors = FALSE)
             }
          )
          levels<-(ncol(stateDF)-2) %/% 3 + 1
@@ -402,7 +402,7 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
                      pr <- rep(NA,maxSizeTrans)
                      pr[1:length(y$pr)] <- y$pr
                      pr <- rbind(t)
-                     data.frame(sId = x$sId, aIdx=y$aIdx, label = y$label, w = w, trans = t, pr = pr)
+                     data.frame(sId = x$sId, aIdx=y$aIdx, label = y$label, w = w, trans = t, pr = pr, stringsAsFactors = FALSE)
                   }
                )
             }

@@ -23,7 +23,8 @@
 #'   
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @export
-plotHypergraph<-function(gridDim,states=NULL,actions=NULL,showGrid=FALSE,fileN=NULL,devOff=TRUE, ...){
+plotHypergraph<-function(gridDim,states=NULL,actions=NULL,showGrid=FALSE,fileN=NULL,devOff=TRUE, 
+                         radx = 0.02, rady=0.03, cex=1, marX=0.03, marY=0.05, ...){
    library(diagram)
    # internal functions
    gMap<-function(sId) return(states$gId[states$sId %in% sId])		# return gId given sId
@@ -35,7 +36,6 @@ plotHypergraph<-function(gridDim,states=NULL,actions=NULL,showGrid=FALSE,fileN=N
    if (!is.null(fileN)) pdf(file=fileN, width=width, height=height, family=fontf)
    
    pos <- coordinates(rep(gridDim[2], gridDim[1]))  # coordinates of each point in the grid
-   marX<-0.03; marY<-0.05
    openplotmat(xlim=c(min(pos[,1])-marX,max(pos[,1])+marX), 
                ylim=c(min(pos[,2])-marY,max(pos[,2])+marY) )  #main = "State expanded hypergraph"
    
@@ -48,19 +48,19 @@ plotHypergraph<-function(gridDim,states=NULL,actions=NULL,showGrid=FALSE,fileN=N
                                               arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol="gray")
          pt<-splitarrow(from = pos[gMap(tails), ], to = pos[gMap(actions[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=actions$lwd[i], lty=actions$lty[i], 
                         arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol=actions$col[i])
-         textempty(pt,lab=actions$label[i],adj=c(-0.1,0.1), ...)
+         textempty(pt,lab=actions$label[i],adj=c(-0.1,0.1), cex=cex, ...)
       }
    }	
    
    # visual view of the point numbers (for figuring out how to map stateId to gridId)
    if (showGrid) {
-      for (i in 1:dim(pos)[1]) textrect(pos[i, ], lab = i, radx = 0.0, ...)
+      for (i in 1:dim(pos)[1]) textrect(pos[i, ], lab = i, radx = 0.0, cex=cex)
    }
    
    # plot states
    if (!is.null(states)) {
       for (i in 1:length(states$gId)) { 
-         textellipse(pos[states$gId[i], ], lab = states$label[i], radx = 0.02, rady=0.03, shadow.size = 0, lwd=0.5, ...) 
+         textellipse(pos[states$gId[i], ], lab = states$label[i], radx = radx, rady=rady, shadow.size = 0, lwd=0.5, cex=cex) 
       }
    }
    if (devOff && !is.null(fileN)) dev.off()

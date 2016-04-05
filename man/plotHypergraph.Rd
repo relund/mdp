@@ -5,7 +5,8 @@
 \title{Plot parts of the state expanded hypergraph (experimental).}
 \usage{
 plotHypergraph(gridDim, states = NULL, actions = NULL, showGrid = FALSE,
-  fileN = NULL, devOff = TRUE, ...)
+  fileN = NULL, devOff = TRUE, radx = 0.02, rady = 0.03, cex = 1,
+  marX = 0.03, marY = 0.05, ...)
 }
 \arguments{
 \item{gridDim}{A 2-dim vector (rows,cols) representing the size of the grid.}
