@@ -1,5 +1,5 @@
 ---
-title: "An introduction to the MDP package in R"
+title: "An introduction to the MDP2 package in R"
 author: "Lars Relund <lars@relund.dk>"
 date: "`r Sys.Date()`"
 bibliography: litt.bib
@@ -46,10 +46,10 @@ opts_chunk$set(fig.align='center',
 ```
 
 
-The MDP package in R is a package for solving Markov decision processes (MDPs) with discrete 
-time-steps, states and actions. Both traditional MDPs [@Puterman94], semi-Markov decision processes (semi-MDPs) [@Tijms03] and 
-hierarchical-MDPs (HMDPs) [@Kristensen00] can be solved under a finite and infinite time-horizon. 
-<!-- In this paper we use the abbreviation MDP for all types. -->
+The `MDP2` package in R is a package for solving Markov decision processes (MDPs) with discrete 
+time-steps, states and actions. Both traditional MDPs [@Puterman94], semi-Markov decision processes
+(semi-MDPs) [@Tijms03] and hierarchical-MDPs (HMDPs) [@Kristensen00] can be solved under a finite
+and infinite time-horizon.
 
 Building and solving an MDP is done in two steps. First, the MDP is built and saved in a set 
 of binary files. Next, you load the MDP into memory from the binary files and apply various
@@ -75,7 +75,9 @@ Help about the package can be seen by writing
 ?MDP2
 ```
 
-To illustrate the package capabilities, we use two examples, namely, a semi-MDP and a HMDP. Before each example a short introduction to these two models are given.
+To illustrate the package capabilities, we use a few examples, namely, an infinite and
+finite-horizon semi-MDP and a HMDP. Before each example a short introduction to these models are
+given.
 
 
 ## An infinite Semi-MDP 
@@ -199,7 +201,6 @@ instance, the state/node with id 1 corresponds to working condition $i=2$ and th
 with head in this node corresponds to the two actions preventive and no repair. Note the tails of a
 hyperare represent a possible transition ($p_{ij}(a)>0$).
 
-
 ```{r plotHgf, echo=FALSE, results='hide', message=FALSE}
 mdp<-loadMDP("hct611-1_")
 dat<-infoMDP(mdp,withHarc = TRUE)
@@ -258,18 +259,21 @@ info$actionDF
 info$stateDF
 ```
 
-Note the loaded model gives each node in the state-expanded hypergraph a *unique id* such that you can identify all the states. These ids are not equal to the ids used when you built the model, since the
-order of the nodes in the hypergraph data structure is optimized! Given the model in memory. We now
-can find the optimal policy under various policies. Let us first try to optimize the average reward 
-per time unit. 
+Note the loaded model gives each node in the state-expanded hypergraph a *unique id* such that you
+can identify all the states. These ids are not equal to the ids used when you built the model, since
+the order of the nodes in the hypergraph data structure is optimized! Given the model in memory, we
+now can find the optimal policy under various policies. Let us first try to optimize the average
+reward per time unit.
 
 ```{r solve1_ave}
 # Optimal policy under average reward per time unit criterion
 policyIteAve(mdp,"Net reward","Duration")
 getPolicy(mdp)
 ```
+
 Note it is optimal to do a preventive repair in state $i=4$. Let us try to optimize the expected 
-total discounted reward.
+total discounted reward using both policy iteration and value iteration.
+
 ```{r solve1_discount}
 # Optimal policy under expected discounted reward criterion (use both policy and value ite)
 policyIteDiscount(mdp,"Net reward","Duration", discountFactor = 0.5)
@@ -277,12 +281,14 @@ getPolicy(mdp)
 valueIte(mdp,"Net reward","Duration", discountFactor = 0.5, eps = 1e-10, maxIte = 1000)
 getPolicy(mdp)
 ```
+
 Note given a discount factor of 0.5, it is optimal to not do a preventive repair in state $i=4$. 
 
-The model can also be built using by specifying a set of matrices. Note this way of specifying **only
-work** for infinite-horizon semi-MDPs (and not finite-horizon or hierarchical models). Specify a list
-of probability matrices  (one for each action) where each row/state contains the transition
-probabilities, a matrix with rewards and a matrix with stage lengths (row = state, column = action).
+The model can also be built by specifying a set of matrices. Note this way of specifying **only 
+work** for infinite-horizon semi-MDPs (and not finite-horizon or hierarchical models). Specify a
+list of probability matrices  (one for each action) where each row/state contains the transition 
+probabilities (all zero if the action is not used in a state), a matrix with rewards and a matrix
+with stage lengths (row = state, column = action). Let us try to build and solve the model again.
 
 ```{r buildMDP2}
 ## define probability matrices
@@ -331,12 +337,35 @@ $a$, i.e. the expected time until the next decision epoch (stage $n+1$) given ac
 $i$. Finally, let $p_{ij}(a,n)$ denote the *transition probability* of obtaining state $j\in I_{n+1}$
 at stage $n+1$ given that action $a$ is chosen in state $i$ at stage $n$. 
 
-Consider a small machine repair problem used as an example in @Relund06. The semi-MDP with
-time-horizon $N=5$ is illustrated below. Each node corresponds to a specific state and a directed
-hyperarc is defined for each possible action. For instance, action `mt` (maintain) corresponds to a
-deterministic transition to state `good` and action `nmt` (not maintain) corresponds to a transition
-to a condition/state not better than the current condition/state. We buy the machine in stage 1 and 
-may choose to replace the machine.
+Consider a small machine repair problem used as an example in @Relund06 where the machine is always
+replaced after 4 years. The state of the machine may be: good, average, and not working. Given the
+machine's state we may maintain the machine. In this case the machine's state will be good at the
+next decision epoch. Otherwise, the machine's state will not be better at next decision epoch. When
+the machine is bought it may be either in state good or average. Moreover, if the machine is not
+working it must be replaced.
+
+The problem of when to replace the machine can be modelled using a Markov decision process with 
+$N=5$ decision epochs. We use system states `good`,  `average`, `not working` and dummy state
+`replaced` together with actions buy (`buy`), maintain (`mt`), no maintenance (`nmt`), and replace
+(`rep`). The set of states at stage zero $S_{0}$ contains a single dummy state `dummy` representing
+the machine before knowing its initial state. The only possible action is `buy`.
+
+The cost of buying the machine is 100 with transition probability of 0.7 to state `good` and 0.3 to
+state `average`. The reward (scrap value) of replacing a machine is 30, 10, and 5 in state `good`,  `average` and `not working`, respectively. The reward of the machine given action `mt` are 55, 40, and 30 in state `good`,  `average` and `not working`, respectively. Moreover, the system enters state 0 with probability 1 at the next stage.
+Finally, the reward, transition states and probabilities given action $a=$`nmt` are given by:
+
+  $n:s$               $1:$ `good`        $1:$ `average`        $2:$ `good`           $2:$ `average`         $3:$ `good`           $3:$ `average`
+  -------------     ---------------    ------------------    ------------------    -------------------    ------------------    ------------------   
+  $r_n(i,a)$          70                 50                    70                    50                     70                    50
+  $j$                 $\{0,1\}$          $\{1,2\}$             $\{0,1\}$             $\{1,2\}$              $\{0,1\}$             $\{1,2\}$
+  $p_{ij}(a,n)$       $\{0.6,0.4\}$      $\{0.6,0.4\}$         $\{0.5,0.5\}$         $\{0.5,0.5\}$          $\{0.2,0.8\}$         $\{0.2,0.8\}$
+
+
+The semi-MDP with time-horizon $N=5$ is illustrated below. Each node corresponds to a specific state
+and a directed hyperarc is defined for each possible action. For instance, action `mt` (maintain)
+corresponds to a deterministic transition to state `good` and action `nmt` (not maintain)
+corresponds to a transition to a condition/state not better than the current condition/state. We buy
+the machine in stage 1 and may choose to replace the machine.
 
 ```{r buildMDP3, include=FALSE}
 prefix<-"machine1_"
@@ -433,7 +462,8 @@ info$actionDF
 info$stateDF
 ```
 
-Let us try to find the optimal policy maximizing the expected total reward under the assumption that terminal values are `r paste(scrapValues,collapse=",")`.
+Let us use value iteration to find the optimal policy maximizing the expected total reward under the
+assumption that terminal values are `r paste(scrapValues,collapse=",")`.
 
 ```{r solve3}
 scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 4)
@@ -441,8 +471,36 @@ valueIte(mdp, "Net reward" , termValues=scrapValues)
 getPolicy(mdp)
 ```
 
+The optimal policy is illustrated below:
 
+```{r plotPolicy3, echo=FALSE, results='hide', message=FALSE}
+actionDF<-cbind(dat$actionDF,dat$harcDF)
+actionDF<-merge(actionDF,getPolicy(mdp))[,c("head","tail2","tail3","label","stateLabel")]
+actionDF$lwd<-1
+actionDF$col<-"deepskyblue3"
+actionDF$highlight<-FALSE
+par(mai=c(0,0.1,0,0.1))
+plotHypergraph(gridDim=c(4,5), states = stateDF, actions = actionDF, radx = 0.06, marX = 0.06)
+```
 
+Note given the optimal policy the machine will never make a transition to states `not working` and `replaced`.
+We may evaluate a certain policy, e.g. the policy always to maintain the machine:
+
+```{r Set policy (machine rep),echo=TRUE,eval=TRUE}
+policy<-data.frame(sId=c(8,11),aIdx=c(0,0))
+setPolicy(mdp, policy)
+getPolicy(mdp)
+```
+
+If the policy specified in `setPolicy` does not contain all states then the actions from the
+previous optimal policy are used. In the output above we can see that the policy now is to maintain always. However, the reward of the policy has not been updated. Let us calculate the expected reward:
+
+```{r Calc reward (machine rep),echo=TRUE}
+calcWeights(mdp, "Net reward", termValues=scrapValues)
+getPolicy(mdp)    
+```
+
+That is, the expected reward is 90.5 compared to 102.2 which was the reward of the optimal policy.
 
 
 ## An infinite-horizon HMDP
@@ -561,14 +619,16 @@ w$process()
 w$endProcess()
 w$closeWriter()
 ```
+
 Note that the model is built using the `prob` parameter which contains triples of (scope,id,pr).
-Scope can be: 2 - A transition to a child process (stage zero in the child process), 1 - A
-transition to next stage in the current process and 0 - A transition to the next stage in the father
+Scope can be: 2 = a transition to a child process (stage zero in the child process), 1 = a
+transition to next stage in the current process and 0 = a transition to the next stage in the father
 process. For instance if `prob = c(1,2,0.3, 0,0,0.7)` we specify transitions to the third state (id
 = 2) at the next stage of the process and to the first state (id = 0) at the next stage of the
 father process with probabilities 0.3 and 0.7, respectively.
 
 A plot of the state-expanded hypergraph are given below where action `keep` is drawn with orange color and action `replace` with blue color.
+
 ```{r plotHMDP, echo=FALSE, results='hide', message=FALSE}
 mdp<-loadMDP(prefix)
 dat<-infoMDP(mdp,withHarc = TRUE)
@@ -653,6 +713,29 @@ actionDF$label<-""
 par(mai=c(0,0,0,0))
 plotHypergraph(gridDim=c(14,7), states = stateDF, actions = actionDF, cex = 0.8)
 ```
+
+We may also find the policy with maximizing average reward per lactation: 
+
+```{r avePerLac, tidy.opts=list(comment=FALSE)}
+wLbl<-"Net reward"         # the weight we want to optimize (net reward)
+durLbl<-"Duration"         # the duration/time label
+policyIteAve(mdp, wLbl, durLbl)
+getPolicy(mdp)
+```
+
+Since other weights are defined for each action we can calculate the average
+reward per litre milk under the optimal policy:
+
+```{r Piglets/time (sow rep), echo=TRUE}
+calcWeights(mdp, w=wLbl, criterion="average", dur = "Yield")
+```
+
+or the average yield per lactation:
+
+```{r Reward/piglet (sow rep), echo=TRUE}
+calcWeights(mdp, w="Yield", criterion="average", dur = durLbl)
+```
+
 
 
 

@@ -359,6 +359,24 @@ scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 
 valueIte(mdp, "Net reward" , termValues=scrapValues)
 getPolicy(mdp)
 
+## ----plotPolicy3, echo=FALSE, results='hide', message=FALSE-----------------------------
+actionDF<-cbind(dat$actionDF,dat$harcDF)
+actionDF<-merge(actionDF,getPolicy(mdp))[,c("head","tail2","tail3","label","stateLabel")]
+actionDF$lwd<-1
+actionDF$col<-"deepskyblue3"
+actionDF$highlight<-FALSE
+par(mai=c(0,0.1,0,0.1))
+plotHypergraph(gridDim=c(4,5), states = stateDF, actions = actionDF, radx = 0.06, marX = 0.06)
+
+## ----Set policy (machine rep),echo=TRUE,eval=TRUE---------------------------------------
+policy<-data.frame(sId=c(8,11),aIdx=c(0,0))
+setPolicy(mdp, policy)
+getPolicy(mdp)
+
+## ----Calc reward (machine rep),echo=TRUE------------------------------------------------
+calcWeights(mdp, "Net reward", termValues=scrapValues)
+getPolicy(mdp)    
+
 ## ----Generate cow MDP functions,echo=true-----------------------------------------------
 cowDf<-read.csv("vignette_files/cow.csv")
 head(cowDf)
@@ -491,6 +509,18 @@ actionDF$highlight<-FALSE
 actionDF$label<-""
 par(mai=c(0,0,0,0))
 plotHypergraph(gridDim=c(14,7), states = stateDF, actions = actionDF, cex = 0.8)
+
+## ----avePerLac, tidy.opts=list(comment=FALSE)-------------------------------------------
+wLbl<-"Net reward"         # the weight we want to optimize (net reward)
+durLbl<-"Duration"         # the duration/time label
+policyIteAve(mdp, wLbl, durLbl)
+getPolicy(mdp)
+
+## ----Piglets/time (sow rep), echo=TRUE--------------------------------------------------
+calcWeights(mdp, w=wLbl, criterion="average", dur = "Yield")
+
+## ----Reward/piglet (sow rep), echo=TRUE-------------------------------------------------
+calcWeights(mdp, w="Yield", criterion="average", dur = durLbl)
 
 ## ----Delete bin, include=FALSE----------------------------------------------------------
 do.call(file.remove,list(list.files(pattern = ".bin")))
