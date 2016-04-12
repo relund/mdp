@@ -42,8 +42,9 @@ plotHypergraph<-function(gridDim,states=NULL,actions=NULL,showGrid=FALSE,fileN=N
    # plot actions
    if (!is.null(actions)) {
       tailCols<-3:grep('label',colnames(actions))-1
-      for (i in 1:(dim(actionDF)[1])) {
+      for (i in 1:(dim(actions)[1])) {
          tails<-actions[i,tailCols]
+         #cat("i:",i,"highlight:",actions$highlight[i],"\n")
          if (actions$highlight[i]) splitarrow(from = pos[gMap(tails), ], to = pos[gMap(actions[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=2, lty=1, 
                                               arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol="gray")
          pt<-splitarrow(from = pos[gMap(tails), ], to = pos[gMap(actions[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=actions$lwd[i], lty=actions$lty[i], 
