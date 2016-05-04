@@ -143,6 +143,7 @@ RCPP_MODULE(HMDPModule){
    .method("policyIteFixedPolicy", RunPolicyIteFixedPolicy)
    .method("calcPolicy", RunCalcPolicy)
    .method("calcRPO", RunCalcRPO)
+   .method("steadyStatePr", &HMDP::CalcSteadyStatePr)
    .method("getNextStageStr", GetNextStageStr)
    .method("getStateSizeStage", GetStateSizeStage)
    .method("getStateSize", GetStateSize)

@@ -2,7 +2,6 @@ library(MDP2)
 context("Test model building")
 cleanUp<-function() unlink("*.bin")
 
-
 test_that("binaryMDPWriter",{
    #sprintf("%.100f",g)
    source("files/HCT_ex6.1.1.R")

@@ -552,6 +552,22 @@ saveMDP<-function(mdp,prefix="", getLog=TRUE) {
 }
 
 
+#' Calculate the steady state transition probabilities for the founder process (level 0).
+#'
+#' Assume that we consider an ergodic/irreducible time-homogeneous Markov chain specified using a policy in the MDP.
+#'
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @return A vector with stady state probabilities for all the states at the founder level.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @export
+calcSteadyStatePr<-function(mdp, getLog=FALSE) {
+   pr<-mdp$ptr$steadyStatePr()
+   if (getLog) message(mdp$ptr$getLog())
+	return(pr)
+}
+
+
+
 # #' Set the weight of an action.
 # #'
 # #' @param mdp The MDP loaded using \link{loadMDP}.
@@ -625,22 +641,7 @@ saveMDP<-function(mdp,prefix="", getLog=TRUE) {
 # 	invisible(NULL)
 # }
 #
-#
-#
-# #' Set the current policy.
-# #'
-# #' @param mdp The MDP loaded using \link{loadMDP}.
-# #' @param policy A matrix with sId in the first column and action index in the second
-# #' @return Nothing.
-# #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
-# #' @export
-# setPolicy<-function(mdp, policy) {
-# 	policy<-as.matrix(policy)
-# 	if (ncol(policy)!=2) stop("The policy must be a matrix with 2 columns!")
-# 	.Call("MDP_SetPolicy", mdp$ptr, as.integer(policy), PACKAGE="MDP")
-# 	invisible(NULL)
-# }
+
 #
 #
 # #' Set the weight of a state.
@@ -771,18 +772,7 @@ saveMDP<-function(mdp,prefix="", getLog=TRUE) {
 # # }
 #
 #
-# #' Calculate the steady state transition probabilities for the founder process (level 0).
-# #'
-# #' Assume that we consider an ergodic/irreducible time-homogeneous Markov chain specified using a policy in the MDP.
-# #'
-# #' @param mdp The MDP loaded using \link{loadMDP}.
-# #' @return A vector stady state probabilities for all the states.
-# #' @author Lars Relund \email{lars@@relund.dk}
-# #' @export
-# calcSteadyStatePr<-function(mdp) {
-# 	pr<-.Call("MDP_CalcSteadyStatePr", mdp$ptr, PACKAGE="MDP")
-# 	return(pr)
-# }
+
 #
 # #' Get the transition probability matrix P for the founder process (level 0).
 # #'

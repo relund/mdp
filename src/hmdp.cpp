@@ -1083,3 +1083,38 @@ HMDPSave::~HMDPSave() {
   fclose(pTransProbFile);
   fclose(pExternalProcessesFile);
 }
+
+// ----------------------------------------------------------------------------
+
+vector<flt> HMDP::CalcSteadyStatePr() {
+	log.str("");
+	int rows = GetStateSize("0");
+	vector<flt> v(rows,0);
+	if (timeHorizon<INFINT) {
+		log << "Stady state probabilities can only be done be calculated on infinite time-horizon HMDPs!" << endl;
+		return v;
+	}
+	MatAlg matAlg; // Matrix routines
+	multimap<string, int >::iterator ite, iteZ;
+	MatSimple<double> b(rows,1),    // Matrix left hand side
+				   w(rows,1),       // Matrix of weights (the unknown)
+				   P(rows,rows);    // Matrix of prob values
+	MatSimple<double> I(rows,true); // identity
+
+	log << "Calculate steady state probabilities:";
+	FounderPr(TransPr,P);
+	//P.Print();
+    // Now solve equations wP = w and w1=1 -> w(P-I) = 0 and w1=1 where P have been
+    // calculated for the founder. This is equvivalent to solving
+    // Qw=b where Q=(P-I)' and b=(0,...,0,1)' where last col in
+    // (P-I) is replaced with 1.
+    matAlg.PMinusI(P);
+    for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = 1;
+    b.Set(0);
+    b(rows-1,0) = 1;
+    if (matAlg.LASolveT(P,w,b)) log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? " << endl;
+    v.assign(&w(0,0),&w(0,0)+rows);
+    //cout << "r=" << endl << r << endl << "P=" << endl << P << endl << "w=" << endl << w << endl;
+	log << " finished." << endl;
+    return v;
+}

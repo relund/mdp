@@ -180,6 +180,13 @@ class HMDPState {
  private:
     HMDPState(const string & lbl) {
         label = lbl;
+        pred = -1;
+        w = 0;
+    }
+
+    HMDPState() {
+        pred = -1;
+        w = 0;
     }
 
 // Add methods --------------
@@ -622,13 +629,13 @@ class HMDP
 
 
 
-//    /** Calculate the stady state probabilities for the founder chain (infinite time-horizon, ergodic chain).
-//     * \return A vector with the probabilities
-//     * \post Use \code GetLog to see the log.
-//     */
-//    vector<flt> CalcStadyStatePr();
-//
-//
+    /** Calculate the steady state probabilities for the founder chain (infinite time-horizon, ergodic chain).
+     * \return A vector with the probabilities
+     * \post Use \code GetLog to see the log.
+     */
+    vector<flt> CalcSteadyStatePr();
+
+
 
 //    /** Find the h(arc) corresponding to an action.
 //     * \param iS The index of the state we consider in \code states.
