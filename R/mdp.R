@@ -330,6 +330,7 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
       stateStr<-mdp$ptr$getStateStr(sId)
    }else {
       if (!is.null(stateStr)) sId<-mdp$ptr$getStateIdsStates(stateStr)
+      else stateStr<-mdp$ptr$getStateStr(sId)
    }
    maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
    if (max(sId)>=maxS | min(sId)<0)
