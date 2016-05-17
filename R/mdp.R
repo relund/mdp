@@ -327,6 +327,7 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
                   stateStr=NULL, stageStr=NULL, withDF = TRUE, withHarc = FALSE, asStrings = TRUE) {
    if (!is.null(stageStr)) {
       sId<-mdp$ptr$getStateIdsStages(stageStr)
+      stateStr<-mdp$ptr$getStateStr(sId)
    }else {
       if (!is.null(stateStr)) sId<-mdp$ptr$getStateIdsStates(stateStr)
    }
@@ -336,7 +337,6 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
    l<-vector("list", length(sId))
    lapply(l,function(x) x<-list(sId=NULL,stateStr=NULL,label=NULL,actions=NULL))
 
-   stateStr<-mdp$ptr$getStateStr(sId)
    labels<-mdp$ptr$getStateLabel(sId)
    for (i in 1:length(l)) {
       l[[i]]$sId <- sId[i]

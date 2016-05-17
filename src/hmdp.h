@@ -999,8 +999,9 @@ class HMDP
         string stageStr = GetStageStr(stateStr);
         idx pos = stateStr.find_last_of(",");
         idx idxS;
-        from_string<idx>(idxS,stateStr.substr(pos), std::dec);
+        from_string<idx>(idxS,stateStr.substr(pos+1), std::dec);
         pair<idx,idx> sP = stages[stageStr];
+        //cout << "stageStr:" << stageStr << " idxS:" << idxS << endl;
         idx iS = sP.first + idxS;
         return iS;
     }
