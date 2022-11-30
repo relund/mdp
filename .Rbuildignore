@@ -3,4 +3,4 @@
 notes
 tmp
 cb
-vignettes
+^LICENSE\.md$
