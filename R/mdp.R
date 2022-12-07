@@ -347,16 +347,16 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
    }
    if (withDF) {
       if (asStrings) {
-         stateDF=ldply(
+         stateDF=plyr::ldply(
             .data=l,
             .fun = function(x) {
                data.frame(sId=x$sId, stateStr = x$stateStr, label = x$label, stringsAsFactors = FALSE)
             }
          )
-         actionDF=ldply(
+         actionDF=plyr::ldply(
             .data = l,
             .fun = function(x) {
-               ldply(
+               plyr::ldply(
                   x$actions,
                   function(y) {
                      data.frame(sId = x$sId, aIdx=y$aIdx, label = y$label,
@@ -369,7 +369,7 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
          )
       } 
       if (!asStrings) {
-         stateDF=ldply(
+         stateDF=plyr::ldply(
             .data=l,
             .fun = function(x) { 
                s <- rbind( scan(text=x$stateStr,, sep=",", quiet = TRUE) )
@@ -379,10 +379,10 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
          levels<-(ncol(stateDF)-2) %/% 3 + 1
          if (levels==1) colnames(stateDF)<-c("sId","label",paste(c("n","s"),levels-1,sep=""))
          if (levels>1) colnames(stateDF)<-c("sId","label",paste(c("n","s","a"),rep(0:(levels-2),each=3),sep=""),paste(c("n","s"),levels-1,sep=""))
-         maxSizeTrans = max(ldply(
+         maxSizeTrans = max(plyr::ldply(
             .data = l,
             .fun = function(x) {
-               ldply(
+               plyr::ldply(
                   x$actions,
                   function(y) {
                      w <- length(y$trans)
@@ -390,10 +390,10 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
                )
             }
          ) )
-         actionDF=ldply(
+         actionDF=plyr::ldply(
             .data = l,
             .fun = function(x) {
-               ldply(
+               plyr::ldply(
                   x$actions,
                   function(y) {
                      w <- rbind(y$weights)
@@ -411,10 +411,10 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
       }
    }
    if (withHarc) {
-      harcDF=ldply(
+      harcDF=plyr::ldply(
          .data = l,
          .fun = function(x) {
-            ldply(
+            plyr::ldply(
                x$actions,
                function(y) {
                   rbind( c(x$sId, y$trans) )

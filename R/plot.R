@@ -22,10 +22,10 @@
 #' @return NULL
 #'   
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @import diagram
 #' @export
 plotHypergraph<-function(gridDim,states=NULL,actions=NULL,showGrid=FALSE,fileN=NULL,devOff=TRUE, 
                          radx = 0.02, rady=0.03, cex=1, marX=0.03, marY=0.05, ...){
-   library(diagram)
    # internal functions
    gMap<-function(sId) return(states$gId[states$sId %in% sId])		# return gId given sId
    sMap<-function(gId) return(states$sId[states$gId %in% gId])		# return sId given gId
