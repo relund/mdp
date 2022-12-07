@@ -12,14 +12,12 @@ License: GPL (>= 3.3.2)
 URL: https://relund.github.io/mdp/, https://github.com/relund/mdp/,
     http://relund.github.io/mdp/
 BugReports: https://github.com/relund/mdp/issues
-Depends:
-    plyr,
-    R (>= 4.2.2),
-    Rcpp
+Depends: R (>= 4.2.2)
 Imports:
     diagram,
     methods,
-    Rcpp (>= 0.11.5)
+    Rcpp (>= 0.11.5),
+    plyr
 Suggests:
     knitr,
     Matrix,
