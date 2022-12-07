@@ -77,15 +77,15 @@ w$closeWriter()
 #library(Matrix)
 P<-list()
 # a=1 (no repair)
-Z<-Matrix(rbind(cbind(Q,0),0,0))
+Z<-Matrix::Matrix(rbind(cbind(Q,0),0,0))
 #Z[5,1]<-Z[6,1]<-1
 P[[1]]<-Z
 # a=2 (preventive repair)
-Z <- Matrix(0, nrow = N+1, ncol = N+1)
+Z <- Matrix::Matrix(0, nrow = N+1, ncol = N+1)
 Z[2,1]<-Z[3,1]<-Z[4,1]<-1
 P[[2]]<-Z
 # a=3 (forced repair)
-Z <- Matrix(0, nrow = N+1, ncol = N+1)
+Z <- Matrix::Matrix(0, nrow = N+1, ncol = N+1)
 Z[5,6]<-Z[6,1]<-1
 P[[3]]<-Z
 
