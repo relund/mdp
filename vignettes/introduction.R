@@ -7,7 +7,7 @@ opts_chunk$set(fig.align='center',
                fig.width=10, fig.height=5, 
                fig.show='hold', 
                out.extra='style="max-width:100%;"',
-               tidy = TRUE,
+               # tidy = TRUE,
                prompt=T,
                comment=NA,
                cache=F, 
@@ -377,7 +377,7 @@ getPolicy(mdp)
 calcWeights(mdp, "Net reward", termValues=scrapValues)
 getPolicy(mdp)    
 
-## ----Generate cow MDP functions,echo=true-----------------------------------------------
+## ----Generate cow MDP functions,echo=TRUE-----------------------------------------------
 cowDf<-read.csv("vignette_files/cow.csv")
 head(cowDf)
 
@@ -393,7 +393,7 @@ lev1Pr<-function(s0Idx,n1Idx,s1Idx,a1Lbl) {
 }
 lev1Pr(2,2,1,'Replace') # good genetic merit, lactation 2, avg yield, replace action
 
-## ----Generate cow MDP,echo=true, tidy=FALSE---------------------------------------------
+## ----Generate cow MDP,echo=TRUE, tidy=FALSE---------------------------------------------
 lblS0<-c('Bad genetic level','Avg genetic level','Good genetic level')
 lblS1<-c('Low yield','Avg yield','High yield')
 prefix<-"cow_"
