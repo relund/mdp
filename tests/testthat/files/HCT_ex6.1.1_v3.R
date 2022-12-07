@@ -90,7 +90,7 @@ Z[5,6]<-Z[6,1]<-1
 P[[3]]<-Z
 
 # reward 6x3 matrix with one column for each action
-R <- Matrix(0, nrow = N+1, ncol = 3)
+R <- Matrix::Matrix(0, nrow = N+1, ncol = 3)
 R[2:4,2]<-Cp[2:4]
 R[5,3]<-Cf
 
