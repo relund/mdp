@@ -4,21 +4,32 @@
 \alias{plotHypergraph}
 \title{Plot parts of the state expanded hypergraph (experimental).}
 \usage{
-plotHypergraph(gridDim, states = NULL, actions = NULL, showGrid = FALSE,
-  fileN = NULL, devOff = TRUE, radx = 0.02, rady = 0.03, cex = 1,
-  marX = 0.03, marY = 0.05, ...)
+plotHypergraph(
+  gridDim,
+  states = NULL,
+  actions = NULL,
+  showGrid = FALSE,
+  fileN = NULL,
+  devOff = TRUE,
+  radx = 0.02,
+  rady = 0.03,
+  cex = 1,
+  marX = 0.03,
+  marY = 0.05,
+  ...
+)
 }
 \arguments{
 \item{gridDim}{A 2-dim vector (rows,cols) representing the size of the grid.}
 
-\item{states}{A data frame containing 3 columns: sId = state id, gId = grid id and label = text 
+\item{states}{A data frame containing 3 columns: sId = state id, gId = grid id and label = text
 to be plotted.}
 
-\item{actions}{A data frame with a columns in the following order for each action of type (head, tail1, 
-tail2,...,label,lwd,lty,col,highlight), since number of tails may differ NAs may appear. Each 
-number (head and tails) must correspond to a state id. Column label contains labels = text to 
-be plotted (important must appear after the last tail column). Next columns is the line width, 
-line type and line color. Column highlight contains boolean which is true if highlight the 
+\item{actions}{A data frame with a columns in the following order for each action of type (head, tail1,
+tail2,...,label,lwd,lty,col,highlight), since number of tails may differ NAs may appear. Each
+number (head and tails) must correspond to a state id. Column label contains labels = text to
+be plotted (important must appear after the last tail column). Next columns is the line width,
+line type and line color. Column highlight contains boolean which is true if highlight the
 hyperarc (useful if want to show the policy).}
 
 \item{showGrid}{If true show the grid points (good for debugging).}
@@ -38,4 +49,3 @@ i.e. given grid coordinates (row,col) (where (1,1) is the top left corner) the g
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

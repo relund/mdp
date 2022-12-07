@@ -4,10 +4,19 @@
 \alias{randomHMDP}
 \title{Generate a "random" HMDP stored in a set of binary files.}
 \usage{
-randomHMDP(prefix = "", levels = 3, timeHorizon = c(Inf, 3, 4),
-  states = c(2, 4, 5), actions = c(1, 2), childProcessPr = 0.5,
-  externalProcessPr = 0, rewards = c(0, 100), durations = c(1, 10),
-  rewardName = "Reward", durationName = "Duration")
+randomHMDP(
+  prefix = "",
+  levels = 3,
+  timeHorizon = c(Inf, 3, 4),
+  states = c(2, 4, 5),
+  actions = c(1, 2),
+  childProcessPr = 0.5,
+  externalProcessPr = 0,
+  rewards = c(0, 100),
+  durations = c(1, 10),
+  rewardName = "Reward",
+  durationName = "Duration"
+)
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to til file(s).}
@@ -38,4 +47,3 @@ Generate a "random" HMDP stored in a set of binary files.
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

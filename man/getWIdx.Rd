@@ -20,4 +20,3 @@ Return the index of a weight in the model. Note that index always start from zer
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

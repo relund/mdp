@@ -4,9 +4,15 @@
 \alias{binInfoActions}
 \title{Info about the actions in the HMDP model under consideration.}
 \usage{
-binInfoActions(prefix = "", labels = TRUE, fileA = "actionIdx.bin",
-  filePr = "transProb.bin", fileW = "actionWeight.bin",
-  fileLabelW = "actionWeightLbl.bin", fileLabelA = "actionIdxLbl.bin")
+binInfoActions(
+  prefix = "",
+  labels = TRUE,
+  fileA = "actionIdx.bin",
+  filePr = "transProb.bin",
+  fileW = "actionWeight.bin",
+  fileLabelW = "actionWeightLbl.bin",
+  fileLabelA = "actionIdxLbl.bin"
+)
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to til binary files.}
@@ -25,10 +31,10 @@ binInfoActions(prefix = "", labels = TRUE, fileA = "actionIdx.bin",
 }
 \value{
 A data frame with the information. Scope string contain the scope of the transitions and
-  can be 4 values: 2 - A transition to a child process (stage zero in the child process), 1 - A
-  transition to next stage in the current process, 0 - A transition to the next stage in the
-  father process. Finally, if scope = 3 then a transition to the state with sId = idx is
-  considered. The index string denote the index (id is scope = 3) of the state at the next stage.
+can be 4 values: 2 - A transition to a child process (stage zero in the child process), 1 - A
+transition to next stage in the current process, 0 - A transition to the next stage in the
+father process. Finally, if scope = 3 then a transition to the state with sId = idx is
+considered. The index string denote the index (id is scope = 3) of the state at the next stage.
 }
 \description{
 Info about the actions in the HMDP model under consideration.
@@ -37,24 +43,6 @@ Info about the actions in the HMDP model under consideration.
 The model don't have to be loaded, i.e only read the binary files. The state id (sId) will
 not be the same as in the loaded model!
 }
-\examples{
-wDir<-getwd()
-setwd(system.file("models", package = "MDP"))
-
-prefix<-"machine1_"
-stateIdxMat(prefix)
-stateIdxDf(prefix)
-actionIdxMat(prefix)
-actionIdxDf(prefix)
-actionWeightMat(prefix)
-weightNames(prefix)
-transProbMat(prefix)
-a<-actionInfo(prefix)
-a[order(a$sId),]
-
-setwd(wDir)
-}
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

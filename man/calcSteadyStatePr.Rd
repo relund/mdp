@@ -18,4 +18,3 @@ Assume that we consider an ergodic/irreducible time-homogeneous Markov chain spe
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

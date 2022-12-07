@@ -4,9 +4,17 @@
 \alias{policyIteDiscount}
 \title{Perform policy iteration (discounted reward criterion) on the MDP.}
 \usage{
-policyIteDiscount(mdp, w, dur, rate = 0, rateBase = 1,
-  discountFactor = NULL, maxIte = 100, discountMethod = "continuous",
-  getLog = TRUE)
+policyIteDiscount(
+  mdp,
+  w,
+  dur,
+  rate = 0,
+  rateBase = 1,
+  discountFactor = NULL,
+  maxIte = 100,
+  discountMethod = "continuous",
+  getLog = TRUE
+)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -33,10 +41,9 @@ Nothing.
 \description{
 The policy can afterwards be received using functions \code{getPolicy} and \code{getPolicyW}.
 }
-\author{
-Lars Relund \email{lars@relund.dk}
-}
 \seealso{
 \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
 }
-
+\author{
+Lars Relund \email{lars@relund.dk}
+}

@@ -15,10 +15,9 @@ setPolicy(mdp, policy)
 Nothing.
 }
 \description{
-If the policy does not contain all states then the actions from the previous optimal 
+If the policy does not contain all states then the actions from the previous optimal
 policy are used.
 }
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

@@ -4,12 +4,15 @@
 \alias{binaryActionWriter}
 \title{Function for writing actions of a HMDP model to binary files. The function defineds
 subfunctions which can be used to define actions saved in a set of binary
-files. It is assumed that the states have been defined using \code{binaryMDPWriter} 
+files. It is assumed that the states have been defined using \code{binaryMDPWriter}
 and that the id of the states is known (can be retrived using e.g. \code{stateIdxDf}).}
 \usage{
-binaryActionWriter(prefix = "", binNames = c("actionIdx.bin",
-  "actionIdxLbl.bin", "actionWeight.bin", "actionWeightLbl.bin",
-  "transProb.bin"), append = TRUE)
+binaryActionWriter(
+  prefix = "",
+  binNames = c("actionIdx.bin", "actionIdxLbl.bin", "actionWeight.bin",
+    "actionWeightLbl.bin", "transProb.bin"),
+  append = TRUE
+)
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to \code{binNames}.}
@@ -17,7 +20,7 @@ binaryActionWriter(prefix = "", binNames = c("actionIdx.bin",
 \item{binNames}{A character vector of length 5 giving the names of the binary
 files storing the model.}
 
-\item{append}{Logical indicating whether should keep the currents actions (default - TRUE) 
+\item{append}{Logical indicating whether should keep the currents actions (default - TRUE)
 defined or delete them and start over (FALSE).}
 }
 \value{
@@ -29,13 +32,13 @@ format the binary files use less storage space and loading the model is faster.
 }
 \details{
 The functions which can be used are: \itemize{
-  \item{\code{setWeights(labels, ...)}: }{Set the labels of the weights used in the actions.
-     \code{labels} is a vector of label names, \code{...} are not used.
-     The function must be called before starting building the model.}
-  \item{\code{addAction(label=NULL, sIdx, weights, prob, ...)}: }{Add an action. Parameter \code{sIdx} is the id of the state defining the action, \code{weights} must be a vector of action weights,
-     \code{prob} is a matrix (sIdx,pr)  where the first column contain the id of the transition state (see the description of actionIdx.bin below - scope is assumed to the 3), \code{...} is currently not used.}
-  \item{\code{endAction()}: }{Ends an action.}
-  \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}}
+\item{\code{setWeights(labels, ...)}: }{Set the labels of the weights used in the actions.
+\code{labels} is a vector of label names, \code{...} are not used.
+The function must be called before starting building the model.}
+\item{\code{addAction(label=NULL, sIdx, weights, prob, ...)}: }{Add an action. Parameter \code{sIdx} is the id of the state defining the action, \code{weights} must be a vector of action weights,
+\code{prob} is a matrix (sIdx,pr)  where the first column contain the id of the transition state (see the description of actionIdx.bin below - scope is assumed to the 3), \code{...} is currently not used.}
+\item{\code{endAction()}: }{Ends an action.}
+\item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}}
 
 Five binary files are created using the following format:\itemize{
 \item{actionIdx.bin: }{File of integers containing the indexes defining all actions in the format
@@ -67,123 +70,122 @@ used to indicate that a new action is considered (new line).}}
 Note all indexes are starting from zero (C/C++ style).
 }
 \examples{
-
-# Create a small HMDP with two levels
-w<-binaryMDPWriter()
-w$setWeights(c("Duration","Net reward","Items"))
-w$process()
-	w$stage()
-		w$state(label="M0")
-			w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
-				w$process()
-					w$stage()
-						w$state(label="D")
-							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-					w$endStage()
-				w$endProcess()
-			w$endAction()
-			w$action(label="A1",weights=c(0,0,0),prob=c(2,0,1))
-				w$process()
-					w$stage()
-						w$state(label="D")
-							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,1))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-							w$action(label="A1",weights=c(0,10,5),prob=c(0,0,0.5,0,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-				w$endProcess()
-			w$endAction()
-		w$endState()
-		w$state(label="M1")
-			w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
-				w$process()
-					w$stage()
-						w$state(label="D")
-							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-					w$endStage()
-				w$endProcess()
-			w$endAction()
-		w$endState()
-	w$endStage()
-w$endProcess()
-w$closeWriter()
-
-stateIdxDf()
-actionIdxDf()
-actionWeightMat()
-transProbMat()
-a<-actionInfo()
-a                   # ordered by action id
-a[order(a$sId),]    # ordered by state id
+# 
+# # Create a small HMDP with two levels
+# w<-binaryMDPWriter()
+# w$setWeights(c("Duration","Net reward","Items"))
+# w$process()
+# 	w$stage()
+# 		w$state(label="M0")
+# 			w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
+# 				w$process()
+# 					w$stage()
+# 						w$state(label="D")
+# 							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 				w$endProcess()
+# 			w$endAction()
+# 			w$action(label="A1",weights=c(0,0,0),prob=c(2,0,1))
+# 				w$process()
+# 					w$stage()
+# 						w$state(label="D")
+# 							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 							w$action(label="A1",weights=c(0,10,5),prob=c(0,0,0.5,0,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 				w$endProcess()
+# 			w$endAction()
+# 		w$endState()
+# 		w$state(label="M1")
+# 			w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
+# 				w$process()
+# 					w$stage()
+# 						w$state(label="D")
+# 							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 				w$endProcess()
+# 			w$endAction()
+# 		w$endState()
+# 	w$endStage()
+# w$endProcess()
+# w$closeWriter()
+# 
+# #stateIdxDf()
+# #actionIdxDf()
+# #actionWeightMat()
+# #transProbMat()
+# #a<-actionInfo()
+# #a                   # ordered by action id
+# #a[order(a$sId),]    # ordered by state id
 }
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

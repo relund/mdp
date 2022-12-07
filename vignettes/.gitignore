@@ -4,3 +4,5 @@ external.html
 mdp_examples.pdf
 litt.bib.bak
 rsconnect
+*.html
+*.R

@@ -49,7 +49,7 @@
 #' @return A list of functions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @example tests/binaryMDPWriter.Rex
+#' @example tests/binaryMDPWriter.R
 #' @export
 binaryActionWriter<-function(prefix="", binNames=c("actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"), append=TRUE)

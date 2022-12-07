@@ -4,11 +4,20 @@
 \alias{calcRPO}
 \title{Calculate the rentention payoff (RPO) or opportunity cost for some states.}
 \usage{
-calcRPO(mdp, w, iA, sId = ifelse(mdp$timeHorizon >= Inf, mdp$founderStatesLast
-  + 1, 1):ifelse(mdp$timeHorizon >= Inf, mdp$states + mdp$founderStatesLast,
-  mdp$states) - 1, criterion = "expected", dur = "", rate = 0,
-  rateBase = 1, discountFactor = NULL, g = 0,
-  discountMethod = "continuous")
+calcRPO(
+  mdp,
+  w,
+  iA,
+  sId = ifelse(mdp$timeHorizon >= Inf, mdp$founderStatesLast + 1,
+    1):ifelse(mdp$timeHorizon >= Inf, mdp$states + mdp$founderStatesLast, mdp$states) - 1,
+  criterion = "expected",
+  dur = "",
+  rate = 0,
+  rateBase = 1,
+  discountFactor = NULL,
+  g = 0,
+  discountMethod = "continuous"
+)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
@@ -44,4 +53,3 @@ weight of the node when using another predecessor different from \code{iA}.
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

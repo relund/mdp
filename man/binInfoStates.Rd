@@ -4,8 +4,13 @@
 \alias{binInfoStates}
 \title{Info about the states in the binary files of the HMDP model under consideration.}
 \usage{
-binInfoStates(prefix = "", labels = TRUE, stateStr = TRUE,
-  fileS = "stateIdx.bin", labelS = "stateIdxLbl.bin")
+binInfoStates(
+  prefix = "",
+  labels = TRUE,
+  stateStr = TRUE,
+  fileS = "stateIdx.bin",
+  labelS = "stateIdxLbl.bin"
+)
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to til binary files.}
@@ -30,24 +35,6 @@ Info about the states in the binary files of the HMDP model under consideration.
 The model don't have to be loaded, i.e only read the binary files. The state id (sId) will
 not be the same as in the loaded model!
 }
-\examples{
-wDir<-getwd()
-setwd(system.file("models", package = "MDP"))
-
-prefix<-"machine1_"
-stateIdxMat(prefix)
-stateIdxDf(prefix)
-actionIdxMat(prefix)
-actionIdxDf(prefix)
-actionWeightMat(prefix)
-weightNames(prefix)
-transProbMat(prefix)
-a<-actionInfo(prefix)
-a[order(a$sId),]
-
-setwd(wDir)
-}
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

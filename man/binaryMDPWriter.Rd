@@ -6,10 +6,12 @@
 subfunctions which can be used to define an HMDP model saved in a set of binary
 files.}
 \usage{
-binaryMDPWriter(prefix = "", binNames = c("stateIdx.bin", "stateIdxLbl.bin",
-  "actionIdx.bin", "actionIdxLbl.bin", "actionWeight.bin",
-  "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin"),
-  getLog = TRUE)
+binaryMDPWriter(
+  prefix = "",
+  binNames = c("stateIdx.bin", "stateIdxLbl.bin", "actionIdx.bin", "actionIdxLbl.bin",
+    "actionWeight.bin", "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin"),
+  getLog = TRUE
+)
 }
 \arguments{
 \item{prefix}{A character string with the prefix added to \code{binNames}.}
@@ -24,58 +26,60 @@ Binary files are efficent for storing large models. Compared to the HMP (XML)
 format the binary files use less storage space and loads the model faster.
 }
 \details{
-The functions which can be used are: 
+The functions which can be used are:
 \itemize{
-  \item{\code{setWeights(labels, ...)}: }{Set the labels of the weights used in the actions. 
-  \code{labels} is a vector of label names, \code{...} are not used. The function must be called
-  before starting building the model.}
-  
-  \item{\code{process()}: }{Starts a (sub)process. May also be used to specify a traditional MDP 
-  using matrices (MDPtoolbox style). The style is as follows: P is a list of matrices (one for 
-  each action) each of size SxS (S = number of states). Each row must sum to one if used or all 
-  entries in a row must be zero if not used. R is a matrix of size SxA (A = number of 
-  actions) and D is a matrix of size SxA with durations (optional if not specified assume all 
-  durations are 1).}
-  
-  \item{\code{endProcess()}: }{Ends a (sub)process.}
-  
-  \item{\code{stage(label=NULL)}: }{Starts a stage. Currently \code{label} are not used in the
-  binary format.}
-  
-  \item{\code{endStage()}: }{Ends a (sub)process.}
-  
-  \item{\code{state(label=NULL)}: }{Starts a state. Returns (invisible) the states id number
-  which can be used for later reference given scope 3.}
-  
-  \item{\code{endState()}: }{Ends a stage.}
-  
-  \item{\code{action(scope=NULL, id=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...)}: }
-  {Starts an action. Parameter
-  \code{weights} must be a vector of action weights. There are two ways to enter transition prob 
-  1) \code{prob} contains triples of (scope,id,pr), 
-  2) Vectors \code{id} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
-   (see the description of actionIdx.bin below). If \code{end=TRUE} then an \code{endAction()} is not nesseary. 
-  \code{...} is currently not used.}
-  
-  \item{\code{endAction()}: }{Ends an action. Do not use if you set \code{end=TRUE} when you specify an action.}
-  
-  \item{\code{includeProcess(prefix, label=NULL, weights, prob, termStates)}: }{Include an 
-  external process. External processes will only be loaded in memory when needed. That is,
-  external processes is usefull when considering large models and have problems with memory.
-  Parameter \code{prefix} is the prefix of the external process. The next parameters specify the
-  child jump action to the process, i.e. \code{weights} must be a vector of action weights,
-  \code{prob} must contain triples of (scope,idx,pr) (see the description of actionIdx.bin
-  below), Finally \code{termStates} must specify the number of states at the last stage in the
-  external process. Note that inside an \code{includeProcess ... endIncludeProcess} you must
-  specify the father jump actions of the last stage in the external process. An external process
-  is represented using its first and last stage, together with its jump actions. Returns 
-  (invisible) the state id's of the first stage in the external process which can be used for 
-  later reference given scope 3.}
-  
-  \item{\code{endIncludeProcess()}: }{Ends an includeProcess.}
-  
-  \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has
-  finished.}}
+\item{\code{setWeights(labels, ...)}: }{Set the labels of the weights used in the actions.
+\code{labels} is a vector of label names, \code{...} are not used. The function must be called
+before starting building the model.}
+
+\item{\code{process()}: }{Starts a (sub)process. May also be used to specify a traditional MDP
+using matrices (MDPtoolbox style). The style is as follows: P is a list of matrices (one for
+each action) each of size SxS (S = number of states). Each row must sum to one if used or all
+entries in a row must be zero if not used. R is a matrix of size SxA (A = number of
+actions) and D is a matrix of size SxA with durations (optional if not specified assume all
+durations are 1).}
+
+\item{\code{endProcess()}: }{Ends a (sub)process.}
+
+\item{\code{stage(label=NULL)}: }{Starts a stage. Currently \code{label} are not used in the
+binary format.}
+
+\item{\code{endStage()}: }{Ends a (sub)process.}
+
+\item{\code{state(label=NULL)}: }{Starts a state. Returns (invisible) the states id number
+which can be used for later reference given scope 3.}
+
+\item{\code{endState()}: }{Ends a stage.}
+
+\item{\code{action(scope=NULL, id=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...)}: }
+{Starts an action. Parameter
+\code{weights} must be a vector of action weights. There are two ways to enter transition prob
+\enumerate{
+\item \code{prob} contains triples of (scope,id,pr),
+\item Vectors \code{id} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
+(see the description of actionIdx.bin below). If \code{end=TRUE} then an \code{endAction()} is not nesseary.
+\code{...} is currently not used.}
+}
+
+\item{\code{endAction()}: }{Ends an action. Do not use if you set \code{end=TRUE} when you specify an action.}
+
+\item{\code{includeProcess(prefix, label=NULL, weights, prob, termStates)}: }{Include an
+external process. External processes will only be loaded in memory when needed. That is,
+external processes is usefull when considering large models and have problems with memory.
+Parameter \code{prefix} is the prefix of the external process. The next parameters specify the
+child jump action to the process, i.e. \code{weights} must be a vector of action weights,
+\code{prob} must contain triples of (scope,idx,pr) (see the description of actionIdx.bin
+below), Finally \code{termStates} must specify the number of states at the last stage in the
+external process. Note that inside an \code{includeProcess ... endIncludeProcess} you must
+specify the father jump actions of the last stage in the external process. An external process
+is represented using its first and last stage, together with its jump actions. Returns
+(invisible) the state id's of the first stage in the external process which can be used for
+later reference given scope 3.}
+
+\item{\code{endIncludeProcess()}: }{Ends an includeProcess.}
+
+\item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has
+finished.}}
 
 Eight binary files are created using the following format:\itemize{
 \item{stateIdx.bin: }{File of integers containing the indexes defining all states in the format
@@ -119,123 +123,122 @@ delimiter is used.}}
 Note all indexes are starting from zero (C/C++ style).
 }
 \examples{
-
-# Create a small HMDP with two levels
-w<-binaryMDPWriter()
-w$setWeights(c("Duration","Net reward","Items"))
-w$process()
-	w$stage()
-		w$state(label="M0")
-			w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
-				w$process()
-					w$stage()
-						w$state(label="D")
-							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-					w$endStage()
-				w$endProcess()
-			w$endAction()
-			w$action(label="A1",weights=c(0,0,0),prob=c(2,0,1))
-				w$process()
-					w$stage()
-						w$state(label="D")
-							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,1))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-							w$action(label="A1",weights=c(0,10,5),prob=c(0,0,0.5,0,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-				w$endProcess()
-			w$endAction()
-		w$endState()
-		w$state(label="M1")
-			w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
-				w$process()
-					w$stage()
-						w$state(label="D")
-							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
-							w$endAction()
-						w$endState()
-					w$endStage()
-					w$stage()
-						w$state(label="C0")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-						w$state(label="C1")
-							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
-							w$endAction()
-						w$endState()
-					w$endStage()
-				w$endProcess()
-			w$endAction()
-		w$endState()
-	w$endStage()
-w$endProcess()
-w$closeWriter()
-
-stateIdxDf()
-actionIdxDf()
-actionWeightMat()
-transProbMat()
-a<-actionInfo()
-a                   # ordered by action id
-a[order(a$sId),]    # ordered by state id
+# 
+# # Create a small HMDP with two levels
+# w<-binaryMDPWriter()
+# w$setWeights(c("Duration","Net reward","Items"))
+# w$process()
+# 	w$stage()
+# 		w$state(label="M0")
+# 			w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
+# 				w$process()
+# 					w$stage()
+# 						w$state(label="D")
+# 							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 				w$endProcess()
+# 			w$endAction()
+# 			w$action(label="A1",weights=c(0,0,0),prob=c(2,0,1))
+# 				w$process()
+# 					w$stage()
+# 						w$state(label="D")
+# 							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 							w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 							w$action(label="A1",weights=c(0,10,5),prob=c(0,0,0.5,0,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 				w$endProcess()
+# 			w$endAction()
+# 		w$endState()
+# 		w$state(label="M1")
+# 			w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
+# 				w$process()
+# 					w$stage()
+# 						w$state(label="D")
+# 							w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 					w$stage()
+# 						w$state(label="C0")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 						w$state(label="C1")
+# 							w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+# 							w$endAction()
+# 						w$endState()
+# 					w$endStage()
+# 				w$endProcess()
+# 			w$endAction()
+# 		w$endState()
+# 	w$endStage()
+# w$endProcess()
+# w$closeWriter()
+# 
+# #stateIdxDf()
+# #actionIdxDf()
+# #actionWeightMat()
+# #transProbMat()
+# #a<-actionInfo()
+# #a                   # ordered by action id
+# #a[order(a$sId),]    # ordered by state id
 }
 \author{
 Lars Relund \email{lars@relund.dk}
 }
-

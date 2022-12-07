@@ -11,7 +11,7 @@
 #' 
 #' @return A list containing relevant information about the model and a pointer \code{ptr} to the model rc object in memory.
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.Rex
+#' @example tests/machine.R
 #' @export
 loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"),
@@ -194,7 +194,7 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFactor 
 #' @return NULL (invisible)
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
-#' @example tests/machine.Rex
+#' @example tests/machine.R
 #' @export
 valueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
                    eps = 1e-05, termValues = NULL, g=NULL, getLog = TRUE, discountMethod="continuous") {
@@ -251,7 +251,7 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = 
 #' 
 #' @return The policy (data frame).
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.Rex
+#' @example tests/machine.R
 #' @export
 getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                        ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
@@ -321,7 +321,7 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
 #'   
 #' @return A list of states containing actions.
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.Rex
+#' @example tests/machine.R
 #' @export
 infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+mdp$founderStatesLast)-1,
                   stateStr=NULL, stageStr=NULL, withDF = TRUE, withHarc = FALSE, asStrings = TRUE) {
@@ -466,7 +466,7 @@ setPolicy<-function(mdp, policy) {
 #' 
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.Rex
+#' @example tests/machine.R
 #' @export
 calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0, rateBase = 1, 
                       discountFactor = NULL, termValues = NULL, discountMethod = "continuous") {
@@ -578,7 +578,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param wLbl The label of the weight we consider.
 # #' @return Nothing.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
+# #' @example tests/machine.R
 # #' @export
 # setActionWeight<-function(mdp, w, sId, iA, wLbl) {
 # 	iW<-getWIdx(mdp,wLbl)
@@ -621,7 +621,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @return Nothing.
 # #' @author Lars Relund \email{lars@@relund.dk}
 # #' @seealso \code{\link{resetActions}}, \code{\link{fixAction}}.
-# #' @example tests/machine.Rex
+# #' @example tests/machine.R
 # #' @export
 # removeAction<-function(mdp, sId, iA) {
 # 	.Call("MDP_RemoveAction", mdp$ptr, as.integer(sId), as.integer(iA), PACKAGE="MDP")
@@ -635,7 +635,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @return Nothing.
 # #' @author Lars Relund \email{lars@@relund.dk}
 # #' @seealso \code{\link{resetActions}}, \code{\link{fixAction}}.
-# #' @example tests/machine.Rex
+# #' @example tests/machine.R
 # #' @export
 # resetActions<-function(mdp) {
 # 	.Call("MDP_ResetActions", mdp$ptr, PACKAGE="MDP")
@@ -667,7 +667,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param stages A char vector of index in the form "n0,s0,a0,n1", i.e. 3*level+1 elements in the string.
 # #' @return A vector of ids for the states.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
+# #' @example tests/machine.R
 # #' @export
 # getIdSStages<-function(mdp, stages) {
 # 	v<-.Call("MDP_GetIdSStage", mdp$ptr, as.character(stages), PACKAGE="MDP")
@@ -681,7 +681,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idS A vector of state ids.
 # #' @return A vector of index for the states.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
+# #' @example tests/machine.R
 # #' @export
 # getStrIdxS<-function(mdp, idS) {
 # 	n<- mdp$states + ifelse(mdp$timeHorizon>=Inf,mdp$founderStatesLast,0)
@@ -697,7 +697,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idS A vector of state ids.
 # #' @return A vector of labels for the states.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
+# #' @example tests/machine.R
 # #' @export
 # getLabel<-function(mdp, idS) {
 # 	n<- mdp$states + ifelse(mdp$timeHorizon>=Inf,mdp$founderStatesLast,0)
@@ -714,7 +714,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idxA The action index.
 # #' @return A vector of weights for the action.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
+# #' @example tests/machine.R
 # #' @export
 # getActionW<-function(mdp, idS, idxA) {
 # 	l<-info(mdp, idS[1])
@@ -735,7 +735,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idxA The action index.
 # #' @return A vector of weights for the action.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
+# #' @example tests/machine.R
 # #' @export
 # getActionTransIdS<-function(mdp, idS, idxA) {
 # 	l<-info(mdp, idS[1])
@@ -756,7 +756,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idxA The action index (c++ style starting from zero).
 # #' @return A vector of weights for the action.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.Rex
+# #' @example tests/machine.R
 # #' @export
 # getActionTransPr<-function(mdp, idS, idxA) {
 #   return(.Call("MDP_GetActionTransPr", mdp$ptr, as.integer(idS), as.integer(idxA), PACKAGE="MDP") )

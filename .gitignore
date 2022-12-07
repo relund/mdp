@@ -13,3 +13,6 @@ Sweavel.sty
 *.synctex.gz
 vignettes/graphic
 tmp
+inst/doc
+docs
+.DS_Store

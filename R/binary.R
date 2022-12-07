@@ -17,8 +17,6 @@
 #' @return A data frame with the information.
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
-#'
-#' @example tests/infoMat.Rex
 #' @export
 binInfoStates<-function(prefix="", labels = TRUE, stateStr = TRUE, fileS="stateIdx.bin", labelS="stateIdxLbl.bin") {
 	fileS<-paste(prefix,fileS,sep="")
@@ -71,8 +69,6 @@ binInfoStates<-function(prefix="", labels = TRUE, stateStr = TRUE, fileS="stateI
 #' not be the same as in the loaded model!
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
-#'
-#' @example tests/infoMat.Rex
 #' @export
 binInfoActions<-function(prefix="", labels = TRUE, fileA="actionIdx.bin",
                          filePr="transProb.bin", fileW="actionWeight.bin",

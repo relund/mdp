@@ -23,10 +23,9 @@ The optimal gain (g) calculated.
 \description{
 The policy can afterwards be recieved using functions \code{getPolicy} and \code{getPolicyW}.
 }
-\author{
-Lars Relund \email{lars@relund.dk}
-}
 \seealso{
 \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
 }
-
+\author{
+Lars Relund \email{lars@relund.dk}
+}
