@@ -1,34 +1,38 @@
-Package: MDP2
 Type: Package
+Package: MDP2
 Title: Markov Decision Processes (MDPs) in R
-Description: Create and optimize (semi) MDPs with discrete time steps and state 
-    space. Both hierarchical and ordinary-traditional MDPs can be modelled.
 Version: 2.0.0
-Authors@R: person("Lars", "Relund Nielsen", email = "lars@relund.dk", role = c("aut", "cre"), 
-    comment = c(ORCID = "0000-0002-4802-3071"))
-URL: https://relund.github.io/mdp/,
-    https://github.com/relund/mdp/,
+Authors@R: 
+    person("Lars", "Relund Nielsen", , "lars@relund.dk", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-4802-3071"))
+Description: Create and optimize (semi) MDPs with discrete time steps and
+    state space. Both hierarchical and ordinary-traditional MDPs can be
+    modelled.
+License: GPL (>= 3.3.2)
+URL: https://relund.github.io/mdp/, https://github.com/relund/mdp/,
     http://relund.github.io/mdp/
 BugReports: https://github.com/relund/mdp/issues
-License: GPL (>= 3.3.2)
-Language: en-US
-Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.2.2
-Roxygen: list(markdown = TRUE)
-LinkingTo: Rcpp
-Imports:
-    methods,
-    diagram,
-    Rcpp (>= 0.11.5)
 Depends:
+    plyr,
     R (>= 4.2.2),
-    Rcpp,
-    plyr
-Suggests:
-    XML,
-    knitr,
-    testthat,
+    Rcpp
+Imports:
     diagram,
-    rmarkdown
-VignetteBuilder: knitr
+    methods,
+    Rcpp (>= 0.11.5)
+Suggests:
+    diagram,
+    knitr,
+    Matrix,
+    rmarkdown,
+    testthat,
+    XML
+LinkingTo: 
+    Rcpp
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+Language: en-US
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.2

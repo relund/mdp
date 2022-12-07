@@ -74,7 +74,7 @@ w$closeWriter()
 
 ## Using binaryMDPWriter where the MDP is specified using a list of sparse matrices and a sparse matrix of rewards
 # specify transition pr for each action (one sparse 6x6 matrix for each action)
-library(Matrix)
+#library(Matrix)
 P<-list()
 # a=1 (no repair)
 Z<-Matrix(rbind(cbind(Q,0),0,0))
