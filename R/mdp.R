@@ -306,6 +306,52 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
 
 
 
+
+
+
+#' Information about the MDP
+#' 
+#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param sId The id of the state(s) considered.
+#' @param stateStr A character vector containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1"). 
+#'   Parameter \code{sId} are ignored if not NULL.
+#' @param stageStr A character vector containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). 
+#'   Parameter \code{sId} and \code{idxS} are ignored if not NULL.
+#' @param withDF Include two data frames with information about actions and states.
+#' @param withHarc Include hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
+#'   head (sId) and the rest tails (sId).
+#' @param asStrings Write state vector, transitions and probabilities as strings.
+#'   
+#' @return A list of states containing actions.
+#' @author Lars Relund \email{lars@@relund.dk}
+#' @example tests/machine.R
+#' @export
+getActionInfo<-function(mdp, sId = NULL, actionStr=NULL, output = "tibble", stageStr=NULL, withDF = TRUE, withHarc = FALSE, asStrings = TRUE) {
+   if (!is.null(actionStr)) {
+      
+      sId<-mdp$ptr$getStateIdsStages(stageStr)
+      stateStr<-mdp$ptr$getStateStr(sId)
+   } else {
+      if (!is.null(sId)) sId<-mdp$ptr$getStateIdsStates(stateStr)
+      else stateStr<-mdp$ptr$getStateStr(sId)
+   }
+   maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
+   if (max(sId)>=maxS | min(sId)<0)
+      stop("Out of range (sId). Need to be a subset of 0,...,",maxS-1,"!")
+   l<-vector("list", length(sId))
+   lapply(l,function(x) x<-list(sId=NULL,stateStr=NULL,label=NULL,actions=NULL))
+   
+   labels<-mdp$ptr$getStateLabel(sId)
+   for (i in 1:length(l)) {
+      l[[i]]$sId <- sId[i]
+      l[[i]]$stateStr <- stateStr[i]
+      l[[i]]$label <- labels[i]
+      l[[i]]$actions <- mdp$ptr$getActionInfo(sId[i])
+   }
+}
+
+
+
 #' Information about the MDP
 #' 
 #' @param mdp The MDP loaded using \link{loadMDP}.
