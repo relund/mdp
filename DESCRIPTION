@@ -15,6 +15,7 @@ BugReports: https://github.com/relund/mdp/issues
 Depends: R (>= 4.2.2)
 Imports:
     diagram,
+    dplyr,
     methods,
     Rcpp (>= 0.11.5),
     plyr
