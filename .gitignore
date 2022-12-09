@@ -16,3 +16,4 @@ tmp
 inst/doc
 docs
 .DS_Store
+*.hmp
