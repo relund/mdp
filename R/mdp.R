@@ -117,7 +117,7 @@ getWIdx<-function(mdp, wLbl) {
 
 #' Perform policy iteration (average reward criterion) on the MDP.
 #'
-#' The policy can afterwards be recieved using functions \code{getPolicy} and \code{getPolicyW}.
+#' The policy can afterwards be received using functions \code{getPolicy} and \code{getPolicyW}.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
 #' @param w The label of the weight we optimize.

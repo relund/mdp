@@ -11,6 +11,7 @@
 #' @param binNames A character vector of length 7 giving the names of the binary files storing the model.
 #' @param out The name of the hmp file (e.g. mdp.hmp).
 #' @param duration Weight number storing the duration (NULL if none).
+#' @param getLog Output log text.
 #' @return NULL (invisible).
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
@@ -19,7 +20,7 @@
 #' @export
 convertBinary2HMP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
-	out=paste(prefix,'converted.hmp',sep=""), duration=1) {
+	out=paste(prefix,'converted.hmp',sep=""), duration=1, getLog = TRUE) {
 
 	# mat: matrix of state index
 	process<-function(mat) {
@@ -100,12 +101,14 @@ convertBinary2HMP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bi
 	wNames<-weightNames(prefix,binNames[6])
 	wLth<-length(wNames)
 	# level<-sum(!is.na(sIdx[i,2:cols])) %/% 3
-	w<-hmpMDPWriter(file=out,desc="HMP file created by converting binary files")
+	w<-hmpMDPWriter(file=out, desc="HMP file created by converting binary files", getLog = getLog)
 		w$setWeights(wNames, duration)
 		process(sIdx)
 	w$closeWriter()
-	cat("Converted binary files to hmp format.\n")
-	print(proc.time() - ptm)
+	if (getLog) {
+	   cat("Converted binary files to hmp format.\n")
+	   print(proc.time() - ptm)
+	}
 	invisible(NULL)
 }
 

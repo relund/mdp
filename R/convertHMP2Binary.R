@@ -5,13 +5,14 @@
 #'
 #' @param file The name of the hmp file (e.g. mdp.hmp).
 #' @param prefix A character string with the prefix which will be added to the binary files.
+#' @param getLog Output log text.
 #' @return NULL (invisible).
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @seealso \link{binaryMDPWriter}.
 #' @example tests/convert.R
 #' @export
-convertHMP2Binary<-function(file, prefix="") {
+convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
 	setWeights<-function(q) {
 		labels<-unlist(lapply(q, function(x) xmlAttrs(x)))
 		ctrW<<-length(labels)+1
@@ -64,7 +65,7 @@ convertHMP2Binary<-function(file, prefix="") {
 			if (type=="s") {
 				idx<-pr[1:length(pr)%%2==1]
 				pr<-pr[1:length(pr)%%2==0]
-				scp<-rep(1,ceiling(length(pr)/2))    # set scp to 1 (default)
+				scp<-rep(1, length(pr))    # set scp to 1 (default)
 			}
 			if (type=="d") {
 				idx<-pr[1]
@@ -75,11 +76,13 @@ convertHMP2Binary<-function(file, prefix="") {
 				idx<-1:length(pr)-1
 				scp<-rep(1,length(pr))    # set scp to 1 (default)
 			}
-			for (i in 1:length(idx)) {
-				if (idx[i]>=states) {
-					scp[i]<-0
-					idx[i]<-idx[i]-states
-				}
+			if (isHMDP) {
+			   for (i in 1:length(idx)) {
+			      if (idx[i]>=states) {
+			         scp[i]<-0
+			         idx[i]<-idx[i]-states
+			      }
+			   }
 			}
 			i<-which(pr!=0)
 			scp<-scp[i]
@@ -95,12 +98,15 @@ convertHMP2Binary<-function(file, prefix="") {
 	ctrW<-0
 	doc<-xmlTreeParse(file,useInternalNodes=TRUE)
 	r<-xmlRoot(doc)
-	w<-binaryMDPWriter(prefix)
+	isHMDP <- xpathApply(r[['proc']], "count(.//proc)") > 0   # ordinary MDP or HMDP
+	w<-binaryMDPWriter(prefix, getLog = getLog)
 		setWeights(r['quantities',all=TRUE])
 		process(r[['proc']])
 	w$closeWriter()
 	free(doc)
-	cat("Converted",file,"to binary format.\n\n")
-	print(proc.time() - ptm)
+	if (getLog) {
+	   cat("Converted",file,"to binary format.\n\n")
+	   print(proc.time() - ptm)
+	}
 	invisible(NULL)
 }

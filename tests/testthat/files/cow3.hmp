@@ -1,0 +1,46 @@
+<mlhmp l='Dairy cow model - 3 states' b='1.0' dsl='1.0' precision='0.001' version='1.2'>
+  <i>0.16 </i>
+  <quantities l='Net returns'/>
+  <quantities l='Milk yield'/>
+  <sources>0 1</sources>
+  <proc>
+    <g l='Lactation cycle'>
+      <s l='Low yield'>
+        <a l='Keep'>
+          <q>10000.0 5000.0 </q>
+          <p t='e'>0.6 0.3 0.1 </p>
+          <d>0.99999976</d>
+        </a>
+        <a l='Replace'>
+          <q>9000.0 5000.0 </q>
+          <p t='e'>0.33333334 0.33333334 0.33333334 </p>
+          <d>0.99999976</d>
+        </a>
+      </s>
+      <s l='Average yield'>
+        <a l='Keep'>
+          <q>12000.0 6000.0 </q>
+          <p t='e'>0.2 0.6 0.2 </p>
+          <d>0.99999976</d>
+        </a>
+        <a l='Replace'>
+          <q>11000.0 6000.0 </q>
+          <p t='e'>0.33333334 0.33333334 0.33333334 </p>
+          <d>0.99999976</d>
+        </a>
+      </s>
+      <s l='High yield'>
+        <a l='Keep'>
+          <q>14000.0 7000.0 </q>
+          <p t='e'>0.1 0.3 0.6 </p>
+          <d>0.99999976</d>
+        </a>
+        <a l='Replace'>
+          <q>13000.0 7000.0 </q>
+          <p t='e'>0.33333334 0.33333334 0.33333334 </p>
+          <d>0.99999976</d>
+        </a>
+      </s>
+    </g>
+  </proc>
+</mlhmp>
