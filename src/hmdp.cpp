@@ -92,7 +92,9 @@ void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile) {
 
     // next add labels
 	idx lblSize = ReadBinary<char>(stateIdxLblFile,lbl);
-	if (lblSize==0) {okay = false; return;}
+	//if (lblSize==0) {okay = false; return;}
+	// fix bug show no labels okay
+	if (lblSize==0) {return;}
 	// add labels to a string vector
 	vector<string> labels;
 	char * ptr = lbl;
@@ -134,7 +136,10 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	idx wLblSize = ReadBinary(actionWLblFile,wLbl);
 	idx tPrSize = ReadBinary(transProbFile,tPr);
 	// note that all arrays (except the label arrays) have the same number of rows (same number of -1's).
-    if ( (aIdxSize==0) | (lblSize==0) | (aWSize==0) | (wLblSize==0) | (tPrSize==0) ) {okay = false; return;}
+   // if ( (aIdxSize==0) | (lblSize==0) | (aWSize==0) | (wLblSize==0) | (tPrSize==0) ) {okay = false; return;}
+   // fix bug such that an mdp with no labels okay
+   if ( (aIdxSize==0) | (aWSize==0) | (wLblSize==0) | (tPrSize==0) ) {okay = false; return;}
+    
 
 	// add weight labels to HMDP
 	vector<string> labels;
@@ -204,21 +209,25 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	delete [] tPr;
 
 	// scan lbl
-	labels.clear();
-	ptr = lbl;
-	for (int i=0;;++i) {
-		labels.push_back(ptr);
-		ptr = strrchr(ptr,'\0');
-		if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
-		++ptr;
+	// fix bug such that an mdp with no labels okay
+	if (lblSize>0) {
+   	labels.clear();
+   	ptr = lbl;
+   	for (int i=0;;++i) {
+   		labels.push_back(ptr);
+   		ptr = strrchr(ptr,'\0');
+   		if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
+   		++ptr;
+   	}
+   	labels.pop_back();  // the last element is a dummy
+   	// add labels to actions
+   	for(idx i=0;i<labels.size();++i) {
+   		if (i % 2 == 0) from_string<idx>(aId, labels[i], std::dec); // if i is even
+   		else actionVec[aId].label = labels[i];
+   	}
+       delete [] lbl; //cout << "aSize: " << actionVec.size()<<endl;
 	}
-	labels.pop_back();  // the last element is a dummy
-	// add labels to actions
-	for(idx i=0;i<labels.size();++i) {
-		if (i % 2 == 0) from_string<idx>(aId, labels[i], std::dec); // if i is even
-		else actionVec[aId].label = labels[i];
-	}
-    delete [] lbl; //cout << "aSize: " << actionVec.size()<<endl;
+	
 	// copy actions to states
 	for(idx i=0;i<actionVec.size();++i) {
         stateVec[actionVec[i].sId].actions.push_back(actionVec[i]);

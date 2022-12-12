@@ -38,13 +38,13 @@
 #'   then we have an interest rate of 10 percent over the year.
 #' @param precision The precision used when checking if probabilities sum to one.
 #' @param desc Description of the model.
+#' @param getLog Output log text.
 #' @return A list of functions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @example tests/hmpMDPWriter.R
 #' @export
-hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, desc="HMP file created using hmpMDPWriter in R")
-{
+hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, desc="HMP file created using hmpMDPWriter in R", getLog = TRUE) {
 	addLevelRates<-function(rates){
 		tr$addTag("i",paste(rates,collapse=" "))
 		invisible(NULL)
@@ -150,7 +150,7 @@ hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, de
 
 	closeWriter<-function(){
 		saveXML(tr$value(),file=file,compression=0,prefix = NULL)
-		cat("\nModel saved to file:",file,"\n")
+		if (getLog) cat("\nModel saved to file:",file,"\n")
 	}
 
 	file <- file
