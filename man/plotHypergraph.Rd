@@ -38,7 +38,17 @@ hyperarc (useful if want to show the policy).}
 
 \item{devOff}{If false do not make a dev.off(), i.e. you can add more graphic to the file.}
 
-\item{...}{Graphical parameters e.g. \code{cex=0.5} to control text size.}
+\item{radx}{Horizontal radius of the box.}
+
+\item{rady}{Vertical radius of the box.}
+
+\item{cex}{Relative size of text.}
+
+\item{marX}{Horizontal margin.}
+
+\item{marY}{Vertical margin.}
+
+\item{...}{Graphical parameters passed to \code{textempty}.}
 }
 \description{
 A plot is created based on a grid. Each grid point is numbered from left to right and topdown,

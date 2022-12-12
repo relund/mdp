@@ -30,7 +30,7 @@ randomHMDP<-function(prefix="", levels=3, timeHorizon=c(Inf,3,4), states=c(2,4,5
                   w$state(s1)
                      aSize = sample(actions[1]:actions[2],1)
                      for (a1 in 1:aSize-1) {
-                        if (levels>1) isChild = rbinom(1,1,childProcessPr)==1 else isChild = FALSE
+                        if (levels>1) isChild = stats::rbinom(1,1,childProcessPr)==1 else isChild = FALSE
                         if (isChild) {
                            idx<-sample(1:states[2]-1,states[2]/2) 
                            pr<-rep(1/length(idx),length(idx))

@@ -10,7 +10,8 @@ hmpMDPWriter(
   rate = 0.1,
   rateBase = 1,
   precision = 1e-05,
-  desc = "HMP file created using hmpMDPWriter in R"
+  desc = "HMP file created using hmpMDPWriter in R",
+  getLog = TRUE
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ then we have an interest rate of 10 percent over the year.}
 \item{precision}{The precision used when checking if probabilities sum to one.}
 
 \item{desc}{Description of the model.}
+
+\item{getLog}{Output log text.}
 }
 \value{
 A list of functions.

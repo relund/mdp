@@ -17,15 +17,31 @@
 #' @param showGrid If true show the grid points (good for debugging).
 #' @param fileN If specified the plot will be saved as a pdf file.
 #' @param devOff If false do not make a dev.off(), i.e. you can add more graphic to the file.
-#' @param ... Graphical parameters e.g. \code{cex=0.5} to control text size. 
+#' @param radx Horizontal radius of the box.
+#' @param rady Vertical radius of the box.
+#' @param cex Relative size of text.
+#' @param marX Horizontal margin.
+#' @param marY Vertical margin.
+#' @param ... Graphical parameters passed to `textempty`. 
 #'   
 #' @return NULL
 #'   
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @import diagram
 #' @export
-plotHypergraph<-function(gridDim,states=NULL,actions=NULL,showGrid=FALSE,fileN=NULL,devOff=TRUE, 
-                         radx = 0.02, rady=0.03, cex=1, marX=0.03, marY=0.05, ...){
+plotHypergraph <-
+   function(gridDim,
+            states = NULL,
+            actions = NULL,
+            showGrid = FALSE,
+            fileN = NULL,
+            devOff = TRUE,
+            radx = 0.02,
+            rady = 0.03,
+            cex = 1,
+            marX = 0.03,
+            marY = 0.05,
+            ...) {
    # internal functions
    gMap<-function(sId) return(states$gId[states$sId %in% sId])		# return gId given sId
    sMap<-function(gId) return(states$sId[states$gId %in% gId])		# return sId given gId
@@ -65,4 +81,5 @@ plotHypergraph<-function(gridDim,states=NULL,actions=NULL,showGrid=FALSE,fileN=N
       }
    }
    if (devOff && !is.null(fileN)) dev.off()
+   return(invisible(NULL))
 }

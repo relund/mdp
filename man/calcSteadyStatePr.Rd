@@ -8,6 +8,8 @@ calcSteadyStatePr(mdp, getLog = FALSE)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \link{loadMDP}.}
+
+\item{getLog}{Output log text.}
 }
 \value{
 A vector with stady state probabilities for all the states at the founder level.

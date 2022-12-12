@@ -6,11 +6,12 @@
 #' @param file The name of the hmp file (e.g. mdp.hmp).
 #' @param prefix A character string with the prefix which will be added to the binary files.
 #' @param getLog Output log text.
+#' 
 #' @return NULL (invisible).
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @seealso \link{binaryMDPWriter}.
-#' @example tests/convert.R
+#' @example inst/examples/convert.R
 #' @export
 convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
 	setWeights<-function(q) {

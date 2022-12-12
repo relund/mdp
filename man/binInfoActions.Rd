@@ -25,9 +25,9 @@ binInfoActions(
 
 \item{fileW}{The binary file containing the description of weights.}
 
-\item{labelA}{The binary file containing the action labels.}
+\item{fileLabelW}{The binary file containing the weight labels.}
 
-\item{labelW}{The binary file containing the weight labels.}
+\item{fileLabelA}{The binary file containing the action labels.}
 }
 \value{
 A data frame with the information. Scope string contain the scope of the transitions and

@@ -6,9 +6,14 @@
 The function simply parse the binary files and create hmp files using
 the \link{hmpMDPWriter}.}
 \usage{
-convertBinary2HMP(prefix="",
-  binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin","actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
-  out=paste(prefix,'converted.hmp',sep=""), duration=1)
+convertBinary2HMP(
+  prefix = "",
+  binNames = c("stateIdx.bin", "stateIdxLbl.bin", "actionIdx.bin", "actionIdxLbl.bin",
+    "actionWeight.bin", "actionWeightLbl.bin", "transProb.bin"),
+  out = paste0(prefix, "converted.hmp"),
+  duration = 1,
+  getLog = TRUE
+)
 }
 \arguments{
 \item{prefix}{A character string with the prefix which will be added to the binary files.}
@@ -18,6 +23,8 @@ convertBinary2HMP(prefix="",
 \item{out}{The name of the hmp file (e.g. mdp.hmp).}
 
 \item{duration}{Weight number storing the duration (NULL if none).}
+
+\item{getLog}{Output log text.}
 }
 \value{
 NULL (invisible).
@@ -50,7 +57,7 @@ Note all indexes are starting from zero (C/C++ style).
 #convertBinary2HMP("machine2_")  # error since using scope = 3 not supported in hmp files
 }
 \seealso{
-convertHMP2Binary.
+\code{convertHMP2Binary}.
 }
 \author{
 Lars Relund \email{lars@relund.dk}

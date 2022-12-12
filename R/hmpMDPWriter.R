@@ -42,7 +42,7 @@
 #' @return A list of functions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @example tests/hmpMDPWriter.R
+#' @example inst/examples/hmpMDPWriter.R
 #' @export
 hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, desc="HMP file created using hmpMDPWriter in R", getLog = TRUE) {
 	addLevelRates<-function(rates){

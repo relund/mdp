@@ -16,7 +16,8 @@ calcRPO(
   rateBase = 1,
   discountFactor = NULL,
   g = 0,
-  discountMethod = "continuous"
+  discountMethod = "continuous",
+  stateStr = TRUE
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ calcRPO(
 \item{g}{The optimal gain (g) calculated (used if \code{criterion = "average"}).}
 
 \item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.}
+
+\item{stateStr}{Output the state string.}
 }
 \value{
 The rpo (matrix/data frame).

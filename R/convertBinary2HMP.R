@@ -2,25 +2,23 @@
 #' The function simply parse the binary files and create hmp files using
 #' the \link{hmpMDPWriter}.
 #'
-#' @usage
-#' convertBinary2HMP(prefix="",
-#'   binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin","actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
-#'   out=paste(prefix,'converted.hmp',sep=""), duration=1)
-#'
 #' @param prefix A character string with the prefix which will be added to the binary files.
 #' @param binNames A character vector of length 7 giving the names of the binary files storing the model.
 #' @param out The name of the hmp file (e.g. mdp.hmp).
 #' @param duration Weight number storing the duration (NULL if none).
 #' @param getLog Output log text.
+#' 
 #' @return NULL (invisible).
+#' 
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @seealso convertHMP2Binary.
-#' @example tests/convert.R
+#' 
+#' @seealso `convertHMP2Binary`.
+#' @example inst/examples/convert.R
 #' @export
 convertBinary2HMP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),
-	out=paste(prefix,'converted.hmp',sep=""), duration=1, getLog = TRUE) {
+	out=paste0(prefix,'converted.hmp'), duration=1, getLog = TRUE) {
 
 	# mat: matrix of state index
 	process<-function(mat) {

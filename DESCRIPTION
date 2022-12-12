@@ -15,10 +15,13 @@ BugReports: https://github.com/relund/mdp/issues
 Depends: R (>= 4.2.2)
 Imports:
     diagram,
-    dplyr,
+    dplyr, 
+    stringr, 
+    tidyr,
+    magrittr,
+    rlang,
     methods,
-    Rcpp (>= 0.11.5),
-    plyr
+    Rcpp (>= 0.11.5)
 Suggests:
     knitr,
     Matrix,

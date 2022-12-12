@@ -42,7 +42,7 @@ Nothing.
 The policy can afterwards be received using functions \code{getPolicy} and \code{getPolicyW}.
 }
 \seealso{
-\code{\link{getPolicy}}, \code{\link{getPolicyW}}.
+\code{\link{getPolicy}}.
 }
 \author{
 Lars Relund \email{lars@relund.dk}

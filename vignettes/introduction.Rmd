@@ -5,9 +5,11 @@ date: "`r Sys.Date()`"
 bibliography: litt.bib
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MDP2 introduction}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{An introduction to the MDP2 package in R}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 <style> 
@@ -55,7 +57,7 @@ Building and solving an MDP is done in two steps. First, the MDP is built and sa
 of binary files. Next, you load the MDP into memory from the binary files and apply various
 algorithms to the model.
 
-In the package are implemented well-known algorithms such as policy iteration and value iteration
+The package implement well-known algorithms such as policy iteration and value iteration
 under different criteria e.g. average reward per time unit and expected total discounted reward. The
 model is stored using an underlying data structure based on the *state-expanded directed hypergraph*
 of the MDP (@Relund06) implemented in `C++` for fast running times. <!-- Under development is also
@@ -63,14 +65,18 @@ support for MLHMP which is a Java implementation of algorithms for solving MDPs 
 -->
 
 The newest version of the package can be installed from GitHub 
+
 ```{r Install github, echo=TRUE, eval=FALSE}
 install_github("relund/mdp")
 ```
 We load the package using 
+
 ```{r Load package, echo=TRUE, warning=FALSE, results='hide', message=FALSE}
 library(MDP2)
 ```
+
 Help about the package can be seen by writing
+
 ```{r Package help, echo=TRUE, eval=FALSE}
 ?MDP2
 ```
@@ -203,13 +209,12 @@ hyperare represent a possible transition ($p_{ij}(a)>0$).
 
 ```{r plotHgf, echo=FALSE, results='hide', message=FALSE}
 mdp<-loadMDP("hct611-1_")
-dat<-infoMDP(mdp,withHarc = TRUE)
-stateDF<-dat$stateDF
+dat <- infoMDP(mdp, withHarc = TRUE)
+stateDF<-dat$df
 stateDF$label<-paste0(c(1:N,1:N)-1,": i=",c(1:N,1:N) )
 #stateDF$label[1:N]<-""
 stateDF$gId<-c(seq(2,10,by=2),seq(1,9,by=2))
 actionDF<-dat$harcDF
-actionDF$label<-dat$actionDF$label
 actionDF$lwd<-0.5
 actionDF$lty[actionDF$label=="no repair"]<-1
 actionDF$lty[actionDF$label=="preventive repair"]<-1
@@ -255,8 +260,7 @@ The model can be loaded using
 mdp<-loadMDP("hct611-1_")
 mdp # overall info
 info<-infoMDP(mdp)  # more detailed info
-info$actionDF
-info$stateDF
+info$df
 ```
 
 Note the loaded model gives each node in the state-expanded hypergraph a *unique id* such that you
@@ -432,10 +436,9 @@ w$closeWriter()
 scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 4)
 mdp<-loadMDP("machine1_", getLog = FALSE)
 dat<-infoMDP(mdp, withHarc = TRUE)
-stateDF<-dat$stateDF
+stateDF<-dat$df
 stateDF$gId<-c(5,10,15,20,4,9,14,19,3,8,13,2,7,1)
 actionDF<-dat$harcDF
-actionDF$label<-dat$actionDF$label
 actionDF$lwd<-0.5
 actionDF$lwd<-1
 actionDF$col<-"deepskyblue3"
@@ -458,8 +461,7 @@ Let us try to load the model and get some info:
 mdp<-loadMDP("machine1_")
 mdp # overall info
 info<-infoMDP(mdp)  # more detailed info
-info$actionDF
-info$stateDF
+info$df
 ```
 
 Let us use value iteration to find the optimal policy maximizing the expected total reward under the
@@ -474,8 +476,10 @@ getPolicy(mdp)
 The optimal policy is illustrated below:
 
 ```{r plotPolicy3, echo=FALSE, results='hide', message=FALSE}
-actionDF<-cbind(dat$actionDF,dat$harcDF)
-actionDF<-merge(actionDF,getPolicy(mdp))[,c("head","tail2","tail3","label","stateLabel")]
+library(tidyverse)
+actionDF <- left_join(getPolicy(mdp), dat$harcDF, by = c("sId" = "head", "actionLabel" = "label")) %>% 
+   filter(aIdx >= 0) %>% 
+   select(head = sId, contains("tail"), label = actionLabel)
 actionDF$lwd<-1
 actionDF$col<-"deepskyblue3"
 actionDF$highlight<-FALSE
@@ -631,8 +635,8 @@ A plot of the state-expanded hypergraph are given below where action `keep` is d
 
 ```{r plotHMDP, echo=FALSE, results='hide', message=FALSE}
 mdp<-loadMDP(prefix)
-dat<-infoMDP(mdp,withHarc = TRUE)
-stateDF<-dat$stateDF
+dat<-infoMDP(mdp, withHarc = TRUE)
+stateDF<-dat$df
 stateDF$label[stateDF$label==""]<-c("Bad","Avg","Good")
 stateDF$label[stateDF$label=="Low yield"]<-"L"
 stateDF$label[stateDF$label=="Avg yield"]<-"A"
@@ -641,6 +645,7 @@ stateDF$label[stateDF$label=="Dummy"]<-"D"
 stateDF$label[stateDF$label=="Bad genetic level"]<-"Bad"
 stateDF$label[stateDF$label=="Avg genetic level"]<-"Avg"
 stateDF$label[stateDF$label=="Good genetic level"]<-"Good"
+stateDF$gId <- NA
 stateDF$gId[1:3]<-c(7,14,21)
 stateDF$gId[43:45]<-c(1,8,15)
 getGId<-function(process,stage,state) {
@@ -659,7 +664,6 @@ for (process in 0:2)
          stateDF$gId[idx]<-getGId(process,stage,state)
       }
 actionDF<-dat$harcDF
-actionDF$label<-dat$actionDF$label
 actionDF$label[actionDF$label=="Replace"]<-"R"
 actionDF$label[actionDF$label=="Keep"]<-"K"
 actionDF$label[actionDF$label=="Dummy"]<-"D"
@@ -695,8 +699,11 @@ getPolicy(mdp)
 A plot of the optimal policy can be seen below.
 
 ```{r plotPolicy, echo=FALSE, results='hide', message=FALSE}
-actionDF<-cbind(dat$actionDF,dat$harcDF)
-actionDF<-merge(actionDF,getPolicy(mdp))[,c("head","tail2","tail3","tail4","label","stateLabel")]
+actionDF <- left_join(getPolicy(mdp), dat$harcDF, by = c("sId" = "head", "actionLabel" = "label")) %>% 
+   filter(aIdx >= 0) %>% 
+   select(head = sId, contains("tail"), label = actionLabel)
+# actionDF<-cbind(dat$actionDF,dat$harcDF)
+# actionDF<-merge(actionDF,getPolicy(mdp))[,c("head","tail2","tail3","tail4","label","stateLabel")]
 actionDF$label[actionDF$label=="Replace"]<-"R"
 actionDF$label[actionDF$label=="Keep"]<-"K"
 actionDF$label[actionDF$label=="Dummy"]<-"D"

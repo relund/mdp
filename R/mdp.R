@@ -11,7 +11,7 @@
 #' 
 #' @return A list containing relevant information about the model and a pointer \code{ptr} to the model rc object in memory.
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.R
+#' @example inst/examples/machine.R
 #' @export
 loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"),
@@ -127,7 +127,7 @@ getWIdx<-function(mdp, wLbl) {
 #' 
 #' @return The optimal gain (g) calculated.
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @seealso \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
+#' @seealso \code{\link{getPolicy}}.
 #' @export
 policyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
@@ -156,7 +156,7 @@ policyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
 #' 
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @seealso \code{\link{getPolicy}}, \code{\link{getPolicyW}}.
+#' @seealso \code{\link{getPolicy}}.
 #' @export
 policyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
                             discountMethod="continuous", getLog = TRUE) {
@@ -194,7 +194,7 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFactor 
 #' @return NULL (invisible)
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
-#' @example tests/machine.R
+#' @example inst/examples/machine.R
 #' @export
 valueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
                    eps = 1e-05, termValues = NULL, g=NULL, getLog = TRUE, discountMethod="continuous") {
@@ -251,7 +251,7 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = 
 #' 
 #' @return The policy (data frame).
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.R
+#' @example inst/examples/machine.R
 #' @export
 getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                        ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
@@ -291,7 +291,7 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
    if (!is.null(external)) {
       policy <- list(main=policy)
       for (s in external) {
-         prefix <- subset(mdpExt$external, stageStr == s, select = "prefix", drop = TRUE)
+         prefix <- subset(mdp$external, stageStr == s, select = "prefix", drop = TRUE)
          lastStage<-mdp$ptr$getNextStageStr(s)
          termValues <- getPolicy(mdp, stageStr = lastStage)$weight
          extMDP<-loadMDP(prefix, getLog = FALSE)
@@ -301,10 +301,8 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
          rm(extMDP)
       }
    }
-	return(policy)
+	return(dplyr::as_tibble(policy))
 }
-
-
 
 
 
@@ -317,60 +315,27 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
 #'   Parameter \code{sId} are ignored if not NULL.
 #' @param stageStr A character vector containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). 
 #'   Parameter \code{sId} and \code{idxS} are ignored if not NULL.
-#' @param withDF Include two data frames with information about actions and states.
-#' @param withHarc Include hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
-#'   head (sId) and the rest tails (sId).
-#' @param asStrings Write state vector, transitions and probabilities as strings.
+#' @param withList Output info as a list `lst`.  
+#' @param withDF Output the info as a data frame.
+#' @param level If `withDF` and equal `"state"` the data frame contains a row for each state. If equal `"action"` the data frame contains a row for each action.
+#' @param asStringsState Write state vector as a string; otherwise, output it as columns.
+#' @param asStringsActions Write action vectors (weights, transitions and probabilities) as strings; otherwise, output it as columns.
+#' @param withHarc Output a hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
+#'   head (sId), the tails (sId) and the label.
 #'   
-#' @return A list of states containing actions.
+#' @return A list containing the list, data frame(s).
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.R
+#' @example inst/examples/machine.R
+#' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #' @export
-getActionInfo<-function(mdp, sId = NULL, actionStr=NULL, output = "tibble", stageStr=NULL, withDF = TRUE, withHarc = FALSE, asStrings = TRUE) {
-   if (!is.null(actionStr)) {
-      
-      sId<-mdp$ptr$getStateIdsStages(stageStr)
-      stateStr<-mdp$ptr$getStateStr(sId)
-   } else {
-      if (!is.null(sId)) sId<-mdp$ptr$getStateIdsStates(stateStr)
-      else stateStr<-mdp$ptr$getStateStr(sId)
-   }
-   maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
-   if (max(sId)>=maxS | min(sId)<0)
-      stop("Out of range (sId). Need to be a subset of 0,...,",maxS-1,"!")
-   l<-vector("list", length(sId))
-   lapply(l,function(x) x<-list(sId=NULL,stateStr=NULL,label=NULL,actions=NULL))
-   
-   labels<-mdp$ptr$getStateLabel(sId)
-   for (i in 1:length(l)) {
-      l[[i]]$sId <- sId[i]
-      l[[i]]$stateStr <- stateStr[i]
-      l[[i]]$label <- labels[i]
-      l[[i]]$actions <- mdp$ptr$getActionInfo(sId[i])
-   }
-}
-
-
-
-#' Information about the MDP
-#' 
-#' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param sId The id of the state(s) considered.
-#' @param stateStr A character vector containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1"). 
-#'   Parameter \code{sId} are ignored if not NULL.
-#' @param stageStr A character vector containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). 
-#'   Parameter \code{sId} and \code{idxS} are ignored if not NULL.
-#' @param withDF Include two data frames with information about actions and states.
-#' @param withHarc Include hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
-#'   head (sId) and the rest tails (sId).
-#' @param asStrings Write state vector, transitions and probabilities as strings.
-#'   
-#' @return A list of states containing actions.
-#' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.R
-#' @export
-infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+mdp$founderStatesLast)-1,
-                  stateStr=NULL, stageStr=NULL, withDF = TRUE, withHarc = FALSE, asStrings = TRUE) {
+infoMDP<-function(mdp, 
+                  sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+mdp$founderStatesLast)-1,
+                  stateStr=NULL, stageStr=NULL, 
+                  withList = TRUE, 
+                  withDF = TRUE, level = "state", asStringsState = TRUE, asStringsActions = FALSE,
+                  withHarc = FALSE
+                  ) {
    if (!is.null(stageStr)) {
       sId<-mdp$ptr$getStateIdsStages(stageStr)
       stateStr<-mdp$ptr$getStateStr(sId)
@@ -391,93 +356,73 @@ infoMDP<-function(mdp, sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+
       l[[i]]$label <- labels[i]
       l[[i]]$actions <- mdp$ptr$getActionInfo(sId[i])
    }
+   names(l) <- sId
+   lst <- list(lst = l)
    if (withDF) {
-      if (asStrings) {
-         stateDF=plyr::ldply(
-            .data=l,
-            .fun = function(x) {
-               data.frame(sId=x$sId, stateStr = x$stateStr, label = x$label, stringsAsFactors = FALSE)
-            }
-         )
-         actionDF=plyr::ldply(
-            .data = l,
-            .fun = function(x) {
-               plyr::ldply(
-                  x$actions,
-                  function(y) {
-                     data.frame(sId = x$sId, aIdx=y$aIdx, label = y$label,
-                                weights = paste(y$weights, collapse = ","),
-                                trans=paste(y$trans,collapse = ","),
-                                pr = paste(y$pr, collapse = ","), stringsAsFactors = FALSE)
-                  }
-               )
-            }
-         )
-      } 
-      if (!asStrings) {
-         stateDF=plyr::ldply(
-            .data=l,
-            .fun = function(x) { 
-               s <- rbind( scan(text=x$stateStr,, sep=",", quiet = TRUE) )
-               data.frame(sId=x$sId, label=x$label, s, stringsAsFactors = FALSE)
-            }
-         )
-         levels<-(ncol(stateDF)-2) %/% 3 + 1
-         if (levels==1) colnames(stateDF)<-c("sId","label",paste(c("n","s"),levels-1,sep=""))
-         if (levels>1) colnames(stateDF)<-c("sId","label",paste(c("n","s","a"),rep(0:(levels-2),each=3),sep=""),paste(c("n","s"),levels-1,sep=""))
-         maxSizeTrans = max(plyr::ldply(
-            .data = l,
-            .fun = function(x) {
-               plyr::ldply(
-                  x$actions,
-                  function(y) {
-                     w <- length(y$trans)
-                  }
-               )
-            }
-         ) )
-         actionDF=plyr::ldply(
-            .data = l,
-            .fun = function(x) {
-               plyr::ldply(
-                  x$actions,
-                  function(y) {
-                     w <- rbind(y$weights)
-                     t<-rep(NA,maxSizeTrans)
-                     t[1:length(y$trans)] <- y$trans
-                     t <- rbind(t)
-                     pr <- rep(NA,maxSizeTrans)
-                     pr[1:length(y$pr)] <- y$pr
-                     pr <- rbind(t)
-                     data.frame(sId = x$sId, aIdx=y$aIdx, label = y$label, w = w, trans = t, pr = pr, stringsAsFactors = FALSE)
-                  }
-               )
-            }
-         )
+      df <- dplyr::tibble(sId = l) # add list 
+      df <- df %>% tidyr::unnest_wider(.data$sId)  # convert states to columns
+      if (level == "action") {
+         df <- df %>% 
+            tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
+            tidyr::unnest_wider(.data$actions, names_repair = tidyr_legacy) # convert action to columns
+         df <- df %>% 
+            dplyr::rename(label_action = label1)
+         if (asStringsActions) {
+            df <- df %>% 
+               dplyr::mutate(weights = sapply(weights, function(x) paste0(x, collapse = ",")),
+                      trans = sapply(trans, function(x) paste0(x, collapse = ",")),
+                      pr = sapply(pr, function(x) paste0(x, collapse = ","))) %>% 
+               dplyr::mutate(weights = dplyr::na_if(weights, ""),
+                      trans = dplyr::na_if(trans, ""),
+                      pr = dplyr::na_if(pr, ""))
+         }
+      } else {
+         if (asStringsActions) {
+            df <- df %>% 
+               tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
+               tidyr::unnest_wider(.data$actions, names_repair = tidyr::tidyr_legacy) # convert action to columns
+            df <- df %>% 
+               dplyr::rename(label_action = .data$label1)
+            df <- df %>% 
+               dplyr::mutate(weights = sapply(.data$weights, function(x) paste0(x, collapse = ",")),
+                      trans = sapply(.data$trans, function(x) paste0(x, collapse = ",")),
+                      pr = sapply(.data$pr, function(x) paste0(x, collapse = ","))) %>% 
+               dplyr::mutate(weights = dplyr::na_if(.data$weights, ""),
+                      trans = dplyr::na_if(.data$trans, ""),
+                      pr = dplyr::na_if(.data$pr, ""))
+            df <- df %>% 
+               dplyr::group_by(.data$sId, .data$stateStr, .data$label) %>% 
+               tidyr::nest() %>% 
+               dplyr::mutate(data = lapply(.data$data, function(x) {if (all(is.na(x$aIdx))) return(NULL) else return(x)})) %>% 
+               dplyr::rename(actions = .data$data)
+         }
       }
+      if (!asStringsState) {
+         levels <- (max(stringr::str_count(df$stateStr, ",")) + 1) %/% 3 + 1
+         if (levels == 1)
+            nm <- paste(c("n", "s"), levels - 1, sep = "")
+         if (levels > 1)
+            nm <-
+               c(paste(c("n", "s", "a"), rep(0:(levels - 2), each = 3), sep = ""),
+                 paste(c("n", "s"), levels - 1, sep = ""))
+         df <- df %>% 
+            dplyr::separate(.data$stateStr, into = nm, sep = ",", remove = FALSE, fill = "right")
+      }
+      lst$df <- df
    }
    if (withHarc) {
-      harcDF=plyr::ldply(
-         .data = l,
-         .fun = function(x) {
-            plyr::ldply(
-               x$actions,
-               function(y) {
-                  rbind( c(x$sId, y$trans) )
-               }
-            )
-         }
-      )
-      harcDF$.id<-NULL
-      colnames(harcDF) <- paste("tail",colnames(harcDF),sep="")
-      colnames(harcDF)[1] <- "head"
-      l$harcDF <- harcDF
+      df <- dplyr::tibble(sId = l)  %>% 
+         tidyr::unnest_wider(.data$sId) %>% 
+         tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
+         tidyr::unnest_wider(.data$actions, names_repair = tidyr::tidyr_legacy) %>% 
+         tidyr::unnest_wider(.data$trans, names_sep = "") %>% 
+         dplyr::filter(!is.na(.data$aIdx)) %>% 
+         dplyr::select(.data$sId, contains("trans"), label = .data$label1)
+      colnames(df) <- stringr::str_replace(colnames(df), "trans", "tail")
+      colnames(df)[1] <- "head"
+      lst$harcDF <- df
    }
-   if (withDF) {
-      l$stateDF = stateDF
-      l$actionDF = actionDF
-   }
-   return(l)
+   return(lst)
 }
 
 
@@ -512,7 +457,7 @@ setPolicy<-function(mdp, policy) {
 #' 
 #' @return Nothing.
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @example tests/machine.R
+#' @example inst/examples/machine.R
 #' @export
 calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0, rateBase = 1, 
                       discountFactor = NULL, termValues = NULL, discountMethod = "continuous") {
@@ -553,14 +498,16 @@ calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0, 
 #' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
 #' @param g The optimal gain (g) calculated (used if \code{criterion = "average"}).
 #' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.
+#' @param stateStr Output the state string. 
 #' 
 #' @return The rpo (matrix/data frame).
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @importFrom magrittr %>%
 #' @export
 calcRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                     ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
                   criterion="expected", dur = "", rate = 0, rateBase = 1, discountFactor = NULL, 
-                  g = 0, discountMethod="continuous") {
+                  g = 0, discountMethod="continuous", stateStr = TRUE) {
    iW<-getWIdx(mdp,w)
    iDur<-getWIdx(mdp,dur)
    .checkWIdx(iW,length(mdp$weightNames))
@@ -578,7 +525,11 @@ calcRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStat
    if (criterion=="discount") rpo<-mdp$ptr$calcRPO(1, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
    if (criterion=="average")  rpo<-mdp$ptr$calcRPO(0, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
    rpo[rpo <= -1.8e+16]<-NA # less than 2 actions
-   rpo<-cbind(sId=sId, rpo=rpo)
+   rpo <- dplyr::tibble(sId=sId, rpo=rpo)
+   if (stateStr) {
+      rpo <- rpo %>% 
+         dplyr::transmute(sId, stateStr = mdp$ptr$getStateStr(sId), rpo)
+   }
    return(rpo)
 }
 
@@ -604,6 +555,8 @@ saveMDP<-function(mdp,prefix="", getLog=TRUE) {
 #' Assume that we consider an ergodic/irreducible time-homogeneous Markov chain specified using a policy in the MDP.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param getLog Output log text.
+#' 
 #' @return A vector with stady state probabilities for all the states at the founder level.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @export
@@ -624,7 +577,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param wLbl The label of the weight we consider.
 # #' @return Nothing.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.R
+# #' @example inst/examples/machine.R
 # #' @export
 # setActionWeight<-function(mdp, w, sId, iA, wLbl) {
 # 	iW<-getWIdx(mdp,wLbl)
@@ -667,7 +620,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @return Nothing.
 # #' @author Lars Relund \email{lars@@relund.dk}
 # #' @seealso \code{\link{resetActions}}, \code{\link{fixAction}}.
-# #' @example tests/machine.R
+# #' @example inst/examples/machine.R
 # #' @export
 # removeAction<-function(mdp, sId, iA) {
 # 	.Call("MDP_RemoveAction", mdp$ptr, as.integer(sId), as.integer(iA), PACKAGE="MDP")
@@ -681,7 +634,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @return Nothing.
 # #' @author Lars Relund \email{lars@@relund.dk}
 # #' @seealso \code{\link{resetActions}}, \code{\link{fixAction}}.
-# #' @example tests/machine.R
+# #' @example inst/examples/machine.R
 # #' @export
 # resetActions<-function(mdp) {
 # 	.Call("MDP_ResetActions", mdp$ptr, PACKAGE="MDP")
@@ -713,7 +666,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param stages A char vector of index in the form "n0,s0,a0,n1", i.e. 3*level+1 elements in the string.
 # #' @return A vector of ids for the states.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.R
+# #' @example inst/examples/machine.R
 # #' @export
 # getIdSStages<-function(mdp, stages) {
 # 	v<-.Call("MDP_GetIdSStage", mdp$ptr, as.character(stages), PACKAGE="MDP")
@@ -727,7 +680,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idS A vector of state ids.
 # #' @return A vector of index for the states.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.R
+# #' @example inst/examples/machine.R
 # #' @export
 # getStrIdxS<-function(mdp, idS) {
 # 	n<- mdp$states + ifelse(mdp$timeHorizon>=Inf,mdp$founderStatesLast,0)
@@ -743,7 +696,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idS A vector of state ids.
 # #' @return A vector of labels for the states.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.R
+# #' @example inst/examples/machine.R
 # #' @export
 # getLabel<-function(mdp, idS) {
 # 	n<- mdp$states + ifelse(mdp$timeHorizon>=Inf,mdp$founderStatesLast,0)
@@ -760,7 +713,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idxA The action index.
 # #' @return A vector of weights for the action.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.R
+# #' @example inst/examples/machine.R
 # #' @export
 # getActionW<-function(mdp, idS, idxA) {
 # 	l<-info(mdp, idS[1])
@@ -781,7 +734,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idxA The action index.
 # #' @return A vector of weights for the action.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.R
+# #' @example inst/examples/machine.R
 # #' @export
 # getActionTransIdS<-function(mdp, idS, idxA) {
 # 	l<-info(mdp, idS[1])
@@ -802,7 +755,7 @@ calcSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idxA The action index (c++ style starting from zero).
 # #' @return A vector of weights for the action.
 # #' @author Lars Relund \email{lars@@relund.dk}
-# #' @example tests/machine.R
+# #' @example inst/examples/machine.R
 # #' @export
 # getActionTransPr<-function(mdp, idS, idxA) {
 #   return(.Call("MDP_GetActionTransPr", mdp$ptr, as.integer(idS), as.integer(idxA), PACKAGE="MDP") )

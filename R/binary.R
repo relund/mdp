@@ -18,33 +18,47 @@
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @export
-binInfoStates<-function(prefix="", labels = TRUE, stateStr = TRUE, fileS="stateIdx.bin", labelS="stateIdxLbl.bin") {
-	fileS<-paste(prefix,fileS,sep="")
-	tmp<-readBin(fileS, integer(),n=file.info(fileS)$size/4)
-	rows<-length(tmp[tmp==-1])
-	if (!stateStr) {
-	   cols<-max(rle(tmp!=-1)$length)
-	   mat<-as.data.frame(matrix(NA,nrow=rows,ncol=cols+1))
-	   idx<-c(0,which(tmp== -1))
-	   for (i in 1:(length(idx)-1)) mat[i,1:(idx[i+1]-idx[i]-1)+1]<-tmp[(idx[i]+1):(idx[i+1]-1)]
-	   levels<-cols %/% 3 + 1
-	   if (levels==1) colnames(mat)<-c("sId",paste(c("n","s"),levels-1,sep=""))
-	   if (levels>1) colnames(mat)<-c("sId",paste(c("n","s","a"),rep(0:(levels-2),each=3),sep=""),paste(c("n","s"),levels-1,sep=""))
-	} else {
-	   mat<-as.data.frame(matrix(NA,nrow=rows,ncol=2))
-	   idx<-c(0,which(tmp== -1))
-	   for (i in 1:(length(idx)-1)) mat[i,2]<-paste(tmp[(idx[i]+1):(idx[i+1]-1)],collapse = ",")
-	   colnames(mat) <- c("sId","stageStr")
-	}
-	mat[,1]<-1:nrow(mat)-1
-	if (labels) {
-	   labelS<-paste(prefix,labelS,sep="")
-	   tmp<-readBin(labelS, character(),n=file.info(labelS)$size)
-	   tmp<-as.data.frame(matrix(tmp,ncol=2,byrow=TRUE),stringsAsFactors = FALSE)
-	   colnames(tmp)<-c("sId","label")
-	   mat<-merge(mat,tmp,all.x=TRUE)
-	}
-	return(mat)
+binInfoStates <-
+   function(prefix = "",
+            labels = TRUE,
+            stateStr = TRUE,
+            fileS = "stateIdx.bin",
+            labelS = "stateIdxLbl.bin"
+   ) {
+   fileS <- paste(prefix, fileS, sep = "")
+   tmp <- readBin(fileS, integer(), n = file.info(fileS)$size / 4)
+   rows <- length(tmp[tmp == -1])
+   if (!stateStr) {
+      cols <- max(rle(tmp != -1)$length)
+      mat <- as.data.frame(matrix(NA, nrow = rows, ncol = cols + 1))
+      idx <- c(0, which(tmp == -1))
+      for (i in 1:(length(idx) - 1))
+         mat[i, 1:(idx[i + 1] - idx[i] - 1) + 1] <-
+         tmp[(idx[i] + 1):(idx[i + 1] - 1)]
+      levels <- cols %/% 3 + 1
+      if (levels == 1)
+         colnames(mat) <- c("sId", paste(c("n", "s"), levels - 1, sep = ""))
+      if (levels > 1)
+         colnames(mat) <-
+         c("sId", paste(c("n", "s", "a"), rep(0:(levels - 2), each = 3), sep = ""), paste(c("n", "s"), levels -
+                                                                                             1, sep = ""))
+   } else {
+      mat <- as.data.frame(matrix(NA, nrow = rows, ncol = 2))
+      idx <- c(0, which(tmp == -1))
+      for (i in 1:(length(idx) - 1))
+         mat[i, 2] <- paste(tmp[(idx[i] + 1):(idx[i + 1] - 1)], collapse = ",")
+      colnames(mat) <- c("sId", "stageStr")
+   }
+   mat[, 1] <- 1:nrow(mat) - 1
+   if (labels) {
+      labelS <- paste(prefix, labelS, sep = "")
+      tmp <- readBin(labelS, character(), n = file.info(labelS)$size)
+      tmp <-
+         as.data.frame(matrix(tmp, ncol = 2, byrow = TRUE), stringsAsFactors = FALSE)
+      colnames(tmp) <- c("sId", "label")
+      mat <- merge(mat, tmp, all.x = TRUE)
+   }
+   return(dplyr::as_tibble(mat))
 }
 
 
@@ -56,8 +70,8 @@ binInfoStates<-function(prefix="", labels = TRUE, stateStr = TRUE, fileS="stateI
 #' @param fileA The binary file containing the description of actions.
 #' @param filePr The binary file containing the description of transition probabilities.
 #' @param fileW The binary file containing the description of weights.
-#' @param labelA The binary file containing the action labels.
-#' @param labelW The binary file containing the weight labels.
+#' @param fileLabelA The binary file containing the action labels.
+#' @param fileLabelW The binary file containing the weight labels.
 #'
 #' @return A data frame with the information. Scope string contain the scope of the transitions and
 #'   can be 4 values: 2 - A transition to a child process (stage zero in the child process), 1 - A
@@ -112,6 +126,6 @@ binInfoActions<-function(prefix="", labels = TRUE, fileA="actionIdx.bin",
       tmp$aId<-as.numeric(tmp$aId)
       mat<-merge(mat,tmp,all.x=TRUE)
    }
-   return(mat)
+   return(dplyr::as_tibble(mat))
 }
 

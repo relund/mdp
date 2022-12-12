@@ -4,12 +4,14 @@
 \alias{convertHMP2Binary}
 \title{Convert a HMDP model stored in a hmp (xml) file to binary file format.}
 \usage{
-convertHMP2Binary(file, prefix = "")
+convertHMP2Binary(file, prefix = "", getLog = TRUE)
 }
 \arguments{
 \item{file}{The name of the hmp file (e.g. mdp.hmp).}
 
 \item{prefix}{A character string with the prefix which will be added to the binary files.}
+
+\item{getLog}{Output log text.}
 }
 \value{
 NULL (invisible).

@@ -86,13 +86,12 @@ w$closeWriter()
 
 ## ----plotHgf, echo=FALSE, results='hide', message=FALSE---------------------------------
 mdp<-loadMDP("hct611-1_")
-dat<-infoMDP(mdp,withHarc = TRUE)
-stateDF<-dat$stateDF
+dat <- infoMDP(mdp, withHarc = TRUE)
+stateDF<-dat$df
 stateDF$label<-paste0(c(1:N,1:N)-1,": i=",c(1:N,1:N) )
 #stateDF$label[1:N]<-""
 stateDF$gId<-c(seq(2,10,by=2),seq(1,9,by=2))
 actionDF<-dat$harcDF
-actionDF$label<-dat$actionDF$label
 actionDF$lwd<-0.5
 actionDF$lty[actionDF$label=="no repair"]<-1
 actionDF$lty[actionDF$label=="preventive repair"]<-1
@@ -165,8 +164,7 @@ transPr(0,1)
 mdp<-loadMDP("hct611-1_")
 mdp # overall info
 info<-infoMDP(mdp)  # more detailed info
-info$actionDF
-info$stateDF
+info$df
 
 ## ----solve1_ave-------------------------------------------------------------------------
 # Optimal policy under average reward per time unit criterion
@@ -276,10 +274,9 @@ w$closeWriter()
 scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 4)
 mdp<-loadMDP("machine1_", getLog = FALSE)
 dat<-infoMDP(mdp, withHarc = TRUE)
-stateDF<-dat$stateDF
+stateDF<-dat$df
 stateDF$gId<-c(5,10,15,20,4,9,14,19,3,8,13,2,7,1)
 actionDF<-dat$harcDF
-actionDF$label<-dat$actionDF$label
 actionDF$lwd<-0.5
 actionDF$lwd<-1
 actionDF$col<-"deepskyblue3"
@@ -351,8 +348,7 @@ plotHypergraph(gridDim=c(4,5), states = stateDF, actions = actionDF, radx = 0.06
 mdp<-loadMDP("machine1_")
 mdp # overall info
 info<-infoMDP(mdp)  # more detailed info
-info$actionDF
-info$stateDF
+info$df
 
 ## ----solve3-----------------------------------------------------------------------------
 scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 4)
@@ -360,8 +356,10 @@ valueIte(mdp, "Net reward" , termValues=scrapValues)
 getPolicy(mdp)
 
 ## ----plotPolicy3, echo=FALSE, results='hide', message=FALSE-----------------------------
-actionDF<-cbind(dat$actionDF,dat$harcDF)
-actionDF<-merge(actionDF,getPolicy(mdp))[,c("head","tail2","tail3","label","stateLabel")]
+library(tidyverse)
+actionDF <- left_join(getPolicy(mdp), dat$harcDF, by = c("sId" = "head", "actionLabel" = "label")) %>% 
+   filter(aIdx >= 0) %>% 
+   select(head = sId, contains("tail"), label = actionLabel)
 actionDF$lwd<-1
 actionDF$col<-"deepskyblue3"
 actionDF$highlight<-FALSE
@@ -435,8 +433,8 @@ w$closeWriter()
 
 ## ----plotHMDP, echo=FALSE, results='hide', message=FALSE--------------------------------
 mdp<-loadMDP(prefix)
-dat<-infoMDP(mdp,withHarc = TRUE)
-stateDF<-dat$stateDF
+dat<-infoMDP(mdp, withHarc = TRUE)
+stateDF<-dat$df
 stateDF$label[stateDF$label==""]<-c("Bad","Avg","Good")
 stateDF$label[stateDF$label=="Low yield"]<-"L"
 stateDF$label[stateDF$label=="Avg yield"]<-"A"
@@ -445,6 +443,7 @@ stateDF$label[stateDF$label=="Dummy"]<-"D"
 stateDF$label[stateDF$label=="Bad genetic level"]<-"Bad"
 stateDF$label[stateDF$label=="Avg genetic level"]<-"Avg"
 stateDF$label[stateDF$label=="Good genetic level"]<-"Good"
+stateDF$gId <- NA
 stateDF$gId[1:3]<-c(7,14,21)
 stateDF$gId[43:45]<-c(1,8,15)
 getGId<-function(process,stage,state) {
@@ -463,7 +462,6 @@ for (process in 0:2)
          stateDF$gId[idx]<-getGId(process,stage,state)
       }
 actionDF<-dat$harcDF
-actionDF$label<-dat$actionDF$label
 actionDF$label[actionDF$label=="Replace"]<-"R"
 actionDF$label[actionDF$label=="Keep"]<-"K"
 actionDF$label[actionDF$label=="Dummy"]<-"D"
@@ -492,8 +490,11 @@ getPolicy(mdp)
 # policy
 
 ## ----plotPolicy, echo=FALSE, results='hide', message=FALSE------------------------------
-actionDF<-cbind(dat$actionDF,dat$harcDF)
-actionDF<-merge(actionDF,getPolicy(mdp))[,c("head","tail2","tail3","tail4","label","stateLabel")]
+actionDF <- left_join(getPolicy(mdp), dat$harcDF, by = c("sId" = "head", "actionLabel" = "label")) %>% 
+   filter(aIdx >= 0) %>% 
+   select(head = sId, contains("tail"), label = actionLabel)
+# actionDF<-cbind(dat$actionDF,dat$harcDF)
+# actionDF<-merge(actionDF,getPolicy(mdp))[,c("head","tail2","tail3","tail4","label","stateLabel")]
 actionDF$label[actionDF$label=="Replace"]<-"R"
 actionDF$label[actionDF$label=="Keep"]<-"K"
 actionDF$label[actionDF$label=="Dummy"]<-"D"

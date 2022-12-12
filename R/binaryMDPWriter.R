@@ -98,10 +98,12 @@
 #'
 #' @param prefix A character string with the prefix added to \code{binNames}.
 #' @param binNames A character vector giving the names of the binary files storing the model.
+#' @param getLog Output log text.
+#' 
 #' @return A list of functions.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @example tests/binaryMDPWriter.R
+#' @example inst/examples/binaryMDPWriter.R
 #' @export
 binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"),
