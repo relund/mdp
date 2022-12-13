@@ -129,7 +129,7 @@ getWIdx<-function(mdp, wLbl) {
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{getPolicy}}.
 #' @export
-policyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
+runPolicyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
 	iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
@@ -158,7 +158,7 @@ policyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @seealso \code{\link{getPolicy}}.
 #' @export
-policyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
+runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
                             discountMethod="continuous", getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
 	iDur<-getWIdx(mdp,dur)
@@ -196,7 +196,7 @@ policyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFactor 
 #' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
 #' @example inst/examples/machine.R
 #' @export
-valueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
+runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
                    eps = 1e-05, termValues = NULL, g=NULL, getLog = TRUE, discountMethod="continuous") {
 	iW<-getWIdx(mdp,w)
 	iDur<-NULL
@@ -256,7 +256,7 @@ valueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = 
 getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                        ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
                     stageStr = NULL, stateLabels = TRUE, actionLabels = TRUE, actionIdx = TRUE, 
-                    rewards = TRUE, stateStr = FALSE, external = NULL, ...) {
+                    rewards = TRUE, stateStr = TRUE, external = NULL, ...) {
 	if (!is.null(stageStr)) sId = mdp$ptr$getStateIdsStages(stageStr)
    maxS<-ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)
 	if (max(sId)>=maxS | min(sId)<0)
@@ -317,7 +317,7 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
 #'   Parameter \code{sId} and \code{idxS} are ignored if not NULL.
 #' @param withList Output info as a list `lst`.  
 #' @param withDF Output the info as a data frame.
-#' @param level If `withDF` and equal `"state"` the data frame contains a row for each state. If equal `"action"` the data frame contains a row for each action.
+#' @param dfLevel If `withDF` and equal `"state"` the data frame contains a row for each state. If equal `"action"` the data frame contains a row for each action.
 #' @param asStringsState Write state vector as a string; otherwise, output it as columns.
 #' @param asStringsActions Write action vectors (weights, transitions and probabilities) as strings; otherwise, output it as columns.
 #' @param withHarc Output a hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
@@ -329,11 +329,11 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
-infoMDP<-function(mdp, 
+getInfo<-function(mdp, 
                   sId=1:ifelse(mdp$timeHorizon<Inf, mdp$states, mdp$states+mdp$founderStatesLast)-1,
                   stateStr=NULL, stageStr=NULL, 
                   withList = TRUE, 
-                  withDF = TRUE, level = "state", asStringsState = TRUE, asStringsActions = FALSE,
+                  withDF = TRUE, dfLevel = "state", asStringsState = TRUE, asStringsActions = FALSE,
                   withHarc = FALSE
                   ) {
    if (!is.null(stageStr)) {
@@ -357,14 +357,15 @@ infoMDP<-function(mdp,
       l[[i]]$actions <- mdp$ptr$getActionInfo(sId[i])
    }
    names(l) <- sId
-   lst <- list(lst = l)
+   lst <- list()
+   if (withList) lst$lst <- l
    if (withDF) {
       df <- dplyr::tibble(sId = l) # add list 
       df <- df %>% tidyr::unnest_wider(sId)  # convert states to columns
-      if (level == "action") {
+      if (dfLevel == "action") {
          df <- df %>% 
             tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
-            tidyr::unnest_wider(.data$actions, names_repair = tidyr_legacy) # convert action to columns
+            tidyr::unnest_wider(.data$actions, names_repair = tidyr::tidyr_legacy) # convert action to columns
          df <- df %>% 
             dplyr::rename(label_action = label1)
          if (asStringsActions) {
@@ -432,14 +433,16 @@ infoMDP<-function(mdp,
 #' policy are used.
 #'
 #' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param policy A data frame with two columns state id and action index.
-#' @return Nothing.
+#' @param policy A data frame with two columns state id `sId` and action index `aIdx`.
+#' @return NULL (invisible)
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @example inst/examples/machine.R
 #' @export
 setPolicy<-function(mdp, policy) {
-   if (dim(policy)[2]!=2) stop("You must specify two columns in policy.")
-   mdp$ptr$setPolicy(as.integer(policy[,1]),as.integer(policy[,2]))
-	invisible(NULL)
+   if (!all(c("sId", "aIdx") %in% colnames(policy))) stop("You must specify `sId` and action index `aIdx`.")
+   #if (dim(policy)[2]!=2) stop("You must specify two columns in policy.")
+   mdp$ptr$setPolicy(as.integer(policy$sId),as.integer(policy$aIdx))
+	return(invisible(NULL))
 }
 
 
@@ -459,7 +462,7 @@ setPolicy<-function(mdp, policy) {
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @example inst/examples/machine.R
 #' @export
-calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0, rateBase = 1, 
+runCalcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0, rateBase = 1, 
                       discountFactor = NULL, termValues = NULL, discountMethod = "continuous") {
 	iW<-getWIdx(mdp,wLbl)
 	if (!is.null(durLbl)) iDur<-getWIdx(mdp,durLbl)
@@ -504,7 +507,7 @@ calcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0, 
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @importFrom magrittr %>%
 #' @export
-calcRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
+getRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                     ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
                   criterion="expected", dur = "", rate = 0, rateBase = 1, discountFactor = NULL, 
                   g = 0, discountMethod="continuous", stateStr = TRUE) {
@@ -560,7 +563,7 @@ saveMDP<-function(mdp,prefix="", getLog=TRUE) {
 #' @return A vector with stady state probabilities for all the states at the founder level.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @export
-calcSteadyStatePr<-function(mdp, getLog=FALSE) {
+getSteadyStatePr<-function(mdp, getLog=FALSE) {
    pr<-mdp$ptr$steadyStatePr()
    if (getLog) message(mdp$ptr$getLog())
 	return(pr)
