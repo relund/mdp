@@ -20,7 +20,6 @@ Imports:
     tidyr,
     magrittr,
     rlang,
-    methods,
     Rcpp (>= 0.11.5)
 Suggests:
     knitr,

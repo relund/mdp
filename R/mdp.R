@@ -360,7 +360,7 @@ infoMDP<-function(mdp,
    lst <- list(lst = l)
    if (withDF) {
       df <- dplyr::tibble(sId = l) # add list 
-      df <- df %>% tidyr::unnest_wider(.data$sId)  # convert states to columns
+      df <- df %>% tidyr::unnest_wider(sId)  # convert states to columns
       if (level == "action") {
          df <- df %>% 
             tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
@@ -391,7 +391,7 @@ infoMDP<-function(mdp,
                       trans = dplyr::na_if(.data$trans, ""),
                       pr = dplyr::na_if(.data$pr, ""))
             df <- df %>% 
-               dplyr::group_by(.data$sId, .data$stateStr, .data$label) %>% 
+               dplyr::group_by(sId, .data$stateStr, .data$label) %>% 
                tidyr::nest() %>% 
                dplyr::mutate(data = lapply(.data$data, function(x) {if (all(is.na(x$aIdx))) return(NULL) else return(x)})) %>% 
                dplyr::rename(actions = .data$data)
@@ -406,13 +406,13 @@ infoMDP<-function(mdp,
                c(paste(c("n", "s", "a"), rep(0:(levels - 2), each = 3), sep = ""),
                  paste(c("n", "s"), levels - 1, sep = ""))
          df <- df %>% 
-            dplyr::separate(.data$stateStr, into = nm, sep = ",", remove = FALSE, fill = "right")
+            tidyr::separate(.data$stateStr, into = nm, sep = ",", remove = FALSE, fill = "right")
       }
       lst$df <- df
    }
    if (withHarc) {
       df <- dplyr::tibble(sId = l)  %>% 
-         tidyr::unnest_wider(.data$sId) %>% 
+         tidyr::unnest_wider(sId) %>% 
          tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
          tidyr::unnest_wider(.data$actions, names_repair = tidyr::tidyr_legacy) %>% 
          tidyr::unnest_wider(.data$trans, names_sep = "") %>% 
