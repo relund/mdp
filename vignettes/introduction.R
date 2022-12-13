@@ -86,7 +86,7 @@ w$closeWriter()
 
 ## ----plotHgf, echo=FALSE, results='hide', message=FALSE---------------------------------
 mdp<-loadMDP("hct611-1_")
-dat <- infoMDP(mdp, withHarc = TRUE)
+dat <- getInfo(mdp, withHarc = TRUE)
 stateDF<-dat$df
 stateDF$label<-paste0(c(1:N,1:N)-1,": i=",c(1:N,1:N) )
 #stateDF$label[1:N]<-""
@@ -163,19 +163,19 @@ transPr(0,1)
 ## ----load-------------------------------------------------------------------------------
 mdp<-loadMDP("hct611-1_")
 mdp # overall info
-info<-infoMDP(mdp)  # more detailed info
+info<-getInfo(mdp)  # more detailed info
 info$df
 
 ## ----solve1_ave-------------------------------------------------------------------------
 # Optimal policy under average reward per time unit criterion
-policyIteAve(mdp,"Net reward","Duration")
+runPolicyIteAve(mdp,"Net reward","Duration")
 getPolicy(mdp)
 
 ## ----solve1_discount--------------------------------------------------------------------
 # Optimal policy under expected discounted reward criterion (use both policy and value ite)
-policyIteDiscount(mdp,"Net reward","Duration", discountFactor = 0.5)
+runPolicyIteDiscount(mdp,"Net reward","Duration", discountFactor = 0.5)
 getPolicy(mdp)
-valueIte(mdp,"Net reward","Duration", discountFactor = 0.5, eps = 1e-10, maxIte = 1000)
+runValueIte(mdp,"Net reward","Duration", discountFactor = 0.5, eps = 1e-10, maxIte = 1000)
 getPolicy(mdp)
 
 ## ----buildMDP2--------------------------------------------------------------------------
@@ -207,7 +207,7 @@ w$closeWriter()
 
 ## ----solve2-----------------------------------------------------------------------------
 mdp<-loadMDP("hct611-2_")
-policyIteAve(mdp,"Net reward","Duration")
+runPolicyIteAve(mdp,"Net reward","Duration")
 getPolicy(mdp)
 
 ## ----buildMDP3, include=FALSE-----------------------------------------------------------
@@ -273,7 +273,7 @@ w$closeWriter()
 ## ----plotHgf3, echo=FALSE---------------------------------------------------------------
 scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 4)
 mdp<-loadMDP("machine1_", getLog = FALSE)
-dat<-infoMDP(mdp, withHarc = TRUE)
+dat<-getInfo(mdp, withHarc = TRUE)
 stateDF<-dat$df
 stateDF$gId<-c(5,10,15,20,4,9,14,19,3,8,13,2,7,1)
 actionDF<-dat$harcDF
@@ -347,12 +347,12 @@ plotHypergraph(gridDim=c(4,5), states = stateDF, actions = actionDF, radx = 0.06
 ## ----load3------------------------------------------------------------------------------
 mdp<-loadMDP("machine1_")
 mdp # overall info
-info<-infoMDP(mdp)  # more detailed info
+info<-getInfo(mdp)  # more detailed info
 info$df
 
 ## ----solve3-----------------------------------------------------------------------------
 scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 4)
-valueIte(mdp, "Net reward" , termValues=scrapValues)
+runValueIte(mdp, "Net reward" , termValues=scrapValues)
 getPolicy(mdp)
 
 ## ----plotPolicy3, echo=FALSE, results='hide', message=FALSE-----------------------------
@@ -372,7 +372,7 @@ setPolicy(mdp, policy)
 getPolicy(mdp)
 
 ## ----Calc reward (machine rep),echo=TRUE------------------------------------------------
-calcWeights(mdp, "Net reward", termValues=scrapValues)
+runCalcWeights(mdp, "Net reward", termValues=scrapValues)
 getPolicy(mdp)    
 
 ## ----Generate cow MDP functions,echo=TRUE-----------------------------------------------
@@ -433,7 +433,7 @@ w$closeWriter()
 
 ## ----plotHMDP, echo=FALSE, results='hide', message=FALSE--------------------------------
 mdp<-loadMDP(prefix)
-dat<-infoMDP(mdp, withHarc = TRUE)
+dat<-getInfo(mdp, withHarc = TRUE)
 stateDF<-dat$df
 stateDF$label[stateDF$label==""]<-c("Bad","Avg","Good")
 stateDF$label[stateDF$label=="Low yield"]<-"L"
@@ -483,7 +483,7 @@ plotHypergraph(gridDim=c(14,7), states = stateDF, actions = actionDF, cex = 0.8)
 mdp<-loadMDP(prefix)
 wLbl<-"Net reward"         # the weight we want to optimize (net reward)
 durLbl<-"Duration"         # the duration/time label
-policyIteDiscount(mdp, wLbl, durLbl, rate=0.1)
+runPolicyIteDiscount(mdp, wLbl, durLbl, rate=0.1)
 getPolicy(mdp)
 # rpo<-calcRPO(mdp, wLbl, iA=rep(0,42), criterion="discount", dur=durLbl, rate=rate, rateBase=rateBase)
 # policy<-merge(policy,rpo)
@@ -514,14 +514,14 @@ plotHypergraph(gridDim=c(14,7), states = stateDF, actions = actionDF, cex = 0.8)
 ## ----avePerLac, tidy.opts=list(comment=FALSE)-------------------------------------------
 wLbl<-"Net reward"         # the weight we want to optimize (net reward)
 durLbl<-"Duration"         # the duration/time label
-policyIteAve(mdp, wLbl, durLbl)
+runPolicyIteAve(mdp, wLbl, durLbl)
 getPolicy(mdp)
 
 ## ----Piglets/time (sow rep), echo=TRUE--------------------------------------------------
-calcWeights(mdp, w=wLbl, criterion="average", dur = "Yield")
+runCalcWeights(mdp, w=wLbl, criterion="average", dur = "Yield")
 
 ## ----Reward/piglet (sow rep), echo=TRUE-------------------------------------------------
-calcWeights(mdp, w="Yield", criterion="average", dur = durLbl)
+runCalcWeights(mdp, w="Yield", criterion="average", dur = durLbl)
 
 ## ----Delete bin, include=FALSE----------------------------------------------------------
 do.call(file.remove,list(list.files(pattern = ".bin")))

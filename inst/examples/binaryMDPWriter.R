@@ -1,3 +1,6 @@
+## Use temp dir
+wd <- setwd(tempdir())
+
 # Create a small HMDP with two levels
 w<-binaryMDPWriter()
 w$setWeights(c("Duration","Net reward","Items"))
@@ -105,6 +108,9 @@ w$process()
 w$endProcess()
 w$closeWriter()
 
-## Info about the binary files
-binInfoStates()
-binInfoActions()
+## Info about the binary files (don't have to load the model first)
+getBinInfoStates()
+getBinInfoActions()
+
+## reset working dir
+setwd(wd)

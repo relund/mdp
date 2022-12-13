@@ -607,9 +607,9 @@ an <code>action</code> are specified using the <code>pr</code> and
 prefix “<code>hct611-1_</code>”.</p>
 <p>The model can be loaded using</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(<span class="st">&quot;hct611-1_&quot;</span>)</span></code></pre></div>
-<pre><code>Read binary files (0.000285309 sec.)
-Build the HMDP (2.4419e-05 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (1.024e-06 sec.)</code></pre>
+<pre><code>Read binary files (0.000305969 sec.)
+Build the HMDP (2.4965e-05 sec.)</code></pre>
+<pre><code>Checking MDP and found no errors (9.17e-07 sec.)</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp <span class="co"># overall info</span></span></code></pre></div>
 <pre><code>$binNames
 [1] &quot;hct611-1_stateIdx.bin&quot;          &quot;hct611-1_stateIdxLbl.bin&quot;      
@@ -636,11 +636,11 @@ $weightNames
 [1] &quot;Duration&quot;   &quot;Net reward&quot;
 
 $ptr
-C++ object &lt;0x7fd1e5e50a90&gt; of class &#39;HMDP&#39; &lt;0x600002a3a000&gt;
+C++ object &lt;0x7fd82eb87da0&gt; of class &#39;HMDP&#39; &lt;0x6000019fd300&gt;
 
 attr(,&quot;class&quot;)
 [1] &quot;MDP:C++&quot;</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="ot">&lt;-</span><span class="fu">infoMDP</span>(mdp)  <span class="co"># more detailed info</span></span>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="ot">&lt;-</span><span class="fu">getInfo</span>(mdp)  <span class="co"># more detailed info</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="sc">$</span>df</span></code></pre></div>
 <pre><code># A tibble: 10 × 4
      sId stateStr label actions   
@@ -663,51 +663,51 @@ optimized! Given the model in memory, we now can find the optimal policy
 under various policies. Let us first try to optimize the average reward
 per time unit.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># Optimal policy under average reward per time unit criterion</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">policyIteAve</span>(mdp,<span class="st">&quot;Net reward&quot;</span>,<span class="st">&quot;Duration&quot;</span>)</span></code></pre></div>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">runPolicyIteAve</span>(mdp,<span class="st">&quot;Net reward&quot;</span>,<span class="st">&quot;Duration&quot;</span>)</span></code></pre></div>
 <pre><code>Run policy iteration under average reward criterion using 
 reward &#39;Net reward&#39; over &#39;Duration&#39;. Iterations (g): 
-1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.024e-06 sec.</code></pre>
+1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 9.17e-07 sec.</code></pre>
 <pre><code>[1] -0.43379</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code># A tibble: 5 × 5
-    sId stateLabel  aIdx actionLabel       weight
-  &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;              &lt;dbl&gt;
-1     5 i=1            0 no repair           9.13
-2     6 i=2            0 no repair           4.79
-3     7 i=3            0 no repair           2.97
-4     8 i=4            1 preventive repair   4.57
-5     9 i=5            0 forced repair       0   </code></pre>
+<pre><code># A tibble: 5 × 6
+    sId stateStr stateLabel  aIdx actionLabel       weight
+  &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;              &lt;dbl&gt;
+1     5 0,0      i=1            0 no repair           9.13
+2     6 0,1      i=2            0 no repair           4.79
+3     7 0,2      i=3            0 no repair           2.97
+4     8 0,3      i=4            1 preventive repair   4.57
+5     9 0,4      i=5            0 forced repair       0   </code></pre>
 <p>Note it is optimal to do a preventive repair in state <span class="math inline">\(i=4\)</span>. Let us try to optimize the expected
 total discounted reward using both policy iteration and value
 iteration.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># Optimal policy under expected discounted reward criterion (use both policy and value ite)</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">policyIteDiscount</span>(mdp,<span class="st">&quot;Net reward&quot;</span>,<span class="st">&quot;Duration&quot;</span>, <span class="at">discountFactor =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">runPolicyIteDiscount</span>(mdp,<span class="st">&quot;Net reward&quot;</span>,<span class="st">&quot;Duration&quot;</span>, <span class="at">discountFactor =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 <pre><code>Run policy iteration using quantity &#39;Net reward&#39; under discounting criterion 
 with &#39;Duration&#39; as duration using discount factor 0.5. 
-Iteration(s): 1 2 finished. Cpu time: 1.024e-06 sec.</code></pre>
+Iteration(s): 1 2 finished. Cpu time: 9.17e-07 sec.</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code># A tibble: 5 × 5
-    sId stateLabel  aIdx actionLabel     weight
-  &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;
-1     5 i=1            0 no repair      -0.0642
-2     6 i=2            0 no repair      -0.706 
-3     7 i=3            0 no repair      -1.80  
-4     8 i=4            0 no repair      -3.34  
-5     9 i=5            0 forced repair -10.0   </code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">valueIte</span>(mdp,<span class="st">&quot;Net reward&quot;</span>,<span class="st">&quot;Duration&quot;</span>, <span class="at">discountFactor =</span> <span class="fl">0.5</span>, <span class="at">eps =</span> <span class="fl">1e-10</span>, <span class="at">maxIte =</span> <span class="dv">1000</span>)</span></code></pre></div>
+<pre><code># A tibble: 5 × 6
+    sId stateStr stateLabel  aIdx actionLabel     weight
+  &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;
+1     5 0,0      i=1            0 no repair      -0.0642
+2     6 0,1      i=2            0 no repair      -0.706 
+3     7 0,2      i=3            0 no repair      -1.80  
+4     8 0,3      i=4            0 no repair      -3.34  
+5     9 0,4      i=5            0 forced repair -10.0   </code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runValueIte</span>(mdp,<span class="st">&quot;Net reward&quot;</span>,<span class="st">&quot;Duration&quot;</span>, <span class="at">discountFactor =</span> <span class="fl">0.5</span>, <span class="at">eps =</span> <span class="fl">1e-10</span>, <span class="at">maxIte =</span> <span class="dv">1000</span>)</span></code></pre></div>
 <pre><code>Run value iteration with epsilon = 1e-10 at most 1000 time(s)
 using quantity &#39;Net reward&#39; under expected discounted reward criterion 
 with &#39;Duration&#39; as duration using discount factor 0.5.
-Iterations: 33 Finished. Cpu time 2.3763e-05 sec.</code></pre>
+Iterations: 33 Finished. Cpu time 2.0173e-05 sec.</code></pre>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code># A tibble: 5 × 5
-    sId stateLabel  aIdx actionLabel     weight
-  &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;
-1     5 i=1            0 no repair      -0.0642
-2     6 i=2            0 no repair      -0.706 
-3     7 i=3            0 no repair      -1.80  
-4     8 i=4            0 no repair      -3.34  
-5     9 i=5            0 forced repair -10.0   </code></pre>
+<pre><code># A tibble: 5 × 6
+    sId stateStr stateLabel  aIdx actionLabel     weight
+  &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;            &lt;dbl&gt;
+1     5 0,0      i=1            0 no repair      -0.0642
+2     6 0,1      i=2            0 no repair      -0.706 
+3     7 0,2      i=3            0 no repair      -1.80  
+4     8 0,3      i=4            0 no repair      -3.34  
+5     9 0,4      i=5            0 forced repair -10.0   </code></pre>
 <p>Note given a discount factor of 0.5, it is optimal to not do a
 preventive repair in state <span class="math inline">\(i=4\)</span>.</p>
 <p>The model can also be built by specifying a set of matrices. Note
@@ -751,23 +751,23 @@ again.</p>
 
   Closing binary MDP writer.</code></pre>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(<span class="st">&quot;hct611-2_&quot;</span>)</span></code></pre></div>
-<pre><code>Read binary files (0.000276005 sec.)
-Build the HMDP (2.3779e-05 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (7.57e-07 sec.)</code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">policyIteAve</span>(mdp,<span class="st">&quot;Net reward&quot;</span>,<span class="st">&quot;Duration&quot;</span>)</span></code></pre></div>
+<pre><code>Read binary files (0.000272955 sec.)
+Build the HMDP (2.251e-05 sec.)</code></pre>
+<pre><code>Checking MDP and found no errors (7.91e-07 sec.)</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runPolicyIteAve</span>(mdp,<span class="st">&quot;Net reward&quot;</span>,<span class="st">&quot;Duration&quot;</span>)</span></code></pre></div>
 <pre><code>Run policy iteration under average reward criterion using 
 reward &#39;Net reward&#39; over &#39;Duration&#39;. Iterations (g): 
-1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 7.57e-07 sec.</code></pre>
+1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 7.91e-07 sec.</code></pre>
 <pre><code>[1] -0.43379</code></pre>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code># A tibble: 5 × 5
-    sId stateLabel  aIdx actionLabel weight
-  &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt;
-1     5 1              0 1             9.13
-2     6 2              0 1             4.79
-3     7 3              0 1             2.97
-4     8 4              1 2             4.57
-5     9 5              0 3             0   </code></pre>
+<pre><code># A tibble: 5 × 6
+    sId stateStr stateLabel  aIdx actionLabel weight
+  &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt;
+1     5 0,0      1              0 1             9.13
+2     6 0,1      2              0 1             4.79
+3     7 0,2      3              0 1             2.97
+4     8 0,3      4              1 2             4.57
+5     9 0,4      5              0 3             0   </code></pre>
 </div>
 <div id="a-finite-horizon-semi-mdp" class="section level2">
 <h2>A finite-horizon Semi-MDP</h2>
@@ -953,9 +953,9 @@ define an action with transition to states with id’s 1 and 2 at the next
 stage with probability 0.2 and 0.8, respectively.</p>
 <p>Let us try to load the model and get some info:</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(<span class="st">&quot;machine1_&quot;</span>)</span></code></pre></div>
-<pre><code>Read binary files (0.000320236 sec.)
-Build the HMDP (3.6005e-05 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (8.41e-07 sec.)</code></pre>
+<pre><code>Read binary files (0.000266174 sec.)
+Build the HMDP (3.8036e-05 sec.)</code></pre>
+<pre><code>Checking MDP and found no errors (8.43e-07 sec.)</code></pre>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp <span class="co"># overall info</span></span></code></pre></div>
 <pre><code>$binNames
 [1] &quot;machine1_stateIdx.bin&quot;          &quot;machine1_stateIdxLbl.bin&quot;      
@@ -982,11 +982,11 @@ $weightNames
 [1] &quot;Net reward&quot;
 
 $ptr
-C++ object &lt;0x7fd1e58f0860&gt; of class &#39;HMDP&#39; &lt;0x600002a3a000&gt;
+C++ object &lt;0x7fd8296955f0&gt; of class &#39;HMDP&#39; &lt;0x6000019fd300&gt;
 
 attr(,&quot;class&quot;)
 [1] &quot;MDP:C++&quot;</code></pre>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="ot">&lt;-</span><span class="fu">infoMDP</span>(mdp)  <span class="co"># more detailed info</span></span>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="ot">&lt;-</span><span class="fu">getInfo</span>(mdp)  <span class="co"># more detailed info</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="sc">$</span>df</span></code></pre></div>
 <pre><code># A tibble: 14 × 4
      sId stateStr label       actions   
@@ -1009,28 +1009,28 @@ attr(,&quot;class&quot;)
 expected total reward under the assumption that terminal values are
 30,10,5,0.</p>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> scrapValues<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">10</span>,<span class="dv">5</span>,<span class="dv">0</span>)   <span class="co"># scrap values (the values of the 4 states at stage 4)</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">valueIte</span>(mdp, <span class="st">&quot;Net reward&quot;</span> , <span class="at">termValues=</span>scrapValues)</span></code></pre></div>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runValueIte</span>(mdp, <span class="st">&quot;Net reward&quot;</span> , <span class="at">termValues=</span>scrapValues)</span></code></pre></div>
 <pre><code>Run value iteration with epsilon = 0 at most 1 time(s)
 using quantity &#39;Net reward&#39; under reward criterion.
- Finished. Cpu time 3.909e-06 sec.</code></pre>
+ Finished. Cpu time 3.445e-06 sec.</code></pre>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code># A tibble: 14 × 5
-     sId stateLabel   aIdx actionLabel weight
-   &lt;dbl&gt; &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt;
- 1     0 good           -1 &quot;&quot;             30 
- 2     1 average        -1 &quot;&quot;             10 
- 3     2 not working    -1 &quot;&quot;              5 
- 4     3 replaced       -1 &quot;&quot;              0 
- 5     4 good            0 &quot;mt&quot;           85 
- 6     5 average         0 &quot;mt&quot;           70 
- 7     6 not working     0 &quot;mt&quot;           60 
- 8     7 replaced        0 &quot;Dummy&quot;         0 
- 9     8 good            1 &quot;nmt&quot;         148.
-10     9 average         0 &quot;mt&quot;          125 
-11    10 not working     0 &quot;mt&quot;          115 
-12    11 good            1 &quot;nmt&quot;         208.
-13    12 average         0 &quot;mt&quot;          188.
-14    13 Dummy           0 &quot;buy&quot;         102.</code></pre>
+<pre><code># A tibble: 14 × 6
+     sId stateStr stateLabel   aIdx actionLabel weight
+   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt;
+ 1     0 4,0      good           -1 &quot;&quot;             30 
+ 2     1 4,1      average        -1 &quot;&quot;             10 
+ 3     2 4,2      not working    -1 &quot;&quot;              5 
+ 4     3 4,3      replaced       -1 &quot;&quot;              0 
+ 5     4 3,0      good            0 &quot;mt&quot;           85 
+ 6     5 3,1      average         0 &quot;mt&quot;           70 
+ 7     6 3,2      not working     0 &quot;mt&quot;           60 
+ 8     7 3,3      replaced        0 &quot;Dummy&quot;         0 
+ 9     8 2,0      good            1 &quot;nmt&quot;         148.
+10     9 2,1      average         0 &quot;mt&quot;          125 
+11    10 2,2      not working     0 &quot;mt&quot;          115 
+12    11 1,0      good            1 &quot;nmt&quot;         208.
+13    12 1,1      average         0 &quot;mt&quot;          188.
+14    13 0,0      Dummy           0 &quot;buy&quot;         102.</code></pre>
 <p>The optimal policy is illustrated below:</p>
 <pre><code>Warning: Unknown or uninitialised column: `lty`.
 Unknown or uninitialised column: `lty`.
@@ -1050,47 +1050,47 @@ machine:</p>
 <div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> policy<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">sId=</span><span class="fu">c</span>(<span class="dv">8</span>,<span class="dv">11</span>),<span class="at">aIdx=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))</span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">setPolicy</span>(mdp, policy)</span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code># A tibble: 14 × 5
-     sId stateLabel   aIdx actionLabel weight
-   &lt;dbl&gt; &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt;
- 1     0 good           -1 &quot;&quot;             30 
- 2     1 average        -1 &quot;&quot;             10 
- 3     2 not working    -1 &quot;&quot;              5 
- 4     3 replaced       -1 &quot;&quot;              0 
- 5     4 good            0 &quot;mt&quot;           85 
- 6     5 average         0 &quot;mt&quot;           70 
- 7     6 not working     0 &quot;mt&quot;           60 
- 8     7 replaced        0 &quot;Dummy&quot;         0 
- 9     8 good            0 &quot;mt&quot;          148.
-10     9 average         0 &quot;mt&quot;          125 
-11    10 not working     0 &quot;mt&quot;          115 
-12    11 good            0 &quot;mt&quot;          208.
-13    12 average         0 &quot;mt&quot;          188.
-14    13 Dummy           0 &quot;buy&quot;         102.</code></pre>
+<pre><code># A tibble: 14 × 6
+     sId stateStr stateLabel   aIdx actionLabel weight
+   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt;
+ 1     0 4,0      good           -1 &quot;&quot;             30 
+ 2     1 4,1      average        -1 &quot;&quot;             10 
+ 3     2 4,2      not working    -1 &quot;&quot;              5 
+ 4     3 4,3      replaced       -1 &quot;&quot;              0 
+ 5     4 3,0      good            0 &quot;mt&quot;           85 
+ 6     5 3,1      average         0 &quot;mt&quot;           70 
+ 7     6 3,2      not working     0 &quot;mt&quot;           60 
+ 8     7 3,3      replaced        0 &quot;Dummy&quot;         0 
+ 9     8 2,0      good            0 &quot;mt&quot;          148.
+10     9 2,1      average         0 &quot;mt&quot;          125 
+11    10 2,2      not working     0 &quot;mt&quot;          115 
+12    11 1,0      good            0 &quot;mt&quot;          208.
+13    12 1,1      average         0 &quot;mt&quot;          188.
+14    13 0,0      Dummy           0 &quot;buy&quot;         102.</code></pre>
 <p>If the policy specified in <code>setPolicy</code> does not contain
 all states then the actions from the previous optimal policy are used.
 In the output above we can see that the policy now is to maintain
 always. However, the reward of the policy has not been updated. Let us
 calculate the expected reward:</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">calcWeights</span>(mdp, <span class="st">&quot;Net reward&quot;</span>, <span class="at">termValues=</span>scrapValues)</span>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runCalcWeights</span>(mdp, <span class="st">&quot;Net reward&quot;</span>, <span class="at">termValues=</span>scrapValues)</span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)    </span></code></pre></div>
-<pre><code># A tibble: 14 × 5
-     sId stateLabel   aIdx actionLabel weight
-   &lt;dbl&gt; &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt;
- 1     0 good           -1 &quot;&quot;            30  
- 2     1 average        -1 &quot;&quot;            10  
- 3     2 not working    -1 &quot;&quot;             5  
- 4     3 replaced       -1 &quot;&quot;             0  
- 5     4 good            0 &quot;mt&quot;          85  
- 6     5 average         0 &quot;mt&quot;          70  
- 7     6 not working     0 &quot;mt&quot;          60  
- 8     7 replaced        0 &quot;Dummy&quot;        0  
- 9     8 good            0 &quot;mt&quot;         140  
-10     9 average         0 &quot;mt&quot;         125  
-11    10 not working     0 &quot;mt&quot;         115  
-12    11 good            0 &quot;mt&quot;         195  
-13    12 average         0 &quot;mt&quot;         180  
-14    13 Dummy           0 &quot;buy&quot;         90.5</code></pre>
+<pre><code># A tibble: 14 × 6
+     sId stateStr stateLabel   aIdx actionLabel weight
+   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;        &lt;dbl&gt;
+ 1     0 4,0      good           -1 &quot;&quot;            30  
+ 2     1 4,1      average        -1 &quot;&quot;            10  
+ 3     2 4,2      not working    -1 &quot;&quot;             5  
+ 4     3 4,3      replaced       -1 &quot;&quot;             0  
+ 5     4 3,0      good            0 &quot;mt&quot;          85  
+ 6     5 3,1      average         0 &quot;mt&quot;          70  
+ 7     6 3,2      not working     0 &quot;mt&quot;          60  
+ 8     7 3,3      replaced        0 &quot;Dummy&quot;        0  
+ 9     8 2,0      good            0 &quot;mt&quot;         140  
+10     9 2,1      average         0 &quot;mt&quot;         125  
+11    10 2,2      not working     0 &quot;mt&quot;         115  
+12    11 1,0      good            0 &quot;mt&quot;         195  
+13    12 1,1      average         0 &quot;mt&quot;         180  
+14    13 0,0      Dummy           0 &quot;buy&quot;         90.5</code></pre>
 <p>That is, the expected reward is 90.5 compared to 102.2 which was the
 reward of the optimal policy.</p>
 </div>
@@ -1252,29 +1252,29 @@ probabilities 0.3 and 0.7, respectively.</p>
 criterion the HMDP using policy iteration:</p>
 <div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="do">## solve under discount criterion</span></span>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(prefix)</span></code></pre></div>
-<pre><code>Read binary files (0.000385025 sec.)
-Build the HMDP (0.000240771 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (1.212e-06 sec.)</code></pre>
+<pre><code>Read binary files (0.000365549 sec.)
+Build the HMDP (0.000226336 sec.)</code></pre>
+<pre><code>Checking MDP and found no errors (1.593e-06 sec.)</code></pre>
 <div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> wLbl<span class="ot">&lt;-</span><span class="st">&quot;Net reward&quot;</span>         <span class="co"># the weight we want to optimize (net reward)</span></span>
 <span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> durLbl<span class="ot">&lt;-</span><span class="st">&quot;Duration&quot;</span>         <span class="co"># the duration/time label</span></span>
-<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">policyIteDiscount</span>(mdp, wLbl, durLbl, <span class="at">rate=</span><span class="fl">0.1</span>)</span></code></pre></div>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runPolicyIteDiscount</span>(mdp, wLbl, durLbl, <span class="at">rate=</span><span class="fl">0.1</span>)</span></code></pre></div>
 <pre><code>Run policy iteration using quantity &#39;Net reward&#39; under discounting criterion 
 with &#39;Duration&#39; as duration using discount factor 0.904837. 
-Iteration(s): 1 2 3 4 finished. Cpu time: 1.212e-06 sec.</code></pre>
+Iteration(s): 1 2 3 4 finished. Cpu time: 1.593e-06 sec.</code></pre>
 <div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code># A tibble: 42 × 5
-     sId stateLabel  aIdx actionLabel  weight
-   &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;         &lt;dbl&gt;
- 1     3 Low yield      0 Replace     118594.
- 2     4 Avg yield      0 Replace     120594.
- 3     5 High yield     0 Replace     122594.
- 4     6 Low yield      0 Keep        120213.
- 5     7 Avg yield      0 Keep        123118.
- 6     8 High yield     0 Keep        126023.
- 7     9 Low yield      0 Keep        122088.
- 8    10 Avg yield      0 Keep        125402.
- 9    11 High yield     0 Keep        128716.
-10    12 Low yield      0 Keep        121969.
+<pre><code># A tibble: 42 × 6
+     sId stateStr  stateLabel  aIdx actionLabel  weight
+   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;         &lt;dbl&gt;
+ 1     3 0,2,0,4,0 Low yield      0 Replace     118594.
+ 2     4 0,2,0,4,1 Avg yield      0 Replace     120594.
+ 3     5 0,2,0,4,2 High yield     0 Replace     122594.
+ 4     6 0,2,0,3,0 Low yield      0 Keep        120213.
+ 5     7 0,2,0,3,1 Avg yield      0 Keep        123118.
+ 6     8 0,2,0,3,2 High yield     0 Keep        126023.
+ 7     9 0,2,0,2,0 Low yield      0 Keep        122088.
+ 8    10 0,2,0,2,1 Avg yield      0 Keep        125402.
+ 9    11 0,2,0,2,2 High yield     0 Keep        128716.
+10    12 0,2,0,1,0 Low yield      0 Keep        121969.
 # … with 32 more rows</code></pre>
 <div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># rpo&lt;-calcRPO(mdp, wLbl, iA=rep(0,42), criterion=&quot;discount&quot;, dur=durLbl, rate=rate, rateBase=rateBase)</span></span>
 <span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="co"># policy&lt;-merge(policy,rpo)</span></span>
@@ -1287,32 +1287,32 @@ Iteration(s): 1 2 3 4 finished. Cpu time: 1.212e-06 sec.</code></pre>
 lactation:</p>
 <div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> wLbl<span class="ot">&lt;-</span><span class="st">&quot;Net reward&quot;</span>         <span class="co"># the weight we want to optimize (net reward)</span></span>
 <span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> durLbl<span class="ot">&lt;-</span><span class="st">&quot;Duration&quot;</span>         <span class="co"># the duration/time label</span></span>
-<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">policyIteAve</span>(mdp, wLbl, durLbl)</span></code></pre></div>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runPolicyIteAve</span>(mdp, wLbl, durLbl)</span></code></pre></div>
 <pre><code>Run policy iteration under average reward criterion using 
 reward &#39;Net reward&#39; over &#39;Duration&#39;. Iterations (g): 
-1 (11000) 2 (11464.1) 3 (11543.8) 4 (11543.8) finished. Cpu time: 1.212e-06 sec.</code></pre>
+1 (11000) 2 (11464.1) 3 (11543.8) 4 (11543.8) finished. Cpu time: 1.593e-06 sec.</code></pre>
 <pre><code>[1] 11543.83</code></pre>
 <div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code># A tibble: 42 × 5
-     sId stateLabel  aIdx actionLabel  weight
-   &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;         &lt;dbl&gt;
- 1     3 Low yield      0 Replace     -7369. 
- 2     4 Avg yield      0 Replace     -5369. 
- 3     5 High yield     0 Replace     -3369. 
- 4     6 Low yield      0 Keep        -5912. 
- 5     7 Avg yield      0 Keep        -2912. 
- 6     8 High yield     0 Keep           87.7
- 7     9 Low yield      0 Keep        -3956. 
- 8    10 Avg yield      0 Keep         -456. 
- 9    11 High yield     0 Keep         3044. 
-10    12 Low yield      0 Keep        -3750. 
+<pre><code># A tibble: 42 × 6
+     sId stateStr  stateLabel  aIdx actionLabel  weight
+   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;         &lt;dbl&gt;
+ 1     3 0,2,0,4,0 Low yield      0 Replace     -7369. 
+ 2     4 0,2,0,4,1 Avg yield      0 Replace     -5369. 
+ 3     5 0,2,0,4,2 High yield     0 Replace     -3369. 
+ 4     6 0,2,0,3,0 Low yield      0 Keep        -5912. 
+ 5     7 0,2,0,3,1 Avg yield      0 Keep        -2912. 
+ 6     8 0,2,0,3,2 High yield     0 Keep           87.7
+ 7     9 0,2,0,2,0 Low yield      0 Keep        -3956. 
+ 8    10 0,2,0,2,1 Avg yield      0 Keep         -456. 
+ 9    11 0,2,0,2,2 High yield     0 Keep         3044. 
+10    12 0,2,0,1,0 Low yield      0 Keep        -3750. 
 # … with 32 more rows</code></pre>
 <p>Since other weights are defined for each action we can calculate the
 average reward per litre milk under the optimal policy:</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">calcWeights</span>(mdp, <span class="at">w=</span>wLbl, <span class="at">criterion=</span><span class="st">&quot;average&quot;</span>, <span class="at">dur =</span> <span class="st">&quot;Yield&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runCalcWeights</span>(mdp, <span class="at">w=</span>wLbl, <span class="at">criterion=</span><span class="st">&quot;average&quot;</span>, <span class="at">dur =</span> <span class="st">&quot;Yield&quot;</span>)</span></code></pre></div>
 <pre><code>[1] 1.932615</code></pre>
 <p>or the average yield per lactation:</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">calcWeights</span>(mdp, <span class="at">w=</span><span class="st">&quot;Yield&quot;</span>, <span class="at">criterion=</span><span class="st">&quot;average&quot;</span>, <span class="at">dur =</span> durLbl)</span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runCalcWeights</span>(mdp, <span class="at">w=</span><span class="st">&quot;Yield&quot;</span>, <span class="at">criterion=</span><span class="st">&quot;average&quot;</span>, <span class="at">dur =</span> durLbl)</span></code></pre></div>
 <pre><code>[1] 5973.166</code></pre>
 </div>
 <div id="references" class="section level2 unnumbered">
