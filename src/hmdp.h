@@ -1247,7 +1247,8 @@ class HMDP
                     case AverageReward: wTmp += w(iteA,idxW)-w(iteA,idxDur)*g; break;
                     case Reward: wTmp += w(iteA,idxW); break;
                     case DiscountedReward: wTmp = wTmp*pow(dB,w(iteA,idxDur)) + w(iteA,idxW); break;
-                    case TransPr: wTmp = wTmp; break;
+                    //case TransPr: wTmp = wTmp; break;  // generates warning: explicitly assigning value of variable of type 'flt' (aka 'double') to itself
+                    case TransPr: break;
                     case TransPrDiscounted: wTmp = wTmp*pow(dB,w(iteA,idxDur)); break;
                     default: log << "Criterion not defined!" << endl; break;
                 }
