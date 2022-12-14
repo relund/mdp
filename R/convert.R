@@ -17,32 +17,44 @@
 #' @example inst/examples/convert.R
 #' @export
 convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
-   setWeights<-function(q) {
-      labels<-unlist(lapply(q, function(x) xmlAttrs(x)))
-      ctrW<<-length(labels)+1
-      w$setWeights(c("Duration",labels))
+   setWeights <- function(labels) {
+      ctrW <<- length(labels) + 1
+      w$setWeights(c("Duration", labels))
    }
    
-   stateCtr<-function(g) {
-      length(xmlChildren(g))
-   }
+   # stateCtr<-function(g) {
+   #    browser()
+   #    #xml2::xml_length(g)
+   #    length(xmlChildren(g))
+   # }
    
+   #' @param p A process node
    process<-function(p) {
       w$process()
-      states<-unlist(c(xmlApply(p,stateCtr),0))   # number of states in each stage
-      for (i in 1:(length(states)-1)) stage(p[[i]],states[i+1])
+      states <- c(xml2::xml_length(xml2::xml_children(p)), 0)  # number of states in each stage (add 0 to indicate last stage)
+      for (i in 1:(length(states)-1)) stage(xml2::xml_child(p, i), states[i+1])
       w$endProcess()
    }
    
-   stage<-function(g,states) {
+   #' @param g A stage node
+   #' @param states Number of states at next stage
+   stage <- function(g, states) {
       w$stage()
-      xmlApply(g,state,states=states)
+      r <- xml2::xml_children(g)
+      # cat("states:\n"); print(r)
+      for (i in 1:length(r)) state(r[i], states)
       w$endStage()
    }
    
-   state<-function(s,states) {
-      w$state(label=xmlAttrs(s)['l'])
-      xmlApply(s,action,states=states)
+   #' @param s A state node
+   #' @param states Number of states at next stage
+   state <- function(s, states) {
+      w$state(label = xml2::xml_attr(s, "l"))
+      r <- xml2::xml_children(s)
+      if (length(r) > 0) {
+         # cat("actions:\n"); print(r)
+         for (i in 1:length(r)) action(r[i], states)
+      }      
       w$endState()
    }
    
@@ -52,19 +64,21 @@ convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
       sub("[ \t\n\r]*$", "", sub("^[ \t\n\r]*", "", x))
    }
    
-   action<-function(a,states) {
-      if ("proc" %in% names(xmlChildren(a))) {
-         w$action(label=xmlAttrs(a)['l'], weights=rep(0,ctrW), prob=c(2,0,1))
-         xmlApply(a,process)
+   #' @param a An action node
+   #' @param states Number of states at next stage
+   action<-function(a, states) {
+      if (length(xml2::xml_find_all(a, "proc")) > 0) {  # if subprocess
+         w$action(label=xml2::xml_attr(a, "l"), weights=rep(0,ctrW), prob=c(2,0,1))
+         process(xml2::xml_child(a))
       } else {    # normal action
-         v<-paste("c(", gsub(" +", ",", trim(xmlValue(a[['q']]))), ")",sep="")
+         v<-paste("c(", gsub(" +", ",", trim(xml2::xml_text(xml2::xml_child(a, "q")))), ")",sep="")
          v<-eval(parse(text=v))
-         d<-paste("c(", gsub(" +", ",", trim(xmlValue(a[['d']]))), ")",sep="")
+         d<-paste("c(", gsub(" +", ",", trim(xml2::xml_text(xml2::xml_child(a, "d")))), ")",sep="")
          d<-eval(parse(text=d))
          if (length(d)>1) warning("More than one duration number in the action (see hmp file)! \nOnly one duration for each action is supported in the binary file format. \nUse the first one.", call.=FALSE)
          v<-c(d[1],v)
-         type<-xmlAttrs(a[['p']])['t']
-         pr<-paste("c(", gsub(" +", ",", trim(xmlValue(a[['p']]))), ")",sep="")
+         type<-xml2::xml_attr(xml2::xml_child(a, "p"), "t")
+         pr<-paste("c(", gsub(" +", ",", trim(xml2::xml_text(xml2::xml_child(a, "p")))), ")",sep="")
          pr<-eval(parse(text=pr))
          if (type=="s") {
             idx<-pr[1:length(pr)%%2==1]
@@ -93,29 +107,26 @@ convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
          idx<-idx[i]
          pr<-pr[i]
          pr<-as.numeric(rbind(scp,idx,pr))
-         w$action(label=xmlAttrs(a)['l'], weights=v, prob=pr)
+         w$action(label=xml2::xml_attr(a, "l"), weights=v, prob=pr)
       }
       w$endAction()
    }
    
    ptm <- proc.time()
    ctrW<-0
-   doc<-xmlTreeParse(file,useInternalNodes=TRUE)
-   r<-xmlRoot(doc)
-   isHMDP <- xpathApply(r[['proc']], "count(.//proc)") > 0   # ordinary MDP or HMDP
+   doc <- xml2::read_xml(file)
+   isHMDP <- xml2::xml_find_num(doc, xpath = "count(.//proc)") > 1   # ordinary MDP or HMDP
    w<-binaryMDPWriter(prefix, getLog = getLog)
-   setWeights(r['quantities',all=TRUE])
-   process(r[['proc']])
+   r <- xml2::xml_find_all(doc, "./quantities")
+   setWeights(xml2::xml_attr(r, "l"))
+   process(xml2::xml_child(doc, "proc"))
    w$closeWriter()
-   free(doc)
    if (getLog) {
       cat("Converted",file,"to binary format.\n\n")
       print(proc.time() - ptm)
    }
    invisible(NULL)
 }
-
-
 
 #' Convert a HMDP model stored in binary format to a hmp (xml) file.
 #' The function simply parse the binary files and create hmp files using
