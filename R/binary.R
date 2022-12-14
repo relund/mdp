@@ -107,9 +107,20 @@
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @example inst/examples/binaryMDPWriter.R
 #' @export
-binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
-                                                "actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"),
-                          getLog = TRUE)
+binaryMDPWriter <-
+   function(prefix = "",
+            binNames = c(
+               "stateIdx.bin",
+               "stateIdxLbl.bin",
+               "actionIdx.bin",
+               "actionIdxLbl.bin",
+               "actionWeight.bin",
+               "actionWeightLbl.bin",
+               "transProb.bin",
+               "externalProcesses.bin"
+            ),
+            getLog = TRUE
+   )
 {
    setWeights<-function(labels,...){
       if (wFixed) stop("Weights already added!")
@@ -120,7 +131,8 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
    }
    
    process<-function(P=NULL, R=NULL, D=NULL){
-      if (!wFixed) stop("Weights must be added using 'setWeights' before starting building the HMDP!")
+      if (!wFixed)
+         stop("Weights must be added using 'setWeights' before starting building the HMDP!")
       dCtr<<- -1  # reset stage ctr
       sIdx<<-c(sIdx,NA)
       if (!is.null(P) & !is.null(R)) { # MDP specified using MDPtoolbox style
@@ -184,7 +196,16 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
       invisible(NULL)
    }
    
-   action<-function(scope=NULL, id=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...){     # prop contain tripeles (scope,idx,prob)
+   action <-
+      function(scope = NULL,
+               id = NULL,
+               pr = NULL,
+               prob = NULL,
+               weights,
+               label = NULL,
+               end = FALSE,
+               ...) {
+         # prop contain tripeles (scope,idx,prob)
       #cat("action:\n")
       #print(weights)
       #print(prob)
@@ -255,9 +276,12 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
       stage()  # first stage of the external process
       writeBin(c(paste(idx,collapse=","), prefix), fExt)  # store the external process' name
       pr<-as.numeric( t(matrix(c(rep(1,termStates), 1:termStates-1, rep(1/termStates,termStates)), ncol=3)) )
-      for (i in 0:maxId) {  # create the states in the first stage (with no actions)
-         stateId<-c(stateId,state())
-         action(weights=rep(0,length(weights)), prob=pr, end=TRUE) # dummy action of external process with transition to all terminal states
+      for (i in 0:maxId) {
+         # create the states in the first stage (with no actions)
+         stateId <- c(stateId, state())
+         action(weights = rep(0, length(weights)),
+                prob = pr,
+                end = TRUE) # dummy action of external process with transition to all terminal states
          endState()
       }
       endStage()
@@ -309,9 +333,21 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
    sRowId<- -1    # current row/line of state in stateIdx file
    aRowId<- -1    # current row/line of action in actionIdx file
    wFixed<-FALSE  # TRUE if size of weights are fixed
-   v <- list(setWeights = setWeights, stage = stage, endStage = endStage, state = state, endState = endState,
-             action = action, endAction = endAction, includeProcess = includeProcess, endIncludeProcess = endIncludeProcess, process = process, endProcess = endProcess,
-             closeWriter = closeWriter)
+   v <-
+      list(
+         setWeights = setWeights,
+         stage = stage,
+         endStage = endStage,
+         state = state,
+         endState = endState,
+         action = action,
+         endAction = endAction,
+         includeProcess = includeProcess,
+         endIncludeProcess = endIncludeProcess,
+         process = process,
+         endProcess = endProcess,
+         closeWriter = closeWriter
+      )
    class(v) <- c("binaryMDPWriter")
    return(v)
 }
@@ -329,10 +365,15 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 #'   \item{\code{setWeights(labels, ...)}: }{Set the labels of the weights used in the actions.
 #'      \code{labels} is a vector of label names, \code{...} are not used.
 #'      The function must be called before starting building the model.}
-#'   \item{\code{addAction(label=NULL, sIdx, weights, prob, ...)}: }{Add an action. Parameter \code{sIdx} is the id of the state defining the action, \code{weights} must be a vector of action weights,
-#'      \code{prob} is a matrix (sIdx,pr)  where the first column contain the id of the transition state (see the description of actionIdx.bin below - scope is assumed to the 3), \code{...} is currently not used.}
+#'   \item{\code{addAction(label=NULL, sIdx, weights, prob, ...)}: }{Add an action. Parameter 
+#'      \code{sIdx} is the id of the state defining the action, \code{weights} must be a vector of 
+#'      action weights,
+#'      \code{prob} is a matrix (sIdx,pr)  where the first column contain the id of the transition 
+#'      state (see the description of actionIdx.bin below - scope is assumed to the 3), \code{...} 
+#'      is currently not used.}
 #'   \item{\code{endAction()}: }{Ends an action.}
-#'   \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}}
+#'   \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has 
+#'     finished.}}
 #'
 #' Five binary files are created using the following format:\itemize{
 #' \item{actionIdx.bin: }{File of integers containing the indexes defining all actions in the format
@@ -370,8 +411,16 @@ binaryMDPWriter<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin"
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @example inst/examples/binaryMDPWriter.R
 #' @export
-binaryActionWriter<-function(prefix="", binNames=c("actionIdx.bin",
-                                                   "actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"), append=TRUE)
+binaryActionWriter <- function(prefix = "",
+                               binNames = c(
+                                  "actionIdx.bin",
+                                  "actionIdxLbl.bin",
+                                  "actionWeight.bin",
+                                  "actionWeightLbl.bin",
+                                  "transProb.bin"
+                               ),
+                               append = TRUE
+)
 {
    setWeights<-function(labels,...){
       if (wFixed) stop("Weights already added!")

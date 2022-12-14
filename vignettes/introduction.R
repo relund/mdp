@@ -356,10 +356,10 @@ runValueIte(mdp, "Net reward" , termValues=scrapValues)
 getPolicy(mdp)
 
 ## ----plotPolicy3, echo=FALSE, results='hide', message=FALSE-----------------------------
-library(tidyverse)
-actionDF <- left_join(getPolicy(mdp), dat$harcDF, by = c("sId" = "head", "actionLabel" = "label")) %>% 
-   filter(aIdx >= 0) %>% 
-   select(head = sId, contains("tail"), label = actionLabel)
+library(magrittr)
+actionDF <- dplyr::left_join(getPolicy(mdp), dat$harcDF, by = c("sId" = "head", "actionLabel" = "label")) %>% 
+   dplyr::filter(aIdx >= 0) %>% 
+   dplyr::select(head = sId, contains("tail"), label = actionLabel)
 actionDF$lwd<-1
 actionDF$col<-"deepskyblue3"
 actionDF$highlight<-FALSE
@@ -490,9 +490,9 @@ getPolicy(mdp)
 # policy
 
 ## ----plotPolicy, echo=FALSE, results='hide', message=FALSE------------------------------
-actionDF <- left_join(getPolicy(mdp), dat$harcDF, by = c("sId" = "head", "actionLabel" = "label")) %>% 
-   filter(aIdx >= 0) %>% 
-   select(head = sId, contains("tail"), label = actionLabel)
+actionDF <- dplyr::left_join(getPolicy(mdp), dat$harcDF, by = c("sId" = "head", "actionLabel" = "label")) %>% 
+   dplyr::filter(aIdx >= 0) %>% 
+   dplyr::select(head = sId, contains("tail"), label = actionLabel)
 # actionDF<-cbind(dat$actionDF,dat$harcDF)
 # actionDF<-merge(actionDF,getPolicy(mdp))[,c("head","tail2","tail3","tail4","label","stateLabel")]
 actionDF$label[actionDF$label=="Replace"]<-"R"
