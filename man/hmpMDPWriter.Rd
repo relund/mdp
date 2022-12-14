@@ -68,8 +68,6 @@ and idx=2 we consider state number 3 at next stage in the current process
 Note all indexes are starting from zero (C/C++ style).
 }
 \examples{
-library(XML)
-
 ## Use temp dir
 wd <- setwd(tempdir())
 
@@ -181,7 +179,7 @@ w$endProcess()
 w$closeWriter()
 
 ## Have a look at the hmp file
-xmlTreeParse("r.hmp",useInternalNodes=TRUE)
+cat(readr::read_file("r.hmp"))
 
 ## Reset working dir
 setwd(wd)

@@ -12,6 +12,16 @@ convertHMP2Binary(file, prefix = "", getLog = TRUE)
 \item{prefix}{A character string with the prefix which will be added to the binary files.}
 
 \item{getLog}{Output log text.}
+
+\item{p}{A process node}
+
+\item{g}{A stage node}
+
+\item{s}{A state node}
+
+\item{a}{An action node}
+
+\item{states}{Number of states at next stage}
 }
 \value{
 NULL (invisible).
@@ -24,8 +34,6 @@ the \link{binaryMDPWriter}.
 Note all indexes are starting from zero (C/C++ style).
 }
 \examples{
-library(XML)
-
 ## Set working dir
 wd <- setwd(system.file("models", package = "MDP2"))
 
@@ -34,7 +42,7 @@ prefix1 <- "machine1_"
 getBinInfoStates(prefix1)
 convertBinary2HMP(prefix1, duration = NULL)
 # have a look at the hmp file
-xmlTreeParse("machine1_converted.hmp", useInternalNodes = TRUE)
+cat(readr::read_file("machine1_converted.hmp"))
 
 ## Convert the machine example hmp file to binary files
 prefix2 <- "machine_cov_"

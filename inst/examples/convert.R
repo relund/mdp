@@ -1,5 +1,3 @@
-library(XML)
-
 ## Set working dir
 wd <- setwd(system.file("models", package = "MDP2"))
 
@@ -8,7 +6,7 @@ prefix1 <- "machine1_"
 getBinInfoStates(prefix1)
 convertBinary2HMP(prefix1, duration = NULL)
 # have a look at the hmp file
-xmlTreeParse("machine1_converted.hmp", useInternalNodes = TRUE)
+cat(readr::read_file("machine1_converted.hmp"))
 
 ## Convert the machine example hmp file to binary files
 prefix2 <- "machine_cov_"

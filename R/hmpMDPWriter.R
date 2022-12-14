@@ -45,65 +45,81 @@
 #' @example inst/examples/hmpMDPWriter.R
 #' @export
 hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, desc="HMP file created using hmpMDPWriter in R", getLog = TRUE) {
-	addLevelRates<-function(rates){
-		tr$addTag("i",paste(rates,collapse=" "))
-		invisible(NULL)
-	}
+	# addLevelRates<-function(rates){
+	# 	tr$addTag("i",paste(rates,collapse=" "))
+	#    xml2::xml_add_child(doc, "i", paste(rates,collapse=" "))
+	# 	invisible(NULL)
+	# }
 
-	setSources<-function(s){
-		tr$addTag("sources",paste(s-1,collapse=" "))
-		invisible(NULL)
-	}
+	# setSources<-function(s){
+	# 	tr$addTag("sources",paste(s-1,collapse=" "))
+	#    xml2::xml_add_child(doc, "sources", paste(s-1,collapse=" "))
+	# 	invisible(NULL)
+	# }
 
 	setWeights<-function(labels, duration) {
-		if (is.null(duration)) durIdx<<- -1  # no duration specified by negative number
+		if (is.null(duration)) durIdx <<- -1  # no duration specified by negative number
 		else durIdx<<-duration
-		tr$addTag("i",rate)
+		# tr$addTag("i",rate)
+		xml2::xml_add_child(doc, "i", rate)
+		
 		if (wFixed) stop("Weights already added!")
 		for (i in 1:length(labels)) {
-			if (i!=durIdx) tr$addTag("quantities",attrs=c(l=labels[i]))
+			if (i!=durIdx) {
+			   # tr$addTag("quantities",attrs=c(l=labels[i]))
+			   xml2::xml_add_child(doc, "quantities", l = labels[i])
+			}
 		}
 		wFixed<<-TRUE
-		tr$addTag("sources","0 1")
+		# tr$addTag("sources","0 1")
+		xml2::xml_add_child(doc, "sources", "0 1")
 		invisible(NULL)
 	}
 
 	process<-function(){
 		if (!wFixed) stop("Weights must be added using 'setWeights' before starting building the HMDP!")
-		tr$addTag("proc",close=FALSE)
+		# tr$addTag("proc",close=FALSE)
+		n <<- xml2::xml_add_child(n, "proc")
 		invisible(NULL)
 	}
 
 	endProcess<-function(){
-		tr$closeTag()
+		# tr$closeTag()
+	   n <<- xml2::xml_parent(n)
 		invisible(NULL)
 	}
 
 	stage<-function(label=NULL){
 		if (is.null(label)) {
-			tr$addTag("g",close=FALSE)
+			# tr$addTag("g",close=FALSE)
+		   n <<- xml2::xml_add_child(n, "g")
 		} else {
-			tr$addTag("g",attrs=c(l=label),close=FALSE)
+			# tr$addTag("g",attrs=c(l=label),close=FALSE)
+		   n <<- xml2::xml_add_child(n, "g", l = label)
 		}
 		invisible(NULL)
 	}
 
 	endStage<-function(){
-		tr$closeTag()
+		# tr$closeTag()
+	   n <<- xml2::xml_parent(n)
 		invisible(NULL)
 	}
 
 	state<-function(label=NULL){
 		if (is.null(label)) {
-			tr$addTag("s",close=FALSE)
+			# tr$addTag("s",close=FALSE)
+		   n <<- xml2::xml_add_child(n, "s")
 		} else {
-			tr$addTag("s",attrs=c(l=label),close=FALSE)
+			# tr$addTag("s",attrs=c(l=label),close=FALSE)
+		   n <<- xml2::xml_add_child(n, "s", l = label)
 		}
 		invisible(NULL)
 	}
 
 	endState<-function(){
-		tr$closeTag()
+		# tr$closeTag()
+	   n <<- xml2::xml_parent(n)
 		invisible(NULL)
 	}
 
@@ -119,45 +135,60 @@ hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, de
 			idx<-3*(which(scope==0)-1)+1            # index of scope==0
 			prob[idx+1]<-prob[idx+1]+statesNext     # add number of states at next stage to father idx
 		}
+		n <<- xml2::xml_add_child(n, "a")
 		tags<-NULL
 		if (!is.null(label)) tags<-c(tags,l=label)
 		if (term) tags<-c(tags,term='t')
 		if (is.null(tags)) {
-			tr$addTag("a",close=FALSE)
+			# tr$addTag("a",close=FALSE)
 		} else {
-			tr$addTag("a",attrs=tags,close=FALSE)
+			# tr$addTag("a",attrs=tags,close=FALSE)
+		   xml2::xml_attrs(n) <- tags
 		}
 		if (any(scope==2)) {    # we have an prob to a new child process
 			if (!all(prob==c(2,0,1))) stop("Only a deterministic transition to the dummy stage in the child process allowed (prop=(2,0,1))!")
 			return(invisible(NULL))   # only a deterministic transition with zero weights allowed in the hmp format
 		}
-		tr$addTag("q",paste(weights[which(1:length(weights)!=durIdx)],collapse=" "))  # quantities
+		# tr$addTag("q",paste(weights[which(1:length(weights)!=durIdx)],collapse=" "))  # quantities
+		xml2::xml_add_child(n, "q", paste(weights[which(1:length(weights)!=durIdx)],collapse=" "))
 		probs<-prob[which((1:length(prob)-1)%%3!=0)]   # probs contain pairs (idx,prob)
 		if (length(probs)==2) { # deterministic transition
-			tr$addTag("p",probs[1],attrs=c(t='d'))
+			# tr$addTag("p",probs[1],attrs=c(t='d'))
+		   xml2::xml_add_child(n, "p", probs[1], t='d')
 		} else {
-			tr$addTag("p",paste(probs,collapse=" "),attrs=c(t='s'))
+			# tr$addTag("p",paste(probs,collapse=" "),attrs=c(t='s'))
+		   xml2::xml_add_child(n, "p", paste(probs,collapse=" "), t='s')
 		}
-		if (durIdx<0) tr$addTag("d", 1)
-		else tr$addTag("d", weights[durIdx])
+		if (durIdx<0) {
+		   # tr$addTag("d", 1)
+		   xml2::xml_add_child(n, "d", 1)
+		}
+		else {
+		   names(weights) <- NULL
+		   # tr$addTag("d", weights[durIdx])
+		   xml2::xml_add_child(n, "d", weights[durIdx])
+		}
 		invisible(NULL)
 	}
 
 	endAction<-function(){
-		tr$closeTag()
+		# tr$closeTag()
+	   n <<- xml2::xml_parent(n)
 		invisible(NULL)
 	}
 
 	closeWriter<-function(){
-		saveXML(tr$value(),file=file,compression=0,prefix = NULL)
+		# saveXML(tr$value(),file="old.hmp",compression=0,prefix = NULL)
+	   xml2::write_xml(doc, file)
 		if (getLog) cat("\nModel saved to file:",file,"\n")
 	}
-
-	file <- file
-	wFixed<-FALSE
+	
+	wFixed<-FALSE  # have weights been added
 	durIdx <- NULL   # index of weight storing the duration (number from 1)
-	tr<-xmlTree("mlhmp",dtd=NULL,attrs=c(l=desc,b=rate,dsl=rateBase,precision=precision,version="1.1"))
-
+	# tr<-xmlTree("mlhmp",dtd=NULL,attrs=c(l=desc,b=rate,dsl=rateBase,precision=precision,version="1.1"))
+	doc <- xml2::xml_new_root("mlhmp", l=desc, b=rate, dsl=rateBase, precision=precision, version="1.1")
+	n <- doc  # current node
+	
 	v <- list(setWeights = setWeights,
 		stage = stage, endStage = endStage, state = state, endState = endState,
 		action = action, endAction = endAction, process = process, endProcess = endProcess,
