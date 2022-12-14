@@ -3,7 +3,6 @@ context("Check optimality")
 cleanUp<-function() unlink("*.bin")
 
 
-
 test_that("Total reward",{
    source("files/machine_replacement_v1.R")
    mdp<-loadMDP("machine1_", getLog = FALSE)

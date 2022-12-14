@@ -1,6 +1,4 @@
 library(MDP2)
-library(XML)
-
 context("Test model conversion")
 cleanUp<-function() {
    unlink("*.bin")
