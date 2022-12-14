@@ -19,6 +19,7 @@ Imports:
     stringr, 
     tidyr,
     magrittr,
+    methods,
     rlang,
     Rcpp (>= 0.11.5)
 Suggests:
@@ -26,6 +27,7 @@ Suggests:
     Matrix,
     rmarkdown,
     testthat,
+    readr,
     xml2
 LinkingTo: 
     Rcpp

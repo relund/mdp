@@ -82,7 +82,7 @@ getPolicy(mdp)     # optimal policy
 library(magrittr)
 policy <- getInfo(mdp, withList = FALSE, dfLevel = "action")$df %>% 
    dplyr::filter(label_action == "mt") %>% 
-   select(sId, aIdx)
+   dplyr::select(sId, aIdx)
 setPolicy(mdp, policy)
 runCalcWeights(mdp, w, termValues=scrapValues)
 getPolicy(mdp)  

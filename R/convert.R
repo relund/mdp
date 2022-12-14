@@ -28,7 +28,7 @@ convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
    #    length(xmlChildren(g))
    # }
    
-   #' @param p A process node
+   # @param p A process node
    process<-function(p) {
       w$process()
       states <- c(xml2::xml_length(xml2::xml_children(p)), 0)  # number of states in each stage (add 0 to indicate last stage)
@@ -36,8 +36,8 @@ convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
       w$endProcess()
    }
    
-   #' @param g A stage node
-   #' @param states Number of states at next stage
+   # @param g A stage node
+   # @param states Number of states at next stage
    stage <- function(g, states) {
       w$stage()
       r <- xml2::xml_children(g)
@@ -46,8 +46,8 @@ convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
       w$endStage()
    }
    
-   #' @param s A state node
-   #' @param states Number of states at next stage
+   # @param s A state node
+   # @param states Number of states at next stage
    state <- function(s, states) {
       w$state(label = xml2::xml_attr(s, "l"))
       r <- xml2::xml_children(s)
@@ -64,8 +64,8 @@ convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
       sub("[ \t\n\r]*$", "", sub("^[ \t\n\r]*", "", x))
    }
    
-   #' @param a An action node
-   #' @param states Number of states at next stage
+   # @param a An action node
+   # @param states Number of states at next stage
    action<-function(a, states) {
       if (length(xml2::xml_find_all(a, "proc")) > 0) {  # if subprocess
          w$action(label=xml2::xml_attr(a, "l"), weights=rep(0,ctrW), prob=c(2,0,1))

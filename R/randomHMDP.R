@@ -35,7 +35,7 @@ randomHMDP<-function(prefix="", levels=3, timeHorizon=c(Inf,3,4), states=c(2,4,5
                            idx<-sample(1:states[2]-1,states[2]/2) 
                            pr<-rep(1/length(idx),length(idx))
                            scp<-rep(2,length(idx))
-                           isExt = rbinom(1,1,externalProcessPr)==1
+                           isExt = stats::rbinom(1,1,externalProcessPr)==1
                            if (isExt) {
                               message("\n External: ", appendLF = FALSE)
                               pfx<-paste(prefix,l1,"-",s1,"-",a1,"_",sub("\\.","-",format(Sys.time(), "%H-%M-%OS4")),"_",sep="")

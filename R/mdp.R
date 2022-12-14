@@ -19,7 +19,7 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 {
 	binNames<-paste(prefix,binNames,sep="")
 	if (!is.logical(verbose)) verbose = FALSE
-	mdp<-new(HMDP, binNames, verbose)
+	mdp<-methods::new(HMDP, binNames, verbose)
 
 	if (!mdp$okay) {
 		message(mdp$getLog())
@@ -367,15 +367,15 @@ getInfo<-function(mdp,
             tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
             tidyr::unnest_wider(.data$actions, names_repair = tidyr::tidyr_legacy) # convert action to columns
          df <- df %>% 
-            dplyr::rename(label_action = label1)
+            dplyr::rename(label_action = .data$label1)
          if (asStringsActions) {
             df <- df %>% 
-               dplyr::mutate(weights = sapply(weights, function(x) paste0(x, collapse = ",")),
-                      trans = sapply(trans, function(x) paste0(x, collapse = ",")),
-                      pr = sapply(pr, function(x) paste0(x, collapse = ","))) %>% 
-               dplyr::mutate(weights = dplyr::na_if(weights, ""),
-                      trans = dplyr::na_if(trans, ""),
-                      pr = dplyr::na_if(pr, ""))
+               dplyr::mutate(weights = sapply(.data$weights, function(x) paste0(x, collapse = ",")),
+                      trans = sapply(.data$trans, function(x) paste0(x, collapse = ",")),
+                      pr = sapply(.data$pr, function(x) paste0(x, collapse = ","))) %>% 
+               dplyr::mutate(weights = dplyr::na_if(.data$weights, ""),
+                      trans = dplyr::na_if(.data$trans, ""),
+                      pr = dplyr::na_if(.data$pr, ""))
          }
       } else {
          if (asStringsActions) {
@@ -418,7 +418,7 @@ getInfo<-function(mdp,
          tidyr::unnest_wider(.data$actions, names_repair = tidyr::tidyr_legacy) %>% 
          tidyr::unnest_wider(.data$trans, names_sep = "") %>% 
          dplyr::filter(!is.na(.data$aIdx)) %>% 
-         dplyr::select(.data$sId, contains("trans"), label = .data$label1)
+         dplyr::select(.data$sId, tidyr::contains("trans"), label = .data$label1)
       colnames(df) <- stringr::str_replace(colnames(df), "trans", "tail")
       colnames(df)[1] <- "head"
       lst$harcDF <- df

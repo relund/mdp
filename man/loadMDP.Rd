@@ -118,10 +118,10 @@ runValueIte(mdp, w, termValues=scrapValues)
 getPolicy(mdp)     # optimal policy
 
 ## Calculate the weights of the policy always to maintain
-# library(dplyr)
+library(magrittr)
 policy <- getInfo(mdp, withList = FALSE, dfLevel = "action")$df \%>\% 
    dplyr::filter(label_action == "mt") \%>\% 
-   select(sId, aIdx)
+   dplyr::select(sId, aIdx)
 setPolicy(mdp, policy)
 runCalcWeights(mdp, w, termValues=scrapValues)
 getPolicy(mdp)  

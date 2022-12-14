@@ -15,8 +15,6 @@
 #'   line type and line color. Column highlight contains boolean which is true if highlight the 
 #'   hyperarc (useful if want to show the policy).
 #' @param showGrid If true show the grid points (good for debugging).
-#' @param fileN If specified the plot will be saved as a pdf file.
-#' @param devOff If false do not make a dev.off(), i.e. you can add more graphic to the file.
 #' @param radx Horizontal radius of the box.
 #' @param rady Vertical radius of the box.
 #' @param cex Relative size of text.
@@ -34,8 +32,6 @@ plotHypergraph <-
             states = NULL,
             actions = NULL,
             showGrid = FALSE,
-            fileN = NULL,
-            devOff = TRUE,
             radx = 0.02,
             rady = 0.03,
             cex = 1,
@@ -46,10 +42,10 @@ plotHypergraph <-
    gMap<-function(sId) return(states$gId[states$sId %in% sId])		# return gId given sId
    sMap<-function(gId) return(states$sId[states$gId %in% gId])		# return sId given gId
    
-   fontf<-"Times"
-   width=8 # A4 is 8.25 x 11.75 inch
-   height=5	
-   if (!is.null(fileN)) pdf(file=fileN, width=width, height=height, family=fontf)
+   # fontf<-"Times"
+   # width=8 # A4 is 8.25 x 11.75 inch
+   # height=5	
+   # if (!is.null(fileN)) pdf(file=fileN, width=width, height=height, family=fontf)
    
    pos <- coordinates(rep(gridDim[2], gridDim[1]))  # coordinates of each point in the grid
    openplotmat(xlim=c(min(pos[,1])-marX,max(pos[,1])+marX), 
@@ -80,6 +76,5 @@ plotHypergraph <-
          textellipse(pos[states$gId[i], ], lab = states$label[i], radx = radx, rady=rady, shadow.size = 0, lwd=0.5, cex=cex) 
       }
    }
-   if (devOff && !is.null(fileN)) dev.off()
    return(invisible(NULL))
 }

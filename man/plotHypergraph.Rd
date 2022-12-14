@@ -9,8 +9,6 @@ plotHypergraph(
   states = NULL,
   actions = NULL,
   showGrid = FALSE,
-  fileN = NULL,
-  devOff = TRUE,
   radx = 0.02,
   rady = 0.03,
   cex = 1,
@@ -33,10 +31,6 @@ line type and line color. Column highlight contains boolean which is true if hig
 hyperarc (useful if want to show the policy).}
 
 \item{showGrid}{If true show the grid points (good for debugging).}
-
-\item{fileN}{If specified the plot will be saved as a pdf file.}
-
-\item{devOff}{If false do not make a dev.off(), i.e. you can add more graphic to the file.}
 
 \item{radx}{Horizontal radius of the box.}
 
