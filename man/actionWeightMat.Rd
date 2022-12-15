@@ -27,3 +27,4 @@ Info about the weights of the actions in the HMDP model under consideration.
 \author{
 Lars Relund \email{lars@relund.dk}
 }
+\keyword{internal}

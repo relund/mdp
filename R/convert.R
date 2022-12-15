@@ -258,6 +258,7 @@ convertBinary2HMP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bi
 #' than one level columns index (d1, s1, a1, ...) are added.
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @keywords internal
 stateIdxMat<-function(prefix="", file="stateIdx.bin") {
    file<-paste(prefix,file,sep="")
    tmp<-readBin(file, integer(),n=file.info(file)$size/4)
@@ -284,6 +285,7 @@ stateIdxMat<-function(prefix="", file="stateIdx.bin") {
 #' \code{stateIdxMat} plus another column containing the labels.
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @keywords internal
 stateIdxDf<-function(prefix="", file="stateIdx.bin", labels="stateIdxLbl.bin") {
    labels<-paste(prefix,labels,sep="")
    mat<-stateIdxMat(prefix, file)
@@ -304,6 +306,7 @@ stateIdxDf<-function(prefix="", file="stateIdx.bin", labels="stateIdxLbl.bin") {
 #' aId is the action row id and ... are the probabilities of the action.
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @keywords internal
 transProbMat<-function(prefix="", file="transProb.bin") {
    file<-paste(prefix,file,sep="")
    tmp<-readBin(file, numeric(),n=file.info(file)$size/8)
@@ -332,6 +335,7 @@ transProbMat<-function(prefix="", file="transProb.bin") {
 #' Finally, if scope = 3 then a transition to the state with sId = idx is considered.
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @keywords internal
 actionIdxMat<-function(prefix="", file="actionIdx.bin") {
    file<-paste(prefix,file,sep="")
    tmp<-readBin(file, integer(),n=file.info(file)$size/4)
@@ -356,6 +360,7 @@ actionIdxMat<-function(prefix="", file="actionIdx.bin") {
 #' \code{actionIdxMat} plus another column containing the labels.
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @keywords internal
 actionIdxDf<-function(prefix="", file="actionIdx.bin", labels="actionIdxLbl.bin") {
    labels<-paste(prefix,labels,sep="")
    mat<-actionIdxMat(prefix, file)
@@ -382,6 +387,7 @@ actionIdxDf<-function(prefix="", file="actionIdx.bin", labels="actionIdxLbl.bin"
 #' not are NULL then a data frame are returned with a label column too.
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @keywords internal
 actionInfo<-function(prefix="", file="actionIdx.bin" , weightFile="actionWeight.bin", transPrFile="transProb.bin", labels="actionIdxLbl.bin") {
    labels<-paste(prefix,labels,sep="")
    mat<-actionIdxMat(prefix, file)
@@ -413,6 +419,7 @@ actionInfo<-function(prefix="", file="actionIdx.bin" , weightFile="actionWeight.
 #' aId is the action row id and ... are the weights of the action.
 #'
 #' @author Lars Relund \email{lars@@relund.dk}
+#' @keywords internal
 actionWeightMat<-function(prefix="", file="actionWeight.bin",labels="actionWeightLbl.bin") {
    file<-paste(prefix,file,sep="")
    labels<-paste(prefix,labels,sep="")
@@ -435,6 +442,7 @@ actionWeightMat<-function(prefix="", file="actionWeight.bin",labels="actionWeigh
 #' @param labels The HMDP binary file containing the weight labels.
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @return Vector of weight names.
+#' @keywords internal
 weightNames<-function(prefix="", labels="actionWeightLbl.bin") {
    labels<-paste(prefix,labels,sep="")
    colNames<-readBin(labels, character(),n=file.info(labels)$size)

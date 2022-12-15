@@ -20,3 +20,4 @@ Names of weights used in actions.
 \author{
 Lars Relund \email{lars@relund.dk}
 }
+\keyword{internal}

@@ -21,3 +21,4 @@ Internal function. Check if the index of the weight is okay. Should not be used 
 \author{
 Lars Relund \email{lars@relund.dk}
 }
+\keyword{internal}

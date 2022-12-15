@@ -34,7 +34,7 @@ runValueIte(
 
 \item{maxIte}{The max number of iterations value iteration is performed.}
 
-\item{eps}{Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see \link{1} p161).}
+\item{eps}{Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).}
 
 \item{termValues}{The terminal values used (values of the last stage in the MDP).}
 
@@ -197,7 +197,7 @@ w$process()
       w$endState()
       w$state(label="not working")    # v=(2,2)
          w$action(label="mt", weights=30, prob=c(1,0,1), end=TRUE)
-         w$action(label="rep", weights=5, prob=c(3,12,1), end=TRUE)     # transition to the node with sId=12 (Dummy)
+         w$action(label="rep", weights=5, prob=c(3,12,1), end=TRUE) # transition to sId=12 (Dummy)
       w$endState()
    w$endStage()
    w$stage()   # stage n=3
@@ -263,7 +263,7 @@ getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
 setwd(wd)
 }
 \references{
-\link{1} Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
+Puterman, M. Markov Decision Processes, Wiley-Interscience, 1994.
 }
 \author{
 Lars Relund \email{lars@relund.dk}

@@ -1,4 +1,43 @@
 url: http://relund.github.io/mdp/
 template:
   bootstrap: 5
-
+reference:
+- title: Building an MDP model to a file
+- contents:
+  - matches("Writer")
+  - getBinInfoActions
+  - getBinInfoStates
+  - randomHMDP
+- title: Loading the MDP
+- contents:
+  - loadMDP
+  - saveMDP
+- title: Get info about the MDP
+- contents:
+  - getInfo
+  - plotHypergraph
+  - getWIdx
+- title: Finding the optimal policy
+  contents:
+  - runPolicyIteAve
+  - runPolicyIteDiscount
+  - runValueIte
+- title: Get info about the current policy
+  contents:
+  - setPolicy
+  - getPolicy
+  - runCalcWeights
+  - getSteadyStatePr
+  - getRPO
+- title: Convert to different file formats
+- contents: 
+  - matches("convert")
+- title: internal
+- contents:
+  - actionIdxDf
+  - actionIdxMat
+  - actionInfo
+  - actionWeightMat
+  - stateIdxDf
+  - stateIdxMat
+  - transProbMat

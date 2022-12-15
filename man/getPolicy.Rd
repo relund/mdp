@@ -195,7 +195,7 @@ w$process()
       w$endState()
       w$state(label="not working")    # v=(2,2)
          w$action(label="mt", weights=30, prob=c(1,0,1), end=TRUE)
-         w$action(label="rep", weights=5, prob=c(3,12,1), end=TRUE)     # transition to the node with sId=12 (Dummy)
+         w$action(label="rep", weights=5, prob=c(3,12,1), end=TRUE) # transition to sId=12 (Dummy)
       w$endState()
    w$endStage()
    w$stage()   # stage n=3

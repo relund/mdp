@@ -23,3 +23,4 @@ Internal function. Check if the indexes given are okay. Should not be used excep
 \author{
 Lars Relund \email{lars@relund.dk}
 }
+\keyword{internal}

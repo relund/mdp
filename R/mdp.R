@@ -71,6 +71,7 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @return Nothing.
 #' @name checkWDurIdx
+#' @keywords internal
 .checkWDurIdx<-function(iW, iDur, wLth) {
 	if (length(iW)!=1) stop("Index iW must be of length one!",call. = FALSE)
 	if (iW>wLth-1) stop("Index iW must be less than ",wLth,"!",call. = FALSE)
@@ -93,6 +94,7 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 #' @author Lars Relund \email{lars@@relund.dk}
 #' @return Nothing.
 #' @name checkWIdx
+#' @keywords internal
 .checkWIdx<-function(iW, wLth) {
 	if (max(iW)>wLth-1) stop("Index iW must be less than ",wLth,"!",call. = FALSE)
 	if (min(iW)<0) stop("Index iW must be greater or equal zero!",call. = FALSE)
@@ -185,7 +187,7 @@ runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFact
 #' @param rateBase The time-horizon the rate is valid over.
 #' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
 #' @param maxIte The max number of iterations value iteration is performed.
-#' @param eps Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see [1] p161).
+#' @param eps Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).
 #' @param termValues The terminal values used (values of the last stage in the MDP).
 #' @param g Average reward. If specified then do a single iteration using the opdate equations under average reward criterion with the specified g value.
 #' @param getLog Output the log messages.
@@ -193,7 +195,7 @@ runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFact
 #' 
 #' @return NULL (invisible)
 #' @author Lars Relund \email{lars@@relund.dk}
-#' @references [1] Puterman, M.; Markov Decision Processes, Wiley-Interscience, 1994.
+#' @references Puterman, M. Markov Decision Processes, Wiley-Interscience, 1994.
 #' @example inst/examples/machine.R
 #' @export
 runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
