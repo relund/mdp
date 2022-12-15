@@ -47,7 +47,7 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="building-an-mdp-model-to-a-file">Building an MDP model to a file<a class="anchor" aria-label="anchor" href="#building-an-mdp-model-to-a-file"></a></h2>
       
       
 
@@ -59,10 +59,179 @@
 
       <dl><dt>
           
-          <code><a href="MDP2.html">MDP2</a></code> <code><a href="MDP2.html">MDP-package</a></code> <code><a href="MDP2.html">MDP</a></code> 
+          <code><a href="binaryActionWriter.html">binaryActionWriter()</a></code> 
         </dt>
-        <dd>Markov Decision Processes (MDPs) in R</dd>
+        <dd>Function for writing actions of a HMDP model to binary files. The function defineds
+subfunctions which can be used to define actions saved in a set of binary
+files. It is assumed that the states have been defined using <code>binaryMDPWriter</code>
+and that the id of the states is known (can be retrived using e.g. <code>stateIdxDf</code>).</dd>
       </dl><dl><dt>
+          
+          <code><a href="binaryMDPWriter.html">binaryMDPWriter()</a></code> 
+        </dt>
+        <dd>Function for writing an HMDP model to binary files. The function defineds
+subfunctions which can be used to define an HMDP model saved in a set of binary
+files.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="hmpMDPWriter.html">hmpMDPWriter()</a></code> 
+        </dt>
+        <dd>Function for writing an HMDP model to a hmp file (XML). The function define
+subfunctions which can be used to define an HMDP model stored in a hmp file.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="getBinInfoActions.html">getBinInfoActions()</a></code> 
+        </dt>
+        <dd>Info about the actions in the HMDP model under consideration.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="getBinInfoStates.html">getBinInfoStates()</a></code> 
+        </dt>
+        <dd>Info about the states in the binary files of the HMDP model under consideration.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="randomHMDP.html">randomHMDP()</a></code> 
+        </dt>
+        <dd>Generate a "random" HMDP stored in a set of binary files.</dd>
+      </dl></div><div class="section level2">
+      <h2 id="loading-the-mdp">Loading the MDP<a class="anchor" aria-label="anchor" href="#loading-the-mdp"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="loadMDP.html">loadMDP()</a></code> 
+        </dt>
+        <dd>Load the HMDP model defined in the binary files. The model are created in memory
+using the external C++ library.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="saveMDP.html">saveMDP()</a></code> 
+        </dt>
+        <dd>Save the MDP to binary files</dd>
+      </dl></div><div class="section level2">
+      <h2 id="get-info-about-the-mdp">Get info about the MDP<a class="anchor" aria-label="anchor" href="#get-info-about-the-mdp"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="getInfo.html">getInfo()</a></code> 
+        </dt>
+        <dd>Information about the MDP</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plotHypergraph.html">plotHypergraph()</a></code> 
+        </dt>
+        <dd>Plot parts of the state expanded hypergraph (experimental).</dd>
+      </dl><dl><dt>
+          
+          <code><a href="getWIdx.html">getWIdx()</a></code> 
+        </dt>
+        <dd>Return the index of a weight in the model. Note that index always start from zero (C++ style), i.e. the first weight, the first state at a stage etc has index 0.</dd>
+      </dl></div><div class="section level2">
+      <h2 id="finding-the-optimal-policy">Finding the optimal policy<a class="anchor" aria-label="anchor" href="#finding-the-optimal-policy"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="runPolicyIteAve.html">runPolicyIteAve()</a></code> 
+        </dt>
+        <dd>Perform policy iteration (average reward criterion) on the MDP.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="runPolicyIteDiscount.html">runPolicyIteDiscount()</a></code> 
+        </dt>
+        <dd>Perform policy iteration (discounted reward criterion) on the MDP.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="runValueIte.html">runValueIte()</a></code> 
+        </dt>
+        <dd>Perform value iteration on the MDP.</dd>
+      </dl></div><div class="section level2">
+      <h2 id="get-info-about-the-current-policy">Get info about the current policy<a class="anchor" aria-label="anchor" href="#get-info-about-the-current-policy"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="setPolicy.html">setPolicy()</a></code> 
+        </dt>
+        <dd>Modify the current policy by setting policy action of states.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="getPolicy.html">getPolicy()</a></code> 
+        </dt>
+        <dd>Get parts of the optimal policy.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="runCalcWeights.html">runCalcWeights()</a></code> 
+        </dt>
+        <dd>Calculate weights based on current policy. Normally run after an optimal policy has been found.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="getSteadyStatePr.html">getSteadyStatePr()</a></code> 
+        </dt>
+        <dd>Calculate the steady state transition probabilities for the founder process (level 0).</dd>
+      </dl><dl><dt>
+          
+          <code><a href="getRPO.html">getRPO()</a></code> 
+        </dt>
+        <dd>Calculate the rentention payoff (RPO) or opportunity cost for some states.</dd>
+      </dl></div><div class="section level2">
+      <h2 id="convert-to-different-file-formats">Convert to different file formats<a class="anchor" aria-label="anchor" href="#convert-to-different-file-formats"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="convertBinary2HMP.html">convertBinary2HMP()</a></code> 
+        </dt>
+        <dd>Convert a HMDP model stored in binary format to a hmp (xml) file.
+The function simply parse the binary files and create hmp files using
+the hmpMDPWriter.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="convertHMP2Binary.html">convertHMP2Binary()</a></code> 
+        </dt>
+        <dd>Convert a HMDP model stored in a hmp (xml) file to binary file format.</dd>
+      </dl></div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="actionIdxDf.html">actionIdxDf()</a></code> 
         </dt>
@@ -84,130 +253,6 @@
         <dd>Info about the weights of the actions in the HMDP model under consideration.</dd>
       </dl><dl><dt>
           
-          <code><a href="binaryActionWriter.html">binaryActionWriter()</a></code> 
-        </dt>
-        <dd>Function for writing actions of a HMDP model to binary files. The function defineds
-subfunctions which can be used to define actions saved in a set of binary
-files. It is assumed that the states have been defined using <code>binaryMDPWriter</code>
-and that the id of the states is known (can be retrived using e.g. <code>stateIdxDf</code>).</dd>
-      </dl><dl><dt>
-          
-          <code><a href="binaryMDPWriter.html">binaryMDPWriter()</a></code> 
-        </dt>
-        <dd>Function for writing an HMDP model to binary files. The function defineds
-subfunctions which can be used to define an HMDP model saved in a set of binary
-files.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="checkWDurIdx.html">.checkWDurIdx()</a></code> 
-        </dt>
-        <dd>Internal function. Check if the indexes given are okay. Should not be used except you know what you are doing</dd>
-      </dl><dl><dt>
-          
-          <code><a href="checkWIdx.html">.checkWIdx()</a></code> 
-        </dt>
-        <dd>Internal function. Check if the index of the weight is okay. Should not be used except you know what you are doing</dd>
-      </dl><dl><dt>
-          
-          <code><a href="convertBinary2HMP.html">convertBinary2HMP()</a></code> 
-        </dt>
-        <dd>Convert a HMDP model stored in binary format to a hmp (xml) file.
-The function simply parse the binary files and create hmp files using
-the hmpMDPWriter.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="convertHMP2Binary.html">convertHMP2Binary()</a></code> 
-        </dt>
-        <dd>Convert a HMDP model stored in a hmp (xml) file to binary file format.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getBinInfoActions.html">getBinInfoActions()</a></code> 
-        </dt>
-        <dd>Info about the actions in the HMDP model under consideration.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getBinInfoStates.html">getBinInfoStates()</a></code> 
-        </dt>
-        <dd>Info about the states in the binary files of the HMDP model under consideration.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getInfo.html">getInfo()</a></code> 
-        </dt>
-        <dd>Information about the MDP</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getPolicy.html">getPolicy()</a></code> 
-        </dt>
-        <dd>Get parts of the optimal policy.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getRPO.html">getRPO()</a></code> 
-        </dt>
-        <dd>Calculate the rentention payoff (RPO) or opportunity cost for some states.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getSteadyStatePr.html">getSteadyStatePr()</a></code> 
-        </dt>
-        <dd>Calculate the steady state transition probabilities for the founder process (level 0).</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getWIdx.html">getWIdx()</a></code> 
-        </dt>
-        <dd>Return the index of a weight in the model. Note that index always start from zero (C++ style), i.e. the first weight, the first state at a stage etc has index 0.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="hmpMDPWriter.html">hmpMDPWriter()</a></code> 
-        </dt>
-        <dd>Function for writing an HMDP model to a hmp file (XML). The function define
-subfunctions which can be used to define an HMDP model stored in a hmp file.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="loadMDP.html">loadMDP()</a></code> 
-        </dt>
-        <dd>Load the HMDP model defined in the binary files. The model are created in memory
-using the external C++ library.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plotHypergraph.html">plotHypergraph()</a></code> 
-        </dt>
-        <dd>Plot parts of the state expanded hypergraph (experimental).</dd>
-      </dl><dl><dt>
-          
-          <code><a href="randomHMDP.html">randomHMDP()</a></code> 
-        </dt>
-        <dd>Generate a "random" HMDP stored in a set of binary files.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="runCalcWeights.html">runCalcWeights()</a></code> 
-        </dt>
-        <dd>Calculate weights based on current policy. Normally run after an optimal policy has been found.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="runPolicyIteAve.html">runPolicyIteAve()</a></code> 
-        </dt>
-        <dd>Perform policy iteration (average reward criterion) on the MDP.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="runPolicyIteDiscount.html">runPolicyIteDiscount()</a></code> 
-        </dt>
-        <dd>Perform policy iteration (discounted reward criterion) on the MDP.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="runValueIte.html">runValueIte()</a></code> 
-        </dt>
-        <dd>Perform value iteration on the MDP.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="saveMDP.html">saveMDP()</a></code> 
-        </dt>
-        <dd>Save the MDP to binary files</dd>
-      </dl><dl><dt>
-          
-          <code><a href="setPolicy.html">setPolicy()</a></code> 
-        </dt>
-        <dd>Modify the current policy by setting policy action of states.</dd>
-      </dl><dl><dt>
-          
           <code><a href="stateIdxDf.html">stateIdxDf()</a></code> 
         </dt>
         <dd>Info about the states in the HMDP model under consideration.</dd>
@@ -221,13 +266,9 @@ using the external C++ library.</dd>
           <code><a href="transProbMat.html">transProbMat()</a></code> 
         </dt>
         <dd>Info about the transition probabilities in the HMDP model under consideration.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="weightNames.html">weightNames()</a></code> 
-        </dt>
-        <dd>Names of weights used in actions.</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
