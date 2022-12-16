@@ -70,7 +70,7 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>mdp</dt>
-<dd><p>The MDP loaded using <a href="loadMDP.html">loadMDP</a>.</p></dd>
+<dd><p>The MDP loaded using <code><a href="loadMDP.html">loadMDP()</a></code>.</p></dd>
 
 
 <dt>w</dt>
@@ -90,7 +90,7 @@
 
 
 <dt>discountFactor</dt>
-<dd><p>The discountRate for one time unit. If specified <code>rate</code> and <code>rateBase</code> are not used to calculate the discount rate.</p></dd>
+<dd><p>The discount rate for one time unit. If specified <code>rate</code> and <code>rateBase</code> are not used to calculate the discount rate.</p></dd>
 
 
 <dt>maxIte</dt>
@@ -98,7 +98,7 @@
 
 
 <dt>discountMethod</dt>
-<dd><p>Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if <code>discountFactor</code> is <code>NULL</code>.</p></dd>
+<dd><p>Either 'continuous' or 'discrete', corresponding to discount factor <code>exp(-rate/rateBase)</code> or <code>1/(1 + rate/rateBase)</code>, respectively. Only used if <code>discountFactor</code> is <code>NULL</code>.</p></dd>
 
 
 <dt>getLog</dt>
@@ -113,11 +113,7 @@
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="getPolicy.html">getPolicy</a></code>.</p></div>
-    </div>
-    <div class="section level2">
-    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Lars Relund <a href="mailto:lars@relund.dk">lars@relund.dk</a></p>
+    <div class="dont-index"><p><code><a href="getPolicy.html">getPolicy()</a></code>.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

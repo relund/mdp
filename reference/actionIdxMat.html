@@ -71,17 +71,13 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A matrix with columns (aId, ...) where
-aId is the action row id and ... are alternating pairs (scp, idx), one for each
-possible transition where scp is the scope that can be 4 values:
+<p>A matrix with columns (<code>aId</code>, ...) where
+<code>aId</code> is the action row id and <code>...</code> are alternating pairs <code>(scp, idx)</code>, one for each
+possible transition where <code>scp</code> is the scope that can be 4 values:
 2 - A transition to a child process (stage zero in the child process), 1 - A transition
 to next stage in the current process, 0 - A transition to the next stage in the father
 process. the idx in the pair denote the index of the state at the stage considered.
-Finally, if scope = 3 then a transition to the state with sId = idx is considered.</p>
-    </div>
-    <div class="section level2">
-    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Lars Relund <a href="mailto:lars@relund.dk">lars@relund.dk</a></p>
+Finally, if scope equals 3 then a transition to the state with <code>sId = idx</code> is considered.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
