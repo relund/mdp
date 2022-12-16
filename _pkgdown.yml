@@ -4,7 +4,9 @@ template:
 reference:
 - title: Building an MDP model to a file
 - contents:
-  - matches("Writer")
+  - binaryMDPWriter
+  - binaryActionWriter
+  - hmpMDPWriter
   - getBinInfoActions
   - getBinInfoStates
   - randomHMDP
@@ -32,12 +34,4 @@ reference:
 - title: Convert to different file formats
 - contents: 
   - matches("convert")
-- title: internal
-- contents:
-  - actionIdxDf
-  - actionIdxMat
-  - actionInfo
-  - actionWeightMat
-  - stateIdxDf
-  - stateIdxMat
-  - transProbMat
+
