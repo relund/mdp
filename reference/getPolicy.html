@@ -205,9 +205,9 @@ the g value and the label for reward and duration. See the vignette about extern
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load the model into memory</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.0001388 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.75e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.3e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000186801 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (5.63e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.9e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $binNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      </span>
@@ -234,7 +234,7 @@ the g value and the label for reward and duration. See the vignette about extern
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Net reward"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x557e7e5e9400&gt; of class 'HMDP' &lt;0x557e83c1aa10&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x56331c5d2dd0&gt; of class 'HMDP' &lt;0x56331368f300&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MDP:C++"</span>
@@ -282,7 +282,7 @@ the g value and the label for reward and duration. See the vignette about extern
 <span class="r-in"><span><span class="fu"><a href="runValueIte.html">runValueIte</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w</span>, termValues<span class="op">=</span><span class="va">scrapValues</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> using quantity 'Net reward' under reward criterion.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 2.18e-05 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 1.08e-05 sec.</span>
 <span class="r-in"><span><span class="fu">getPolicy</span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>     <span class="co"># optimal policy</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr stateLabel   aIdx actionLabel weight</span>
@@ -428,9 +428,9 @@ the g value and the label for reward and duration. See the vignette about extern
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Have a look at the state-expanded hypergraph</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000139401 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.64e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (9e-07 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.0002294 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (8.24e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.9e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $binNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      </span>
@@ -457,7 +457,7 @@ the g value and the label for reward and duration. See the vignette about extern
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Net reward"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x557e87ebc0d0&gt; of class 'HMDP' &lt;0x557e83c1aa10&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x56331c5bec80&gt; of class 'HMDP' &lt;0x56331368f300&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MDP:C++"</span>
