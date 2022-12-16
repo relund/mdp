@@ -34,10 +34,12 @@ public:
         int nrhs = 1;
         int ldp = P.rows;
         int ldr = r.rows;
-        int ipiv[P.rows];
+        //int ipiv[P.rows];  // warning: ISO C++ forbids variable length array ‘ipiv’ [-Wvla]
+        int *ipiv = new int[P.rows];  // use instead (remember to delete ipiv)
         int info = 0;
         w.Inject(r);    // copy r to w;
         F77_CALL(dgesv)(&rows, &nrhs, &P(0,0), &ldp, ipiv, &w(0,0), &ldr, &info);
+        delete [] ipiv;
         if (info!=0) {
             cout << "Error in LASolve (dgesv). Info=" << info << endl;
             return 1;
