@@ -366,10 +366,10 @@ getInfo<-function(mdp,
       df <- df %>% tidyr::unnest_wider(sId)  # convert states to columns
       if (dfLevel == "action") {
          df <- df %>% 
-            tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
-            tidyr::unnest_wider(.data$actions, names_repair = tidyr::tidyr_legacy) # convert action to columns
+            tidyr::unnest_longer("actions") %>% # convert actions (one row for each action)
+            tidyr::unnest_wider("actions", names_repair = tidyr::tidyr_legacy) # convert action to columns
          df <- df %>% 
-            dplyr::rename(label_action = .data$label1)
+            dplyr::rename(label_action = "label1")
          if (asStringsActions) {
             df <- df %>% 
                dplyr::mutate(weights = sapply(.data$weights, function(x) paste0(x, collapse = ",")),
@@ -382,8 +382,8 @@ getInfo<-function(mdp,
       } else {
          if (asStringsActions) {
             df <- df %>% 
-               tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
-               tidyr::unnest_wider(.data$actions, names_repair = tidyr::tidyr_legacy) # convert action to columns
+               tidyr::unnest_longer("actions") %>% # convert actions (one row for each action)
+               tidyr::unnest_wider("actions", names_repair = tidyr::tidyr_legacy) # convert action to columns
             df <- df %>% 
                dplyr::rename(label_action = .data$label1)
             df <- df %>% 
@@ -416,8 +416,8 @@ getInfo<-function(mdp,
    if (withHarc) {
       df <- dplyr::tibble(sId = l)  %>% 
          tidyr::unnest_wider(sId) %>% 
-         tidyr::unnest_longer(.data$actions) %>% # convert actions (one row for each action)
-         tidyr::unnest_wider(.data$actions, names_repair = tidyr::tidyr_legacy) %>% 
+         tidyr::unnest_longer("actions") %>% # convert actions (one row for each action)
+         tidyr::unnest_wider("actions", names_repair = tidyr::tidyr_legacy) %>% 
          tidyr::unnest_wider(.data$trans, names_sep = "") %>% 
          dplyr::filter(!is.na(.data$aIdx)) %>% 
          dplyr::select(.data$sId, tidyr::contains("trans"), label = .data$label1)
