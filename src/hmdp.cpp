@@ -690,7 +690,9 @@ flt HMDP::PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, con
 	SetPred(0); // default policy
 	if (externalProc) CalcOptPolicy(crit, idxW, g, idxD, discountF);   // if external processes we have to find the optimal policy of the external processes and set external action w and trans pr
 	for (idx k=1; ; ++k) { //cout << endl << "IteP:" << k << endl;
-		if (verbose) log << endl; log << k << " "; if (verbose) log << endl;
+		if (verbose) log << endl; 
+		log << k << " "; 
+		if (verbose) log << endl;
 		// find rewards, dur, trans pr at founder given policy
 		if (crit==AverageReward) {
             FounderW(Reward, r, idxW);
