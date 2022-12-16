@@ -12,15 +12,12 @@ stateIdxMat(prefix = "", file = "stateIdx.bin")
 \item{file}{The HMDP binary file containing the description under consideration.}
 }
 \value{
-A matrix with columns (sId, n0, s0, a0, ...) where
-sId is the state row id, n0 the index of the stage at level 0, s0 the index
-of the state and a0 the index of the action. If the HMDP has more
-than one level columns index (d1, s1, a1, ...) are added.
+A matrix with columns \verb{(sId, n0, s0, a0, ...)} where
+\code{sId} is the state row id, \code{n0} the index of the stage at level 0, \code{s0} the index
+of the state and \code{a0} the index of the action. If the HMDP has more
+than one level columns index \verb{(d1, s1, a1, ...)} are added.
 }
 \description{
 Info about the states in the HMDP model under consideration.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }
 \keyword{internal}

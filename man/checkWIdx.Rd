@@ -18,7 +18,4 @@ Nothing.
 \description{
 Internal function. Check if the index of the weight is okay. Should not be used except you know what you are doing
 }
-\author{
-Lars Relund \email{lars@relund.dk}
-}
 \keyword{internal}

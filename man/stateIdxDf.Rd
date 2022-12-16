@@ -7,7 +7,7 @@
 stateIdxDf(prefix = "", file = "stateIdx.bin", labels = "stateIdxLbl.bin")
 }
 \arguments{
-\item{prefix}{A character string with the prefix added to til file(s).}
+\item{prefix}{A character string with the prefix added to the file(s).}
 
 \item{file}{The HMDP binary file containing the description under consideration.}
 
@@ -19,8 +19,5 @@ A data frame with the same columns as in
 }
 \description{
 Info about the states in the HMDP model under consideration.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }
 \keyword{internal}

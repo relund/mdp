@@ -1,22 +1,36 @@
 #' Load the HMDP model defined in the binary files. The model are created in memory
 #' using the external C++ library.
 #'
-#' @param prefix A character string with the prefix added to \code{binNames}. Used to identify a specific model.
+#' @param prefix A character string with the prefix added to `binNames`. Used to identify a 
+#'   specific model.
 #' @param binNames A character vector of length 7 giving the names of the binary
 #'     files storing the model.
-#' @param eps The sum of the transition probabilities must at most differ eps from one.
+#' @param eps The sum of the transition probabilities must at most differ `eps` from one.
 #' @param check Check if the MDP seems correct.
 #' @param verbose More output when running algorithms.
 #' @param getLog Output the log messages.
 #' 
-#' @return A list containing relevant information about the model and a pointer \code{ptr} to the model rc object in memory.
-#' @author Lars Relund \email{lars@@relund.dk}
+#' @return A list containing relevant information about the model and a pointer `ptr` to the model 
+#'   object in memory.
 #' @example inst/examples/machine.R
 #' @export
-loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
-	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin","externalProcesses.bin"),
-	eps = 0.00001, check = TRUE, verbose=FALSE, getLog = TRUE)
-{
+loadMDP <-
+   function(prefix = "",
+            binNames = c(
+               "stateIdx.bin",
+               "stateIdxLbl.bin",
+               "actionIdx.bin",
+               "actionIdxLbl.bin",
+               "actionWeight.bin",
+               "actionWeightLbl.bin",
+               "transProb.bin",
+               "externalProcesses.bin"
+            ),
+            eps = 0.00001,
+            check = TRUE,
+            verbose = FALSE,
+            getLog = TRUE
+   ) {
 	binNames<-paste(prefix,binNames,sep="")
 	if (!is.logical(verbose)) verbose = FALSE
 	mdp<-methods::new(HMDP, binNames, verbose)
@@ -68,7 +82,6 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 #' @param iW Index of the weight we want to optimize.
 #' @param iDur Index of the duration/time.
 #' @param wLth Number of weights in the model.
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @return Nothing.
 #' @name checkWDurIdx
 #' @keywords internal
@@ -91,7 +104,6 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 #' @aliases .checkWIdx
 #' @param iW Index of the weight we want to optimize.
 #' @param wLth Number of weights in the model.
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @return Nothing.
 #' @name checkWIdx
 #' @keywords internal
@@ -104,9 +116,8 @@ loadMDP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","action
 
 #' Return the index of a weight in the model. Note that index always start from zero (C++ style), i.e. the first weight, the first state at a stage etc has index 0.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param wLbl The label/string of the weight.
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @return The index (integer).
 #' @export
 getWIdx<-function(mdp, wLbl) {
@@ -119,17 +130,16 @@ getWIdx<-function(mdp, wLbl) {
 
 #' Perform policy iteration (average reward criterion) on the MDP.
 #'
-#' The policy can afterwards be received using functions \code{getPolicy} and \code{getPolicyW}.
+#' The policy can afterwards be received using functions `getPolicy` and `getPolicyW`.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param w The label of the weight we optimize.
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param maxIte Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.
 #' @param getLog Output the log messages.
 #' 
 #' @return The optimal gain (g) calculated.
-#' @author Lars Relund \email{lars@@relund.dk}
-#' @seealso \code{\link{getPolicy}}.
+#' @seealso [getPolicy()].
 #' @export
 runPolicyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
@@ -144,21 +154,20 @@ runPolicyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
 
 #' Perform policy iteration (discounted reward criterion) on the MDP.
 #'
-#' The policy can afterwards be received using functions \code{getPolicy} and \code{getPolicyW}.
+#' The policy can afterwards be received using functions `getPolicy` and `getPolicyW`.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param w The label of the weight we optimize.
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
-#' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
+#' @param discountFactor The discount rate for one time unit. If specified `rate` and `rateBase` are not used to calculate the discount rate.
 #' @param maxIte Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.
-#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.
+#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
 #' @param getLog Output the log messages.
 #' 
 #' @return Nothing.
-#' @author Lars Relund \email{lars@@relund.dk}
-#' @seealso \code{\link{getPolicy}}.
+#' @seealso [getPolicy()].
 #' @export
 runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
                             discountMethod="continuous", getLog = TRUE) {
@@ -177,24 +186,23 @@ runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFact
 
 #' Perform value iteration on the MDP.
 #'
-#' If the MDP has a finite time-horizon then arguments \code{times} and \code{eps}
+#' If the MDP has a finite time-horizon then arguments `times` and `eps`
 #' are ignored.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param w The label of the weight we optimize.
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate Interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
-#' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
+#' @param discountFactor The discount rate for one time unit. If specified `rate` and `rateBase` are not used to calculate the discount rate.
 #' @param maxIte The max number of iterations value iteration is performed.
-#' @param eps Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).
+#' @param eps Stopping criterion. If $max(w(t)-w(t+1)) < `eps`$ then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).
 #' @param termValues The terminal values used (values of the last stage in the MDP).
-#' @param g Average reward. If specified then do a single iteration using the opdate equations under average reward criterion with the specified g value.
+#' @param g Average reward. If specified then do a single iteration using the update equations under average reward criterion with the specified g value.
 #' @param getLog Output the log messages.
-#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.
+#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
 #' 
 #' @return NULL (invisible)
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @references Puterman, M. Markov Decision Processes, Wiley-Interscience, 1994.
 #' @example inst/examples/machine.R
 #' @export
@@ -236,9 +244,9 @@ runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor
 
 #' Get parts of the optimal policy.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param sId Vector of id's of the states we want to retrieve.
-#' @param stageStr Stage string. If specified then find sId based on the stage string.
+#' @param stageStr Stage string. If specified then find `sId` based on the stage string.
 #' @param stateLabels Add state labels.
 #' @param actionLabels Add action labels of policy.
 #' @param actionIdx Add action index.
@@ -247,12 +255,11 @@ runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor
 #' @param external A vector of stage strings corresponding to external processes we want the optimal policy of.
 #' @param ... Parameters passed on when find the optimal policy of the external processes.
 #' 
-#' Note if external is specified then it must contain stage strings from mdp$external. Moreover you 
-#' must specify further arguments passed on to valueIte used for recreating the optimal policy e.g. 
+#' Note if external is specified then it must contain stage strings from `mdp$external`. Moreover you 
+#' must specify further arguments passed on to [runValueIte()] used for recreating the optimal policy e.g. 
 #' the g value and the label for reward and duration. See the vignette about external processes. 
 #' 
 #' @return The policy (data frame).
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @example inst/examples/machine.R
 #' @export
 getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
@@ -311,22 +318,21 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
 
 #' Information about the MDP
 #' 
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param sId The id of the state(s) considered.
 #' @param stateStr A character vector containing the index of the state(s) (e.g. "n0,s0,a0,n1,s1"). 
-#'   Parameter \code{sId} are ignored if not NULL.
+#'   Parameter `sId` are ignored if not NULL.
 #' @param stageStr A character vector containing the index of the stage(s) (e.g. "n0,s0,a0,n1"). 
-#'   Parameter \code{sId} and \code{idxS} are ignored if not NULL.
+#'   Parameter `sId` and `idxS` are ignored if not NULL.
 #' @param withList Output info as a list `lst`.  
 #' @param withDF Output the info as a data frame.
 #' @param dfLevel If `withDF` and equal `"state"` the data frame contains a row for each state. If equal `"action"` the data frame contains a row for each action.
 #' @param asStringsState Write state vector as a string; otherwise, output it as columns.
 #' @param asStringsActions Write action vectors (weights, transitions and probabilities) as strings; otherwise, output it as columns.
 #' @param withHarc Output a hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
-#'   head (sId), the tails (sId) and the label.
+#'   head (`sId`), the tails (`sId`) and the label.
 #'   
 #' @return A list containing the list, data frame(s).
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @example inst/examples/machine.R
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
@@ -434,10 +440,9 @@ getInfo<-function(mdp,
 #' If the policy does not contain all states then the actions from the previous optimal 
 #' policy are used.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param policy A data frame with two columns state id `sId` and action index `aIdx`.
 #' @return NULL (invisible)
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @example inst/examples/machine.R
 #' @export
 setPolicy<-function(mdp, policy) {
@@ -450,18 +455,17 @@ setPolicy<-function(mdp, policy) {
 
 #' Calculate weights based on current policy. Normally run after an optimal policy has been found.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param wLbl The label of the weight we consider.
-#' @param criterion The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.
+#' @param criterion The criterion used. If `expected` used expected reward, if `discount` used discounted rewards, if `average` use average rewards.
 #' @param durLbl The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
-#' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
+#' @param discountFactor The discount rate for one time unit. If specified `rate` and `rateBase` are not used to calculate the discount rate.
 #' @param termValues The terminal values used (values of the last stage in the MDP).
-#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.
+#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
 #' 
 #' @return Nothing.
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @example inst/examples/machine.R
 #' @export
 runCalcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0, rateBase = 1, 
@@ -486,27 +490,26 @@ runCalcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 
 }
 
 
-#' Calculate the rentention payoff (RPO) or opportunity cost for some states.
+#' Calculate the retention pay-off (RPO) or opportunity cost for some states.
 #'
 #' The RPO is defined as the difference between
-#' the weight of the state when using action \code{iA} and the maximum
-#' weight of the node when using another predecessor different from \code{iA}.
+#' the weight of the state when using action `iA` and the maximum
+#' weight of the node when using another predecessor different from `iA`.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param w The label of the weight/reward we calculate RPO for.
-#' @param iA  The action index we calculate the RPO with respect to (same size as sId).
-#' @param sId Vector of id's of the states we want to retrive.
-#' @param criterion The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.
+#' @param iA  The action index we calculate the RPO with respect to (same size as `sId`).
+#' @param sId Vector of id's of the states we want to retrieve.
+#' @param criterion The criterion used. If `expected` used expected reward, if `discount` used discounted rewards, if `average` use average rewards.
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
-#' @param discountFactor The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.
-#' @param g The optimal gain (g) calculated (used if \code{criterion = "average"}).
-#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.
+#' @param discountFactor The discount rate for one time unit. If specified `rate` and `rateBase` are not used to calculate the discount rate.
+#' @param g The optimal gain (g) calculated (used if `criterion = "average"`).
+#' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
 #' @param stateStr Output the state string. 
 #' 
-#' @return The rpo (matrix/data frame).
-#' @author Lars Relund \email{lars@@relund.dk}
+#' @return The RPO (matrix/data frame).
 #' @importFrom magrittr %>%
 #' @export
 getRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
@@ -542,12 +545,11 @@ getRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderState
 #' 
 #' Currently do not save external files.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
-#' @param prefix A character string with the prefix added to \code{binNames}. Used to identify a specific model.
+#' @param mdp The MDP loaded using [loadMDP()].
+#' @param prefix A character string with the prefix added to `binNames`. Used to identify a specific model.
 #' @param getLog Output the log as a message.
 #' 
-#' @return The rpo (matrix/data frame).
-#' @author Lars Relund \email{lars@@relund.dk}
+#' @return ???
 #' @export
 saveMDP<-function(mdp,prefix="", getLog=TRUE) {
    mdp$ptr$save2Binary(prefix)
@@ -559,11 +561,10 @@ saveMDP<-function(mdp,prefix="", getLog=TRUE) {
 #'
 #' Assume that we consider an ergodic/irreducible time-homogeneous Markov chain specified using a policy in the MDP.
 #'
-#' @param mdp The MDP loaded using \link{loadMDP}.
+#' @param mdp The MDP loaded using [loadMDP()].
 #' @param getLog Output log text.
 #' 
-#' @return A vector with stady state probabilities for all the states at the founder level.
-#' @author Lars Relund \email{lars@@relund.dk}
+#' @return A vector with steady state probabilities for all the states at the founder level.
 #' @export
 getSteadyStatePr<-function(mdp, getLog=FALSE) {
    pr<-mdp$ptr$steadyStatePr()
@@ -581,7 +582,6 @@ getSteadyStatePr<-function(mdp, getLog=FALSE) {
 # #' @param idxA The action index.
 # #' @param wLbl The label of the weight we consider.
 # #' @return Nothing.
-# #' @author Lars Relund \email{lars@@relund.dk}
 # #' @example inst/examples/machine.R
 # #' @export
 # setActionWeight<-function(mdp, w, sId, iA, wLbl) {

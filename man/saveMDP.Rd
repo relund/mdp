@@ -7,18 +7,15 @@
 saveMDP(mdp, prefix = "", getLog = TRUE)
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{prefix}{A character string with the prefix added to \code{binNames}. Used to identify a specific model.}
 
 \item{getLog}{Output the log as a message.}
 }
 \value{
-The rpo (matrix/data frame).
+???
 }
 \description{
 Currently do not save external files.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

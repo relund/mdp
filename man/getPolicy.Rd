@@ -19,11 +19,11 @@ getPolicy(
 )
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{sId}{Vector of id's of the states we want to retrieve.}
 
-\item{stageStr}{Stage string. If specified then find sId based on the stage string.}
+\item{stageStr}{Stage string. If specified then find \code{sId} based on the stage string.}
 
 \item{stateLabels}{Add state labels.}
 
@@ -39,8 +39,8 @@ getPolicy(
 
 \item{...}{Parameters passed on when find the optimal policy of the external processes.
 
-Note if external is specified then it must contain stage strings from mdp$external. Moreover you
-must specify further arguments passed on to valueIte used for recreating the optimal policy e.g.
+Note if external is specified then it must contain stage strings from \code{mdp$external}. Moreover you
+must specify further arguments passed on to \code{\link[=runValueIte]{runValueIte()}} used for recreating the optimal policy e.g.
 the g value and the label for reward and duration. See the vignette about external processes.}
 }
 \value{
@@ -259,7 +259,4 @@ getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
 
 ## Reset working dir
 setwd(wd)
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

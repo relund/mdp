@@ -17,7 +17,7 @@ runPolicyIteDiscount(
 )
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{w}{The label of the weight we optimize.}
 
@@ -27,11 +27,11 @@ runPolicyIteDiscount(
 
 \item{rateBase}{The time-horizon the rate is valid over.}
 
-\item{discountFactor}{The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
+\item{discountFactor}{The discount rate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
 
 \item{maxIte}{Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.}
 
-\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.}
+\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor \code{exp(-rate/rateBase)} or \code{1/(1 + rate/rateBase)}, respectively. Only used if \code{discountFactor} is \code{NULL}.}
 
 \item{getLog}{Output the log messages.}
 }
@@ -42,8 +42,5 @@ Nothing.
 The policy can afterwards be received using functions \code{getPolicy} and \code{getPolicyW}.
 }
 \seealso{
-\code{\link{getPolicy}}.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
+\code{\link[=getPolicy]{getPolicy()}}.
 }

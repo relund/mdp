@@ -18,13 +18,10 @@ actionWeightMat(
 \item{labels}{The HMDP binary file containing the labels under consideration.}
 }
 \value{
-A matrix with columns (aId, ...) where
-aId is the action row id and ... are the weights of the action.
+A matrix with columns (\code{aId}, ...) where
+\code{aId} is the action row id and ... are the weights of the action.
 }
 \description{
 Info about the weights of the actions in the HMDP model under consideration.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }
 \keyword{internal}

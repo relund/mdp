@@ -16,12 +16,13 @@ loadMDP(
 )
 }
 \arguments{
-\item{prefix}{A character string with the prefix added to \code{binNames}. Used to identify a specific model.}
+\item{prefix}{A character string with the prefix added to \code{binNames}. Used to identify a
+specific model.}
 
 \item{binNames}{A character vector of length 7 giving the names of the binary
 files storing the model.}
 
-\item{eps}{The sum of the transition probabilities must at most differ eps from one.}
+\item{eps}{The sum of the transition probabilities must at most differ \code{eps} from one.}
 
 \item{check}{Check if the MDP seems correct.}
 
@@ -30,7 +31,8 @@ files storing the model.}
 \item{getLog}{Output the log messages.}
 }
 \value{
-A list containing relevant information about the model and a pointer \code{ptr} to the model rc object in memory.
+A list containing relevant information about the model and a pointer \code{ptr} to the model
+object in memory.
 }
 \description{
 Load the HMDP model defined in the binary files. The model are created in memory
@@ -246,7 +248,4 @@ getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
 
 ## Reset working dir
 setwd(wd)
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

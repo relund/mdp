@@ -7,7 +7,7 @@
 convertHMP2Binary(file, prefix = "", getLog = TRUE)
 }
 \arguments{
-\item{file}{The name of the hmp file (e.g. mdp.hmp).}
+\item{file}{The name of the HMP file (e.g. \code{r.hmp}).}
 
 \item{prefix}{A character string with the prefix which will be added to the binary files.}
 
@@ -18,7 +18,7 @@ NULL (invisible).
 }
 \description{
 The function simply parse the hmp file and create binary files using
-the \link{binaryMDPWriter}.
+the \code{\link[=binaryMDPWriter]{binaryMDPWriter()}}.
 }
 \note{
 Note all indexes are starting from zero (C/C++ style).
@@ -45,8 +45,5 @@ getBinInfoStates(prefix2)
 setwd(wd)
 }
 \seealso{
-\link{binaryMDPWriter}.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
+\code{\link[=binaryMDPWriter]{binaryMDPWriter()}}.
 }

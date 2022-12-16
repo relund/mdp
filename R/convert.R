@@ -4,16 +4,15 @@
 #' Convert a HMDP model stored in a hmp (xml) file to binary file format.
 #'
 #' The function simply parse the hmp file and create binary files using
-#' the \link{binaryMDPWriter}.
+#' the [binaryMDPWriter()].
 #'
-#' @param file The name of the hmp file (e.g. mdp.hmp).
+#' @param file The name of the HMP file (e.g. `r.hmp`).
 #' @param prefix A character string with the prefix which will be added to the binary files.
 #' @param getLog Output log text.
 #' 
 #' @return NULL (invisible).
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @seealso \link{binaryMDPWriter}.
+#' @seealso [binaryMDPWriter()].
 #' @example inst/examples/convert.R
 #' @export
 convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
@@ -128,19 +127,18 @@ convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
    invisible(NULL)
 }
 
-#' Convert a HMDP model stored in binary format to a hmp (xml) file.
-#' The function simply parse the binary files and create hmp files using
-#' the \link{hmpMDPWriter}.
+#' Convert a HMDP model stored in binary format to a `hmp` (XML) file.
+#' The function simply parse the binary files and create `hmp` files using
+#' the [hmpMDPWriter()].
 #'
 #' @param prefix A character string with the prefix which will be added to the binary files.
 #' @param binNames A character vector of length 7 giving the names of the binary files storing the model.
-#' @param out The name of the hmp file (e.g. mdp.hmp).
+#' @param out The name of the HMP file (e.g. `r.hmp`).
 #' @param duration Weight number storing the duration (NULL if none).
 #' @param getLog Output log text.
 #' 
 #' @return NULL (invisible).
 #' 
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' 
 #' @seealso `convertHMP2Binary`.
@@ -252,12 +250,10 @@ convertBinary2HMP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bi
 #' @param prefix A character string with the prefix added to til file(s).
 #' @param file The HMDP binary file containing the description under consideration.
 #'
-#' @return A matrix with columns (sId, n0, s0, a0, ...) where
-#' sId is the state row id, n0 the index of the stage at level 0, s0 the index
-#' of the state and a0 the index of the action. If the HMDP has more
-#' than one level columns index (d1, s1, a1, ...) are added.
-#'
-#' @author Lars Relund \email{lars@@relund.dk}
+#' @return A matrix with columns `(sId, n0, s0, a0, ...)` where
+#' `sId` is the state row id, `n0` the index of the stage at level 0, `s0` the index
+#' of the state and `a0` the index of the action. If the HMDP has more
+#' than one level columns index `(d1, s1, a1, ...)` are added.
 #' @keywords internal
 stateIdxMat<-function(prefix="", file="stateIdx.bin") {
    file<-paste(prefix,file,sep="")
@@ -277,14 +273,12 @@ stateIdxMat<-function(prefix="", file="stateIdx.bin") {
 
 #' Info about the states in the HMDP model under consideration.
 #'
-#' @param prefix A character string with the prefix added to til file(s).
+#' @param prefix A character string with the prefix added to the file(s).
 #' @param file The HMDP binary file containing the description under consideration.
 #' @param labels The HMDP binary file containing the labels under consideration.
 #'
 #' @return A data frame with the same columns as in
-#' \code{stateIdxMat} plus another column containing the labels.
-#'
-#' @author Lars Relund \email{lars@@relund.dk}
+#' `stateIdxMat` plus another column containing the labels.
 #' @keywords internal
 stateIdxDf<-function(prefix="", file="stateIdx.bin", labels="stateIdxLbl.bin") {
    labels<-paste(prefix,labels,sep="")
@@ -302,10 +296,8 @@ stateIdxDf<-function(prefix="", file="stateIdx.bin", labels="stateIdxLbl.bin") {
 #' @param prefix A character string with the prefix added to til file(s).
 #' @param file The HMDP binary file containing the description under consideration.
 #'
-#' @return A matrix with columns (aId, ...) where
-#' aId is the action row id and ... are the probabilities of the action.
-#'
-#' @author Lars Relund \email{lars@@relund.dk}
+#' @return A matrix with columns (`aId`, ...) where
+#' `aId` is the action row id and ... are the probabilities of the action.
 #' @keywords internal
 transProbMat<-function(prefix="", file="transProb.bin") {
    file<-paste(prefix,file,sep="")
@@ -326,15 +318,13 @@ transProbMat<-function(prefix="", file="transProb.bin") {
 #' @param prefix A character string with the prefix added to til file(s).
 #' @param file The HMDP binary file containing the description under consideration.
 #'
-#' @return A matrix with columns (aId, ...) where
-#' aId is the action row id and ... are alternating pairs (scp, idx), one for each
-#' possible transition where scp is the scope that can be 4 values:
+#' @return A matrix with columns (`aId`, ...) where
+#' `aId` is the action row id and `...` are alternating pairs `(scp, idx)`, one for each
+#' possible transition where `scp` is the scope that can be 4 values:
 #' 2 - A transition to a child process (stage zero in the child process), 1 - A transition
 #' to next stage in the current process, 0 - A transition to the next stage in the father
 #' process. the idx in the pair denote the index of the state at the stage considered.
-#' Finally, if scope = 3 then a transition to the state with sId = idx is considered.
-#'
-#' @author Lars Relund \email{lars@@relund.dk}
+#' Finally, if scope equals 3 then a transition to the state with `sId = idx` is considered.
 #' @keywords internal
 actionIdxMat<-function(prefix="", file="actionIdx.bin") {
    file<-paste(prefix,file,sep="")
@@ -357,9 +347,7 @@ actionIdxMat<-function(prefix="", file="actionIdx.bin") {
 #' @param labels The HMDP binary file containing the labels under consideration.
 #'
 #' @return A data frame with the same columns as in
-#' \code{actionIdxMat} plus another column containing the labels.
-#'
-#' @author Lars Relund \email{lars@@relund.dk}
+#' `actionIdxMat` plus another column containing the labels.
 #' @keywords internal
 actionIdxDf<-function(prefix="", file="actionIdx.bin", labels="actionIdxLbl.bin") {
    labels<-paste(prefix,labels,sep="")
@@ -382,11 +370,9 @@ actionIdxDf<-function(prefix="", file="actionIdx.bin", labels="actionIdxLbl.bin"
 #' @param weightFile The HMDP binary file containing the action costs.
 #' @param transPrFile The HMDP binary file containing the transition probabilities.
 #'
-#' @return A matrix with columns from \code{actionIdxMat},
-#' \code{actionCostMat} and \code{transProbMat} if labels is NULL. If labels
+#' @return A matrix with columns from `actionIdxMat`,
+#' `actionCostMat` and `transProbMat` if labels is NULL. If labels
 #' not are NULL then a data frame are returned with a label column too.
-#'
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @keywords internal
 actionInfo<-function(prefix="", file="actionIdx.bin" , weightFile="actionWeight.bin", transPrFile="transProb.bin", labels="actionIdxLbl.bin") {
    labels<-paste(prefix,labels,sep="")
@@ -415,10 +401,8 @@ actionInfo<-function(prefix="", file="actionIdx.bin" , weightFile="actionWeight.
 #' @param file The HMDP binary file containing the description under consideration.
 #' @param labels The HMDP binary file containing the labels under consideration.
 #'
-#' @return A matrix with columns (aId, ...) where
-#' aId is the action row id and ... are the weights of the action.
-#'
-#' @author Lars Relund \email{lars@@relund.dk}
+#' @return A matrix with columns (`aId`, ...) where
+#' `aId` is the action row id and ... are the weights of the action.
 #' @keywords internal
 actionWeightMat<-function(prefix="", file="actionWeight.bin",labels="actionWeightLbl.bin") {
    file<-paste(prefix,file,sep="")
@@ -440,7 +424,6 @@ actionWeightMat<-function(prefix="", file="actionWeight.bin",labels="actionWeigh
 #'
 #' @param prefix A character string with the prefix added to the binary file names.
 #' @param labels The HMDP binary file containing the weight labels.
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @return Vector of weight names.
 #' @keywords internal
 weightNames<-function(prefix="", labels="actionWeightLbl.bin") {

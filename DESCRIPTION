@@ -7,7 +7,7 @@ Authors@R:
            comment = c(ORCID = "0000-0002-4802-3071"))
 Description: Create and optimize (semi) MDPs with discrete time steps and
     state space. Both hierarchical and ordinary-traditional MDPs can be
-    modelled.
+    modeled.
 License: GPL (>= 3.3.2)
 URL: https://relund.github.io/mdp/, https://github.com/relund/mdp/,
     http://relund.github.io/mdp/
@@ -37,4 +37,4 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3

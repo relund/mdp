@@ -7,7 +7,7 @@
 runPolicyIteAve(mdp, w, dur, maxIte = 100, getLog = TRUE)
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{w}{The label of the weight we optimize.}
 
@@ -24,8 +24,5 @@ The optimal gain (g) calculated.
 The policy can afterwards be received using functions \code{getPolicy} and \code{getPolicyW}.
 }
 \seealso{
-\code{\link{getPolicy}}.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
+\code{\link[=getPolicy]{getPolicy()}}.
 }

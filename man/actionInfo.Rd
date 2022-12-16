@@ -31,7 +31,4 @@ not are NULL then a data frame are returned with a label column too.
 \description{
 Info about the actions in the HMDP model under consideration.
 }
-\author{
-Lars Relund \email{lars@relund.dk}
-}
 \keyword{internal}

@@ -2,9 +2,9 @@
 % Please edit documentation in R/convert.R
 \name{convertBinary2HMP}
 \alias{convertBinary2HMP}
-\title{Convert a HMDP model stored in binary format to a hmp (xml) file.
-The function simply parse the binary files and create hmp files using
-the \link{hmpMDPWriter}.}
+\title{Convert a HMDP model stored in binary format to a \code{hmp} (XML) file.
+The function simply parse the binary files and create \code{hmp} files using
+the \code{\link[=hmpMDPWriter]{hmpMDPWriter()}}.}
 \usage{
 convertBinary2HMP(
   prefix = "",
@@ -20,7 +20,7 @@ convertBinary2HMP(
 
 \item{binNames}{A character vector of length 7 giving the names of the binary files storing the model.}
 
-\item{out}{The name of the hmp file (e.g. mdp.hmp).}
+\item{out}{The name of the HMP file (e.g. \code{r.hmp}).}
 
 \item{duration}{Weight number storing the duration (NULL if none).}
 
@@ -30,9 +30,9 @@ convertBinary2HMP(
 NULL (invisible).
 }
 \description{
-Convert a HMDP model stored in binary format to a hmp (xml) file.
-The function simply parse the binary files and create hmp files using
-the \link{hmpMDPWriter}.
+Convert a HMDP model stored in binary format to a \code{hmp} (XML) file.
+The function simply parse the binary files and create \code{hmp} files using
+the \code{\link[=hmpMDPWriter]{hmpMDPWriter()}}.
 }
 \note{
 Note all indexes are starting from zero (C/C++ style).
@@ -60,7 +60,4 @@ setwd(wd)
 }
 \seealso{
 \code{convertHMP2Binary}.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

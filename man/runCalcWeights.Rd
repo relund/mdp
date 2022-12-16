@@ -17,7 +17,7 @@ runCalcWeights(
 )
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{wLbl}{The label of the weight we consider.}
 
@@ -29,11 +29,11 @@ runCalcWeights(
 
 \item{rateBase}{The time-horizon the rate is valid over.}
 
-\item{discountFactor}{The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
+\item{discountFactor}{The discount rate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
 
 \item{termValues}{The terminal values used (values of the last stage in the MDP).}
 
-\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.}
+\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor \code{exp(-rate/rateBase)} or \code{1/(1 + rate/rateBase)}, respectively. Only used if \code{discountFactor} is \code{NULL}.}
 }
 \value{
 Nothing.
@@ -251,7 +251,4 @@ getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
 
 ## Reset working dir
 setwd(wd)
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

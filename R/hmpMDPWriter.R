@@ -1,5 +1,5 @@
 #' Function for writing an HMDP model to a hmp file (XML). The function define
-#' subfunctions which can be used to define an HMDP model stored in a hmp file.
+#' sub-functions which can be used to define an HMDP model stored in a hmp file.
 #'
 #' HMP files are in XML format and human readable using e.g. a text editor.
 #' HMP files are not suitable for storing large HMDP models since text files are very
@@ -8,39 +8,39 @@
 #' models then use the binary file format instead.
 #'
 #' The functions which can be used are:\itemize{
-#'   \item{\code{setWeights(labels, duration)}: }{Set the labels of the weights used in the actions.
-#'      \code{labels} is a vector of label names, \code{duration} A number defining which label
-#'      that corresponds to duration/time, e.g. if the first entry in labels is time then \code{duration = 1}.
+#'   \item{`setWeights(labels, duration)`: }{Set the labels of the weights used in the actions.
+#'      `labels` is a vector of label names, `duration` A number defining which label
+#'      that corresponds to duration/time, e.g. if the first entry in labels is time then `duration = 1`.
 #'      The function must be called before starting building the model.}
-#'   \item{\code{process()}: }{Starts a (sub)process.}
-#'   \item{\code{endProcess()}: }{Ends a (sub)process.}
-#'   \item{\code{stage(label=NULL)}: }{Starts a stage.}
-#'   \item{\code{endStage()}: }{Ends a (sub)process.}
-#'   \item{\code{state(label=NULL)}: }{Starts a state. Returns the states index number sIdx.}
-#'   \item{\code{endState()}: }{Ends a stage.}
-#'   \item{\code{action(label=NULL, weights, prob, statesNext=NULL)}: }{Starts an action.
-#'     Parameter \code{weights} must be a vector of action weights,
-#'     \code{prob} must contain triples of (scope, idx,pr).
-#'     The \code{scope} can be 3 values: 0 - A transition to the next stage in the
-#'     father process, 1 - A transition to next stage in the current process, 2 - A
-#'     transition to a child process (stage zero in the child process). \code{idx} in
-#'     the pair denote the index of the state at the stage considered, e.g. if scope=1
-#'     and idx=2 we consider state number 3 at next stage in the current process
-#'     (number from zero). Note scope = 3 is not supported in the hmp file format!
-#'     \code{statesNext} is the number of states in the next stage of the process
+#'   \item{`process()`: }{Starts a (sub)process.}
+#'   \item{`endProcess()`: }{Ends a (sub)process.}
+#'   \item{`stage(label=NULL)`: }{Starts a stage.}
+#'   \item{`endStage()`: }{Ends a (sub)process.}
+#'   \item{`state(label=NULL)`: }{Starts a state. Returns the states index number `sIdx`.}
+#'   \item{`endState()`: }{Ends a stage.}
+#'   \item{`action(label=NULL, weights, prob, statesNext=NULL)`: }{Starts an action.
+#'     Parameter `weights` must be a vector of action weights,
+#'     `prob` must contain triples of `(scope, idx, pr)`.
+#'     The `scope` can be 3 values: 
+#'     * 0: A transition to the next stage in the father process, 
+#'     * 1: A transition to next stage in the current process, 
+#'     * 2: A transition to a child process (stage zero in the child process). 
+#'     `idx` in the pair denote the index of the state at the stage considered, e.g. if `scope = 1`
+#'     and `idx = 2` we consider state number 3 at next stage in the current process
+#'     (number from zero). Note `scope = 3` is not supported in the `hmp` file format!
+#'     `statesNext` is the number of states in the next stage of the process
 #'     (only needed if have a transition to the father).}
-#'   \item{\code{endAction()}: }{Ends an action.}
-#'   \item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}}
+#'   \item{`endAction()`: }{Ends an action.}
+#'   \item{`closeWriter()`: }{Close the writer. Must be called when the model description has finished.}}
 #'
-#' @param file The name of the file storing the model (e.g. mdp.hmp).
+#' @param file The name of the file storing the model (e.g. `r.hmp`).
 #' @param rate The interest rate (used if consider discounting).
-#' @param rateBase The time where the \code{rate} is taken over, e.g. if the \code{rate} is 0.1 and \code{rateBase} is 365 days
+#' @param rateBase The time where the `rate` is taken over, e.g. if the `rate` is 0.1 and `rateBase` is 365 days
 #'   then we have an interest rate of 10 percent over the year.
 #' @param precision The precision used when checking if probabilities sum to one.
 #' @param desc Description of the model.
 #' @param getLog Output log text.
 #' @return A list of functions.
-#' @author Lars Relund \email{lars@@relund.dk}
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @example inst/examples/hmpMDPWriter.R
 #' @export

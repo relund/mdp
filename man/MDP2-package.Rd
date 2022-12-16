@@ -6,10 +6,10 @@
 \alias{MDP2-package}
 \title{MDP2: Markov Decision Processes (MDPs) in R}
 \description{
-Create and optimize (semi) MDPs with discrete time steps and state space. Both hierarchical and ordinary-traditional MDPs can be modelled.
+Create and optimize (semi) MDPs with discrete time steps and state space. Both hierarchical and ordinary-traditional MDPs can be modeled.
 }
 \seealso{
-\link{loadMDP}.
+\code{\link[=loadMDP]{loadMDP()}}.
 }
 \author{
 \strong{Maintainer}: Lars Relund Nielsen \email{lars@relund.dk} (\href{https://orcid.org/0000-0002-4802-3071}{ORCID})

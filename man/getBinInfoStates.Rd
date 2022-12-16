@@ -32,9 +32,6 @@ A data frame with the information.
 Info about the states in the binary files of the HMDP model under consideration.
 }
 \note{
-The model don't have to be loaded, i.e only read the binary files. The state id (sId) will
+The model don't have to be loaded, i.e only read the binary files. The state id (\code{sId}) will
 not be the same as in the loaded model!
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

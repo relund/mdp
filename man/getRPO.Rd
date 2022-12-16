@@ -2,7 +2,7 @@
 % Please edit documentation in R/mdp.R
 \name{getRPO}
 \alias{getRPO}
-\title{Calculate the rentention payoff (RPO) or opportunity cost for some states.}
+\title{Calculate the retention pay-off (RPO) or opportunity cost for some states.}
 \usage{
 getRPO(
   mdp,
@@ -21,13 +21,13 @@ getRPO(
 )
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{w}{The label of the weight/reward we calculate RPO for.}
 
-\item{iA}{The action index we calculate the RPO with respect to (same size as sId).}
+\item{iA}{The action index we calculate the RPO with respect to (same size as \code{sId}).}
 
-\item{sId}{Vector of id's of the states we want to retrive.}
+\item{sId}{Vector of id's of the states we want to retrieve.}
 
 \item{criterion}{The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.}
 
@@ -37,22 +37,19 @@ getRPO(
 
 \item{rateBase}{The time-horizon the rate is valid over.}
 
-\item{discountFactor}{The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
+\item{discountFactor}{The discount rate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
 
 \item{g}{The optimal gain (g) calculated (used if \code{criterion = "average"}).}
 
-\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.}
+\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor \code{exp(-rate/rateBase)} or \code{1/(1 + rate/rateBase)}, respectively. Only used if \code{discountFactor} is \code{NULL}.}
 
 \item{stateStr}{Output the state string.}
 }
 \value{
-The rpo (matrix/data frame).
+The RPO (matrix/data frame).
 }
 \description{
 The RPO is defined as the difference between
 the weight of the state when using action \code{iA} and the maximum
 weight of the node when using another predecessor different from \code{iA}.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

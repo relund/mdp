@@ -21,9 +21,9 @@ randomHMDP(
 \arguments{
 \item{prefix}{A character string with the prefix added to til file(s).}
 
-\item{levels}{Maximum number of levels. Set childProcessPr=1 if want exact this number of levels.}
+\item{levels}{Maximum number of levels. Set \code{childProcessPr = 1} if want exact this number of levels.}
 
-\item{timeHorizon}{The time horizon for each level (vector). For the founder the timehorizon can be Inf.}
+\item{timeHorizon}{The time horizon for each level (vector). For the founder the time-horizon can be Inf.}
 
 \item{states}{Number of states at each stage at a given level (vector of length levels)}
 
@@ -43,7 +43,4 @@ randomHMDP(
 }
 \description{
 Generate a "random" HMDP stored in a set of binary files.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

@@ -12,13 +12,10 @@ transProbMat(prefix = "", file = "transProb.bin")
 \item{file}{The HMDP binary file containing the description under consideration.}
 }
 \value{
-A matrix with columns (aId, ...) where
-aId is the action row id and ... are the probabilities of the action.
+A matrix with columns (\code{aId}, ...) where
+\code{aId} is the action row id and ... are the probabilities of the action.
 }
 \description{
 Info about the transition probabilities in the HMDP model under consideration.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }
 \keyword{internal}

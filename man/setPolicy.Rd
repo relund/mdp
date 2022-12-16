@@ -7,7 +7,7 @@
 setPolicy(mdp, policy)
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{policy}{A data frame with two columns state id \code{sId} and action index \code{aIdx}.}
 }
@@ -228,7 +228,4 @@ getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
 
 ## Reset working dir
 setwd(wd)
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

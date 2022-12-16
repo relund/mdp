@@ -20,7 +20,7 @@ runValueIte(
 )
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{w}{The label of the weight we optimize.}
 
@@ -30,19 +30,19 @@ runValueIte(
 
 \item{rateBase}{The time-horizon the rate is valid over.}
 
-\item{discountFactor}{The discountRate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
+\item{discountFactor}{The discount rate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
 
 \item{maxIte}{The max number of iterations value iteration is performed.}
 
-\item{eps}{Stopping criterion. If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).}
+\item{eps}{Stopping criterion. If $max(w(t)-w(t+1)) < \code{eps}$ then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).}
 
 \item{termValues}{The terminal values used (values of the last stage in the MDP).}
 
-\item{g}{Average reward. If specified then do a single iteration using the opdate equations under average reward criterion with the specified g value.}
+\item{g}{Average reward. If specified then do a single iteration using the update equations under average reward criterion with the specified g value.}
 
 \item{getLog}{Output the log messages.}
 
-\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor exp(-rate/rateBase) or 1/(1+rate/rateBase), respectively. Only used if \code{discountFactor} is \code{NULL}.}
+\item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor \code{exp(-rate/rateBase)} or \code{1/(1 + rate/rateBase)}, respectively. Only used if \code{discountFactor} is \code{NULL}.}
 }
 \value{
 NULL (invisible)
@@ -264,7 +264,4 @@ setwd(wd)
 }
 \references{
 Puterman, M. Markov Decision Processes, Wiley-Interscience, 1994.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

@@ -34,6 +34,7 @@ img {width: 100%;}
 ```{r setup, include=FALSE}
 library(knitr)
 options(formatR.arrow = TRUE, width=90) # , scipen=999, digits=5
+options(rmarkdown.html_vignette.check_title = FALSE)
 #thm <- knit_theme$get("edit-kwrite")   # whitengrey, bright, print, edit-flashdevelop, edit-kwrite
 #knit_theme$set(thm)
 opts_chunk$set(fig.align='center', 
@@ -205,7 +206,7 @@ node corresponds to a specific state in the MDP and is given the stage assigned 
 (**id must always start from zero**). A directed hyperarc is defined for each possible action. For
 instance, the state/node with id 1 corresponds to working condition $i=2$ and the two hyperarcs
 with head in this node corresponds to the two actions preventive and no repair. Note the tails of a
-hyperare represent a possible transition ($p_{ij}(a)>0$).
+hyperarc represent a possible transition ($p_{ij}(a)>0$).
 
 ```{r plotHgf, echo=FALSE, results='hide', message=FALSE}
 mdp<-loadMDP("hct611-1_")
@@ -348,7 +349,7 @@ next decision epoch. Otherwise, the machine's state will not be better at next d
 the machine is bought it may be either in state good or average. Moreover, if the machine is not
 working it must be replaced.
 
-The problem of when to replace the machine can be modelled using a Markov decision process with 
+The problem of when to replace the machine can be modeled using a Markov decision process with 
 $N=5$ decision epochs. We use system states `good`,  `average`, `not working` and dummy state
 `replaced` together with actions buy (`buy`), maintain (`mt`), no maintenance (`nmt`), and replace
 (`rep`). The set of states at stage zero $S_{0}$ contains a single dummy state `dummy` representing
@@ -563,7 +564,7 @@ Note the MDP runs over an infinite time-horizon at the founder level where each 
 merit) define a semi-MDP at level 1 with 4 lactations.
 
 To generate the MDP we need to know the weights and transition probabilities which are provided in a
-csv file. To ease the understanding we provide 2 functions for reading from the csv:
+CSV file. To ease the understanding we provide 2 functions for reading from the CSV:
 
 ```{r Generate cow MDP functions,echo=TRUE}
 cowDf<-read.csv("vignette_files/cow.csv")

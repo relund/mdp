@@ -7,16 +7,13 @@
 getSteadyStatePr(mdp, getLog = FALSE)
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{getLog}{Output log text.}
 }
 \value{
-A vector with stady state probabilities for all the states at the founder level.
+A vector with steady state probabilities for all the states at the founder level.
 }
 \description{
 Assume that we consider an ergodic/irreducible time-homogeneous Markov chain specified using a policy in the MDP.
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

@@ -31,18 +31,138 @@ getBinInfoActions(
 }
 \value{
 A data frame with the information. Scope string contain the scope of the transitions and
-can be 4 values: 2 - A transition to a child process (stage zero in the child process), 1 - A
-transition to next stage in the current process, 0 - A transition to the next stage in the
-father process. Finally, if scope = 3 then a transition to the state with sId = idx is
-considered. The index string denote the index (id is scope = 3) of the state at the next stage.
+can be 4 values:
+\itemize{
+\item 0: A transition to the next stage in the father process,
+\item 1: A transition to next stage in the current process,
+\item 2: A transition to a child process (stage zero in the child process),
+\item 3: A transition to the state with \code{sId = idx} is considered.
+}
+
+The index string denote the index (id is scope = 3) of the state at the next stage.
 }
 \description{
 Info about the actions in the HMDP model under consideration.
 }
 \note{
-The model don't have to be loaded, i.e only read the binary files. The state id (sId) will
+The model don't have to be loaded, i.e only read the binary files. The state id (\code{sId}) will
 not be the same as in the loaded model!
 }
-\author{
-Lars Relund \email{lars@relund.dk}
+\examples{
+## Use temp dir
+wd <- setwd(tempdir())
+
+# Create a small HMDP with two levels
+w<-binaryMDPWriter()
+w$setWeights(c("Duration","Net reward","Items"))
+w$process()
+   w$stage()
+      w$state(label="M0")
+         w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
+            w$process()
+               w$stage()
+                  w$state(label="D")
+                     w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
+                     w$endAction()
+                  w$endState()
+               w$endStage()
+               w$stage()
+                  w$state(label="C0")
+                     w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+                     w$endAction()
+                     w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
+                     w$endAction()
+                  w$endState()
+                  w$state(label="C1")
+                     w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+                     w$endAction()
+                     w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
+                     w$endAction()
+                  w$endState()
+               w$endStage()
+               w$stage()
+                  w$state(label="C0")
+                     w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+                     w$endAction()
+                  w$endState()
+                  w$state(label="C1")
+                     w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+                     w$endAction()
+                  w$endState()
+               w$endStage()
+            w$endProcess()
+         w$endAction()
+         w$action(label="A1",weights=c(0,0,0),prob=c(2,0,1))
+            w$process()
+               w$stage()
+                  w$state(label="D")
+                     w$action(label="A0",weights=c(0,0,1),prob=c(1,0,1))
+                     w$endAction()
+                  w$endState()
+               w$endStage()
+               w$stage()
+                  w$state(label="C0")
+                     w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+                     w$endAction()
+                     w$action(label="A1",weights=c(1,2,1),prob=c(1,0,0.5,1,1,0.5))
+                     w$endAction()
+                  w$endState()
+               w$endStage()
+               w$stage()
+                  w$state(label="C0")
+                     w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+                     w$endAction()
+                  w$endState()
+                  w$state(label="C1")
+                     w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+                     w$endAction()
+                     w$action(label="A1",weights=c(0,10,5),prob=c(0,0,0.5,0,1,0.5))
+                     w$endAction()
+                  w$endState()
+               w$endStage()
+            w$endProcess()
+         w$endAction()
+      w$endState()
+      w$state(label="M1")
+         w$action(label="A0",weights=c(0,0,0),prob=c(2,0,1))
+            w$process()
+               w$stage()
+                  w$state(label="D")
+                     w$action(label="A0",weights=c(0,0,1),prob=c(1,0,0.5,1,1,0.5))
+                     w$endAction()
+                  w$endState()
+               w$endStage()
+               w$stage()
+                  w$state(label="C0")
+                     w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+                     w$endAction()
+                  w$endState()
+                  w$state(label="C1")
+                     w$action(label="A0",weights=c(0,0,0),prob=c(1,0,1))
+                     w$endAction()
+                  w$endState()
+               w$endStage()
+               w$stage()
+                  w$state(label="C0")
+                     w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+                     w$endAction()
+                  w$endState()
+                  w$state(label="C1")
+                     w$action(label="A0",weights=c(1,4,0),prob=c(0,0,1))
+                     w$endAction()
+                  w$endState()
+               w$endStage()
+            w$endProcess()
+         w$endAction()
+      w$endState()
+   w$endStage()
+w$endProcess()
+w$closeWriter()
+
+## Info about the binary files (don't have to load the model first)
+getBinInfoStates()
+getBinInfoActions()
+
+## reset working dir
+setwd(wd)
 }

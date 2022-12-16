@@ -20,7 +20,4 @@ Nothing.
 \description{
 Internal function. Check if the indexes given are okay. Should not be used except you know what you are doing
 }
-\author{
-Lars Relund \email{lars@relund.dk}
-}
 \keyword{internal}

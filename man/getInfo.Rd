@@ -19,7 +19,7 @@ getInfo(
 )
 }
 \arguments{
-\item{mdp}{The MDP loaded using \link{loadMDP}.}
+\item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
 \item{sId}{The id of the state(s) considered.}
 
@@ -40,7 +40,7 @@ Parameter \code{sId} and \code{idxS} are ignored if not NULL.}
 \item{asStringsActions}{Write action vectors (weights, transitions and probabilities) as strings; otherwise, output it as columns.}
 
 \item{withHarc}{Output a hyperarcs data frame. Each row contains a hyperarc with the first column denoting the
-head (sId), the tails (sId) and the label.}
+head (\code{sId}), the tails (\code{sId}) and the label.}
 }
 \value{
 A list containing the list, data frame(s).
@@ -258,7 +258,4 @@ getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
 
 ## Reset working dir
 setwd(wd)
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

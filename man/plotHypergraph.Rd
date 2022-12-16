@@ -20,11 +20,10 @@ plotHypergraph(
 \arguments{
 \item{gridDim}{A 2-dim vector (rows,cols) representing the size of the grid.}
 
-\item{states}{A data frame containing 3 columns: sId = state id, gId = grid id and label = text
+\item{states}{A data frame containing 3 columns: \code{sId} = state id, \code{gId} = grid id and \code{label} = text
 to be plotted.}
 
-\item{actions}{A data frame with a columns in the following order for each action of type (head, tail1,
-tail2,...,label,lwd,lty,col,highlight), since number of tails may differ NAs may appear. Each
+\item{actions}{A data frame with a columns in the following order for each action of type \verb{(head, tail1,  tail2,...,label, lwd, lty, col, highlight)}, since number of tails may differ \code{NA}s may appear. Each
 number (head and tails) must correspond to a state id. Column label contains labels = text to
 be plotted (important must appear after the last tail column). Next columns is the line width,
 line type and line color. Column highlight contains boolean which is true if highlight the
@@ -49,7 +48,4 @@ A plot is created based on a grid. Each grid point is numbered from left to righ
 i.e. given grid coordinates (row,col) (where (1,1) is the top left corner) the grid id is
 (row-1)*cols+col. You must yourself assign a state to a grid point using the states data frame
 (see below).
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }

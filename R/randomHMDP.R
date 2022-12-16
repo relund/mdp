@@ -1,8 +1,8 @@
 #' Generate a "random" HMDP stored in a set of binary files.
 #'
 #' @param prefix A character string with the prefix added to til file(s).
-#' @param levels Maximum number of levels. Set childProcessPr=1 if want exact this number of levels.
-#' @param timeHorizon The time horizon for each level (vector). For the founder the timehorizon can be Inf.
+#' @param levels Maximum number of levels. Set `childProcessPr = 1` if want exact this number of levels.
+#' @param timeHorizon The time horizon for each level (vector). For the founder the time-horizon can be Inf.
 #' @param states Number of states at each stage at a given level (vector of length levels)
 #' @param actions Min and max number of actions at a state.
 #' @param childProcessPr Probability of creating a child process when define action.
@@ -14,14 +14,12 @@
 #'
 #' @return NULL
 #'
-#' @author Lars Relund \email{lars@@relund.dk}
-#'
 #' @export
 randomHMDP<-function(prefix="", levels=3, timeHorizon=c(Inf,3,4), states=c(2,4,5), actions=c(1,2),
                      childProcessPr = 0.5, externalProcessPr=0, rewards=c(0,100), durations=c(1,10), 
                      rewardName="Reward", durationName="Duration" ) 
 {
-   # gen finite timehorizon process function
+   # gen finite time-horizon process function
    genProcess<-function(levels, timeHorizon, states, actions, childProcessPr, rewards, durations, statesFather=NULL) {
       w$process()
          for(l1 in 1:timeHorizon[1]-1 ) {

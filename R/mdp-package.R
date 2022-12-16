@@ -21,14 +21,13 @@
 # @aliases MDP-package MDP
 # @docType package
 # @title Markov Decision Processes (MDPs) in R
-# @author Lars Relund \email{lars@@relund.dk}
 # @useDynLib MDP2
 # @importClassesFrom Rcpp "C++Object"
 # NA
 
 
 
-#' @seealso [loadMDP].
+#' @seealso [loadMDP()].
 #' @keywords internal
 #' @useDynLib MDP2
 #' @importClassesFrom Rcpp "C++Object"

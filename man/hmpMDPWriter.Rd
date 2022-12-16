@@ -3,7 +3,7 @@
 \name{hmpMDPWriter}
 \alias{hmpMDPWriter}
 \title{Function for writing an HMDP model to a hmp file (XML). The function define
-subfunctions which can be used to define an HMDP model stored in a hmp file.}
+sub-functions which can be used to define an HMDP model stored in a hmp file.}
 \usage{
 hmpMDPWriter(
   file = "r.hmp",
@@ -15,7 +15,7 @@ hmpMDPWriter(
 )
 }
 \arguments{
-\item{file}{The name of the file storing the model (e.g. mdp.hmp).}
+\item{file}{The name of the file storing the model (e.g. \code{r.hmp}).}
 
 \item{rate}{The interest rate (used if consider discounting).}
 
@@ -48,17 +48,18 @@ The function must be called before starting building the model.}
 \item{\code{endProcess()}: }{Ends a (sub)process.}
 \item{\code{stage(label=NULL)}: }{Starts a stage.}
 \item{\code{endStage()}: }{Ends a (sub)process.}
-\item{\code{state(label=NULL)}: }{Starts a state. Returns the states index number sIdx.}
+\item{\code{state(label=NULL)}: }{Starts a state. Returns the states index number \code{sIdx}.}
 \item{\code{endState()}: }{Ends a stage.}
 \item{\code{action(label=NULL, weights, prob, statesNext=NULL)}: }{Starts an action.
 Parameter \code{weights} must be a vector of action weights,
-\code{prob} must contain triples of (scope, idx,pr).
-The \code{scope} can be 3 values: 0 - A transition to the next stage in the
-father process, 1 - A transition to next stage in the current process, 2 - A
-transition to a child process (stage zero in the child process). \code{idx} in
-the pair denote the index of the state at the stage considered, e.g. if scope=1
-and idx=2 we consider state number 3 at next stage in the current process
-(number from zero). Note scope = 3 is not supported in the hmp file format!
+\code{prob} must contain triples of \verb{(scope, idx, pr)}.
+The \code{scope} can be 3 values:
+* 0: A transition to the next stage in the father process,
+* 1: A transition to next stage in the current process,
+* 2: A transition to a child process (stage zero in the child process).
+\code{idx} in the pair denote the index of the state at the stage considered, e.g. if \code{scope = 1}
+and \code{idx = 2} we consider state number 3 at next stage in the current process
+(number from zero). Note \code{scope = 3} is not supported in the \code{hmp} file format!
 \code{statesNext} is the number of states in the next stage of the process
 (only needed if have a transition to the father).}
 \item{\code{endAction()}: }{Ends an action.}
@@ -183,7 +184,4 @@ cat(readr::read_file("r.hmp"))
 
 ## Reset working dir
 setwd(wd)
-}
-\author{
-Lars Relund \email{lars@relund.dk}
 }
