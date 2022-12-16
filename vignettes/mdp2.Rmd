@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 bibliography: litt.bib
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{An introduction to the MDP2 package in R}
+  %\VignetteIndexEntry{MDP2}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
