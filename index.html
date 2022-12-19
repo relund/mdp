@@ -48,6 +48,9 @@
     <a class="dropdown-item" href="articles/mdp2.html">An introduction to the MDP2 package in R</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -71,9 +74,9 @@
 <div class="section level1">
 <div class="page-header"><h1 id="markov-decision-processes-mdps-in-r">Markov Decision Processes (MDPs) in R<a class="anchor" aria-label="anchor" href="#markov-decision-processes-mdps-in-r"></a>
 </h1></div>
-<p>The <code>MDP2</code> package in R is a package for solving Markov decision processes (MDPs) with discrete time-steps, states and actions. Both traditional MDPs [@Puterman94], semi-Markov decision processes (semi-MDPs) [@Tijms03] and hierarchical-MDPs (HMDPs) [@Kristensen00] can be solved under a finite and infinite time-horizon.</p>
+<p>The <code>MDP2</code> package in R is a package for solving Markov decision processes (MDPs) with discrete time-steps, states and actions. Both traditional MDPs (Puterman 1994), semi-Markov decision processes (semi-MDPs) (Tijms 2003) and hierarchical-MDPs (HMDPs) (Kristensen and Jørgensen 2000) can be solved under a finite and infinite time-horizon.</p>
 <p>Building and solving an MDP is done in two steps. First, the MDP is built and saved in a set of binary files. Next, you load the MDP into memory from the binary files and apply various algorithms to the model.</p>
-<p>The package implement well-known algorithms such as policy iteration and value iteration under different criteria e.g. average reward per time unit and expected total discounted reward. The model is stored using an underlying data structure based on the <em>state-expanded directed hypergraph</em> of the MDP (@Relund06) implemented in <code>C++</code> for fast running times.</p>
+<p>The package implement well-known algorithms such as policy iteration and value iteration under different criteria e.g. average reward per time unit and expected total discounted reward. The model is stored using an underlying data structure based on the <em>state-expanded directed hypergraph</em> of the MDP (Nielsen and Kristensen (2006)) implemented in <code>C++</code> for fast running times.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -96,6 +99,24 @@
 </h2>
 <p>To get started, first read vignette(“MDP2”).</p>
 <p>For more examples see <code>example("MDP2")</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Kristensen00" class="csl-entry">
+Kristensen, A. R., and E. Jørgensen. 2000. “Multi-Level Hierarchic Markov Processes as a Framework for Herd Management Support.” <em>Annals of Operations Research</em> 94: 69–89. <a href="https://doi.org/10.1023/A:1018921201113" class="external-link uri">https://doi.org/10.1023/A:1018921201113</a>.
+</div>
+<div id="ref-Relund06" class="csl-entry">
+Nielsen, L. R., and A. R. Kristensen. 2006. “Finding the <span class="math inline"><em>K</em></span> Best Policies in a Finite-Horizon Markov Decision Process.” <em>European Journal of Operational Research</em> 175 (2): 1164–79. <a href="https://doi.org/10.1016/j.ejor.2005.06.011" class="external-link uri">https://doi.org/10.1016/j.ejor.2005.06.011</a>.
+</div>
+<div id="ref-Puterman94" class="csl-entry">
+Puterman, M. L. 1994. <em>Markov Decision Processes</em>. Wiley Series in Probability and Mathematical Statistics. Wiley-Interscience.
+</div>
+<div id="ref-Tijms03" class="csl-entry">
+Tijms, Henk. C. 2003. <em>A First Course in Stochastic Models</em>. John Wiley &amp; Sons Ltd.
+</div>
+</div>
 </div>
 </div>
 
