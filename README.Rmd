@@ -1,5 +1,6 @@
 ---
 always_allow_html: true
+bibliography: ./vignettes/litt.bib
 output: 
    github_document
 editor_options: 
@@ -79,6 +80,7 @@ To get started, first read vignette("MDP2").
 
 For more examples see `example("MDP2")`. 
 
+## References
 
 
 
