@@ -120,11 +120,12 @@ loadMDP <-
 #' @param wLbl The label/string of the weight.
 #' @return The index (integer).
 #' @export
-getWIdx<-function(mdp, wLbl) {
-	idx<-grepl(wLbl,mdp$weightNames)
-	if (!any(idx)) # we do not have a match
-		stop("The weight name does not seem to exist!", call.=FALSE)
-	return(which(idx)-1)
+getWIdx <- function(mdp, wLbl) {
+   idx <- grepl(wLbl, mdp$weightNames, fixed = TRUE)
+   if (!any(idx))
+      # we do not have a match
+      stop("The weight name does not seem to exist!", call. = FALSE)
+   return(which(idx) - 1)
 }
 
 
