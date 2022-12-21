@@ -1,6 +1,16 @@
 #ifndef BASICDT_HPP
 #define BASICDT_HPP
 
+// before any R headers, or define in PKG_CPPFLAGS
+#ifndef  USE_FC_LEN_T
+#define USE_FC_LEN_T
+#endif
+#include <Rconfig.h>
+#include <R_ext/BLAS.h>
+#ifndef FCONE
+#define FCONE
+#endif
+
 //#include <iostream>
 //#include <string>
 #include <sstream>

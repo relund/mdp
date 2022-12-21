@@ -5,7 +5,7 @@
 #include "matrix.h"
 #include <iostream>
 #include <R_ext/Lapack.h>
-#include <R_ext/BLAS.h>
+// #include <R_ext/BLAS.h>
 
 /** Few algorithms for manipulating and solving matrices. */
 class MatAlg
@@ -64,7 +64,7 @@ public:
             cout << "Error in LASolve (dgetrf). Info=" << info << endl;
             return 1;
         }
-        F77_CALL(dgetrs)("T", &rows, &nrhs, &P(0,0), &lda, &ipivot(0,0), &w(0,0), &ldb, &info);
+        F77_CALL(dgetrs)("T", &rows, &nrhs, &P(0,0), &lda, &ipivot(0,0), &w(0,0), &ldb, &info FCONE);
         if (info!=0) {
             cout << "Error in LASolve (dgetrs). Info=" << info << endl;
             return 1;
