@@ -1,8 +1,8 @@
 # MDP2 v2.1.0
 
-* Migrated to dplyr and xml2
+* Migrated to `dplyr` and `xml2`
 * Added more tests
-* Fixed bug in hmd format writers
+* Fixed bug in HMD format writers
 * Added new functions
 * Renamed functions
 

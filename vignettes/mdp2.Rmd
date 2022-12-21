@@ -46,6 +46,7 @@ opts_chunk$set(fig.align='center',
                comment=NA,
                cache=F, 
                background="red")
+
 ```
 
 

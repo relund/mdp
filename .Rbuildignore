@@ -9,3 +9,5 @@ cb
 ^pkgdown$
 ^\.github$
 ^test.R$
+^cran-comments\.md$
+^CRAN-RELEASE$
