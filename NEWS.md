@@ -1,3 +1,7 @@
+# MDP2 v2.1.1
+
+* Fixed FORTRAN error in R-devel
+
 # MDP2 v2.1.0
 
 * Migrated to `dplyr` and `xml2`
