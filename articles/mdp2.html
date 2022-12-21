@@ -322,9 +322,9 @@ an <code>action</code> are specified using the <code>pr</code> and
 prefix “<code>hct611-1_</code>”.</p>
 <p>The model can be loaded using</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(<span class="st">"hct611-1_"</span>)</span></code></pre></div>
-<pre><code>Read binary files (0.000133503 sec.)
-Build the HMDP (3.1101e-05 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (1.6e-06 sec.)</code></pre>
+<pre><code>Read binary files (0.0001166 sec.)
+Build the HMDP (3.26e-05 sec.)</code></pre>
+<pre><code>Checking MDP and found no errors (1.1e-06 sec.)</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp <span class="co"># overall info</span></span></code></pre></div>
 <pre><code>$binNames
 [1] "hct611-1_stateIdx.bin"          "hct611-1_stateIdxLbl.bin"      
@@ -351,7 +351,7 @@ $weightNames
 [1] "Duration"   "Net reward"
 
 $ptr
-C++ object &lt;0x55de415cc140&gt; of class 'HMDP' &lt;0x55de444b6ce0&gt;
+C++ object &lt;0x55bdac7bb930&gt; of class 'HMDP' &lt;0x55bdaf411ce0&gt;
 
 attr(,"class")
 [1] "MDP:C++"</code></pre>
@@ -381,7 +381,7 @@ per time unit.</p>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">runPolicyIteAve</span>(mdp,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>)</span></code></pre></div>
 <pre><code>Run policy iteration under average reward criterion using 
 reward 'Net reward' over 'Duration'. Iterations (g): 
-1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.6e-06 sec.</code></pre>
+1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.1e-06 sec.</code></pre>
 <pre><code>[1] -0.43379</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
 <pre><code> [38;5;246m# A tibble: 5 × 6 [39m
@@ -399,7 +399,7 @@ iteration.</p>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">runPolicyIteDiscount</span>(mdp,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>, <span class="at">discountFactor =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 <pre><code>Run policy iteration using quantity 'Net reward' under discounting criterion 
 with 'Duration' as duration using discount factor 0.5. 
-Iteration(s): 1 2 finished. Cpu time: 1.6e-06 sec.</code></pre>
+Iteration(s): 1 2 finished. Cpu time: 1.1e-06 sec.</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
 <pre><code> [38;5;246m# A tibble: 5 × 6 [39m
     sId stateStr stateLabel  aIdx actionLabel     weight
@@ -413,7 +413,7 @@ Iteration(s): 1 2 finished. Cpu time: 1.6e-06 sec.</code></pre>
 <pre><code>Run value iteration with epsilon = 1e-10 at most 1000 time(s)
 using quantity 'Net reward' under expected discounted reward criterion 
 with 'Duration' as duration using discount factor 0.5.
-Iterations: 33 Finished. Cpu time 2.6701e-05 sec.</code></pre>
+Iterations: 33 Finished. Cpu time 2.48e-05 sec.</code></pre>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
 <pre><code> [38;5;246m# A tibble: 5 × 6 [39m
     sId stateStr stateLabel  aIdx actionLabel     weight
@@ -466,13 +466,13 @@ again.</p>
 
   Closing binary MDP writer.</code></pre>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(<span class="st">"hct611-2_"</span>)</span></code></pre></div>
-<pre><code>Read binary files (0.000148103 sec.)
-Build the HMDP (3.2901e-05 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (2e-06 sec.)</code></pre>
+<pre><code>Read binary files (0.0001293 sec.)
+Build the HMDP (3.44e-05 sec.)</code></pre>
+<pre><code>Checking MDP and found no errors (2.3e-06 sec.)</code></pre>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runPolicyIteAve</span>(mdp,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>)</span></code></pre></div>
 <pre><code>Run policy iteration under average reward criterion using 
 reward 'Net reward' over 'Duration'. Iterations (g): 
-1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 2e-06 sec.</code></pre>
+1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 2.3e-06 sec.</code></pre>
 <pre><code>[1] -0.43379</code></pre>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
 <pre><code> [38;5;246m# A tibble: 5 × 6 [39m
@@ -679,9 +679,9 @@ define an action with transition to states with id’s 1 and 2 at the next
 stage with probability 0.2 and 0.8, respectively.</p>
 <p>Let us try to load the model and get some info:</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(<span class="st">"machine1_"</span>)</span></code></pre></div>
-<pre><code>Read binary files (0.000161904 sec.)
-Build the HMDP (4.5701e-05 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (1.8e-06 sec.)</code></pre>
+<pre><code>Read binary files (0.000152199 sec.)
+Build the HMDP (4.78e-05 sec.)</code></pre>
+<pre><code>Checking MDP and found no errors (1.3e-06 sec.)</code></pre>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp <span class="co"># overall info</span></span></code></pre></div>
 <pre><code>$binNames
 [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      
@@ -708,7 +708,7 @@ $weightNames
 [1] "Net reward"
 
 $ptr
-C++ object &lt;0x55de46eec6b0&gt; of class 'HMDP' &lt;0x55de444b6ce0&gt;
+C++ object &lt;0x55bdb0e17b60&gt; of class 'HMDP' &lt;0x55bdaf411ce0&gt;
 
 attr(,"class")
 [1] "MDP:C++"</code></pre>
@@ -738,7 +738,7 @@ expected total reward under the assumption that terminal values are
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runValueIte</span>(mdp, <span class="st">"Net reward"</span> , <span class="at">termValues=</span>scrapValues)</span></code></pre></div>
 <pre><code>Run value iteration with epsilon = 0 at most 1 time(s)
 using quantity 'Net reward' under reward criterion.
- Finished. Cpu time 9.8e-06 sec.</code></pre>
+ Finished. Cpu time 8.1e-06 sec.</code></pre>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
 <pre><code> [38;5;246m# A tibble: 14 × 6 [39m
      sId stateStr stateLabel   aIdx actionLabel weight
@@ -979,15 +979,15 @@ probabilities 0.3 and 0.7, respectively.</p>
 criterion the HMDP using policy iteration:</p>
 <div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="do">## solve under discount criterion</span></span>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(prefix)</span></code></pre></div>
-<pre><code>Read binary files (0.000296306 sec.)
-Build the HMDP (0.000275506 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (6.4e-06 sec.)</code></pre>
+<pre><code>Read binary files (0.000265099 sec.)
+Build the HMDP (0.000275298 sec.)</code></pre>
+<pre><code>Checking MDP and found no errors (2.6e-06 sec.)</code></pre>
 <div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> wLbl<span class="ot">&lt;-</span><span class="st">"Net reward"</span>         <span class="co"># the weight we want to optimize (net reward)</span></span>
 <span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> durLbl<span class="ot">&lt;-</span><span class="st">"Duration"</span>         <span class="co"># the duration/time label</span></span>
 <span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runPolicyIteDiscount</span>(mdp, wLbl, durLbl, <span class="at">rate=</span><span class="fl">0.1</span>)</span></code></pre></div>
 <pre><code>Run policy iteration using quantity 'Net reward' under discounting criterion 
 with 'Duration' as duration using discount factor 0.904837. 
-Iteration(s): 1 2 3 4 finished. Cpu time: 6.4e-06 sec.</code></pre>
+Iteration(s): 1 2 3 4 finished. Cpu time: 2.6e-06 sec.</code></pre>
 <div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
 <pre><code> [38;5;246m# A tibble: 42 × 6 [39m
      sId stateStr  stateLabel  aIdx actionLabel  weight
@@ -1017,7 +1017,7 @@ lactation:</p>
 <span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runPolicyIteAve</span>(mdp, wLbl, durLbl)</span></code></pre></div>
 <pre><code>Run policy iteration under average reward criterion using 
 reward 'Net reward' over 'Duration'. Iterations (g): 
-1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 6.4e-06 sec.</code></pre>
+1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 2.6e-06 sec.</code></pre>
 <pre><code>[1] 11543.83</code></pre>
 <div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
 <pre><code> [38;5;246m# A tibble: 42 × 6 [39m
