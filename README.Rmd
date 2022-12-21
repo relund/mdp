@@ -22,6 +22,8 @@ opts_chunk$set(
   include = TRUE
 )
 library(MDP2)
+## Use temp dir
+wd <- setwd(tempdir())
 ```
 
 <!-- badges: start -->
@@ -79,6 +81,12 @@ given.
 To get started, first read vignette("MDP2"). 
 
 For more examples see `example("MDP2")`. 
+
+```{r, include=FALSE}
+## reset working dir
+setwd(wd)
+```
+
 
 ## References
 
