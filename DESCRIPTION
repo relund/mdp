@@ -28,7 +28,8 @@ Suggests:
     rmarkdown,
     testthat,
     readr,
-    xml2
+    xml2,
+    covr
 LinkingTo: 
     Rcpp
 VignetteBuilder: 

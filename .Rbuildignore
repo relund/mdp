@@ -13,3 +13,4 @@ cb
 ^CRAN-RELEASE$
 ^README\.Rmd$
 ^CRAN-SUBMISSION$
+^codecov\.yml$
