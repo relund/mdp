@@ -12,3 +12,4 @@ cb
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^README\.Rmd$
+^CRAN-SUBMISSION$
