@@ -48,7 +48,7 @@ const flt PRECISION = 1e-10;  ///< used for comparison floats
 */
 inline bool Equal(flt n1,flt n2) {
     return ((n2-PRECISION)<=n1 && n1<=(n2+PRECISION));
-};
+}
 
 /** Global function for converting a number to a string */
 template <typename T>
@@ -56,7 +56,7 @@ std::string inline ToString(T t) {
     std::ostringstream s;
     s << t;
     return s.str();
-};
+}
 
 /** Global function for converting a string
  \param t The variable of the result.
@@ -82,7 +82,7 @@ bool inline from_string(T& t,
 {
   std::istringstream iss(s);
   return !(iss >> f >> t).fail();
-};
+}
 
 /** convert a vector to a comma separated string. */
 template <typename T>
