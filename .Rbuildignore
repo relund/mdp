@@ -14,3 +14,4 @@ cb
 ^README\.Rmd$
 ^CRAN-SUBMISSION$
 ^codecov\.yml$
+^cran-upload\.R$
