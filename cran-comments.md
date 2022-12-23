@@ -8,29 +8,9 @@
 
 
 ## R CMD check results
-R CMD check results
+R CMD check results (local)
 
-* checking CRAN incoming feasibility ... NOTE
-   Maintainer: 'Lars Relund Nielsen <lars@relund.dk>'
-   
-   New submission
-   
-   Possibly misspelled words in DESCRIPTION:
-     MDPs (3:35, 8:41, 9:61)
-  
-* checking compiled code ... NOTE
-   File ‘MDP2/libs/MDP2.so’:
-     Found ‘__ZNSt3__14cerrE’, possibly from ‘std::cerr’ (C++)
-       Object: ‘hmdp.o’
-     Found ‘__ZNSt3__14coutE’, possibly from ‘std::cout’ (C++)
-       Object: ‘hmdp.o’
-
-Compiled code should not call entry points which might terminate R nor
-write to stdout/stderr instead of to the console, nor use Fortran I/O
-nor system RNGs.
-See ‘Writing portable packages’ in the ‘Writing R Extensions’ manual.
-
-0 errors ✔ | 0 warnings ✔ | 2 notes ✔
+0 errors ✔ | 0 warnings ✔ | 0 notes ✔
 
 
 ## Downstream dependencies
