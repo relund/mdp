@@ -17,7 +17,7 @@
 #include "matalg.h"    // linear equations solver using lapack
 
 #include <stdlib.h>     // For use of exit command
-#include <stdio.h>      // For use of scanf and printf
+// #include <stdio.h>      // For use of scanf
 
 //-----------------------------------------------------------------------------
 

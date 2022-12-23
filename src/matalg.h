@@ -1,6 +1,8 @@
 #ifndef MATALG_H
 #define MATALG_H
 
+#include <Rcpp.h>  // for Rcpp::Rcerr
+
 #include "basicdt.h"
 #include "matrix.h"
 #include <iostream>
@@ -43,7 +45,8 @@ public:
         F77_CALL(dgesv)(&rows, &nrhs, &P(0,0), &ldp, &ipiv(0,0), &w(0,0), &ldr, &info);
         //delete [] ipiv;
         if (info!=0) {
-            cout << "Error in LASolve (dgesv). Info=" << info << endl;
+            // cout << "Error in LASolve (dgesv). Info=" << info << endl;
+            Rcpp::Rcerr << "Error in LASolve (dgesv). Info=" << info << endl;
             return 1;
         }
         return 0;
@@ -61,12 +64,14 @@ public:
         F77_CALL(dgetrf)(&rows, &rows, &P(0,0), &lda, &ipivot(0,0), &info);
         //ipivot.Print();
         if (info!=0) {
-            cout << "Error in LASolve (dgetrf). Info=" << info << endl;
+            // cout << "Error in LASolve (dgetrf). Info=" << info << endl;
+            Rcpp::Rcerr << "Error in LASolve (dgetrf). Info=" << info << endl;
             return 1;
         }
         F77_CALL(dgetrs)("T", &rows, &nrhs, &P(0,0), &lda, &ipivot(0,0), &w(0,0), &ldb, &info FCONE);
         if (info!=0) {
-            cout << "Error in LASolve (dgetrs). Info=" << info << endl;
+            // cout << "Error in LASolve (dgetrs). Info=" << info << endl;
+            Rcpp::Rcerr << "Error in LASolve (dgetrs). Info=" << info << endl;
             return 1;
         }
         return 0;

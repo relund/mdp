@@ -95,13 +95,13 @@ public:
        return v[i];
     }
 
-    void Print() {
+    /*void Print() {
         for(idx r=0;r<rows;r++) {
             for(idx c=0;c<cols;c++) cout << v[rows*c+r] << "\t";
             cout << endl;
         }
         cout << endl;
-    }
+    }*/
 
     uInt rows;     ///< Number of rows.
     uInt cols;     ///< Number of cols.
@@ -112,7 +112,7 @@ public:
             for(idx c=0;c<m.cols;c++) o << m.v[m.rows*c+r] << "\t";
             o << endl;
         }
-        cout << endl;
+        o << endl;
         return o;
     }
 

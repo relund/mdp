@@ -10,6 +10,8 @@
 #ifndef TIMER_HPP
 #define TIMER_HPP
 
+#include <Rcpp.h>  // for Rcpp::Rcerr
+
 #include <stdint.h>
 #include <limits>
 #include <iostream>
@@ -81,7 +83,8 @@ double CumulativeTime(std::string unit) const {
     else if (unit=="min")   return double(cumulT)/(1000000000LL*60);
     else if (unit=="hour")  return double(cumulT)/(1000000000LL*60*60);
     else if (unit=="day")   return double(cumulT)/(1000000000LL*60*60*24);
-    std::cerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
+    // std::cerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
+    Rcpp::Rcerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
     return -1;
 }
 
@@ -105,7 +108,8 @@ double ElapsedTime(std::string unit) const {
     else if (unit=="min")   return double(elapsedT)/(1000000000LL*60);
     else if (unit=="hour")  return double(elapsedT)/(1000000000LL*60*60);
     else if (unit=="day")   return double(elapsedT)/(1000000000LL*60*60*24);
-    std::cerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
+    // std::cerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
+    Rcpp::Rcerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
     return -1;
 }
 /** Start the timer.
