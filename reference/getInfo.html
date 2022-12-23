@@ -204,9 +204,9 @@ head (<code>sId</code>), the tails (<code>sId</code>) and the label.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load the model into memory</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000170604 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.5902e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.3e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000228402 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (5e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.8e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $binNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      </span>
@@ -233,7 +233,7 @@ head (<code>sId</code>), the tails (<code>sId</code>) and the label.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Net reward"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55c9bbad79a0&gt; of class 'HMDP' &lt;0x55c9beab4260&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x559d292b6960&gt; of class 'HMDP' &lt;0x559d243791a0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MDP:C++"</span>
@@ -281,7 +281,7 @@ head (<code>sId</code>), the tails (<code>sId</code>) and the label.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="runValueIte.html">runValueIte</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w</span>, termValues<span class="op">=</span><span class="va">scrapValues</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> using quantity 'Net reward' under reward criterion.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 6e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 9.2e-06 sec.</span>
 <span class="r-in"><span><span class="fu"><a href="getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>     <span class="co"># optimal policy</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr stateLabel   aIdx actionLabel weight</span>
@@ -427,9 +427,9 @@ head (<code>sId</code>), the tails (<code>sId</code>) and the label.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Have a look at the state-expanded hypergraph</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000137403 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.3701e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (8e-07 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000174501 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.74e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (2.2e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $binNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      </span>
@@ -456,7 +456,7 @@ head (<code>sId</code>), the tails (<code>sId</code>) and the label.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Net reward"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55c9c2761210&gt; of class 'HMDP' &lt;0x55c9beab4260&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x559d2ce93cc0&gt; of class 'HMDP' &lt;0x559d243791a0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MDP:C++"</span>
