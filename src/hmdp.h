@@ -1227,7 +1227,7 @@ class HMDP
             wMax = wA = -INF;
             state_iterator iteS = GetIte(iS[i]);
             action_iterator iteAA = GetIte(iteS, idxA[i]);
-            if ( (GetActionSize(iteS)==0) | (GetActionSize(iteS)==1) ) {
+            if ( (GetActionSize(iteS)==0) || (GetActionSize(iteS)==1) ) {
                 result.push_back(-INF);
                 continue;
             }
