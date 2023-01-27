@@ -4,7 +4,7 @@
 src/*.o
 src/*.so
 src/*.dll
-*.bin
+./*.bin
 *.log
 *.exe
 *cache/*
@@ -16,4 +16,4 @@ tmp
 inst/doc
 docs
 .DS_Store
-*.hmp
+/*.hmp
