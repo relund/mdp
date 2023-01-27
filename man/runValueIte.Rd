@@ -124,9 +124,6 @@ mdp<-loadMDP(prefix)
 mdp
 plot(mdp)
 
-
-
-
 getInfo(mdp, withList = FALSE)
 getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
 getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = FALSE)
@@ -146,23 +143,6 @@ setPolicy(mdp, policy)
 runCalcWeights(mdp, w, termValues=scrapValues)
 getPolicy(mdp)  
 
-## Old stuff
-# ## Modify the MDP in memory: remove the maintain action in the states of stage 1
-# removeAction(mdp, sId=1, iA=0)  # remove action 0 at the state with sId=1
-# removeAction(mdp, sId=2, iA=0)
-# 
-# ## Perform value iteration on the modified MDP
-# valueIte(mdp, w, termValues=scrapValues)
-# getPolicy(mdp)     # optimal policy for each sId
-# 
-# resetActions(mdp)   # reset the MDP such that all actions are used
-# 
-# ## Modify the weight of action 'buy'
-# setActionWeight(mdp, w=-50, sId=0, iA=0, wLbl=w)
-# 
-# ## Perform value iteration on the modified MDP
-# valueIte(mdp, w, termValues=scrapValues)
-# getPolicy(mdp)     # optimal policy for each sId
 
 
 # The example given in L.R. Nielsen and A.R. Kristensen. Finding the K best
@@ -239,29 +219,25 @@ w$closeWriter()
 ## Have a look at the state-expanded hypergraph
 mdp<-loadMDP(prefix)
 mdp
+plot(mdp)
+
 getInfo(mdp, withList = FALSE)
 getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
+getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = FALSE)
 
-# ## Perform value iteration
-# w<-"Net reward"             # label of the weight we want to optimize
-# scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 4)
-# runValueIte(mdp, w, termValues=0)
-# getPolicy(mdp)     # optimal policy
-# 
-# ## Calculate the weights of the policy always to maintain
-# # library(dplyr)
-# policy <- getInfo(mdp, withList = FALSE, dfLevel = "action")$df \%>\% 
-#    dplyr::filter(label_action == "mt") \%>\% 
-#    select(sId, aIdx)
-# setPolicy(mdp, policy)
-# runCalcWeights(mdp, w, termValues=scrapValues)
-# getPolicy(mdp)  
-# # hypergf(mdp)
-# #
-# # ## Find optimal policy
-# # w<-"Net reward"
-# # valueIte(mdp, w, termValues=0)
-# # policy<-getPolicy(mdp, labels=TRUE)     # optimal policy for each sId
+## Perform value iteration
+w<-"Net reward"             # label of the weight we want to optimize
+runValueIte(mdp, w, termValues = 0)
+getPolicy(mdp)     # optimal policy
+
+## Calculate the weights of the policy always to maintain
+library(magrittr)
+policy <- getInfo(mdp, withList = FALSE, dfLevel = "action")$df \%>\% 
+   dplyr::filter(label_action == "mt") \%>\% 
+   dplyr::select(sId, aIdx)
+setPolicy(mdp, policy)
+runCalcWeights(mdp, w, termValues=scrapValues)
+getPolicy(mdp)  
 
 
 ## Reset working dir

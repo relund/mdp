@@ -19,7 +19,7 @@
 #' @param marY Vertical margin.
 #' @param ... Graphical parameters passed to `textempty`. 
 #'   
-#' @return No return value (NULL invisible), called for side effects.
+#' @return No return value (NULL invisible), called for side effects (plotting).
 #' @seealso [getHypergraph()] and [plot.HMDP()].
 #' @example inst/examples/plot-ex.R
 #' @import diagram

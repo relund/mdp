@@ -40,7 +40,7 @@ width), \code{lty} (hyperarc line type) and \code{col} (hyperarc color).}
 \item{...}{Graphical parameters passed to \code{textempty}.}
 }
 \value{
-No return value (NULL invisible), called for side effects.
+No return value (NULL invisible), called for side effects (plotting).
 }
 \description{
 The plot is created based on a grid \verb{(rows, cols)}. Each grid point is numbered from bottom to

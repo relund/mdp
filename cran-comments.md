@@ -25,7 +25,7 @@ R/convert.R ; R/hmpMDPWriter.R
 
 The global environment is not modified. <<- is only used inside 
 sub-functions of a function, i.e. like an RC6 class. This is a feature
-used for the functions in R/binary.R; R/convert.R ; R/hmpMDPWriter.R
+used for the functions in R/binary.R; R/convert.R; R/hmpMDPWriter.R
 
 > Please add \value to .Rd files regarding exported methods and explain
 the functions results in the documentation. Please write about the
