@@ -13,7 +13,7 @@
 #' @return NULL (invisible).
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' @seealso [binaryMDPWriter()].
-#' @example inst/examples/convert.R
+#' @example inst/examples/convert-ex.R
 #' @export
 convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
    setWeights <- function(labels) {
@@ -142,7 +142,7 @@ convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' 
 #' @seealso `convertHMP2Binary`.
-#' @example inst/examples/convert.R
+#' @example inst/examples/convert-ex.R
 #' @export
 convertBinary2HMP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
 	"actionIdxLbl.bin","actionWeight.bin","actionWeightLbl.bin","transProb.bin"),

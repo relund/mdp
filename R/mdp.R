@@ -10,9 +10,14 @@
 #' @param verbose More output when running algorithms.
 #' @param getLog Output the log messages.
 #' 
-#' @return A list containing relevant information about the model and a pointer `ptr` to the model 
-#'   object in memory.
-#' @example inst/examples/machine.R
+#' @return A list containing relevant information about the model such as model file names 
+#'    (`binNames`), time horizon (`timeHorizon`), number of states (`states`), number of states at 
+#'    last stage of the founder process (`founderStatesLast`), number of actions (`actions`), 
+#'    number of levels (`levels`), names of the weights associated to each action (`weightNames`)
+#'    and a pointer `ptr` to the model object in memory. Note for models with an infinite 
+#'    time-horizon the states at the founder level is repeated at stage two so have something aka
+#'    a double array representation. 
+#' @example inst/examples/machine-ex.R
 #' @export
 loadMDP <-
    function(prefix = "",
@@ -70,7 +75,7 @@ loadMDP <-
 	   v$external <- as.data.frame(matrix(mdp$getExternalInfo(),ncol = 2, byrow = TRUE), stringsAsFactors=FALSE)
 	   colnames(v$external) <- c("stageStr","prefix")
 	}
-	class(v)<-c("MDP:C++")
+	class(v)<-c("HMDP", "list")
 	return(v)
 }
 
@@ -205,7 +210,7 @@ runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFact
 #' 
 #' @return NULL (invisible)
 #' @references Puterman, M. Markov Decision Processes, Wiley-Interscience, 1994.
-#' @example inst/examples/machine.R
+#' @example inst/examples/machine-ex.R
 #' @export
 runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
                    eps = 1e-05, termValues = NULL, g=NULL, getLog = TRUE, discountMethod="continuous") {
@@ -261,7 +266,7 @@ runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor
 #' the g value and the label for reward and duration. See the vignette about external processes. 
 #' 
 #' @return The policy (data frame).
-#' @example inst/examples/machine.R
+#' @example inst/examples/machine-ex.R
 #' @export
 getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                        ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
@@ -334,7 +339,7 @@ getPolicy<-function(mdp, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLas
 #'   head (`sId`), the tails (`sId`) and the label.
 #'   
 #' @return A list containing the list, data frame(s).
-#' @example inst/examples/machine.R
+#' @example inst/examples/machine-ex.R
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
@@ -444,7 +449,7 @@ getInfo<-function(mdp,
 #' @param mdp The MDP loaded using [loadMDP()].
 #' @param policy A data frame with two columns state id `sId` and action index `aIdx`.
 #' @return NULL (invisible)
-#' @example inst/examples/machine.R
+#' @example inst/examples/machine-ex.R
 #' @export
 setPolicy<-function(mdp, policy) {
    if (!all(c("sId", "aIdx") %in% colnames(policy))) stop("You must specify `sId` and action index `aIdx`.")
@@ -467,7 +472,7 @@ setPolicy<-function(mdp, policy) {
 #' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
 #' 
 #' @return Nothing.
-#' @example inst/examples/machine.R
+#' @example inst/examples/machine-ex.R
 #' @export
 runCalcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 0, rateBase = 1, 
                       discountFactor = NULL, termValues = NULL, discountMethod = "continuous") {

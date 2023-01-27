@@ -19,7 +19,7 @@ randomHMDP(
 )
 }
 \arguments{
-\item{prefix}{A character string with the prefix added to til file(s).}
+\item{prefix}{A character string with the prefix added to the file(s).}
 
 \item{levels}{Maximum number of levels. Set \code{childProcessPr = 1} if want exact this number of levels.}
 
@@ -40,6 +40,9 @@ randomHMDP(
 \item{rewardName}{Weight name used for reward.}
 
 \item{durationName}{Weight name used for duration.}
+}
+\value{
+The file prefix (character).
 }
 \description{
 Generate a "random" HMDP stored in a set of binary files.

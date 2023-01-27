@@ -4,7 +4,7 @@
 \name{MDP2-package}
 \alias{MDP2}
 \alias{MDP2-package}
-\title{MDP2: Markov Decision Processes (MDPs) in R}
+\title{MDP2: Markov Decision Processes (MDPs)}
 \description{
 Create and optimize (semi) MDPs with discrete time steps and state space. Both hierarchical and ordinary-traditional MDPs can be modeled.
 }

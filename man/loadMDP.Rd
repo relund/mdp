@@ -31,8 +31,13 @@ files storing the model.}
 \item{getLog}{Output the log messages.}
 }
 \value{
-A list containing relevant information about the model and a pointer \code{ptr} to the model
-object in memory.
+A list containing relevant information about the model such as model file names
+(\code{binNames}), time horizon (\code{timeHorizon}), number of states (\code{states}), number of states at
+last stage of the founder process (\code{founderStatesLast}), number of actions (\code{actions}),
+number of levels (\code{levels}), names of the weights associated to each action (\code{weightNames})
+and a pointer \code{ptr} to the model object in memory. Note for models with an infinite
+time-horizon the states at the founder level is repeated at stage two so have something aka
+a double array representation.
 }
 \description{
 Load the HMDP model defined in the binary files. The model are created in memory
@@ -40,12 +45,11 @@ using the external C++ library.
 }
 \examples{
 ## Set working dir
-wd <- setwd(system.file("models", package = "MDP2"))
+wd <- setwd(tempdir())
 
-# Create the small machine repleacement problem used as an example in L.R.
-# Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
-# Markov decision process. European Journal of Operational Research,
-# 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
+# Create the small machine repleacement problem used as an example in L.R. Nielsen and A.R.
+# Kristensen. Finding the K best policies in a finite-horizon Markov decision process. European
+# Journal of Operational Research, 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
 
 ## Create the MDP using a dummy replacement node
 prefix<-"machine1_"
@@ -110,8 +114,14 @@ w$closeWriter()
 ## Load the model into memory
 mdp<-loadMDP(prefix)
 mdp
+plot(mdp)
+
+
+
+
 getInfo(mdp, withList = FALSE)
 getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
+getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = FALSE)
 
 ## Perform value iteration
 w<-"Net reward"             # label of the weight we want to optimize

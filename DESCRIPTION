@@ -1,7 +1,7 @@
 Type: Package
 Package: MDP2
-Title: Markov Decision Processes (MDPs) in R
-Version: 2.1.1
+Title: Markov Decision Processes (MDPs)
+Version: 2.1.2
 Authors@R: 
     person("Lars", "Relund Nielsen", , "lars@relund.dk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4802-3071"))
@@ -20,7 +20,9 @@ Imports:
     tidyr,
     magrittr,
     methods,
+    purrr,
     rlang,
+    tibble,
     Rcpp (>= 0.11.5)
 Suggests:
     knitr,

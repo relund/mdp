@@ -53,12 +53,11 @@ are ignored.
 }
 \examples{
 ## Set working dir
-wd <- setwd(system.file("models", package = "MDP2"))
+wd <- setwd(tempdir())
 
-# Create the small machine repleacement problem used as an example in L.R.
-# Nielsen and A.R. Kristensen. Finding the K best policies in a finite-horizon
-# Markov decision process. European Journal of Operational Research,
-# 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
+# Create the small machine repleacement problem used as an example in L.R. Nielsen and A.R.
+# Kristensen. Finding the K best policies in a finite-horizon Markov decision process. European
+# Journal of Operational Research, 175(2):1164-1179, 2006. doi:10.1016/j.ejor.2005.06.011.
 
 ## Create the MDP using a dummy replacement node
 prefix<-"machine1_"
@@ -123,8 +122,14 @@ w$closeWriter()
 ## Load the model into memory
 mdp<-loadMDP(prefix)
 mdp
+plot(mdp)
+
+
+
+
 getInfo(mdp, withList = FALSE)
 getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
+getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = FALSE)
 
 ## Perform value iteration
 w<-"Net reward"             # label of the weight we want to optimize

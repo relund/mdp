@@ -105,7 +105,7 @@
 #' 
 #' @return A list of functions.
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @example inst/examples/binaryMDPWriter.R
+#' @example inst/examples/binaryMDPWriter-ex.R
 #' @export
 binaryMDPWriter <-
    function(prefix = "",
@@ -408,7 +408,7 @@ binaryMDPWriter <-
 #' defined or delete them and start over (FALSE).
 #' @return A list of functions.
 #' @note Note all indexes are starting from zero (C/C++ style).
-#' @example inst/examples/binaryMDPWriter.R
+#' @example inst/examples/binaryMDPWriter-ex.R
 #' @export
 binaryActionWriter <- function(prefix = "",
                                binNames = c(
@@ -566,7 +566,7 @@ getBinInfoStates <-
 #'
 #' @note The model don't have to be loaded, i.e only read the binary files. The state id (`sId`) will
 #'   not be the same as in the loaded model!
-#' @example inst/examples/binaryMDPWriter.R
+#' @example inst/examples/binaryMDPWriter-ex.R
 #' @export
 getBinInfoActions<-function(prefix="", labels = TRUE, fileA="actionIdx.bin",
                          filePr="transProb.bin", fileW="actionWeight.bin",

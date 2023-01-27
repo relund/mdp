@@ -1,6 +1,6 @@
 #' Generate a "random" HMDP stored in a set of binary files.
 #'
-#' @param prefix A character string with the prefix added to til file(s).
+#' @param prefix A character string with the prefix added to the file(s).
 #' @param levels Maximum number of levels. Set `childProcessPr = 1` if want exact this number of levels.
 #' @param timeHorizon The time horizon for each level (vector). For the founder the time-horizon can be Inf.
 #' @param states Number of states at each stage at a given level (vector of length levels)
@@ -12,7 +12,7 @@
 #' @param rewardName Weight name used for reward.
 #' @param durationName Weight name used for duration.
 #'
-#' @return NULL
+#' @return The file prefix (character).
 #'
 #' @export
 randomHMDP<-function(prefix="", levels=3, timeHorizon=c(Inf,3,4), states=c(2,4,5), actions=c(1,2),
@@ -116,4 +116,5 @@ randomHMDP<-function(prefix="", levels=3, timeHorizon=c(Inf,3,4), states=c(2,4,5
    }
    w$closeWriter()
    message(" finished.")
+   return(prefix)
 }
