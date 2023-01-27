@@ -59,7 +59,7 @@ a short introduction to these models are given.
 
 ## Learning more
 
-To get started, first read vignette(“MDP2”).
+To get started, first read `vignette("MDP2")`.
 
 For more examples see `example("MDP2")`.
 
