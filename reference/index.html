@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">MDP2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,7 +24,9 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/mdp2.html">An introduction to the MDP2 package in R</a>
+    <a class="dropdown-item" href="../articles/building.html">Building an MDP model</a>
+    <a class="dropdown-item" href="../articles/finite-mdp.html">Solving a finite-horizon semi-MDP</a>
+    <a class="dropdown-item" href="../articles/mdp2.html">The MDP2 package</a>
   </div>
 </li>
 <li class="nav-item">
@@ -136,9 +138,19 @@ using the external C++ library.</dd>
         <dd>Information about the MDP</dd>
       </dl><dl><dt>
           
+          <code><a href="plot.HMDP.html">plot(<i>&lt;HMDP&gt;</i>)</a></code> 
+        </dt>
+        <dd>Plot the state-expanded hypergraph of the MDP.</dd>
+      </dl><dl><dt>
+          
           <code><a href="plotHypergraph.html">plotHypergraph()</a></code> 
         </dt>
         <dd>Plot parts of the state expanded hypergraph (experimental).</dd>
+      </dl><dl><dt>
+          
+          <code><a href="getHypergraph.html">getHypergraph()</a></code> 
+        </dt>
+        <dd>Return the (parts of) state-expanded hypergraph</dd>
       </dl><dl><dt>
           
           <code><a href="getWIdx.html">getWIdx()</a></code> 

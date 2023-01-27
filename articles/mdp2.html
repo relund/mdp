@@ -6,12 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="MDP2">
-<title>An introduction to the MDP2 package in R • MDP2</title>
+<title>The MDP2 package • MDP2</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="An introduction to the MDP2 package in R">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="The MDP2 package">
 <meta property="og:description" content="MDP2">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">MDP2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,9 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/mdp2.html">An introduction to the MDP2 package in R</a>
+    <a class="dropdown-item" href="../articles/building.html">Building an MDP model</a>
+    <a class="dropdown-item" href="../articles/finite-mdp.html">Solving a finite-horizon semi-MDP</a>
+    <a class="dropdown-item" href="../articles/mdp2.html">The MDP2 package</a>
   </div>
 </li>
 <li class="nav-item">
@@ -71,11 +73,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>An introduction to the MDP2 package in R</h1>
+      <img src="" class="logo" alt=""><h1>The MDP2 package</h1>
                         <h4 data-toc-skip class="author">Lars Relund <a href="mailto:lars@relund.dk" class="email">lars@relund.dk</a>
 </h4>
             
-            <h4 data-toc-skip class="date">2022-12-23</h4>
+            <h4 data-toc-skip class="date">2023-01-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/relund/mdp/blob/HEAD/vignettes/mdp2.Rmd" class="external-link"><code>vignettes/mdp2.Rmd</code></a></small>
       <div class="d-none name"><code>mdp2.Rmd</code></div>
@@ -87,12 +89,15 @@
 p {text-align: justify;} 
 //.sourceCode {background-color: white;}
 pre {
-  border-style: solid;
-  border-width: 1px;
-  border-color: grey;
+  // border-style: solid;
+  // border-width: 1px;
+  // border-color: grey;
   //background-color: grey !important;
 }
-img {width: 100%;}
+img {
+   //width: 100%;
+   border: 0;
+}
 </style>
 <!-- scale math down --><script type="text/x-mathjax-config"> 
     MathJax.Hub.Config({ 
@@ -117,931 +122,17 @@ Kristensen (2006)</span>) implemented in <code>C++</code> for fast
 running times. <!-- Under development is also
 support for MLHMP which is a Java implementation of algorithms for solving MDPs (@Kristensen03). 
 --></p>
-<p>The newest version of the package can be installed from GitHub</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">install_github</span>(<span class="st">"relund/mdp"</span>)</span></code></pre></div>
-<p>We load the package using</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">library</span>(MDP2)</span></code></pre></div>
-<p>Help about the package can be seen by writing</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> ?MDP2</span></code></pre></div>
-<p>To illustrate the package capabilities, we use a few examples,
-namely, an infinite and finite-horizon semi-MDP and a HMDP. Before each
-example a short introduction to these models are given.</p>
-<div class="section level2">
-<h2 id="an-infinite-semi-mdp">An infinite Semi-MDP<a class="anchor" aria-label="anchor" href="#an-infinite-semi-mdp"></a>
-</h2>
-<p>An <em>infinite-horizon semi-MDP</em> considers a sequential decision
-problem over an infinite number of <em>stages</em>. Let <span class="math inline">\(I\)</span> denote the finite set of system states
-at stage <span class="math inline">\(n\)</span>. Note we assume that the
-semi-MDP is <em>homogeneous</em>, i.e the state space is independent of
-stage number. When <em>state</em> <span class="math inline">\(i \in
-I\)</span> is observed, an <em>action</em> <span class="math inline">\(a\)</span> from the finite set of allowable
-actions <span class="math inline">\(A(i)\)</span> must be chosen which
-generates <em>reward</em> <span class="math inline">\(r(i,a)\)</span>.
-Moreover, let <span class="math inline">\(\tau(i,a)\)</span> denote the
-<em>stage length</em> of action <span class="math inline">\(a\)</span>,
-i.e. the expected time until the next decision epoch (stage <span class="math inline">\(n+1\)</span>) given action <span class="math inline">\(a\)</span> and state <span class="math inline">\(i\)</span>. Finally, let <span class="math inline">\(p_{ij}(a)\)</span> denote the <em>transition
-probability</em> of obtaining state <span class="math inline">\(j\in
-I\)</span> at stage <span class="math inline">\(n+1\)</span> given that
-action <span class="math inline">\(a\)</span> is chosen in state <span class="math inline">\(i\)</span> at stage <span class="math inline">\(n\)</span>. A policy is a decision rule/function
-that assigns to each state in the process an action.</p>
-<p>Let us consider example 6.1.1 in <span class="citation">Tijms
-(2003)</span>. At the beginning of each day a piece of equipment is
-inspected to reveal its actual working condition. The equipment will be
-found in one of the working conditions <span class="math inline">\(i =
-1,\ldots, N\)</span> where the working condition <span class="math inline">\(i\)</span> is better than the working condition
-<span class="math inline">\(i+1\)</span>. The equipment deteriorates in
-time. If the present working condition is <span class="math inline">\(i\)</span> and no repair is done, then at the
-beginning of the next day the equipment has working condition <span class="math inline">\(j\)</span> with probability <span class="math inline">\(q_{ij}\)</span>. It is assumed that <span class="math inline">\(q_{ij}=0\)</span> for <span class="math inline">\(j&lt;i\)</span> and <span class="math inline">\(\sum_{j\geq i}q_{ij}=1\)</span>. The working
-condition <span class="math inline">\(i=N\)</span> represents a
-malfunction that requires an enforced repair taking two days. For the
-intermediate states <span class="math inline">\(i\)</span> with <span class="math inline">\(1&lt;i&lt;N\)</span> there is a choice between
-preventively repairing the equipment and letting the equipment operate
-for the present day. A preventive repair takes only one day. A repaired
-system has the working condition <span class="math inline">\(i=1\)</span>. The cost of an enforced repair upon
-failure is <span class="math inline">\(C_{f}\)</span> and the cost of a
-preemptive repair in working condition <span class="math inline">\(i\)</span> is <span class="math inline">\(C_{p}(i)\)</span>. We wish to determine a
-maintenance rule which minimizes the long-run average repair cost per
-day.</p>
-<p>To formulate this problem as an infinite horizon semi-MDP the set of
-possible states of the system is chosen as <span class="math display">\[
-I=\{1,2,\ldots,N\}.
-\]</span> State <span class="math inline">\(i\)</span> corresponds to
-the situation in which an inspection reveals working condition <span class="math inline">\(i\)</span>. Define actions <span class="math display">\[
-a=\left\{\begin{array}{ll}
-0 &amp; \text{if no repair.}\\
-1 &amp; \text{if preventive repair.}\\
-2 &amp; \text{if forced repair.}\\
-\end{array}\right.
-\]</span> The set of possible actions in state <span class="math inline">\(i\)</span> is chosen as <span class="math inline">\(A(1)=\{0\},\ A(i)=\{0,1\}\)</span> for <span class="math inline">\(1&lt;i&lt;N, A(N)=\{2\}\)</span>. The one-step
-transition probabilities <span class="math inline">\(p_{ij}(a)\)</span>
-are given by <span class="math inline">\(p_{ij}(0) = q_{ij}\)</span> for
-<span class="math inline">\(1\leq i&lt;N\)</span>, <span class="math inline">\(p_{i1}(1) = 1\)</span> for <span class="math inline">\(1&lt;i&lt;N\)</span>, <span class="math inline">\(p_{N1}(2)=1\)</span> and zero otherwise. The
-one-step costs <span class="math inline">\(c_{i}(a)\)</span> are given
-by <span class="math inline">\(c_{i}(0)=0,\ c_{i}(1)=C_{p}(i)\)</span>
-and <span class="math inline">\(c_{N}(2)=C_{f}\)</span>. The stage
-length until next decision epoch are <span class="math inline">\(\tau(i,a) = 1, 0\leq i &lt; N\)</span> and <span class="math inline">\(\tau(N,a) = 2\)</span>.</p>
-<p>Assume that the number of possible working conditions equals <span class="math inline">\(N=5\)</span>. The repair costs are given by <span class="math inline">\(C_{f}=10,\ C_{p}(2)=7,\ C_{p}(3)=7\)</span> and
-<span class="math inline">\(C_{p}(4)=5\)</span>. The deterioration
-probabilities <span class="math inline">\(q_{ij}\)</span> are given
-by</p>
-<table class="table">
-<thead><tr class="header">
-<th align="left"></th>
-<th align="right">1</th>
-<th align="right">2</th>
-<th align="right">3</th>
-<th align="right">4</th>
-<th align="right">5</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">0.9</td>
-<td align="right">0.1</td>
-<td align="right">0.0</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">0.0</td>
-<td align="right">0.8</td>
-<td align="right">0.1</td>
-<td align="right">0.05</td>
-<td align="right">0.05</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">0.0</td>
-<td align="right">0.0</td>
-<td align="right">0.7</td>
-<td align="right">0.10</td>
-<td align="right">0.20</td>
-</tr>
-<tr class="even">
-<td align="left">4</td>
-<td align="right">0.0</td>
-<td align="right">0.0</td>
-<td align="right">0.0</td>
-<td align="right">0.50</td>
-<td align="right">0.50</td>
-</tr>
-</tbody>
-</table>
-<p>A state-expanded hypergraph representing the semi-MDP with infinite
-time-horizon is shown below. Each node corresponds to a specific state
-in the MDP and is given the stage assigned an <em>unique id</em>
-(<strong>id must always start from zero</strong>). A directed hyperarc
-is defined for each possible action. For instance, the state/node with
-id 1 corresponds to working condition <span class="math inline">\(i=2\)</span> and the two hyperarcs with head in
-this node corresponds to the two actions preventive and no repair. Note
-the tails of a hyperarc represent a possible transition (<span class="math inline">\(p_{ij}(a)&gt;0\)</span>).</p>
-<pre><code>Warning: Unknown or uninitialised column: `lty`.</code></pre>
-<pre><code>Warning: Unknown or uninitialised column: `col`.</code></pre>
-<p><img src="mdp2_files/figure-html/plotHgf-1.png" width="960" style="max-width:100%;"></p>
-<p>To build the semi-MDP in R, we use the <code>binaryMDPWriter</code>
-where the model can be built using either matrices or an hierarchical
-structure. We first illustrate how to use the hierarchical structure.
-First, we load the parameters:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> N<span class="ot">&lt;-</span><span class="dv">5</span>; Cf<span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">10</span>; Cp<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="sc">-</span><span class="dv">7</span>,<span class="sc">-</span><span class="dv">7</span>,<span class="sc">-</span><span class="dv">5</span>) <span class="co"># use negative numbers since the MDP optimize based on rewards</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> Q <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>    <span class="fl">0.90</span>, <span class="fl">0.10</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>    <span class="dv">0</span>, <span class="fl">0.80</span>, <span class="fl">0.10</span>, <span class="fl">0.05</span>, <span class="fl">0.05</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.70</span>, <span class="fl">0.10</span>, <span class="fl">0.20</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.50</span>, <span class="fl">0.50</span>), <span class="at">nrow=</span><span class="dv">4</span>, <span class="at">byrow=</span>T) </span></code></pre></div>
-<p>and make a data frame for the states:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> states<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">id=</span><span class="dv">1</span><span class="sc">:</span>N<span class="dv">-1</span>,<span class="at">label=</span><span class="fu">paste0</span>(<span class="st">"i="</span>,<span class="dv">1</span><span class="sc">:</span>N), <span class="at">stringsAsFactors =</span> F)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> states</span></code></pre></div>
-<pre><code>  id label
-1  0   i=1
-2  1   i=2
-3  2   i=3
-4  3   i=4
-5  4   i=5</code></pre>
-<p>To build the model we need transition probabilities and the state ids
-for the corresponding transitions. We here do this using a function:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># transform state to id</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> state2Id<span class="ot">&lt;-</span><span class="cf">function</span>(i) <span class="fu">return</span>(i<span class="dv">-1</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="co"># input state i and action a</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> transPr<span class="ot">&lt;-</span><span class="cf">function</span>(a,i) {</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>    <span class="cf">if</span> (a<span class="sc">==</span><span class="dv">0</span>) {</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>       pr<span class="ot">&lt;-</span>Q[i,]</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>       iN<span class="ot">&lt;-</span><span class="fu">which</span>(pr<span class="sc">&gt;</span><span class="dv">0</span>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>       pr<span class="ot">&lt;-</span>pr[iN]       <span class="co"># only consider trans pr &gt; 0</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>    }</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>    <span class="cf">if</span> (a<span class="sc">&gt;</span><span class="dv">0</span>) {</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>       pr<span class="ot">&lt;-</span><span class="dv">1</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>       iN<span class="ot">&lt;-</span><span class="dv">1</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>    }</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">pr=</span>pr,<span class="at">id=</span><span class="fu">state2Id</span>(iN)))</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span> }</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">transPr</span>(<span class="dv">0</span>,<span class="dv">1</span>)</span></code></pre></div>
-<pre><code>$pr
-  1   2 
-0.9 0.1 
-
-$id
-1 2 
-0 1 </code></pre>
-<p>We can now build the model using the
-<code>binaryMDPWriter</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># Build the model which is stored in a set of binary files</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> w<span class="ot">&lt;-</span><span class="fu">binaryMDPWriter</span>(<span class="st">"hct611-1_"</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">setWeights</span>(<span class="fu">c</span>(<span class="st">"Duration"</span>,<span class="st">"Net reward"</span>))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">process</span>()</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>    w<span class="sc">$</span><span class="fu">stage</span>()</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"i=1"</span>)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>          dat<span class="ot">&lt;-</span><span class="fu">transPr</span>(<span class="dv">0</span>,<span class="dv">1</span>)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>          w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"no repair"</span>, <span class="at">weights=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>), <span class="at">pr=</span>dat<span class="sc">$</span>pr, <span class="at">id=</span>dat<span class="sc">$</span>id, <span class="at">end=</span>T)</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       <span class="cf">for</span> (ii <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>(N<span class="dv">-1</span>) ) {</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>          w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span>states<span class="sc">$</span>label[ii])</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>             dat<span class="ot">&lt;-</span><span class="fu">transPr</span>(<span class="dv">0</span>,ii)</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>             w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"no repair"</span>, <span class="at">weights=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>), <span class="at">pr=</span>dat<span class="sc">$</span>pr, <span class="at">id=</span>dat<span class="sc">$</span>id, <span class="at">end=</span>T)</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>             dat<span class="ot">&lt;-</span><span class="fu">transPr</span>(<span class="dv">1</span>,ii)</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>             w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"preventive repair"</span>, <span class="at">weights=</span><span class="fu">c</span>(<span class="dv">1</span>,Cp[ii]), <span class="at">pr=</span>dat<span class="sc">$</span>pr, <span class="at">id=</span>dat<span class="sc">$</span>id, <span class="at">end=</span>T)</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>          w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>       }</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="fu">paste0</span>(<span class="st">"i="</span>,N))</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>          dat<span class="ot">&lt;-</span><span class="fu">transPr</span>(<span class="dv">2</span>,N)</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>          w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"forced repair"</span>, <span class="at">weights=</span><span class="fu">c</span>(<span class="dv">2</span>,Cf), <span class="at">pr=</span>dat<span class="sc">$</span>pr, <span class="at">id=</span>dat<span class="sc">$</span>id, <span class="at">end=</span>T)</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>    w<span class="sc">$</span><span class="fu">endStage</span>()</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">endProcess</span>()</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">closeWriter</span>()</span></code></pre></div>
-<p>Note that we build the model with two weights applied to each action
-“Duration” and “Net reward”. That is, when we specify an action, we must
-add two weights. “Duration” equals 1 day except in state <span class="math inline">\(i=N\)</span> where a forced repair takes 2 days.
-The process is built using first a <code>process</code> which contains a
-<code>stage</code> (we only specify one stage, since we have a
-homogeneous semi-MDP over an infinite horizon) which contains
-<code>state</code>s which contains <code>action</code>s. Transitions of
-an <code>action</code> are specified using the <code>pr</code> and
-<code>id</code> parameter. The model is saved in a set of files with
-prefix “<code>hct611-1_</code>”.</p>
-<p>The model can be loaded using</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(<span class="st">"hct611-1_"</span>)</span></code></pre></div>
-<pre><code>Read binary files (0.000140903 sec.)
-Build the HMDP (3.3501e-05 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (1.6e-06 sec.)</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp <span class="co"># overall info</span></span></code></pre></div>
-<pre><code>$binNames
-[1] "hct611-1_stateIdx.bin"          "hct611-1_stateIdxLbl.bin"      
-[3] "hct611-1_actionIdx.bin"         "hct611-1_actionIdxLbl.bin"     
-[5] "hct611-1_actionWeight.bin"      "hct611-1_actionWeightLbl.bin"  
-[7] "hct611-1_transProb.bin"         "hct611-1_externalProcesses.bin"
-
-$timeHorizon
-[1] Inf
-
-$states
-[1] 5
-
-$founderStatesLast
-[1] 5
-
-$actions
-[1] 8
-
-$levels
-[1] 1
-
-$weightNames
-[1] "Duration"   "Net reward"
-
-$ptr
-C++ object &lt;0x55f7b418daa0&gt; of class 'HMDP' &lt;0x55f7b588dcd0&gt;
-
-attr(,"class")
-[1] "MDP:C++"</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="ot">&lt;-</span><span class="fu">getInfo</span>(mdp)  <span class="co"># more detailed info</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="sc">$</span>df</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 10 × 4 [39m
-     sId stateStr label actions   
-    [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m     [3m [38;5;246m&lt;chr&gt; [39m [23m  [3m [38;5;246m&lt;list&gt; [39m [23m    
- [38;5;250m 1 [39m     0 1,0       [38;5;246m" [39m [38;5;246m" [39m     [38;5;246m&lt;NULL&gt; [39m    
- [38;5;250m 2 [39m     1 1,1       [38;5;246m" [39m [38;5;246m" [39m     [38;5;246m&lt;NULL&gt; [39m    
- [38;5;250m 3 [39m     2 1,2       [38;5;246m" [39m [38;5;246m" [39m     [38;5;246m&lt;NULL&gt; [39m    
- [38;5;250m 4 [39m     3 1,3       [38;5;246m" [39m [38;5;246m" [39m     [38;5;246m&lt;NULL&gt; [39m    
- [38;5;250m 5 [39m     4 1,4       [38;5;246m" [39m [38;5;246m" [39m     [38;5;246m&lt;NULL&gt; [39m    
- [38;5;250m 6 [39m     5 0,0       [38;5;246m" [39mi=1 [38;5;246m" [39m  [38;5;246m&lt;list [1]&gt; [39m
- [38;5;250m 7 [39m     6 0,1       [38;5;246m" [39mi=2 [38;5;246m" [39m  [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m 8 [39m     7 0,2       [38;5;246m" [39mi=3 [38;5;246m" [39m  [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m 9 [39m     8 0,3       [38;5;246m" [39mi=4 [38;5;246m" [39m  [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m10 [39m     9 0,4       [38;5;246m" [39mi=5 [38;5;246m" [39m  [38;5;246m&lt;list [1]&gt; [39m</code></pre>
-<p>Note the loaded model gives each node in the state-expanded
-hypergraph a <em>unique id</em> such that you can identify all the
-states. These ids are not equal to the ids used when you built the
-model, since the order of the nodes in the hypergraph data structure is
-optimized! Given the model in memory, we now can find the optimal policy
-under various policies. Let us first try to optimize the average reward
-per time unit.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># Optimal policy under average reward per time unit criterion</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">runPolicyIteAve</span>(mdp,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>)</span></code></pre></div>
-<pre><code>Run policy iteration under average reward criterion using 
-reward 'Net reward' over 'Duration'. Iterations (g): 
-1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.6e-06 sec.</code></pre>
-<pre><code>[1] -0.43379</code></pre>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 5 × 6 [39m
-    sId stateStr stateLabel  aIdx actionLabel       weight
-   [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m     [3m [38;5;246m&lt;chr&gt; [39m [23m       [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m               [3m [38;5;246m&lt;dbl&gt; [39m [23m
- [38;5;250m1 [39m     5 0,0      i=1            0 no repair           9.13
- [38;5;250m2 [39m     6 0,1      i=2            0 no repair           4.79
- [38;5;250m3 [39m     7 0,2      i=3            0 no repair           2.97
- [38;5;250m4 [39m     8 0,3      i=4            1 preventive repair   4.57
- [38;5;250m5 [39m     9 0,4      i=5            0 forced repair       0   </code></pre>
-<p>Note it is optimal to do a preventive repair in state <span class="math inline">\(i=4\)</span>. Let us try to optimize the expected
-total discounted reward using both policy iteration and value
-iteration.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># Optimal policy under expected discounted reward criterion (use both policy and value ite)</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">runPolicyIteDiscount</span>(mdp,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>, <span class="at">discountFactor =</span> <span class="fl">0.5</span>)</span></code></pre></div>
-<pre><code>Run policy iteration using quantity 'Net reward' under discounting criterion 
-with 'Duration' as duration using discount factor 0.5. 
-Iteration(s): 1 2 finished. Cpu time: 1.6e-06 sec.</code></pre>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 5 × 6 [39m
-    sId stateStr stateLabel  aIdx actionLabel     weight
-   [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m     [3m [38;5;246m&lt;chr&gt; [39m [23m       [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m             [3m [38;5;246m&lt;dbl&gt; [39m [23m
- [38;5;250m1 [39m     5 0,0      i=1            0 no repair      - [31m0 [39m [31m. [39m [31m0 [39m [31m64 [4m2 [24m [39m
- [38;5;250m2 [39m     6 0,1      i=2            0 no repair      - [31m0 [39m [31m. [39m [31m706 [39m 
- [38;5;250m3 [39m     7 0,2      i=3            0 no repair      - [31m1 [39m [31m. [39m [31m80 [39m  
- [38;5;250m4 [39m     8 0,3      i=4            0 no repair      - [31m3 [39m [31m. [39m [31m34 [39m  
- [38;5;250m5 [39m     9 0,4      i=5            0 forced repair - [31m10 [39m [31m. [39m [31m0 [39m   </code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runValueIte</span>(mdp,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>, <span class="at">discountFactor =</span> <span class="fl">0.5</span>, <span class="at">eps =</span> <span class="fl">1e-10</span>, <span class="at">maxIte =</span> <span class="dv">1000</span>)</span></code></pre></div>
-<pre><code>Run value iteration with epsilon = 1e-10 at most 1000 time(s)
-using quantity 'Net reward' under expected discounted reward criterion 
-with 'Duration' as duration using discount factor 0.5.
-Iterations: 33 Finished. Cpu time 2.6101e-05 sec.</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 5 × 6 [39m
-    sId stateStr stateLabel  aIdx actionLabel     weight
-   [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m     [3m [38;5;246m&lt;chr&gt; [39m [23m       [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m             [3m [38;5;246m&lt;dbl&gt; [39m [23m
- [38;5;250m1 [39m     5 0,0      i=1            0 no repair      - [31m0 [39m [31m. [39m [31m0 [39m [31m64 [4m2 [24m [39m
- [38;5;250m2 [39m     6 0,1      i=2            0 no repair      - [31m0 [39m [31m. [39m [31m706 [39m 
- [38;5;250m3 [39m     7 0,2      i=3            0 no repair      - [31m1 [39m [31m. [39m [31m80 [39m  
- [38;5;250m4 [39m     8 0,3      i=4            0 no repair      - [31m3 [39m [31m. [39m [31m34 [39m  
- [38;5;250m5 [39m     9 0,4      i=5            0 forced repair - [31m10 [39m [31m. [39m [31m0 [39m   </code></pre>
-<p>Note given a discount factor of 0.5, it is optimal to not do a
-preventive repair in state <span class="math inline">\(i=4\)</span>.</p>
-<p>The model can also be built by specifying a set of matrices. Note
-this way of specifying <strong>only work</strong> for infinite-horizon
-semi-MDPs (and not finite-horizon or hierarchical models). Specify a
-list of probability matrices (one for each action) where each row/state
-contains the transition probabilities (all zero if the action is not
-used in a state), a matrix with rewards and a matrix with stage lengths
-(row = state, column = action). Let us try to build and solve the model
-again.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="do">## define probability matrices</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> P<span class="ot">&lt;-</span><span class="fu">list</span>()</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># a=1 (no repair)</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> P[[<span class="dv">1</span>]]<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(<span class="fu">rbind</span>(Q,<span class="dv">0</span>))</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># a=2 (preventive repair)</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> Z <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> N, <span class="at">ncol =</span> N)</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> Z[<span class="dv">2</span>,<span class="dv">1</span>]<span class="ot">&lt;-</span>Z[<span class="dv">3</span>,<span class="dv">1</span>]<span class="ot">&lt;-</span>Z[<span class="dv">4</span>,<span class="dv">1</span>]<span class="ot">&lt;-</span><span class="dv">1</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> P[[<span class="dv">2</span>]]<span class="ot">&lt;-</span>Z</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># a=3 (forced repair)</span></span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> Z <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> N, <span class="at">ncol =</span> N)</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> Z[<span class="dv">5</span>,<span class="dv">1</span>]<span class="ot">&lt;-</span><span class="dv">1</span></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> P[[<span class="dv">3</span>]]<span class="ot">&lt;-</span>Z</span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># reward 6x3 matrix with one column for each action</span></span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> R <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> N, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> R[<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">2</span>]<span class="ot">&lt;-</span>Cp[<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>]</span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> R[<span class="dv">5</span>,<span class="dv">3</span>]<span class="ot">&lt;-</span>Cf</span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># state lengths</span></span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> D <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span>, <span class="at">nrow =</span> N, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> D[<span class="dv">5</span>,<span class="dv">3</span>]<span class="ot">&lt;-</span><span class="dv">2</span></span>
-<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="co"># build model</span></span>
-<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> w<span class="ot">&lt;-</span><span class="fu">binaryMDPWriter</span>(<span class="st">"hct611-2_"</span>)</span>
-<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">setWeights</span>(<span class="fu">c</span>(<span class="st">"Duration"</span>,<span class="st">"Net reward"</span>))</span>
-<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">process</span>(P,R,D)</span>
-<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">closeWriter</span>()</span></code></pre></div>
-<pre><code>
-  Statistics:
-    states : 5 
-    actions: 8 
-    weights: 2 
-
-  Closing binary MDP writer.</code></pre>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(<span class="st">"hct611-2_"</span>)</span></code></pre></div>
-<pre><code>Read binary files (0.000175003 sec.)
-Build the HMDP (3.17e-05 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (1.3e-06 sec.)</code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runPolicyIteAve</span>(mdp,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>)</span></code></pre></div>
-<pre><code>Run policy iteration under average reward criterion using 
-reward 'Net reward' over 'Duration'. Iterations (g): 
-1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.3e-06 sec.</code></pre>
-<pre><code>[1] -0.43379</code></pre>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 5 × 6 [39m
-    sId stateStr stateLabel  aIdx actionLabel weight
-   [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m     [3m [38;5;246m&lt;chr&gt; [39m [23m       [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m         [3m [38;5;246m&lt;dbl&gt; [39m [23m
- [38;5;250m1 [39m     5 0,0      1              0 1             9.13
- [38;5;250m2 [39m     6 0,1      2              0 1             4.79
- [38;5;250m3 [39m     7 0,2      3              0 1             2.97
- [38;5;250m4 [39m     8 0,3      4              1 2             4.57
- [38;5;250m5 [39m     9 0,4      5              0 3             0   </code></pre>
-</div>
-<div class="section level2">
-<h2 id="a-finite-horizon-semi-mdp">A finite-horizon Semi-MDP<a class="anchor" aria-label="anchor" href="#a-finite-horizon-semi-mdp"></a>
-</h2>
-<p>A <em>finite-horizon semi-MDP</em> considers a sequential decision
-problem over <span class="math inline">\(N\)</span> <em>stages</em>. Let
-<span class="math inline">\(I_{n}\)</span> denote the finite set of
-system states at stage <span class="math inline">\(n\)</span>. When
-<em>state</em> <span class="math inline">\(i \in I_{n}\)</span> is
-observed, an <em>action</em> <span class="math inline">\(a\)</span> from
-the finite set of allowable actions <span class="math inline">\(A_n(i)\)</span> must be chosen, and this decision
-generates <em>reward</em> <span class="math inline">\(r_{n}(i,a)\)</span>. Moreover, let <span class="math inline">\(\tau_n(i,a)\)</span> denote the <em>stage
-length</em> of action <span class="math inline">\(a\)</span>, i.e. the
-expected time until the next decision epoch (stage <span class="math inline">\(n+1\)</span>) given action <span class="math inline">\(a\)</span> and state <span class="math inline">\(i\)</span>. Finally, let <span class="math inline">\(p_{ij}(a,n)\)</span> denote the <em>transition
-probability</em> of obtaining state <span class="math inline">\(j\in
-I_{n+1}\)</span> at stage <span class="math inline">\(n+1\)</span> given
-that action <span class="math inline">\(a\)</span> is chosen in state
-<span class="math inline">\(i\)</span> at stage <span class="math inline">\(n\)</span>.</p>
-<p>Consider a small machine repair problem used as an example in <span class="citation">Nielsen and Kristensen (2006)</span> where the machine
-is always replaced after 4 years. The state of the machine may be: good,
-average, and not working. Given the machine’s state we may maintain the
-machine. In this case the machine’s state will be good at the next
-decision epoch. Otherwise, the machine’s state will not be better at
-next decision epoch. When the machine is bought it may be either in
-state good or average. Moreover, if the machine is not working it must
-be replaced.</p>
-<p>The problem of when to replace the machine can be modeled using a
-Markov decision process with <span class="math inline">\(N=5\)</span>
-decision epochs. We use system states <code>good</code>,
-<code>average</code>, <code>not working</code> and dummy state
-<code>replaced</code> together with actions buy (<code>buy</code>),
-maintain (<code>mt</code>), no maintenance (<code>nmt</code>), and
-replace (<code>rep</code>). The set of states at stage zero <span class="math inline">\(S_{0}\)</span> contains a single dummy state
-<code>dummy</code> representing the machine before knowing its initial
-state. The only possible action is <code>buy</code>.</p>
-<p>The cost of buying the machine is 100 with transition probability of
-0.7 to state <code>good</code> and 0.3 to state <code>average</code>.
-The reward (scrap value) of replacing a machine is 30, 10, and 5 in
-state <code>good</code>, <code>average</code> and
-<code>not working</code>, respectively. The reward of the machine given
-action <code>mt</code> are 55, 40, and 30 in state <code>good</code>,
-<code>average</code> and <code>not working</code>, respectively.
-Moreover, the system enters state 0 with probability 1 at the next
-stage. Finally, the reward, transition states and probabilities given
-action <span class="math inline">\(a=\)</span><code>nmt</code> are given
-by:</p>
-<table class="table">
-<thead><tr class="header">
-<th align="left"><span class="math inline">\(n:s\)</span></th>
-<th align="center">
-<span class="math inline">\(1:\)</span>
-<code>good</code>
-</th>
-<th align="center">
-<span class="math inline">\(1:\)</span>
-<code>average</code>
-</th>
-<th align="center">
-<span class="math inline">\(2:\)</span>
-<code>good</code>
-</th>
-<th align="center">
-<span class="math inline">\(2:\)</span>
-<code>average</code>
-</th>
-<th align="center">
-<span class="math inline">\(3:\)</span>
-<code>good</code>
-</th>
-<th align="center">
-<span class="math inline">\(3:\)</span>
-<code>average</code>
-</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left"><span class="math inline">\(r_n(i,a)\)</span></td>
-<td align="center">70</td>
-<td align="center">50</td>
-<td align="center">70</td>
-<td align="center">50</td>
-<td align="center">70</td>
-<td align="center">50</td>
-</tr>
-<tr class="even">
-<td align="left"><span class="math inline">\(j\)</span></td>
-<td align="center"><span class="math inline">\(\{0,1\}\)</span></td>
-<td align="center"><span class="math inline">\(\{1,2\}\)</span></td>
-<td align="center"><span class="math inline">\(\{0,1\}\)</span></td>
-<td align="center"><span class="math inline">\(\{1,2\}\)</span></td>
-<td align="center"><span class="math inline">\(\{0,1\}\)</span></td>
-<td align="center"><span class="math inline">\(\{1,2\}\)</span></td>
-</tr>
-<tr class="odd">
-<td align="left"><span class="math inline">\(p_{ij}(a,n)\)</span></td>
-<td align="center"><span class="math inline">\(\{0.6,0.4\}\)</span></td>
-<td align="center"><span class="math inline">\(\{0.6,0.4\}\)</span></td>
-<td align="center"><span class="math inline">\(\{0.5,0.5\}\)</span></td>
-<td align="center"><span class="math inline">\(\{0.5,0.5\}\)</span></td>
-<td align="center"><span class="math inline">\(\{0.2,0.8\}\)</span></td>
-<td align="center"><span class="math inline">\(\{0.2,0.8\}\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>The semi-MDP with time-horizon <span class="math inline">\(N=5\)</span> is illustrated below. Each node
-corresponds to a specific state and a directed hyperarc is defined for
-each possible action. For instance, action <code>mt</code> (maintain)
-corresponds to a deterministic transition to state <code>good</code> and
-action <code>nmt</code> (not maintain) corresponds to a transition to a
-condition/state not better than the current condition/state. We buy the
-machine in stage 1 and may choose to replace the machine.</p>
-<pre><code>Warning: Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.</code></pre>
-<p><img src="mdp2_files/figure-html/plotHgf3-1.png" width="960" style="max-width:100%;"></p>
-<p>We build the semi-MDP using <code>binaryMDPWriter</code>:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> prefix<span class="ot">&lt;-</span><span class="st">"machine1_"</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w <span class="ot">&lt;-</span> <span class="fu">binaryMDPWriter</span>(prefix)</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">setWeights</span>(<span class="fu">c</span>(<span class="st">"Net reward"</span>))</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">process</span>()</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">stage</span>()   <span class="co"># stage n=0</span></span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"Dummy"</span>)       </span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"buy"</span>, <span class="at">weights=</span><span class="sc">-</span><span class="dv">100</span>, <span class="at">pr=</span><span class="fu">c</span>(<span class="fl">0.7</span>,<span class="fl">0.3</span>), <span class="at">id=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">endStage</span>()</span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">stage</span>()   <span class="co"># stage n=1</span></span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"good"</span>)           </span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"mt"</span>, <span class="at">weights=</span><span class="dv">55</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">0</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"nmt"</span>, <span class="at">weights=</span><span class="dv">70</span>, <span class="at">pr=</span><span class="fu">c</span>(<span class="fl">0.6</span>,<span class="fl">0.4</span>), <span class="at">id=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"average"</span>)        </span>
-<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"mt"</span>, <span class="at">weights=</span><span class="dv">40</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">0</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"nmt"</span>, <span class="at">weights=</span><span class="dv">50</span>, <span class="at">pr=</span><span class="fu">c</span>(<span class="fl">0.6</span>,<span class="fl">0.4</span>), <span class="at">id=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">endStage</span>()</span>
-<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">stage</span>()   <span class="co"># stage n=2</span></span>
-<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"good"</span>)          </span>
-<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"mt"</span>, <span class="at">weights=</span><span class="dv">55</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">0</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"nmt"</span>, <span class="at">weights=</span><span class="dv">70</span>, <span class="at">pr=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>), <span class="at">id=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"average"</span>)       </span>
-<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"mt"</span>, <span class="at">weights=</span><span class="dv">40</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">0</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"nmt"</span>, <span class="at">weights=</span><span class="dv">50</span>, <span class="at">pr=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>), <span class="at">id=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"not working"</span>)    </span>
-<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"mt"</span>, <span class="at">weights=</span><span class="dv">30</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">0</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"rep"</span>, <span class="at">weights=</span><span class="dv">5</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">3</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">endStage</span>()</span>
-<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">stage</span>()   <span class="co"># stage n=3</span></span>
-<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"good"</span>)           </span>
-<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"mt"</span>, <span class="at">weights=</span><span class="dv">55</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">0</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-37"><a href="#cb43-37" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"nmt"</span>, <span class="at">weights=</span><span class="dv">70</span>, <span class="at">pr=</span><span class="fu">c</span>(<span class="fl">0.2</span>,<span class="fl">0.8</span>), <span class="at">id=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-38"><a href="#cb43-38" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-39"><a href="#cb43-39" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"average"</span>)       </span>
-<span id="cb43-40"><a href="#cb43-40" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"mt"</span>, <span class="at">weights=</span><span class="dv">40</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">0</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-41"><a href="#cb43-41" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"nmt"</span>, <span class="at">weights=</span><span class="dv">50</span>, <span class="at">pr=</span><span class="fu">c</span>(<span class="fl">0.2</span>,<span class="fl">0.8</span>), <span class="at">id=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-42"><a href="#cb43-42" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-43"><a href="#cb43-43" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"not working"</span>)    </span>
-<span id="cb43-44"><a href="#cb43-44" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"mt"</span>, <span class="at">weights=</span><span class="dv">30</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">0</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-45"><a href="#cb43-45" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"rep"</span>, <span class="at">weights=</span><span class="dv">5</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">3</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-46"><a href="#cb43-46" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-47"><a href="#cb43-47" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"replaced"</span>)       </span>
-<span id="cb43-48"><a href="#cb43-48" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"Dummy"</span>, <span class="at">weights=</span><span class="dv">0</span>, <span class="at">pr=</span><span class="dv">1</span>, <span class="at">id=</span><span class="dv">3</span>, <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb43-49"><a href="#cb43-49" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb43-50"><a href="#cb43-50" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">endStage</span>()</span>
-<span id="cb43-51"><a href="#cb43-51" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">stage</span>()   <span class="co"># stage n=4</span></span>
-<span id="cb43-52"><a href="#cb43-52" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"good"</span>, <span class="at">end=</span><span class="cn">TRUE</span>)        </span>
-<span id="cb43-53"><a href="#cb43-53" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"average"</span>, <span class="at">end=</span><span class="cn">TRUE</span>)     </span>
-<span id="cb43-54"><a href="#cb43-54" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"not working"</span>, <span class="at">end=</span><span class="cn">TRUE</span>) </span>
-<span id="cb43-55"><a href="#cb43-55" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"replaced"</span>, <span class="at">end=</span><span class="cn">TRUE</span>)   </span>
-<span id="cb43-56"><a href="#cb43-56" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">endStage</span>()</span>
-<span id="cb43-57"><a href="#cb43-57" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">endProcess</span>()</span>
-<span id="cb43-58"><a href="#cb43-58" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">closeWriter</span>()</span></code></pre></div>
-<p>Note that at each stage the states are numbered using id’s starting
-from zero such that e.g. 
-<code>w$action(label="nmt", weights=50, pr=c(0.2,0.8), id=c(1,2), end=TRUE)</code>
-define an action with transition to states with id’s 1 and 2 at the next
-stage with probability 0.2 and 0.8, respectively.</p>
-<p>Let us try to load the model and get some info:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(<span class="st">"machine1_"</span>)</span></code></pre></div>
-<pre><code>Read binary files (0.000169903 sec.)
-Build the HMDP (4.7801e-05 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (1.6e-06 sec.)</code></pre>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> mdp <span class="co"># overall info</span></span></code></pre></div>
-<pre><code>$binNames
-[1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      
-[3] "machine1_actionIdx.bin"         "machine1_actionIdxLbl.bin"     
-[5] "machine1_actionWeight.bin"      "machine1_actionWeightLbl.bin"  
-[7] "machine1_transProb.bin"         "machine1_externalProcesses.bin"
-
-$timeHorizon
-[1] 5
-
-$states
-[1] 14
-
-$founderStatesLast
-[1] 4
-
-$actions
-[1] 18
-
-$levels
-[1] 1
-
-$weightNames
-[1] "Net reward"
-
-$ptr
-C++ object &lt;0x55f7b8b07b60&gt; of class 'HMDP' &lt;0x55f7b588dcd0&gt;
-
-attr(,"class")
-[1] "MDP:C++"</code></pre>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="ot">&lt;-</span><span class="fu">getInfo</span>(mdp)  <span class="co"># more detailed info</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> info<span class="sc">$</span>df</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 14 × 4 [39m
-     sId stateStr label       actions   
-    [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m     [3m [38;5;246m&lt;chr&gt; [39m [23m        [3m [38;5;246m&lt;list&gt; [39m [23m    
- [38;5;250m 1 [39m     0 4,0      good         [38;5;246m&lt;NULL&gt; [39m    
- [38;5;250m 2 [39m     1 4,1      average      [38;5;246m&lt;NULL&gt; [39m    
- [38;5;250m 3 [39m     2 4,2      not working  [38;5;246m&lt;NULL&gt; [39m    
- [38;5;250m 4 [39m     3 4,3      replaced     [38;5;246m&lt;NULL&gt; [39m    
- [38;5;250m 5 [39m     4 3,0      good         [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m 6 [39m     5 3,1      average      [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m 7 [39m     6 3,2      not working  [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m 8 [39m     7 3,3      replaced     [38;5;246m&lt;list [1]&gt; [39m
- [38;5;250m 9 [39m     8 2,0      good         [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m10 [39m     9 2,1      average      [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m11 [39m    10 2,2      not working  [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m12 [39m    11 1,0      good         [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m13 [39m    12 1,1      average      [38;5;246m&lt;list [2]&gt; [39m
- [38;5;250m14 [39m    13 0,0      Dummy        [38;5;246m&lt;list [1]&gt; [39m</code></pre>
-<p>Let us use value iteration to find the optimal policy maximizing the
-expected total reward under the assumption that terminal values are
-30,10,5,0.</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> scrapValues<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">10</span>,<span class="dv">5</span>,<span class="dv">0</span>)   <span class="co"># scrap values (the values of the 4 states at stage 4)</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runValueIte</span>(mdp, <span class="st">"Net reward"</span> , <span class="at">termValues=</span>scrapValues)</span></code></pre></div>
-<pre><code>Run value iteration with epsilon = 0 at most 1 time(s)
-using quantity 'Net reward' under reward criterion.
- Finished. Cpu time 9.8e-06 sec.</code></pre>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 14 × 6 [39m
-     sId stateStr stateLabel   aIdx actionLabel weight
-    [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m     [3m [38;5;246m&lt;chr&gt; [39m [23m        [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m         [3m [38;5;246m&lt;dbl&gt; [39m [23m
- [38;5;250m 1 [39m     0 4,0      good           - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m             30 
- [38;5;250m 2 [39m     1 4,1      average        - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m             10 
- [38;5;250m 3 [39m     2 4,2      not working    - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m              5 
- [38;5;250m 4 [39m     3 4,3      replaced       - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m              0 
- [38;5;250m 5 [39m     4 3,0      good            0  [38;5;246m" [39mmt [38;5;246m" [39m           85 
- [38;5;250m 6 [39m     5 3,1      average         0  [38;5;246m" [39mmt [38;5;246m" [39m           70 
- [38;5;250m 7 [39m     6 3,2      not working     0  [38;5;246m" [39mmt [38;5;246m" [39m           60 
- [38;5;250m 8 [39m     7 3,3      replaced        0  [38;5;246m" [39mDummy [38;5;246m" [39m         0 
- [38;5;250m 9 [39m     8 2,0      good            1  [38;5;246m" [39mnmt [38;5;246m" [39m         148.
- [38;5;250m10 [39m     9 2,1      average         0  [38;5;246m" [39mmt [38;5;246m" [39m          125 
- [38;5;250m11 [39m    10 2,2      not working     0  [38;5;246m" [39mmt [38;5;246m" [39m          115 
- [38;5;250m12 [39m    11 1,0      good            1  [38;5;246m" [39mnmt [38;5;246m" [39m         208.
- [38;5;250m13 [39m    12 1,1      average         0  [38;5;246m" [39mmt [38;5;246m" [39m          188.
- [38;5;250m14 [39m    13 0,0      Dummy           0  [38;5;246m" [39mbuy [38;5;246m" [39m         102.</code></pre>
-<p>The optimal policy is illustrated below:</p>
-<pre><code>Warning: Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.
-Unknown or uninitialised column: `lty`.</code></pre>
-<p><img src="mdp2_files/figure-html/plotPolicy3-1.png" width="960" style="max-width:100%;"></p>
-<p>Note given the optimal policy the machine will never make a
-transition to states <code>not working</code> and <code>replaced</code>.
-We may evaluate a certain policy, e.g. the policy always to maintain the
-machine:</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> policy<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">sId=</span><span class="fu">c</span>(<span class="dv">8</span>,<span class="dv">11</span>),<span class="at">aIdx=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))</span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">setPolicy</span>(mdp, policy)</span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 14 × 6 [39m
-     sId stateStr stateLabel   aIdx actionLabel weight
-    [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m     [3m [38;5;246m&lt;chr&gt; [39m [23m        [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m         [3m [38;5;246m&lt;dbl&gt; [39m [23m
- [38;5;250m 1 [39m     0 4,0      good           - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m             30 
- [38;5;250m 2 [39m     1 4,1      average        - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m             10 
- [38;5;250m 3 [39m     2 4,2      not working    - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m              5 
- [38;5;250m 4 [39m     3 4,3      replaced       - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m              0 
- [38;5;250m 5 [39m     4 3,0      good            0  [38;5;246m" [39mmt [38;5;246m" [39m           85 
- [38;5;250m 6 [39m     5 3,1      average         0  [38;5;246m" [39mmt [38;5;246m" [39m           70 
- [38;5;250m 7 [39m     6 3,2      not working     0  [38;5;246m" [39mmt [38;5;246m" [39m           60 
- [38;5;250m 8 [39m     7 3,3      replaced        0  [38;5;246m" [39mDummy [38;5;246m" [39m         0 
- [38;5;250m 9 [39m     8 2,0      good            0  [38;5;246m" [39mmt [38;5;246m" [39m          148.
- [38;5;250m10 [39m     9 2,1      average         0  [38;5;246m" [39mmt [38;5;246m" [39m          125 
- [38;5;250m11 [39m    10 2,2      not working     0  [38;5;246m" [39mmt [38;5;246m" [39m          115 
- [38;5;250m12 [39m    11 1,0      good            0  [38;5;246m" [39mmt [38;5;246m" [39m          208.
- [38;5;250m13 [39m    12 1,1      average         0  [38;5;246m" [39mmt [38;5;246m" [39m          188.
- [38;5;250m14 [39m    13 0,0      Dummy           0  [38;5;246m" [39mbuy [38;5;246m" [39m         102.</code></pre>
-<p>If the policy specified in <code>setPolicy</code> does not contain
-all states then the actions from the previous optimal policy are used.
-In the output above we can see that the policy now is to maintain
-always. However, the reward of the policy has not been updated. Let us
-calculate the expected reward:</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runCalcWeights</span>(mdp, <span class="st">"Net reward"</span>, <span class="at">termValues=</span>scrapValues)</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)    </span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 14 × 6 [39m
-     sId stateStr stateLabel   aIdx actionLabel weight
-    [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m     [3m [38;5;246m&lt;chr&gt; [39m [23m        [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m         [3m [38;5;246m&lt;dbl&gt; [39m [23m
- [38;5;250m 1 [39m     0 4,0      good           - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m            30  
- [38;5;250m 2 [39m     1 4,1      average        - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m            10  
- [38;5;250m 3 [39m     2 4,2      not working    - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m             5  
- [38;5;250m 4 [39m     3 4,3      replaced       - [31m1 [39m  [38;5;246m" [39m [38;5;246m" [39m             0  
- [38;5;250m 5 [39m     4 3,0      good            0  [38;5;246m" [39mmt [38;5;246m" [39m          85  
- [38;5;250m 6 [39m     5 3,1      average         0  [38;5;246m" [39mmt [38;5;246m" [39m          70  
- [38;5;250m 7 [39m     6 3,2      not working     0  [38;5;246m" [39mmt [38;5;246m" [39m          60  
- [38;5;250m 8 [39m     7 3,3      replaced        0  [38;5;246m" [39mDummy [38;5;246m" [39m        0  
- [38;5;250m 9 [39m     8 2,0      good            0  [38;5;246m" [39mmt [38;5;246m" [39m         140  
- [38;5;250m10 [39m     9 2,1      average         0  [38;5;246m" [39mmt [38;5;246m" [39m         125  
- [38;5;250m11 [39m    10 2,2      not working     0  [38;5;246m" [39mmt [38;5;246m" [39m         115  
- [38;5;250m12 [39m    11 1,0      good            0  [38;5;246m" [39mmt [38;5;246m" [39m         195  
- [38;5;250m13 [39m    12 1,1      average         0  [38;5;246m" [39mmt [38;5;246m" [39m         180  
- [38;5;250m14 [39m    13 0,0      Dummy           0  [38;5;246m" [39mbuy [38;5;246m" [39m         90.5</code></pre>
-<p>That is, the expected reward is 90.5 compared to 102.2 which was the
-reward of the optimal policy.</p>
-</div>
-<div class="section level2">
-<h2 id="an-infinite-horizon-hmdp">An infinite-horizon HMDP<a class="anchor" aria-label="anchor" href="#an-infinite-horizon-hmdp"></a>
-</h2>
-<p>A hierarchical MDP is an MDP with parameters defined in a special
-way, but nevertheless in accordance with all usual rules and conditions
-relating to such processes (<span class="citation">Kristensen and
-Jørgensen (2000)</span>). The basic idea of the hierarchical structure
-is that stages of the process can be expanded to a so-called <em>child
-process</em>, which again may expand stages further to new child
-processes leading to multiple levels. To illustrate consider the HMDP
-shown in the figure below. The process has three levels. At
-<code>Level 2</code> we have a set of finite-horizon semi-MDPs (one for
-each oval box) which all can be represented using a state-expanded
-hypergraph (hyperarcs not shown, only hyperarcs connecting processes are
-shown). A semi-MDP at <code>Level 2</code> is uniquely defined by a
-given state <span class="math inline">\(s\)</span> and action <span class="math inline">\(a\)</span> of its <em>parent process</em> at
-<code>Level 1</code> (illustrated by the arcs with head and tail node at
-<code>Level 1</code> and <code>Level 2</code>, respectively). Moreover,
-when a child process at <code>Level 2</code> terminates a transition
-from a state <span class="math inline">\(s\in \mathcal{S}_{N}\)</span>
-of the child process to a state at the next stage of the parent process
-occur (illustrated by the (hyper)arcs having head and tail at
-<code>Level 2</code> and <code>Level 1</code>, respectively).</p>
-<p><img src="vignette_files/hmdp_index.png" alt="A state-expanded hypergraph for an HMDP."><em>A hypergraph
-representation of the first stage of a hierarchical MDP. Level 0
-indicate the founder level, and the nodes indicates states at the
-different levels. A child process (oval box) is represented using its
-state-expanded hypergraph (hyperarcs not shown) and is uniquely defined
-by a given state and action of its parent process.</em></p>
-<p>Since a child process is always defined by a stage, state and action
-of the parent process we have that for instance a state at Level 1 can
-be identified using an index vector <span class="math inline">\(\nu=(n_{0},s_{0},a_{0},n_{1},s_{1})\)</span> where
-<span class="math inline">\(s_1\)</span> is the state id at the given
-stage <span class="math inline">\(n_1\)</span> in the process defined by
-the action <span class="math inline">\(a_0\)</span> in state <span class="math inline">\(s_0\)</span> at stage <span class="math inline">\(n_0\)</span>. Note all values are ids starting
-from zero, e.g. if <span class="math inline">\(s_1=0\)</span> it is the
-first state at the corresponding stage and if <span class="math inline">\(a_0=2\)</span> it is the third action at the
-corresponding state. In general a state <span class="math inline">\(s\)</span> and action <span class="math inline">\(a\)</span> at level <span class="math inline">\(l\)</span> can be uniquely identified using <span class="math display">\[
-\begin{aligned}
-\nu_{s}&amp;=(n_{0},s_{0},a_{0},n_{1},s_{1},\ldots,n_{l},s_{l}) \\
-\nu_{a}&amp;=(n_{0},s_{0},a_{0},n_{1},s_{1},\ldots,n_{l},s_{l},a_{l}).
-\end{aligned}
-\]</span> The index vectors for state <span class="math inline">\(v_0\)</span>, <span class="math inline">\(v_1\)</span> and <span class="math inline">\(v_2\)</span> are illustrated in the figure. As
-under a semi-MDP another way to identify a state in the state-expanded
-hypergraph is using an unique id.</p>
-<p>Let us try to solve a small problem from livestock farming, namely
-the cow replacement problem where we want to represent the age of the
-cow, i.e. the lactation number of the cow. During a lactation a cow may
-have a high, average or low yield. We assume that a cow is always
-replaced after 4 lactations.</p>
-<p>In addition to lactation and milk yield we also want to take the
-genetic merit into account which is either bad, average or good. When a
-cow is replaced we assume that the probability of a bad, average or good
-heifer is equal.</p>
-<p>We formulate the problem as a HMDP with 2 levels. At level 0 the
-states are the genetic merit and the length of a stage is a life of a
-cow. At level 1 a stage describe a lactation and states describe the
-yield. Decisions at level 1 are <code>keep</code> or
-<code>replace</code>.</p>
-<p>Note the MDP runs over an infinite time-horizon at the founder level
-where each state (genetic merit) define a semi-MDP at level 1 with 4
-lactations.</p>
-<p>To generate the MDP we need to know the weights and transition
-probabilities which are provided in a CSV file. To ease the
-understanding we provide 2 functions for reading from the CSV:</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> cowDf<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"vignette_files/cow.csv"</span>)</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">head</span>(cowDf)</span></code></pre></div>
-<pre><code>  s0 n1 s1   label Duration Reward Output scp0 idx0       pr0 scp1 idx1       pr1 scp2
-1  0  0  0   Dummy        0      0      0    1    0 0.3333333    1    1 0.3333333    1
-2  0  1  0    Keep        1   6000   3000    1    0 0.6000000    1    1 0.3000000    1
-3  0  1  0 Replace        1   5000   3000    0    0 0.3333333    0    1 0.3333333    0
-4  0  1  1    Keep        1   8000   4000    1    0 0.2000000    1    1 0.6000000    1
-5  0  1  1 Replace        1   7000   4000    0    0 0.3333333    0    1 0.3333333    0
-6  0  1  2    Keep        1  10000   5000    1    0 0.1000000    1    1 0.3000000    1
-  idx2       pr2
-1    2 0.3333333
-2    2 0.1000000
-3    2 0.3333333
-4    2 0.2000000
-5    2 0.3333333
-6    2 0.6000000</code></pre>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> lev1W<span class="ot">&lt;-</span><span class="cf">function</span>(s0Idx,n1Idx,s1Idx,a1Lbl) {</span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>   r<span class="ot">&lt;-</span><span class="fu">subset</span>(cowDf,s0<span class="sc">==</span>s0Idx <span class="sc">&amp;</span> n1<span class="sc">==</span>n1Idx <span class="sc">&amp;</span> s1<span class="sc">==</span>s1Idx <span class="sc">&amp;</span> label<span class="sc">==</span>a1Lbl)</span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>   <span class="fu">return</span>(<span class="fu">as.numeric</span>(r[<span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>]))</span>
-<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span> }</span>
-<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">lev1W</span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="st">'Keep'</span>)     <span class="co"># good genetic merit, lactation 2, avg yield, keep action</span></span></code></pre></div>
-<pre><code>[1]     1 14000  7000</code></pre>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> lev1Pr<span class="ot">&lt;-</span><span class="cf">function</span>(s0Idx,n1Idx,s1Idx,a1Lbl) {</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>   r<span class="ot">&lt;-</span><span class="fu">subset</span>(cowDf,s0<span class="sc">==</span>s0Idx <span class="sc">&amp;</span> n1<span class="sc">==</span>n1Idx <span class="sc">&amp;</span> s1<span class="sc">==</span>s1Idx <span class="sc">&amp;</span> label<span class="sc">==</span>a1Lbl)</span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>   <span class="fu">return</span>(<span class="fu">as.numeric</span>(r[<span class="dv">8</span><span class="sc">:</span><span class="dv">16</span>]))</span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span> }</span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">lev1Pr</span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="st">'Replace'</span>) <span class="co"># good genetic merit, lactation 2, avg yield, replace action</span></span></code></pre></div>
-<pre><code>[1] 0.0000000 0.0000000 0.3333333 0.0000000 1.0000000 0.3333333 0.0000000 2.0000000
-[9] 0.3333333</code></pre>
-<p>We can now generate the model with three weights</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> lblS0<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">'Bad genetic level'</span>,<span class="st">'Avg genetic level'</span>,<span class="st">'Good genetic level'</span>)</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> lblS1<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">'Low yield'</span>,<span class="st">'Avg yield'</span>,<span class="st">'High yield'</span>)</span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> prefix<span class="ot">&lt;-</span><span class="st">"cow_"</span></span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="ot">&lt;-</span><span class="fu">binaryMDPWriter</span>(prefix)</span>
-<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">setWeights</span>(<span class="fu">c</span>(<span class="st">"Duration"</span>, <span class="st">"Net reward"</span>, <span class="st">"Yield"</span>))</span>
-<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">process</span>()</span>
-<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">stage</span>()   <span class="co"># stage 0 at founder level</span></span>
-<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>       <span class="cf">for</span> (s0 <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>) {</span>
-<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>           w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span>lblS0[s0<span class="sc">+</span><span class="dv">1</span>])   <span class="co"># state at founder</span></span>
-<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>               w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"Keep"</span>, <span class="at">weights=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">prob=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">1</span>))   <span class="co"># action at founder</span></span>
-<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                   w<span class="sc">$</span><span class="fu">process</span>()</span>
-<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                       w<span class="sc">$</span><span class="fu">stage</span>()   <span class="co"># dummy stage at level 1</span></span>
-<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                            w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span><span class="st">"Dummy"</span>)</span>
-<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                               w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"Dummy"</span>, <span class="at">weights=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), </span>
-<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                                        <span class="at">prob=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, <span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                            w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                       w<span class="sc">$</span><span class="fu">endStage</span>()</span>
-<span id="cb66-18"><a href="#cb66-18" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                       <span class="cf">for</span> (d1 <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>) {</span>
-<span id="cb66-19"><a href="#cb66-19" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                           w<span class="sc">$</span><span class="fu">stage</span>()   <span class="co"># stage at level 1</span></span>
-<span id="cb66-20"><a href="#cb66-20" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                               <span class="cf">for</span> (s1 <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>) {</span>
-<span id="cb66-21"><a href="#cb66-21" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                                   w<span class="sc">$</span><span class="fu">state</span>(<span class="at">label=</span>lblS1[s1<span class="sc">+</span><span class="dv">1</span>])</span>
-<span id="cb66-22"><a href="#cb66-22" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                                       <span class="cf">if</span> (d1<span class="sc">!=</span><span class="dv">4</span>) {</span>
-<span id="cb66-23"><a href="#cb66-23" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                                           w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"Keep"</span>, <span class="at">weights=</span><span class="fu">lev1W</span>(s0,d1,s1,<span class="st">"Keep"</span>), </span>
-<span id="cb66-24"><a href="#cb66-24" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                                                    <span class="at">prob=</span><span class="fu">lev1Pr</span>(s0,d1,s1,<span class="st">"Keep"</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb66-25"><a href="#cb66-25" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                                       }</span>
-<span id="cb66-26"><a href="#cb66-26" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                                       w<span class="sc">$</span><span class="fu">action</span>(<span class="at">label=</span><span class="st">"Replace"</span>, <span class="at">weights=</span><span class="fu">lev1W</span>(s0,d1,s1,<span class="st">"Replace"</span>), </span>
-<span id="cb66-27"><a href="#cb66-27" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                                                <span class="at">prob=</span><span class="fu">lev1Pr</span>(s0,d1,s1,<span class="st">"Replace"</span>), <span class="at">end=</span><span class="cn">TRUE</span>)</span>
-<span id="cb66-28"><a href="#cb66-28" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                                   w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb66-29"><a href="#cb66-29" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                               }</span>
-<span id="cb66-30"><a href="#cb66-30" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                           w<span class="sc">$</span><span class="fu">endStage</span>()</span>
-<span id="cb66-31"><a href="#cb66-31" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                       }</span>
-<span id="cb66-32"><a href="#cb66-32" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>                   w<span class="sc">$</span><span class="fu">endProcess</span>()</span>
-<span id="cb66-33"><a href="#cb66-33" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>               w<span class="sc">$</span><span class="fu">endAction</span>()</span>
-<span id="cb66-34"><a href="#cb66-34" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>           w<span class="sc">$</span><span class="fu">endState</span>()</span>
-<span id="cb66-35"><a href="#cb66-35" aria-hidden="true" tabindex="-1"></a><span class="sc">+</span>       }</span>
-<span id="cb66-36"><a href="#cb66-36" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span>   w<span class="sc">$</span><span class="fu">endStage</span>()</span>
-<span id="cb66-37"><a href="#cb66-37" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">endProcess</span>()</span>
-<span id="cb66-38"><a href="#cb66-38" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> w<span class="sc">$</span><span class="fu">closeWriter</span>()</span></code></pre></div>
-<pre><code>
-  Statistics:
-    states : 42 
-    actions: 69 
-    weights: 3 
-
-  Closing binary MDP writer.</code></pre>
-<p>Note that the model is built using the <code>prob</code> parameter
-which contains triples of (scope,id,pr). Scope can be: 2 = a transition
-to a child process (stage zero in the child process), 1 = a transition
-to next stage in the current process and 0 = a transition to the next
-stage in the father process. For instance if
-<code>prob = c(1,2,0.3, 0,0,0.7)</code> we specify transitions to the
-third state (id = 2) at the next stage of the process and to the first
-state (id = 0) at the next stage of the father process with
-probabilities 0.3 and 0.7, respectively.</p>
-<p>A plot of the state-expanded hypergraph are given below where action
-<code>keep</code> is drawn with orange color and action
-<code>replace</code> with blue color.</p>
-<pre><code>Warning: Unknown or uninitialised column: `lty`.</code></pre>
-<pre><code>Warning: Unknown or uninitialised column: `col`.</code></pre>
-<p><img src="mdp2_files/figure-html/plotHMDP-1.png" width="960" style="max-width:100%;"></p>
-<p>We find the optimal policy under the expected discounted reward
-criterion the HMDP using policy iteration:</p>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="do">## solve under discount criterion</span></span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> mdp<span class="ot">&lt;-</span><span class="fu">loadMDP</span>(prefix)</span></code></pre></div>
-<pre><code>Read binary files (0.000316206 sec.)
-Build the HMDP (0.000274405 sec.)</code></pre>
-<pre><code>Checking MDP and found no errors (3.8e-06 sec.)</code></pre>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> wLbl<span class="ot">&lt;-</span><span class="st">"Net reward"</span>         <span class="co"># the weight we want to optimize (net reward)</span></span>
-<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> durLbl<span class="ot">&lt;-</span><span class="st">"Duration"</span>         <span class="co"># the duration/time label</span></span>
-<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runPolicyIteDiscount</span>(mdp, wLbl, durLbl, <span class="at">rate=</span><span class="fl">0.1</span>)</span></code></pre></div>
-<pre><code>Run policy iteration using quantity 'Net reward' under discounting criterion 
-with 'Duration' as duration using discount factor 0.904837. 
-Iteration(s): 1 2 3 4 finished. Cpu time: 3.8e-06 sec.</code></pre>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 42 × 6 [39m
-     sId stateStr  stateLabel  aIdx actionLabel  weight
-    [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m      [3m [38;5;246m&lt;chr&gt; [39m [23m       [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m          [3m [38;5;246m&lt;dbl&gt; [39m [23m
- [38;5;250m 1 [39m     3 0,2,0,4,0 Low yield      0 Replace      [4m1 [24m [4m1 [24m [4m8 [24m594.
- [38;5;250m 2 [39m     4 0,2,0,4,1 Avg yield      0 Replace      [4m1 [24m [4m2 [24m [4m0 [24m594.
- [38;5;250m 3 [39m     5 0,2,0,4,2 High yield     0 Replace      [4m1 [24m [4m2 [24m [4m2 [24m594.
- [38;5;250m 4 [39m     6 0,2,0,3,0 Low yield      0 Keep         [4m1 [24m [4m2 [24m [4m0 [24m213.
- [38;5;250m 5 [39m     7 0,2,0,3,1 Avg yield      0 Keep         [4m1 [24m [4m2 [24m [4m3 [24m118.
- [38;5;250m 6 [39m     8 0,2,0,3,2 High yield     0 Keep         [4m1 [24m [4m2 [24m [4m6 [24m023.
- [38;5;250m 7 [39m     9 0,2,0,2,0 Low yield      0 Keep         [4m1 [24m [4m2 [24m [4m2 [24m088.
- [38;5;250m 8 [39m    10 0,2,0,2,1 Avg yield      0 Keep         [4m1 [24m [4m2 [24m [4m5 [24m402.
- [38;5;250m 9 [39m    11 0,2,0,2,2 High yield     0 Keep         [4m1 [24m [4m2 [24m [4m8 [24m716.
- [38;5;250m10 [39m    12 0,2,0,1,0 Low yield      0 Keep         [4m1 [24m [4m2 [24m [4m1 [24m969.
- [38;5;246m# … with 32 more rows [39m</code></pre>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="co"># rpo&lt;-calcRPO(mdp, wLbl, iA=rep(0,42), criterion="discount", dur=durLbl, rate=rate, rateBase=rateBase)</span></span>
-<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="co"># policy&lt;-merge(policy,rpo)</span></span>
-<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a><span class="er">&gt;</span> <span class="co"># policy</span></span></code></pre></div>
-<p>A plot of the optimal policy can be seen below.</p>
-<pre><code>Warning: Unknown or uninitialised column: `lty`.</code></pre>
-<pre><code>Warning: Unknown or uninitialised column: `col`.</code></pre>
-<p><img src="mdp2_files/figure-html/plotPolicy-1.png" width="960" style="max-width:100%;"></p>
-<p>We may also find the policy with maximizing average reward per
-lactation:</p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> wLbl<span class="ot">&lt;-</span><span class="st">"Net reward"</span>         <span class="co"># the weight we want to optimize (net reward)</span></span>
-<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> durLbl<span class="ot">&lt;-</span><span class="st">"Duration"</span>         <span class="co"># the duration/time label</span></span>
-<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runPolicyIteAve</span>(mdp, wLbl, durLbl)</span></code></pre></div>
-<pre><code>Run policy iteration under average reward criterion using 
-reward 'Net reward' over 'Duration'. Iterations (g): 
-1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 3.8e-06 sec.</code></pre>
-<pre><code>[1] 11543.83</code></pre>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">getPolicy</span>(mdp)</span></code></pre></div>
-<pre><code> [38;5;246m# A tibble: 42 × 6 [39m
-     sId stateStr  stateLabel  aIdx actionLabel  weight
-    [3m [38;5;246m&lt;dbl&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m      [3m [38;5;246m&lt;chr&gt; [39m [23m       [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m          [3m [38;5;246m&lt;dbl&gt; [39m [23m
- [38;5;250m 1 [39m     3 0,2,0,4,0 Low yield      0 Replace     - [31m [4m7 [24m36 [39m [31m9 [39m [31m. [39m 
- [38;5;250m 2 [39m     4 0,2,0,4,1 Avg yield      0 Replace     - [31m [4m5 [24m36 [39m [31m9 [39m [31m. [39m 
- [38;5;250m 3 [39m     5 0,2,0,4,2 High yield     0 Replace     - [31m [4m3 [24m36 [39m [31m9 [39m [31m. [39m 
- [38;5;250m 4 [39m     6 0,2,0,3,0 Low yield      0 Keep        - [31m [4m5 [24m91 [39m [31m2 [39m [31m. [39m 
- [38;5;250m 5 [39m     7 0,2,0,3,1 Avg yield      0 Keep        - [31m [4m2 [24m91 [39m [31m2 [39m [31m. [39m 
- [38;5;250m 6 [39m     8 0,2,0,3,2 High yield     0 Keep           87.7
- [38;5;250m 7 [39m     9 0,2,0,2,0 Low yield      0 Keep        - [31m [4m3 [24m95 [39m [31m6 [39m [31m. [39m 
- [38;5;250m 8 [39m    10 0,2,0,2,1 Avg yield      0 Keep         - [31m456 [39m [31m. [39m 
- [38;5;250m 9 [39m    11 0,2,0,2,2 High yield     0 Keep          [4m3 [24m044. 
- [38;5;250m10 [39m    12 0,2,0,1,0 Low yield      0 Keep        - [31m [4m3 [24m75 [39m [31m0 [39m  
- [38;5;246m# … with 32 more rows [39m</code></pre>
-<p>Since other weights are defined for each action we can calculate the
-average reward per litre milk under the optimal policy:</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runCalcWeights</span>(mdp, <span class="at">w=</span>wLbl, <span class="at">criterion=</span><span class="st">"average"</span>, <span class="at">dur =</span> <span class="st">"Yield"</span>)</span></code></pre></div>
-<pre><code>[1] 1.932615</code></pre>
-<p>or the average yield per lactation:</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">runCalcWeights</span>(mdp, <span class="at">w=</span><span class="st">"Yield"</span>, <span class="at">criterion=</span><span class="st">"average"</span>, <span class="at">dur =</span> durLbl)</span></code></pre></div>
-<pre><code>[1] 5973.166</code></pre>
-</div>
+<p>To illustrate the package capabilities have a look at the
+vignettes:</p>
+<ul>
+<li>Building MDP models <code><a href="../articles/building.html">vignette("building")</a></code>.</li>
+<li>Solving an infinite-horizon MDP (semi-MDP)
+<code>vignette(infinite-mdp)</code>.</li>
+<li>Solving a finite-horizon MDP (semi-MDP)
+<code>vignette(finite-mdp)</code>.</li>
+<li>Solving an infinite-horizon HMDP
+<code>vignette(infinite-hmdp)</code>.</li>
+</ul>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>

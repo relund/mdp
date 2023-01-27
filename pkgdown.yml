@@ -2,8 +2,10 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
+  building: building.html
+  finite-mdp: finite-mdp.html
   mdp2: mdp2.html
-last_built: 2022-12-23T12:40Z
+last_built: 2023-01-27T10:55Z
 urls:
   reference: http://relund.github.io/mdp/reference
   article: http://relund.github.io/mdp/articles
