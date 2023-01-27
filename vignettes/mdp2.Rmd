@@ -87,9 +87,9 @@ support for MLHMP which is a Java implementation of algorithms for solving MDPs 
 To illustrate the package capabilities have a look at the vignettes:
 
    * Building MDP models `vignette("building")`.
-   * Solving an infinite-horizon MDP (semi-MDP) `vignette(infinite-mdp)`.
-   * Solving a finite-horizon MDP (semi-MDP) `vignette(finite-mdp)`.
-   * Solving an infinite-horizon HMDP `vignette(infinite-hmdp)`.
+   * Solving an infinite-horizon MDP (semi-MDP) `vignette("infinite-mdp")`.
+   * Solving a finite-horizon MDP (semi-MDP) `vignette("finite-mdp")`.
+   * Solving an infinite-horizon HMDP `vignette("infinite-hmdp")`.
 
 
 ## References
