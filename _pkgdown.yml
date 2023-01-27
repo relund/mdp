@@ -17,7 +17,9 @@ reference:
 - title: Get info about the MDP
 - contents:
   - getInfo
+  - plot.HMDP
   - plotHypergraph
+  - getHypergraph
   - getWIdx
 - title: Finding the optimal policy
   contents:
