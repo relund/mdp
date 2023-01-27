@@ -1,0 +1,197 @@
+---
+title: "Solving a finite-horizon semi-MDP"
+author: "Lars Relund <lars@relund.dk>"
+date: "`r Sys.Date()`"
+bibliography: litt.bib
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{finite-mdp}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+<style> 
+p {text-align: justify;} 
+//.sourceCode {background-color: white;}
+pre {
+  // border-style: solid;
+  // border-width: 1px;
+  // border-color: grey;
+  //background-color: grey !important;
+}
+img {
+   //width: 100%;
+   border: 0;
+}
+</style>
+
+<!-- scale math down -->
+<script type="text/x-mathjax-config"> 
+    MathJax.Hub.Config({ 
+        "HTML-CSS": { scale: 80 }
+        });
+</script>
+
+```{r setup, include=FALSE}
+library(knitr)
+options(rmarkdown.html_vignette.check_title = FALSE,
+        # formatR.arrow = TRUE, 
+        # scipen=999, 
+        # digits=5,
+        width=90) 
+#thm <- knit_theme$get("edit-kwrite")   # whitengrey, bright, print, edit-flashdevelop, edit-kwrite
+#knit_theme$set(thm)
+knit_hooks$set(
+   par = function(before, options, envir) {
+      if (before && options$fig.show != 'none')
+         par(mar = c(0, 0, 0, 0), # bottom, left, top, and right
+             oma = c(0, 0, 0, 0))}
+)
+knitr::opts_chunk$set(
+   # collapse = TRUE,
+   comment = "#>",
+   fig.align = 'center',
+   fig.width = 9,
+   fig.height = 5,
+   fig.show = 'hold',
+   out.extra = 'style="max-width:100%;"',
+   # tidy = TRUE,
+   # prompt=T,
+   # comment=NA,
+   cache = F
+   # background = "red"
+)
+library(magrittr)
+library(dplyr)
+```
+
+
+The `MDP2` package in R is a package for solving Markov decision processes (MDPs) with discrete 
+time-steps, states and actions. Both traditional MDPs [@Puterman94], semi-Markov decision processes
+(semi-MDPs) [@Tijms03] and hierarchical-MDPs (HMDPs) [@Kristensen00] can be solved under a finite
+and infinite time-horizon.
+
+The package implement well-known algorithms such as policy iteration and value iteration
+under different criteria e.g. average reward per time unit and expected total discounted reward. The
+model is stored using an underlying data structure based on the *state-expanded directed hypergraph*
+of the MDP (@Relund06) implemented in `C++` for fast running times. <!-- Under development is also
+support for MLHMP which is a Java implementation of algorithms for solving MDPs (@Kristensen03). 
+-->
+
+Building and solving an MDP is done in two steps. First, the MDP is built and saved in a set 
+of binary files. Next, you load the MDP into memory from the binary files and apply various
+algorithms to the model.
+
+For building the MDP models see `vignette("building")`. In this vignette we focus on the second step, i.e. finding the optimal policy. Here we consider a finite-horizon semi-MDP. 
+
+
+```{r}
+library(MDP2)
+```
+
+
+## A finite-horizon semi-MDP
+
+A *finite-horizon semi-MDP* considers a sequential decision problem over $N$ *stages*. Let $I_{n}$
+denote the finite set of system states at stage $n$. When *state* $i \in I_{n}$ is observed, an
+*action* $a$ from the finite set of allowable actions $A_n(i)$ must be chosen, and this decision
+generates *reward* $r_{n}(i,a)$. Moreover, let $\tau_n(i,a)$ denote the *stage length* of action
+$a$, i.e. the expected time until the next decision epoch (stage $n+1$) given action $a$ and state
+$i$. Finally, let $p_{ij}(a,n)$ denote the *transition probability* of obtaining state $j\in I_{n+1}$
+at stage $n+1$ given that action $a$ is chosen in state $i$ at stage $n$. 
+
+## Example
+
+Consider a small machine repair problem used as an example in @Relund06 where the machine is always
+replaced after 4 years. The state of the machine may be: good, average, and not working. Given the
+machine's state we may maintain the machine. In this case the machine's state will be good at the
+next decision epoch. Otherwise, the machine's state will not be better at next decision epoch. When
+the machine is bought it may be either in state good or average. Moreover, if the machine is not
+working it must be replaced.
+
+The problem of when to replace the machine can be modeled using a Markov decision process with 
+$N=5$ decision epochs. We use system states `good`,  `average`, `not working` and dummy state
+`replaced` together with actions buy (`buy`), maintain (`mt`), no maintenance (`nmt`), and replace
+(`rep`). The set of states at stage zero $S_{0}$ contains a single dummy state `dummy` representing
+the machine before knowing its initial state. The only possible action is `buy`.
+
+The cost of buying the machine is 100 with transition probability of 0.7 to state `good` and 0.3 to
+state `average`. The reward (scrap value) of replacing a machine is 30, 10, and 5 in state `good`,  `average` and `not working`, respectively. The reward of the machine given action `mt` are 55, 40, and 30 in state `good`,  `average` and `not working`, respectively. Moreover, the system enters state 0 with probability 1 at the next stage.
+Finally, the reward, transition states and probabilities given action $a=$`nmt` are given by:
+
+  $n:s$               $1:$ `good`        $1:$ `average`        $2:$ `good`           $2:$ `average`         $3:$ `good`           $3:$ `average`
+  -------------     ---------------    ------------------    ------------------    -------------------    ------------------    ------------------   
+  $r_n(i,a)$          70                 50                    70                    50                     70                    50
+  $j$                 $\{0,1\}$          $\{1,2\}$             $\{0,1\}$             $\{1,2\}$              $\{0,1\}$             $\{1,2\}$
+  $p_{ij}(a,n)$       $\{0.6,0.4\}$      $\{0.6,0.4\}$         $\{0.5,0.5\}$         $\{0.5,0.5\}$          $\{0.2,0.8\}$         $\{0.2,0.8\}$
+
+
+Let us try to load the model and get some info:
+
+```{r, par=TRUE}
+prefix <- paste0(system.file("models", package = "MDP2"), "/machine1_")
+mdp <- loadMDP(prefix)
+getInfo(mdp, withList = F, dfLevel = "action", asStringsActions = TRUE)  
+```
+
+The state-expanded hypergraph representing the semi-MDP with finite time-horizon can be plotted 
+using
+
+```{r, par=TRUE}
+plot(mdp, hyperarcColor = "label", radx = 0.06, marX = 0.065, marY = 0.055)
+```
+
+Each node corresponds to a specific state
+and a directed hyperarc is defined for each possible action. For instance, action `mt` (maintain)
+corresponds to a deterministic transition to state `good` and action `nmt` (not maintain)
+corresponds to a transition to a condition/state not better than the current condition/state. We buy
+the machine in stage 1 and may choose to replace the machine.
+
+
+Let us use value iteration to find the optimal policy maximizing the expected total reward:
+
+```{r solve3}
+scrapValues <- c(30, 10, 5, 0)   # scrap values (the values of the 4 states at the last stage)
+runValueIte(mdp, "Net reward", termValues = scrapValues)
+```
+
+The optimal policy is:
+
+```{r, par=TRUE}
+pol <- getPolicy(mdp)
+tail(pol)
+plot(mdp, hyperarcShow = "policy", nodeLabel = "weight", 
+     radx = 0.06, marX = 0.065, marY = 0.055)
+```
+
+Note given the optimal policy the total expected reward is 
+`r pol %>% filter(stateStr == "0,0") %>% pull(weight)` and the machine will never make a transition 
+to states `not working` and `replaced`.
+
+We may evaluate a certain policy, e.g. the policy always to maintain the machine:
+
+```{r Set policy (machine rep),echo=TRUE,eval=TRUE}
+policy<-data.frame(sId=c(8,11), aIdx=c(0,0)) # set the policy for sId 8 and 11 to mt
+setPolicy(mdp, policy)
+getPolicy(mdp)
+```
+
+If the policy specified in `setPolicy` does not contain all states then the actions from the
+previous optimal policy are used. In the output above we can see that the policy now is to maintain
+always. However, the reward of the policy has not been updated. Let us calculate the expected
+reward:
+
+```{r Calc reward (machine rep),echo=TRUE}
+runCalcWeights(mdp, "Net reward", termValues = scrapValues)
+tail(getPolicy(mdp))    
+```
+
+That is, the expected reward is 90.5 compared to 102.2 which was the reward of the optimal policy.
+
+
+
+
+
+## References
