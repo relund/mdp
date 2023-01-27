@@ -4,8 +4,10 @@ pkgdown_sha: ~
 articles:
   building: building.html
   finite-mdp: finite-mdp.html
+  infinite-hmdp: infinite-hmdp.html
+  infinite-mdp: infinite-mdp.html
   mdp2: mdp2.html
-last_built: 2023-01-27T10:55Z
+last_built: 2023-01-27T11:00Z
 urls:
   reference: http://relund.github.io/mdp/reference
   article: http://relund.github.io/mdp/articles
