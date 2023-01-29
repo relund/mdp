@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Lars Relund <a href="mailto:lars@relund.dk" class="email">lars@relund.dk</a>
 </h4>
             
-            <h4 data-toc-skip class="date">2023-01-27</h4>
+            <h4 data-toc-skip class="date">2023-01-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/relund/mdp/blob/HEAD/vignettes/infinite-hmdp.Rmd" class="external-link"><code>vignettes/infinite-hmdp.Rmd</code></a></small>
       <div class="d-none name"><code>infinite-hmdp.Rmd</code></div>
@@ -202,9 +202,9 @@ lactations.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prefix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"models"</span>, package <span class="op">=</span> <span class="st">"MDP2"</span><span class="op">)</span>, <span class="st">"/cow_"</span><span class="op">)</span></span>
 <span><span class="va">mdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Read binary files (0.000323105 sec.)</span></span>
-<span><span class="co">#&gt; Build the HMDP (0.000295104 sec.)</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (6.3e-06 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Read binary files (0.000258398 sec.)</span></span>
+<span><span class="co">#&gt; Build the HMDP (0.000263699 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (2.6e-06 sec.)</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mdp</span> </span></code></pre></div>
 <pre><code><span><span class="co">#&gt; $binNames</span></span>
@@ -236,7 +236,7 @@ lactations.</p>
 <span><span class="co">#&gt; [1] "Duration"   "Net reward" "Yield"     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $ptr</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x555e97c77660&gt; of class 'HMDP' &lt;0x555e99d49520&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x564e55a1b630&gt; of class 'HMDP' &lt;0x564e5610c470&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "HMDP" "list"</span></span></code></pre>
@@ -306,7 +306,7 @@ criterion using policy iteration with an interest rate of 10%:</p>
 <span><span class="fu"><a href="../reference/runPolicyIteDiscount.html">runPolicyIteDiscount</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">wLbl</span>, <span class="va">durLbl</span>, rate <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration using quantity 'Net reward' under discounting criterion </span></span>
 <span><span class="co">#&gt; with 'Duration' as duration using discount factor 0.904837. </span></span>
-<span><span class="co">#&gt; Iteration(s): 1 2 3 4 finished. Cpu time: 6.3e-06 sec.</span></span></code></pre>
+<span><span class="co">#&gt; Iteration(s): 1 2 3 4 finished. Cpu time: 2.6e-06 sec.</span></span></code></pre>
 <p>The optimal policy is:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span> <span class="op">&lt;-</span> <span class="fu">right_join</span><span class="op">(</span><span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span>, <span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sId"</span>, <span class="st">"aIdx"</span><span class="op">)</span><span class="op">)</span></span>
@@ -320,7 +320,7 @@ lactation:</p>
 <span><span class="fu"><a href="../reference/runPolicyIteAve.html">runPolicyIteAve</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">wLbl</span>, <span class="va">durLbl</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration under average reward criterion using </span></span>
 <span><span class="co">#&gt; reward 'Net reward' over 'Duration'. Iterations (g): </span></span>
-<span><span class="co">#&gt; 1 (11000) 2 (11464.1) 3 (11543.8) 4 (11543.8) finished. Cpu time: 6.3e-06 sec.</span></span></code></pre>
+<span><span class="co">#&gt; 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 2.6e-06 sec.</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; [1] 11543.83</span></span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
@@ -336,7 +336,7 @@ lactation:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     9 0,2,0,2,0 Low yield      0 Keep        -<span style="color: #BB0000; text-decoration: underline;">3</span><span style="color: #BB0000;">956.</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    10 0,2,0,2,1 Avg yield      0 Keep         -<span style="color: #BB0000;">456.</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    11 0,2,0,2,2 High yield     0 Keep         <span style="text-decoration: underline;">3</span>044. </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    12 0,2,0,1,0 Low yield      0 Keep        -<span style="color: #BB0000; text-decoration: underline;">3</span><span style="color: #BB0000;">750.</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    12 0,2,0,1,0 Low yield      0 Keep        -<span style="color: #BB0000; text-decoration: underline;">3</span><span style="color: #BB0000;">750</span>  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 32 more rows</span></span></span></code></pre>
 <p>Since other weights are defined for each action we can calculate the
 average reward per litre milk under the optimal policy:</p>
