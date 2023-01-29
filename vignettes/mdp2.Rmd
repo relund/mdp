@@ -43,12 +43,6 @@ options(rmarkdown.html_vignette.check_title = FALSE,
         width=90) 
 #thm <- knit_theme$get("edit-kwrite")   # whitengrey, bright, print, edit-flashdevelop, edit-kwrite
 #knit_theme$set(thm)
-knit_hooks$set(
-   par = function(before, options, envir) {
-      if (before && options$fig.show != 'none')
-         par(mar = c(0, 0, 0, 0), # bottom, left, top, and right
-             oma = c(0, 0, 0, 0))}
-)
 knitr::opts_chunk$set(
    # collapse = TRUE,
    comment = "#>",

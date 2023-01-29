@@ -108,9 +108,9 @@ dat <- hgf$hyperarcs \%>\%
    ) 
 hgf$hyperarcs <- dat
 # plot hypergraph
-par(mai = c(0, 0, 0, 0))
+oldpar <- par(mai = c(0, 0, 0, 0))
 plotHypergraph(gridDim = c(14, 7), hgf, cex = 0.8, radx = 0.02, rady = 0.03)
-
+par(oldpar)
 
 ## Reset working dir
 setwd(wd)

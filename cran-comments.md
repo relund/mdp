@@ -15,40 +15,22 @@ R CMD check results (local)
 
 ## Comments from last submission
 
-> Please omit the redundant "in R" at the end of your title.
+> Please always make sure to reset to user's options(), working directory
+or par() after you changed it in examples and vignettes and demos.
+e.g.:
+oldpar <- par(mfrow = c(1,2))
+...
+par(oldpar)
+-> similar for options() and setwd()
 
 Done
 
 > Please do not modify the global environment (e.g. by using <<-) in your
-functions. This is not allowed by the CRAN policies. -> R/binary.R;
-R/convert.R ; R/hmpMDPWriter.R
+functions. This is not allowed by the CRAN policies. 
 
-The global environment is not modified. <<- is only used inside 
+As stated last time, Tthe global environment is not modified. <<- is only used inside 
 sub-functions of a function, i.e. like an RC6 class. This is a feature
 used for the functions in R/binary.R; R/convert.R; R/hmpMDPWriter.R
-
-> Please add \value to .Rd files regarding exported methods and explain
-the functions results in the documentation. Please write about the
-structure of the output (class) and also what the output means. (If a
-function does not return a value, please document that too, e.g.
-\value{No return value, called for side effects} or similar)
-Missing Rd-tags:
-      plotHypergraph.Rd: \value
-      randomHMDP.Rd: \value
-      
-Done
-
-> Some code lines in examples are commented out. Please never do that.
-Ideally find toy examples that can be regularly executed and checked.
-Lengthy examples (> 5 sec), can be wrapped in \donttest{}.
-Examples in comments in:
-       getPolicy.Rd
-       runCalcWeights.Rd
-       runValueIte.Rd
-       setPolicy.Rd
-       
-Done
-       
 
 > Please fix and resubmit.
 

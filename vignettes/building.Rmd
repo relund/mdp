@@ -41,9 +41,14 @@ options(rmarkdown.html_vignette.check_title = FALSE,
         # scipen=999, 
         # digits=5,
         width=90) # 
-par(oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0)) # bottom, left, top, and right
 #thm <- knit_theme$get("edit-kwrite")   # whitengrey, bright, print, edit-flashdevelop, edit-kwrite
 #knit_theme$set(thm)
+knit_hooks$set(
+   par = function(before, options, envir) {
+      if (before && options$fig.show != 'none')
+         par(mar = c(0, 0, 0, 0), # bottom, left, top, and right
+             oma = c(0, 0, 0, 0))}
+)
 knitr::opts_chunk$set(
    # collapse = TRUE,
    comment = "#>",
@@ -216,8 +221,7 @@ w$endProcess() # end process
 w$closeWriter() # close the binary files
 ```
 
-```{r semi-mdp, echo=FALSE, results='hide', message=FALSE, fig.cap="Figure 1: The state-expanded hypergraph for the semi-MDP."}
-par(oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0))
+```{r semi-mdp, echo=FALSE, results='hide', message=FALSE, fig.cap="Figure 1: The state-expanded hypergraph for the semi-MDP.", par=TRUE}
 mdp<-loadMDP("hct611-1_")
 plot(mdp, hyperarcColor = "label", marY = 0.06)
 ```
@@ -404,8 +408,7 @@ action `nmt` (not maintain) corresponds to a transition to a condition/state not
 current condition/state. We buy the machine in stage 1 and may choose to replace the machine during
 its lifetime.
 
-```{r plotHgf3, echo=FALSE, fig.cap="Figure 2: A finite-horizon MDP"}
-par(oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0))
+```{r plotHgf3, echo=FALSE, fig.cap="Figure 2: A finite-horizon MDP", par=TRUE}
 scrapValues <- c(30, 10, 5, 0)   # scrap values (the values of the 4 states at stage 4)
 mdp <- loadMDP("machine1_", getLog = FALSE)
 plot(mdp, hyperarcColor = "label", radx = 0.06, marX = 0.065, marY = 0.055, nodeLabel = "sIdx:label")
@@ -544,7 +547,7 @@ father process with probabilities 0.3 and 0.7, respectively.
 A plot of the state-expanded hypergraph is given below where action `keep` is drawn with orange
 color and action `replace` with blue color.
 
-```{r plotHMDP, echo=FALSE, message=FALSE}
+```{r plotHMDP, echo=FALSE, message=FALSE, par=TRUE}
 mdp<-loadMDP(prefix)
 # hgf <- list(nodes = NULL, hyperarcs = NULL)
 # hgf %>% plotHypergraph(gridDim=c(14,7), cex = 0.8, showGrid = T)
@@ -596,7 +599,6 @@ dat <- hgf$hyperarcs %>%
       label = ""
    ) 
 hgf$hyperarcs <- dat
-par(mai = c(0, 0, 0, 0))
 plotHypergraph(gridDim = c(14, 7), hgf, cex = 0.8, radx = 0.02, rady = 0.03)
 ```
 

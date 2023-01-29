@@ -49,8 +49,7 @@ plotHypergraph <-
       posN[id, ] <- pos[i, ]
    }
    pos <- posN
-   
-   # par(oma=c(0,0,0,0), mar = c(0,0,0,0))
+
    openplotmat(xlim=c(min(pos[,1])-marX,max(pos[,1])+marX), 
                ylim=c(0-marY,max(pos[,2])+marY) )  #main = "State expanded hypergraph"
    
