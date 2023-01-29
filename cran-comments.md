@@ -3,8 +3,8 @@
 * Mac OS (latest) on GitHub Actions, R (release)
 * Windows (latest) on GitHub Actions, R (release)
 * Ubuntu (latest) on GitHub Actions, R (release, devel, oldrel-1)
-* R-hub (`devtools::check_rhub`)
-* Win-builder (`devtools::check_win_release`)
+* Windows (windows-x86_64-release) on R-hub (`devtools::check_rhub`)
+* Windows on Win-builder (`devtools::check_win_release`)
 
 
 ## R CMD check results
