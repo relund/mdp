@@ -1,3 +1,7 @@
+# MDP2 v2.1.3
+
+* Fix bug writing files outside the temporary directory. 
+
 # MDP2 v2.1.2
 
 * Modified MDP object to class HMDP

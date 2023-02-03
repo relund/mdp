@@ -1,17 +1,16 @@
 ## Set working dir
-wd <- setwd(system.file("models", package = "MDP2"))
-
+fDir <- system.file("models", package = "MDP2")
+wd <- setwd(tempdir())
 ## Convert the machine example to a hmp file
-prefix1 <- "machine1_"
+prefix1 <- paste0(fDir,"/machine1_")
 getBinInfoStates(prefix1)
-convertBinary2HMP(prefix1, duration = NULL)
+convertBinary2HMP(prefix1, duration = NULL, out = "machine1_converted.hmp")
 # have a look at the hmp file
 cat(readr::read_file("machine1_converted.hmp"))
 
 ## Convert the machine example hmp file to binary files
-prefix2 <- "machine_cov_"
-convertHMP2Binary("machine1.hmp", prefix2)
-getBinInfoStates(prefix2)
+convertHMP2Binary(file = paste0(fDir,"/machine1.hmp"), prefix = "machine_cov_")
+getBinInfoStates(prefix = "machine_cov_")
 ## Convert the machine example with a single dummy node to a hmp file
 #convertBinary2HMP("machine2_")  # error since using scope = 3 not supported in hmp files
 

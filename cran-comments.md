@@ -15,25 +15,21 @@ R CMD check results (local)
 
 ## Comments from last submission
 
-> Please always make sure to reset to user's options(), working directory
-or par() after you changed it in examples and vignettes and demos.
-e.g.:
-oldpar <- par(mfrow = c(1,2))
-...
-par(oldpar)
--> similar for options() and setwd()
+Fix CRAN error checks
 
-Done
+>The check problems on the Debian systems are caused by attempts to write
+to the user library to which all packages get installed before checking
+(and which now is remounted read-only for checking).
 
-> Please do not modify the global environment (e.g. by using <<-) in your
-functions. This is not allowed by the CRAN policies. 
+>Having package code which is run as part of the checks and attempts to
+write to the user library violates the CRAN Policy's
 
-As stated last time, Tthe global environment is not modified. <<- is only used inside 
-sub-functions of a function, i.e. like an RC6 class. This is a feature
-used for the functions in R/binary.R; R/convert.R; R/hmpMDPWriter.R
+  >Packages should not write in the user’s home filespace (including
+  clipboards), nor anywhere else on the file system apart from the R
+  session’s temporary directory (or during installation in the location
+  pointed to by TMPDIR: and such usage should be cleaned up).
 
-> Please fix and resubmit.
-
+Fixed
 
 
 ## Downstream dependencies
