@@ -240,9 +240,9 @@ by:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prefix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"models"</span>, package <span class="op">=</span> <span class="st">"MDP2"</span><span class="op">)</span>, <span class="st">"/machine1_"</span><span class="op">)</span></span>
 <span><span class="va">mdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Read binary files (0.000214599 sec.)</span></span>
-<span><span class="co">#&gt; Build the HMDP (5.16e-05 sec.)</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (1.5e-06 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Read binary files (0.000181499 sec.)</span></span>
+<span><span class="co">#&gt; Build the HMDP (4.86e-05 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (1.4e-06 sec.)</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getInfo.html">getInfo</a></span><span class="op">(</span><span class="va">mdp</span>, withList <span class="op">=</span> <span class="cn">F</span>, dfLevel <span class="op">=</span> <span class="st">"action"</span>, asStringsActions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </span></code></pre></div>
 <pre><code><span><span class="co">#&gt; $df</span></span>
@@ -286,7 +286,7 @@ expected total reward:</p>
 <span><span class="fu"><a href="../reference/runValueIte.html">runValueIte</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="st">"Net reward"</span>, termValues <span class="op">=</span> <span class="va">scrapValues</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run value iteration with epsilon = 0 at most 1 time(s)</span></span>
 <span><span class="co">#&gt; using quantity 'Net reward' under reward criterion.</span></span>
-<span><span class="co">#&gt;  Finished. Cpu time 9.2e-06 sec.</span></span></code></pre>
+<span><span class="co">#&gt;  Finished. Cpu time 8.6e-06 sec.</span></span></code></pre>
 <p>The optimal policy is:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pol</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span>
