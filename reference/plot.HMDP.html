@@ -102,9 +102,9 @@ show the current policy.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#### A finite-horizon replacement problem ####</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="st">"machine1_"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000119499 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.14e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000126102 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (3.59e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.4e-06 sec.)</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.HMDP-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span>  <span class="co"># colors based on labels</span></span></span>
@@ -117,7 +117,7 @@ show the current policy.</p></li>
 <span class="r-in"><span><span class="fu"><a href="runValueIte.html">runValueIte</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="st">"Net reward"</span> , termValues <span class="op">=</span> <span class="va">scrapValues</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> using quantity 'Net reward' under reward criterion.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 9e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 8.9e-06 sec.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># highlight optimal policy</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(sId, aIdx)`</span>
 <span class="r-plt img"><img src="plot.HMDP-5.png" alt="" width="700" height="433"></span>
@@ -127,9 +127,9 @@ show the current policy.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#### An infinite-horizon maintenance problem ####</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="st">"hct611-1_"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.0001139 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (3.04e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.2e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000130103 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (2.7701e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.3e-06 sec.)</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>  <span class="co"># plot the first two stages</span></span></span>
 <span class="r-plt img"><img src="plot.HMDP-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span>  <span class="co"># colors based on labels</span></span></span>
@@ -139,7 +139,7 @@ show the current policy.</p></li>
 <span class="r-in"><span><span class="fu"><a href="runPolicyIteAve.html">runPolicyIteAve</a></span><span class="op">(</span><span class="va">mdp</span>,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run policy iteration under average reward criterion using </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reward 'Net reward' over 'Duration'. Iterations (g): </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.2e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.3e-06 sec.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.43379</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># highlight optimal policy</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(sId, aIdx)`</span>
@@ -151,9 +151,9 @@ show the current policy.</p></li>
 <span class="r-in"><span><span class="co">#### An infinite-horizon hierarchical replacement problem ####</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="st">"cow_"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000260999 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (0.000269799 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (2.6e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000264406 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (0.000208005 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (5.6e-06 sec.)</span>
 <span class="r-in"><span><span class="va">hgf</span> <span class="op">&lt;-</span> <span class="fu"><a href="getHypergraph.html">getHypergraph</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># modify labels</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">hgf</span><span class="op">$</span><span class="va">nodes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>

@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Lars Relund <a href="mailto:lars@relund.dk" class="email">lars@relund.dk</a>
 </h4>
             
-            <h4 data-toc-skip class="date">2023-02-03</h4>
+            <h4 data-toc-skip class="date">2023-10-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/relund/mdp/blob/HEAD/vignettes/infinite-mdp.Rmd" class="external-link"><code>vignettes/infinite-mdp.Rmd</code></a></small>
       <div class="d-none name"><code>infinite-mdp.Rmd</code></div>
@@ -240,9 +240,9 @@ by</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prefix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"models"</span>, package <span class="op">=</span> <span class="st">"MDP2"</span><span class="op">)</span>, <span class="st">"/hct611-1_"</span><span class="op">)</span></span>
 <span><span class="va">mdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Read binary files (0.000173099 sec.)</span></span>
-<span><span class="co">#&gt; Build the HMDP (3.2e-05 sec.)</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (9e-07 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Read binary files (0.000165604 sec.)</span></span>
+<span><span class="co">#&gt; Build the HMDP (3.21e-05 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (1.8e-06 sec.)</span></span></code></pre>
 <p>The variable <code>mdp</code> is a list with a pointer to the MDP
 object stored in memory.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -276,7 +276,7 @@ object stored in memory.</p>
 <span><span class="co">#&gt; [1] "Duration"   "Net reward"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $ptr</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x55f3ddb6f4c0&gt; of class 'HMDP' &lt;0x55f3dc3f1d40&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x5651baeba730&gt; of class 'HMDP' &lt;0x5651b68a0630&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "HMDP" "list"</span></span></code></pre>
@@ -321,7 +321,7 @@ time unit.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/runPolicyIteAve.html">runPolicyIteAve</a></span><span class="op">(</span><span class="va">mdp</span>,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration under average reward criterion using </span></span>
 <span><span class="co">#&gt; reward 'Net reward' over 'Duration'. Iterations (g): </span></span>
-<span><span class="co">#&gt; 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 9e-07 sec.</span></span></code></pre>
+<span><span class="co">#&gt; 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.8e-06 sec.</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; [1] -0.43379</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
@@ -343,7 +343,7 @@ iteration:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/runPolicyIteDiscount.html">runPolicyIteDiscount</a></span><span class="op">(</span><span class="va">mdp</span>,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>, discountFactor <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration using quantity 'Net reward' under discounting criterion </span></span>
 <span><span class="co">#&gt; with 'Duration' as duration using discount factor 0.5. </span></span>
-<span><span class="co">#&gt; Iteration(s): 1 2 finished. Cpu time: 9e-07 sec.</span></span></code></pre>
+<span><span class="co">#&gt; Iteration(s): 1 2 finished. Cpu time: 1.8e-06 sec.</span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
@@ -365,7 +365,7 @@ same results can be found using value iteration:</p>
 <pre><code><span><span class="co">#&gt; Run value iteration with epsilon = 1e-10 at most 1000 time(s)</span></span>
 <span><span class="co">#&gt; using quantity 'Net reward' under expected discounted reward criterion </span></span>
 <span><span class="co">#&gt; with 'Duration' as duration using discount factor 0.5.</span></span>
-<span><span class="co">#&gt; Iterations: 33 Finished. Cpu time 2.63e-05 sec.</span></span></code></pre>
+<span><span class="co">#&gt; Iterations: 33 Finished. Cpu time 2.9601e-05 sec.</span></span></code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
