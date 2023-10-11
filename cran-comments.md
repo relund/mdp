@@ -1,5 +1,5 @@
 ## Test environments
-* Mac OS (local), R (release)
+* Mac OS (local, x86_64), R (release)
 * Mac OS (latest) on GitHub Actions, R (release)
 * Windows (latest) on GitHub Actions, R (release)
 * Ubuntu (latest) on GitHub Actions, R (release, devel, oldrel-1)
@@ -15,28 +15,13 @@ R CMD check results (local)
 
 ## Comments from last submission
 
-Fix CRAN error checks
-
->The check problems on the Debian systems are caused by attempts to write
-to the user library to which all packages get installed before checking
-(and which now is remounted read-only for checking).
-
->Having package code which is run as part of the checks and attempts to
-write to the user library violates the CRAN Policy's
-
-  >Packages should not write in the user’s home filespace (including
-  clipboards), nor anywhere else on the file system apart from the R
-  session’s temporary directory (or during installation in the location
-  pointed to by TMPDIR: and such usage should be cleaned up).
-
-Fixed
 
 
 ## Downstream dependencies
 * None
 
 
-## Steps for releasing to CRAN
+## Steps done before releasing to CRAN
 ```r
 update.packages(ask = FALSE)
 devtools::spell_check()
