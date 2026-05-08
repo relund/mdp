@@ -15,3 +15,5 @@ cb
 ^CRAN-SUBMISSION$
 ^codecov\.yml$
 ^cran-upload\.R$
+^\.positai$
+^\.claude$

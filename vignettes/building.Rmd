@@ -127,12 +127,12 @@ until next decision epoch are $\tau(i,a) = 1, 0\leq i < N$ and $\tau(N,a) = 2$.
 Assume that the number of possible working conditions equals $N=5$, i.e. the number of states are:
 
 ```{r states}
-N <- 5
-states <- tibble::tibble(
-      idx = 1:N - 1,
-      label = paste0("i = ", 1:N)
-   )
-states
+   N <- 5
+   states <- tibble::tibble(
+         idx = 1:N - 1,
+         label = paste0("i = ", 1:N)
+      )
+   states
 ```
 
 Note each state are given an index and are always numbered from zero. The repair costs (negative numbers since the MDP optimize based on rewards) are: 
