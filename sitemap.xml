@@ -1,141 +1,49 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>http://relund.github.io/mdp/404.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/articles/building.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/articles/finite-mdp.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/articles/infinite-hmdp.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/articles/infinite-mdp.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/articles/mdp2.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/authors.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/index.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/news/index.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/MDP2-package.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/actionIdxDf.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/actionIdxMat.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/actionInfo.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/actionWeightMat.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/binaryActionWriter.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/binaryMDPWriter.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/checkWDurIdx.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/checkWIdx.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/convertBinary2HMP.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/convertHMP2Binary.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/getBinInfoActions.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/getBinInfoStates.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/getHypergraph.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/getInfo.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/getPolicy.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/getRPO.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/getSteadyStatePr.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/getWIdx.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/hmpMDPWriter.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/loadMDP.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/plot.HMDP.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/plotHypergraph.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/randomHMDP.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/runCalcWeights.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/runPolicyIteAve.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/runPolicyIteDiscount.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/runValueIte.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/saveMDP.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/setPolicy.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/stateIdxDf.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/stateIdxMat.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/transProbMat.html</loc>
-  </url>
-  <url>
-    <loc>http://relund.github.io/mdp/reference/weightNames.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>http://relund.github.io/mdp/404.html</loc></url>
+<url><loc>http://relund.github.io/mdp/LICENSE.html</loc></url>
+<url><loc>http://relund.github.io/mdp/articles/building.html</loc></url>
+<url><loc>http://relund.github.io/mdp/articles/finite-mdp.html</loc></url>
+<url><loc>http://relund.github.io/mdp/articles/index.html</loc></url>
+<url><loc>http://relund.github.io/mdp/articles/infinite-hmdp.html</loc></url>
+<url><loc>http://relund.github.io/mdp/articles/infinite-mdp.html</loc></url>
+<url><loc>http://relund.github.io/mdp/articles/mdp2.html</loc></url>
+<url><loc>http://relund.github.io/mdp/authors.html</loc></url>
+<url><loc>http://relund.github.io/mdp/index.html</loc></url>
+<url><loc>http://relund.github.io/mdp/news/index.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/MDP2-package.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/actionIdxDf.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/actionIdxMat.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/actionInfo.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/actionWeightMat.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/binaryActionWriter.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/binaryMDPWriter.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/checkWDurIdx.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/checkWIdx.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/convertBinary2HMP.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/convertHMP2Binary.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/getBinInfoActions.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/getBinInfoStates.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/getHypergraph.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/getInfo.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/getPolicy.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/getRPO.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/getSteadyStatePr.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/getWIdx.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/hmpMDPWriter.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/index.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/loadMDP.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/plot.HMDP.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/plotHypergraph.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/randomHMDP.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/runCalcWeights.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/runPolicyIteAve.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/runPolicyIteDiscount.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/runValueIte.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/saveMDP.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/setPolicy.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/stateIdxDf.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/stateIdxMat.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/transProbMat.html</loc></url>
+<url><loc>http://relund.github.io/mdp/reference/weightNames.html</loc></url>
 </urlset>
+
