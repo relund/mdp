@@ -14,5 +14,10 @@ Create and optimize (semi) MDPs with discrete time steps and state space. Both h
 \author{
 \strong{Maintainer}: Lars Relund Nielsen \email{lars@relund.dk} (\href{https://orcid.org/0000-0002-4802-3071}{ORCID})
 
+Authors:
+\itemize{
+  \item Lars Relund Nielsen \email{lars@relund.dk} (\href{https://orcid.org/0000-0002-4802-3071}{ORCID})
+}
+
 }
 \keyword{internal}

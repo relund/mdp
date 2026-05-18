@@ -17,3 +17,4 @@ cb
 ^cran-upload\.R$
 ^\.positai$
 ^\.claude$
+^\.AGENTS.md$

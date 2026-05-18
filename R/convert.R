@@ -141,7 +141,7 @@ convertHMP2Binary<-function(file, prefix="", getLog = TRUE) {
 #' 
 #' @note Note all indexes are starting from zero (C/C++ style).
 #' 
-#' @seealso `convertHMP2Binary`.
+#' @seealso [convertHMP2Binary()].
 #' @example inst/examples/convert-ex.R
 #' @export
 convertBinary2HMP<-function(prefix="", binNames=c("stateIdx.bin","stateIdxLbl.bin","actionIdx.bin",
@@ -431,7 +431,6 @@ weightNames<-function(prefix="", labels="actionWeightLbl.bin") {
    colNames<-readBin(labels, character(),n=file.info(labels)$size)
    return(colNames)
 }
-
 
 
 

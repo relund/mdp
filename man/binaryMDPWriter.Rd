@@ -28,98 +28,95 @@ Binary files are efficient for storing large models. Compared to the HMP (XML)
 format the binary files use less storage space and loads the model faster.
 }
 \details{
-The functions which can be used are:
+The returned writer exposes these functions:
 \itemize{
-\item{\code{setWeights(labels, ...)}: }{Set the labels of the weights used in the actions.
-\code{labels} is a vector of label names, \code{...} are not used. The function must be called
-before starting building the model.}
-
-\item{\code{process()}: }{Starts a (sub)process. May also be used to specify a traditional MDP
-using matrices (package \code{MDPtoolbox} style). The style is as follows: P is a list of matrices (one for
-each action) each of size $S x S$ ($S$ = number of states). Each row must sum to one if used or all
-entries in a row must be zero if not used. R is a matrix of size $S x A$ ($A$ = number of
-actions) and D is a matrix of size $S x A$ with durations (optional if not specified assume all
-durations are 1).}
-
-\item{\code{endProcess()}: }{Ends a (sub)process.}
-
-\item{\code{stage(label=NULL)}: }{Starts a stage. Currently \code{label} are not used in the
-binary format.}
-
-\item{\code{endStage()}: }{Ends a (sub)process.}
-
-\item{\code{state(label=NULL)}: }{Starts a state. Returns (invisible) the states id number
-which can be used for later reference given scope 3.}
-
-\item{\code{endState()}: }{Ends a stage.}
-
-\item{\code{action(scope=NULL, id=NULL, pr=NULL, prob=NULL, weights, label=NULL, end=FALSE, ...)}: }
-{Starts an action. Parameter
-\code{weights} must be a vector of action weights. There are two ways to enter transition prob
+\item \code{setWeights(labels, ...)}: sets the labels of the weights used in the actions.
+\code{labels} is a vector of label names. \code{...} is currently ignored. Call this
+before building the model.
+\item \code{process()}: starts a (sub)process. It may also be used to specify a
+traditional MDP using matrices in \code{MDPtoolbox} style. In that style, \code{P} is
+a list of matrices, one per action, each of size \verb{$S x S$} where \verb{$S$} is
+the number of states. Each used row must sum to one, or all entries in a
+row must be zero if unused. \code{R} is a matrix of size \verb{$S x A$}, where \verb{$A$}
+is the number of actions, and \code{D} is a matrix of size \verb{$S x A$} with
+durations. If \code{D} is omitted, all durations are assumed to be 1.
+\item \code{endProcess()}: ends a (sub)process.
+\item \code{stage(label = NULL)}: starts a stage. \code{label} is currently unused in the
+binary format.
+\item \code{endStage()}: ends a stage.
+\item \code{state(label = NULL)}: starts a state and returns, invisibly, the state id.
+That id can later be referenced with scope 3.
+\item \code{endState()}: ends a state.
+\item \code{action(scope = NULL, id = NULL, pr = NULL, prob = NULL, weights, label = NULL, end = FALSE, ...)}: starts an action. \code{weights} must be a
+vector of action weights. Transition probabilities can be entered in two
+ways:
 \enumerate{
-\item \code{prob} contains triples of (scope,id,pr),
-\item Vectors \code{id} and \code{pr} are of equal size. If \code{scope} not is specified, all scopes are assumed 1.
-(see the description of \code{actionIdx.bin} below). If \code{end=TRUE} then an \code{endAction()} is not necessary.
-\code{...} is currently not used.}
+\item \code{prob} contains triples \verb{(scope, id, pr)}.
+\item \code{id} and \code{pr} are vectors of equal length. If \code{scope} is omitted, all
+scopes default to 1.
 }
 
-\item{\code{endAction()}: }{Ends an action. Do not use if you set \code{end=TRUE} when you specify an action.}
+See the description of \code{actionIdx.bin} below. If \code{end = TRUE}, calling
+\code{endAction()} is not necessary. \code{...} is currently ignored.
+\item \code{endAction()}: ends an action. Do not use this if \code{end = TRUE} was used
+when the action was specified.
+\item \code{includeProcess(prefix, label = NULL, weights, prob, termStates)}: includes
+an external process. External processes are loaded into memory only when
+needed, which helps with large models. \code{prefix} is the external process
+prefix. \code{weights} must be a vector of action weights, and \code{prob} must
+contain triples \verb{(scope, idx, pr)}; see the description of \code{actionIdx.bin}
+below. \code{termStates} must specify the number of states at the last stage in
+the external process. Inside an \verb{includeProcess ... endIncludeProcess}
+block, you must specify the father jump actions of the last stage in the
+external process. The external process is represented by its first and last
+stage together with its jump actions. The function returns, invisibly, the
+state ids of the first stage in the external process, which can later be
+referenced with scope 3.
+\item \code{endIncludeProcess()}: ends an \code{includeProcess} block.
+\item \code{closeWriter()}: closes the writer. Call this when the model description is
+finished.
+}
 
-\item{\code{includeProcess(prefix, label=NULL, weights, prob, termStates)}: }{Include an
-external process. External processes will only be loaded in memory when needed. That is,
-external processes is useful when considering large models and have problems with memory.
-Parameter \code{prefix} is the prefix of the external process. The next parameters specify the
-child jump action to the process, i.e. \code{weights} must be a vector of action weights,
-\code{prob} must contain triples of \verb{(scope, idx, pr)} (see the description of \code{actionIdx.bin}
-below), Finally \code{termStates} must specify the number of states at the last stage in the
-external process. Note that inside an \verb{includeProcess ... endIncludeProcess} you must
-specify the father jump actions of the last stage in the external process. An external process
-is represented using its first and last stage, together with its jump actions. Returns
-(invisible) the state id's of the first stage in the external process which can be used for
-later reference given scope 3.}
-
-\item{\code{endIncludeProcess()}: }{Ends an \code{includeProcess}.}
-
-\item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has
-finished.}}
-
-Eight binary files are created using the following format:\itemize{
-\item{\code{stateIdx.bin}: }{File of integers containing the indexes defining all states in the format
-"n0 s0 -1 n0 s0 a0 n1 s1 -1 n0 s0 a0 n1 s1 a1 n2 s2 -1 n0 s0 ...". Here -1 is
-used to indicate that a new state is considered (new line).}
-\item{\code{stateIdxLbl.bin}: }{File of characters in the format \verb{sIdx label sIdx label ...} Here
-\code{sIdx} corresponds to the index/line number in \code{stateIdxLbl.bin} (index starts from 0).
-Note no delimiter is used.}
-\item{\code{actionIdx.bin}: }{File of integers containing the indexes defining all actions in the format
+Eight binary files are created:
+\itemize{
+\item \code{stateIdx.bin}: integers defining all states in the format
+\code{"n0 s0 -1 n0 s0 a0 n1 s1 -1 n0 s0 a0 n1 s1 a1 n2 s2 -1 n0 s0 ..."}.
+Here \code{-1} indicates that a new state is considered.
+\item \code{stateIdxLbl.bin}: character data in the format \verb{sIdx label sIdx label ...}.
+Here \code{sIdx} corresponds to the index or line number in \code{stateIdxLbl.bin},
+starting from 0. No delimiter is used.
+\item \code{actionIdx.bin}: integers defining all actions in the format
 \verb{sIdx scope idx scope idx scope idx -1 sIdx scope idx scope idx -1 sIdx scope -1 ...}.
-\code{sIdx} corresponds to the index/line number in \code{stateIdx.bin} (index starts from 0).
-Next pairs
-\verb{(scope idx)} will follow indicating the possible transitions. Scope can be 4 values:
-2 - A transition to a child process (stage zero in the child process), 1 - A transition
-to next stage in the current process, 0 - A transition to the next stage in the father
-process. Here \code{idx} in the pair denote the index of the state at the stage considered,
-e.g. if scope=1 and \code{idx}=2 we consider state number 3 at next stage in the current
-process. Finally, if scope = 3 then a transition to a state specified by it's state \code{sIdx}
-is given. That is, if scope=3 and \code{idx}=5 then
-we have a transition to the state specified at line 6 in \code{stateIdxLbl.bin}.
-This is useful when considering shared child processes.}
-\item{\code{actionIdxLbl.bin}: }{File of characters in the format \verb{aIdx label aIdx label ...} Here
-\code{aIdx} corresponds to the index/line number in \code{actionIdx.bin} (index starts from 0).
-Note no delimiter is used.}
-\item{\code{actionWeight.bin}: }{File of doubles containing the weights of the actions in the format
-"c1 c2 c3 c1 c2 c3 ..." assuming three weights for each action.}
-\item{\code{actionWeightLbl.bin}: }{File of characters containing the labels of the
-weights in the format \verb{label1 label2 label3} assuming three weights for each action. }
-\item{\code{transProb.bin}: }{File of doubles containing the probabilities of the transitions defined in
-actions in \code{actionIdx.bin}. The format is "p1 p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -1 is used to
-indicate that a new action is considered (new line).}
-\item{\code{externalProcesses.bin}: }{File of
-characters containing links to the external processes. The format is "n0 s0 prefix -1 n0 s0 a0 n1
-s1 prefix -1 ...". Here -1 is used to indicate that a new external process is considered for the
-stage defined by the indexes.}
-\item{\code{externalProcesses.bin}: }{File of characters in the format \verb{stageStr prefix stageStr prefix ...} Here \code{stageStr} corresponds to the index (e.g. \verb{n0 s0 a0 n1}) of the stage corresponding to the
-first stage in the external process and prefix to the prefix of the external process. Note no
-delimiter is used.}}
+\code{sIdx} corresponds to the index or line number in \code{stateIdx.bin}, starting
+from 0. The following \verb{(scope, idx)} pairs indicate possible transitions.
+Scope can take four values:
+\itemize{
+\item \code{2}: a transition to a child process, at stage zero in the child process.
+\item \code{1}: a transition to the next stage in the current process.
+\item \code{0}: a transition to the next stage in the father process.
+\item \code{3}: a transition to a state specified by its state \code{sIdx}.
+}
+
+For example, if \code{scope = 1} and \code{idx = 2}, the transition is to state
+number 3 at the next stage in the current process. If \code{scope = 3} and
+\code{idx = 5}, the transition is to the state specified at line 6 in
+\code{stateIdxLbl.bin}. This is useful when considering shared child processes.
+\item \code{actionIdxLbl.bin}: character data in the format \verb{aIdx label aIdx label ...}.
+Here \code{aIdx} corresponds to the index or line number in \code{actionIdx.bin},
+starting from 0. No delimiter is used.
+\item \code{actionWeight.bin}: doubles containing action weights in the format
+\code{"c1 c2 c3 c1 c2 c3 ..."}, assuming three weights for each action.
+\item \code{actionWeightLbl.bin}: character data containing the weight labels in the
+format \verb{label1 label2 label3}, assuming three weights for each action.
+\item \code{transProb.bin}: doubles containing transition probabilities defined in
+\code{actionIdx.bin}. The format is \code{"p1 p2 p3 -1 p1 -1 p1 p2 -1 ..."}. Here
+\code{-1} indicates that a new action is considered.
+\item \code{externalProcesses.bin}: character data containing links to external
+processes in the format \verb{stageStr prefix stageStr prefix ...}. Here
+\code{stageStr} corresponds to the stage index, for example \verb{n0 s0 a0 n1}, of
+the stage corresponding to the first stage in the external process, and
+\code{prefix} is the external process prefix. No delimiter is used.
+}
 }
 \note{
 Note all indexes are starting from zero (C/C++ style).

@@ -58,5 +58,5 @@ getBinInfoStates(prefix = "machine_cov_")
 setwd(wd)
 }
 \seealso{
-\code{convertHMP2Binary}.
+\code{\link[=convertHMP2Binary]{convertHMP2Binary()}}.
 }

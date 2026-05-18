@@ -39,31 +39,37 @@ the parser writing the hmp file may no output all digits. If you consider large
 models then use the binary file format instead.
 }
 \details{
-The functions which can be used are:\itemize{
-\item{\code{setWeights(labels, duration)}: }{Set the labels of the weights used in the actions.
-\code{labels} is a vector of label names, \code{duration} A number defining which label
-that corresponds to duration/time, e.g. if the first entry in labels is time then \code{duration = 1}.
-The function must be called before starting building the model.}
-\item{\code{process()}: }{Starts a (sub)process.}
-\item{\code{endProcess()}: }{Ends a (sub)process.}
-\item{\code{stage(label=NULL)}: }{Starts a stage.}
-\item{\code{endStage()}: }{Ends a (sub)process.}
-\item{\code{state(label=NULL)}: }{Starts a state. Returns the states index number \code{sIdx}.}
-\item{\code{endState()}: }{Ends a stage.}
-\item{\code{action(label=NULL, weights, prob, statesNext=NULL)}: }{Starts an action.
-Parameter \code{weights} must be a vector of action weights,
-\code{prob} must contain triples of \verb{(scope, idx, pr)}.
-The \code{scope} can be 3 values:
-* 0: A transition to the next stage in the father process,
-* 1: A transition to next stage in the current process,
-* 2: A transition to a child process (stage zero in the child process).
-\code{idx} in the pair denote the index of the state at the stage considered, e.g. if \code{scope = 1}
-and \code{idx = 2} we consider state number 3 at next stage in the current process
-(number from zero). Note \code{scope = 3} is not supported in the \code{hmp} file format!
-\code{statesNext} is the number of states in the next stage of the process
-(only needed if have a transition to the father).}
-\item{\code{endAction()}: }{Ends an action.}
-\item{\code{closeWriter()}: }{Close the writer. Must be called when the model description has finished.}}
+The returned writer exposes these functions:
+\itemize{
+\item \code{setWeights(labels, duration)}: sets the labels of the weights used in the
+actions. \code{labels} is a vector of label names. \code{duration} identifies which
+label corresponds to duration or time. For example, if the first entry in
+\code{labels} is time, then \code{duration = 1}. Call this before building the model.
+\item \code{process()}: starts a (sub)process.
+\item \code{endProcess()}: ends a (sub)process.
+\item \code{stage(label = NULL)}: starts a stage.
+\item \code{endStage()}: ends a stage.
+\item \code{state(label = NULL)}: starts a state and returns the state index \code{sIdx}.
+\item \code{endState()}: ends a state.
+\item \code{action(label = NULL, weights, prob, statesNext = NULL)}: starts an
+action. \code{weights} must be a vector of action weights, and \code{prob} must
+contain triples \verb{(scope, idx, pr)}. \code{scope} can take three values:
+\itemize{
+\item \code{0}: a transition to the next stage in the father process.
+\item \code{1}: a transition to the next stage in the current process.
+\item \code{2}: a transition to a child process, at stage zero in the child process.
+}
+
+The \code{idx} value denotes the index of the state at the stage considered. For
+example, if \code{scope = 1} and \code{idx = 2}, the transition is to state number 3
+at the next stage in the current process, counting from zero. \code{scope = 3}
+is not supported in the \code{hmp} file format. \code{statesNext} is the number of
+states in the next stage of the process and is only needed when there is a
+transition to the father.
+\item \code{endAction()}: ends an action.
+\item \code{closeWriter()}: closes the writer. Call this when the model description is
+finished.
+}
 }
 \note{
 Note all indexes are starting from zero (C/C++ style).

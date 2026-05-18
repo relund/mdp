@@ -7,31 +7,35 @@
 #' the parser writing the hmp file may no output all digits. If you consider large
 #' models then use the binary file format instead.
 #'
-#' The functions which can be used are:\itemize{
-#'   \item{`setWeights(labels, duration)`: }{Set the labels of the weights used in the actions.
-#'      `labels` is a vector of label names, `duration` A number defining which label
-#'      that corresponds to duration/time, e.g. if the first entry in labels is time then `duration = 1`.
-#'      The function must be called before starting building the model.}
-#'   \item{`process()`: }{Starts a (sub)process.}
-#'   \item{`endProcess()`: }{Ends a (sub)process.}
-#'   \item{`stage(label=NULL)`: }{Starts a stage.}
-#'   \item{`endStage()`: }{Ends a (sub)process.}
-#'   \item{`state(label=NULL)`: }{Starts a state. Returns the states index number `sIdx`.}
-#'   \item{`endState()`: }{Ends a stage.}
-#'   \item{`action(label=NULL, weights, prob, statesNext=NULL)`: }{Starts an action.
-#'     Parameter `weights` must be a vector of action weights,
-#'     `prob` must contain triples of `(scope, idx, pr)`.
-#'     The `scope` can be 3 values: 
-#'     * 0: A transition to the next stage in the father process, 
-#'     * 1: A transition to next stage in the current process, 
-#'     * 2: A transition to a child process (stage zero in the child process). 
-#'     `idx` in the pair denote the index of the state at the stage considered, e.g. if `scope = 1`
-#'     and `idx = 2` we consider state number 3 at next stage in the current process
-#'     (number from zero). Note `scope = 3` is not supported in the `hmp` file format!
-#'     `statesNext` is the number of states in the next stage of the process
-#'     (only needed if have a transition to the father).}
-#'   \item{`endAction()`: }{Ends an action.}
-#'   \item{`closeWriter()`: }{Close the writer. Must be called when the model description has finished.}}
+#' The returned writer exposes these functions:
+#'
+#' * `setWeights(labels, duration)`: sets the labels of the weights used in the
+#'   actions. `labels` is a vector of label names. `duration` identifies which
+#'   label corresponds to duration or time. For example, if the first entry in
+#'   `labels` is time, then `duration = 1`. Call this before building the model.
+#' * `process()`: starts a (sub)process.
+#' * `endProcess()`: ends a (sub)process.
+#' * `stage(label = NULL)`: starts a stage.
+#' * `endStage()`: ends a stage.
+#' * `state(label = NULL)`: starts a state and returns the state index `sIdx`.
+#' * `endState()`: ends a state.
+#' * `action(label = NULL, weights, prob, statesNext = NULL)`: starts an
+#'   action. `weights` must be a vector of action weights, and `prob` must
+#'   contain triples `(scope, idx, pr)`. `scope` can take three values:
+#'
+#'   * `0`: a transition to the next stage in the father process.
+#'   * `1`: a transition to the next stage in the current process.
+#'   * `2`: a transition to a child process, at stage zero in the child process.
+#'
+#'   The `idx` value denotes the index of the state at the stage considered. For
+#'   example, if `scope = 1` and `idx = 2`, the transition is to state number 3
+#'   at the next stage in the current process, counting from zero. `scope = 3`
+#'   is not supported in the `hmp` file format. `statesNext` is the number of
+#'   states in the next stage of the process and is only needed when there is a
+#'   transition to the father.
+#' * `endAction()`: ends an action.
+#' * `closeWriter()`: closes the writer. Call this when the model description is
+#'   finished.
 #'
 #' @param file The name of the file storing the model (e.g. `r.hmp`).
 #' @param rate The interest rate (used if consider discounting).

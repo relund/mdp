@@ -17,6 +17,8 @@
 #' @param cex Relative size of text.
 #' @param marX Horizontal margin.
 #' @param marY Vertical margin.
+#' @param drawBorder If `TRUE`, draw a border around the plot region and report the
+#'   outside and inside padding.
 #' @param ... Graphical parameters passed to `textempty`. 
 #'   
 #' @return No return value (NULL invisible), called for side effects (plotting).
@@ -33,6 +35,7 @@ plotHypergraph <-
             cex = 1,
             marX = 0.035,
             marY = 0.15,
+            drawBorder = FALSE,
             ...) {
    # internal functions
    gMap<-function(sId) return(hgf$nodes$gId[hgf$nodes$sId %in% sId])		# return gId given sId
@@ -50,8 +53,27 @@ plotHypergraph <-
    }
    pos <- posN
 
-   openplotmat(xlim=c(min(pos[,1])-marX,max(pos[,1])+marX), 
-               ylim=c(0-marY,max(pos[,2])+marY) )  #main = "State expanded hypergraph"
+   xlim <- c(min(pos[,1])-marX,max(pos[,1])+marX)
+   ylim <- c(0-marY,max(pos[,2])+marY)
+   openplotmat(xlim = xlim, ylim = ylim)  #main = "State expanded hypergraph"
+   if (drawBorder) {
+      outsidePadding <- stats::setNames(graphics::par("mai"), c("bottom", "left", "top", "right"))
+      insidePadding <- c(
+         bottom = min(pos[, 2])-ylim[1],
+         left = min(pos[, 1])-xlim[1],
+         top = ylim[2]-max(pos[, 2]),
+         right = xlim[2]-max(pos[, 1])
+      )
+      message(
+         "plotHypergraph padding: ",
+         "outside figure margin in inches ",
+         paste(names(outsidePadding), round(outsidePadding, 3), sep = "=", collapse = ", "),
+         "; inside plot margin in user coordinates ",
+         paste(names(insidePadding), round(insidePadding, 3), sep = "=", collapse = ", "),
+         ". To remove outside spacing use par(mai = c(0, 0, 0, 0)); ",
+         "to remove inside spacing use marX = 0 and marY = 0."
+      )
+   }
    
    # plot time index
    # if (addTime) {
@@ -103,6 +125,9 @@ plotHypergraph <-
    # visual view of the point numbers (for figuring out how to map stateId to gridId)
    if (showGrid) {
       for (i in 1:dim(pos)[1]) textrect(pos[i, ], lab = i, radx = 0.0, cex=cex)
+   }
+   if (drawBorder) {
+      graphics::box(which = "plot")
    }
    return(invisible(NULL))
 }
@@ -189,7 +214,7 @@ plot.HMDP <- function(x, ...) {
    if (nodeLabel == "weight") {
       hgf$nodes <- hgf$nodes %>%
          dplyr::left_join(getPolicy(mdp), by = "sId") %>% 
-         dplyr::mutate(label = .data$weight)
+         dplyr::mutate(label = round(.data$weight, 2))
    }
    do.call(plotHypergraph, args = c(list(hgf, gridDim), args))
    return(invisible(NULL))

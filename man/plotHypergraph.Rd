@@ -13,6 +13,7 @@ plotHypergraph(
   cex = 1,
   marX = 0.035,
   marY = 0.15,
+  drawBorder = FALSE,
   ...
 )
 }
@@ -36,6 +37,9 @@ width), \code{lty} (hyperarc line type) and \code{col} (hyperarc color).}
 \item{marX}{Horizontal margin.}
 
 \item{marY}{Vertical margin.}
+
+\item{drawBorder}{If \code{TRUE}, draw a border around the plot region and report the
+outside and inside padding.}
 
 \item{...}{Graphical parameters passed to \code{textempty}.}
 }
