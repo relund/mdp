@@ -54,44 +54,49 @@ A list of functions.
 
 ## Details
 
-The functions which can be used are:
+The returned writer exposes these functions:
 
-- `setWeights(labels, duration)`: Set the labels of the weights used in
-  the actions. `labels` is a vector of label names, `duration` A number
-  defining which label that corresponds to duration/time, e.g. if the
-  first entry in labels is time then `duration = 1`. The function must
-  be called before starting building the model.
+- `setWeights(labels, duration)`: sets the labels of the weights used in
+  the actions. `labels` is a vector of label names. `duration`
+  identifies which label corresponds to duration or time. For example,
+  if the first entry in `labels` is time, then `duration = 1`. Call this
+  before building the model.
 
-- `process()`: Starts a (sub)process.
+- `process()`: starts a (sub)process.
 
-- `endProcess()`: Ends a (sub)process.
+- `endProcess()`: ends a (sub)process.
 
-- `stage(label=NULL)`: Starts a stage.
+- `stage(label = NULL)`: starts a stage.
 
-- `endStage()`: Ends a (sub)process.
+- `endStage()`: ends a stage.
 
-- `state(label=NULL)`: Starts a state. Returns the states index number
+- `state(label = NULL)`: starts a state and returns the state index
   `sIdx`.
 
-- `endState()`: Ends a stage.
+- `endState()`: ends a state.
 
-- `action(label=NULL, weights, prob, statesNext=NULL)`: Starts an
-  action. Parameter `weights` must be a vector of action weights, `prob`
-  must contain triples of `(scope, idx, pr)`. The `scope` can be 3
-  values: \* 0: A transition to the next stage in the father process, \*
-  1: A transition to next stage in the current process, \* 2: A
-  transition to a child process (stage zero in the child process). `idx`
-  in the pair denote the index of the state at the stage considered,
-  e.g. if `scope = 1` and `idx = 2` we consider state number 3 at next
-  stage in the current process (number from zero). Note `scope = 3` is
-  not supported in the `hmp` file format! `statesNext` is the number of
-  states in the next stage of the process (only needed if have a
-  transition to the father).
+- `action(label = NULL, weights, prob, statesNext = NULL)`: starts an
+  action. `weights` must be a vector of action weights, and `prob` must
+  contain triples `(scope, idx, pr)`. `scope` can take three values:
 
-- `endAction()`: Ends an action.
+  - `0`: a transition to the next stage in the father process.
 
-- `closeWriter()`: Close the writer. Must be called when the model
-  description has finished.
+  - `1`: a transition to the next stage in the current process.
+
+  - `2`: a transition to a child process, at stage zero in the child
+    process.
+
+  The `idx` value denotes the index of the state at the stage
+  considered. For example, if `scope = 1` and `idx = 2`, the transition
+  is to state number 3 at the next stage in the current process,
+  counting from zero. `scope = 3` is not supported in the `hmp` file
+  format. `statesNext` is the number of states in the next stage of the
+  process and is only needed when there is a transition to the father.
+
+- `endAction()`: ends an action.
+
+- `closeWriter()`: closes the writer. Call this when the model
+  description is finished.
 
 ## Note
 

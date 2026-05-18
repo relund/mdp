@@ -37,59 +37,62 @@ A list of functions.
 
 ## Details
 
-The functions which can be used are:
+The returned writer exposes these functions:
 
-- `setWeights(labels, ...)`: Set the labels of the weights used in the
-  actions. `labels` is a vector of label names, `...` are not used. The
-  function must be called before starting building the model.
+- `setWeights(labels, ...)`: sets the labels of the weights used in the
+  actions. `labels` is a vector of label names. `...` is currently
+  ignored. Call this before building the model.
 
-- `addAction(label=NULL, sIdx, weights, prob, ...)`: Add an action.
-  Parameter `sIdx` is the id of the state defining the action, `weights`
-  must be a vector of action weights, `prob` is a matrix `(sIdx,pr)`
-  where the first column contain the id of the transition state (see the
-  description of `actionIdx.bin` below - scope is assumed to the 3),
-  `...` is currently not used.
+- `addAction(label = NULL, sIdx, weights, prob, ...)`: adds an action.
+  `sIdx` is the id of the state defining the action. `weights` must be a
+  vector of action weights. `prob` is a matrix `(sIdx, pr)` where the
+  first column contains the id of the transition state; see the
+  description of `actionIdx.bin` below, where scope is assumed to be 3.
+  `...` is currently ignored.
 
-- `endAction()`: Ends an action.
+- `endAction()`: ends an action.
 
-- `closeWriter()`: Close the writer. Must be called when the model
-  description has finished.
+- `closeWriter()`: closes the writer. Call this when the model
+  description is finished.
 
-Five binary files are created using the following format:
+Five binary files are created:
 
-- `actionIdx.bin`: File of integers containing the indexes defining all
-  actions in the format
+- `actionIdx.bin`: integers defining all actions in the format
   `sIdx scope idx scope idx scope idx -1 sIdx scope idx scope idx -1 sIdx scope -1 ...`.
-  `sIdx` corresponds to the index/line number in `stateIdx.bin` (index
-  starts from 0). Next pairs `(scope idx)` will follow indicating the
-  possible transitions. Scope can be 4 values: 2 - A transition to a
-  child process (stage zero in the child process), 1 - A transition to
-  next stage in the current process, 0 - A transition to the next stage
-  in the father process. Here `idx` in the pair denote the index of the
-  state at the stage considered, e.g. if scope=1 and `idx`=2 we consider
-  state number 3 at next stage in the current process. Finally, if scope
-  = 3 then a transition to a state specified by it's state `sIdx` is
-  given. That is, if scope=3 and `idx`=5 then we have a transition to
-  the state specified at line 6 in `stateIdxLbl.bin`. This is useful
-  when considering shared child processes.
+  `sIdx` corresponds to the index or line number in `stateIdx.bin`,
+  starting from 0. The following `(scope, idx)` pairs indicate possible
+  transitions. Scope can take four values:
 
-- `actionIdxLbl.bin`: File of characters in the format
-  `aIdx label aIdx label ...` Here `aIdx` corresponds to the index/line
-  number in `actionIdx.bin` (index starts from 0). Note no delimiter is
-  used.
+  - `2`: a transition to a child process, at stage zero in the child
+    process.
 
-- `actionWeight.bin`: File of doubles containing the weights of the
-  actions in the format "c1 c2 c3 c1 c2 c3 ..." assuming three weights
-  for each action.
+  - `1`: a transition to the next stage in the current process.
 
-- `actionWeightLbl.bin`: File of characters containing the labels of the
-  weights in the format `label1 label2 label3` assuming three weights
-  for each action.
+  - `0`: a transition to the next stage in the father process.
 
-- `transProb.bin`: File of doubles containing the probabilities of the
-  transitions defined in actions in `actionIdx.bin`. The format is "p1
-  p2 p3 -1 p1 -1 p1 p2 -1 ...". Here -1 is used to indicate that a new
-  action is considered (new line).
+  - `3`: a transition to a state specified by its state `sIdx`.
+
+  For example, if `scope = 1` and `idx = 2`, the transition is to state
+  number 3 at the next stage in the current process. If `scope = 3` and
+  `idx = 5`, the transition is to the state specified at line 6 in
+  `stateIdxLbl.bin`. This is useful when considering shared child
+  processes.
+
+- `actionIdxLbl.bin`: character data in the format
+  `aIdx label aIdx label ...`. Here `aIdx` corresponds to the index or
+  line number in `actionIdx.bin`, starting from 0. No delimiter is used.
+
+- `actionWeight.bin`: doubles containing action weights in the format
+  `"c1 c2 c3 c1 c2 c3 ..."`, assuming three weights for each action.
+
+- `actionWeightLbl.bin`: character data containing the weight labels in
+  the format `label1 label2 label3`, assuming three weights for each
+  action.
+
+- `transProb.bin`: doubles containing the transition probabilities
+  defined in `actionIdx.bin`. The format is
+  `"p1 p2 p3 -1 p1 -1 p1 p2 -1 ..."`. Here `-1` indicates that a new
+  action is considered.
 
 ## Note
 

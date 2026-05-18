@@ -154,9 +154,9 @@ w$closeWriter()
 
 ## Load the model into memory
 mdp<-loadMDP(prefix)
-#> Read binary files (0.000102524 sec.)
-#> Build the HMDP (2.9274e-05 sec.)
-#> Checking MDP and found no errors (1.142e-06 sec.)
+#> Read binary files (9.8297e-05 sec.)
+#> Build the HMDP (3.5535e-05 sec.)
+#> Checking MDP and found no errors (2.078e-06 sec.)
 mdp
 #> $binNames
 #> [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      
@@ -183,7 +183,7 @@ mdp
 #> [1] "Net reward"
 #> 
 #> $ptr
-#> C++ object <0x5603f0047150> of class 'HMDP' <0x5603f05275f0>
+#> C++ object <0x55a884bbe4d0> of class 'HMDP' <0x55a887db2f30>
 #> 
 #> attr(,"class")
 #> [1] "HMDP" "list"
@@ -265,7 +265,7 @@ scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 
 runValueIte(mdp, w, termValues=scrapValues)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
 #> using quantity 'Net reward' under reward criterion.
-#>  Finished. Cpu time 7.17e-06 sec.
+#>  Finished. Cpu time 7.111e-06 sec.
 getPolicy(mdp)     # optimal policy
 #> # A tibble: 14 × 6
 #>      sId stateStr stateLabel   aIdx actionLabel weight
@@ -394,9 +394,9 @@ w$closeWriter()
 
 ## Have a look at the state-expanded hypergraph
 mdp<-loadMDP(prefix)
-#> Read binary files (0.000125268 sec.)
-#> Build the HMDP (4.6249e-05 sec.)
-#> Checking MDP and found no errors (1.412e-06 sec.)
+#> Read binary files (0.000113075 sec.)
+#> Build the HMDP (3.7553e-05 sec.)
+#> Checking MDP and found no errors (2.806e-06 sec.)
 mdp
 #> $binNames
 #> [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      
@@ -423,7 +423,7 @@ mdp
 #> [1] "Net reward"
 #> 
 #> $ptr
-#> C++ object <0x5603f50735f0> of class 'HMDP' <0x5603f05275f0>
+#> C++ object <0x55a8828e8860> of class 'HMDP' <0x55a887db2f30>
 #> 
 #> attr(,"class")
 #> [1] "HMDP" "list"
@@ -507,7 +507,7 @@ w<-"Net reward"             # label of the weight we want to optimize
 runValueIte(mdp, w, termValues = 0)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
 #> using quantity 'Net reward' under reward criterion.
-#>  Finished. Cpu time 6.871e-06 sec.
+#>  Finished. Cpu time 6.564e-06 sec.
 getPolicy(mdp)     # optimal policy
 #> # A tibble: 13 × 6
 #>      sId stateStr stateLabel   aIdx actionLabel weight

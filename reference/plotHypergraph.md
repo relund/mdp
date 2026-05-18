@@ -21,6 +21,7 @@ plotHypergraph(
   cex = 1,
   marX = 0.035,
   marY = 0.15,
+  drawBorder = FALSE,
   ...
 )
 ```
@@ -66,6 +67,11 @@ plotHypergraph(
 
   Vertical margin.
 
+- drawBorder:
+
+  If `TRUE`, draw a border around the plot region and report the outside
+  and inside padding.
+
 - ...:
 
   Graphical parameters passed to `textempty`.
@@ -87,9 +93,9 @@ wd <- setwd(system.file("models", package = "MDP2"))
 
 #### A finite-horizon replacement problem ####
 mdp<-loadMDP("machine1_")
-#> Read binary files (9.5284e-05 sec.)
-#> Build the HMDP (2.8924e-05 sec.)
-#> Checking MDP and found no errors (7.01e-07 sec.)
+#> Read binary files (9.1722e-05 sec.)
+#> Build the HMDP (3.2617e-05 sec.)
+#> Checking MDP and found no errors (1.315e-06 sec.)
 plot(mdp)
 
 plot(mdp, hyperarcColor = "label")  # colors based on labels
@@ -102,7 +108,7 @@ scrapValues <- c(30, 10, 5, 0)  # scrap values (the values of the 4 states at st
 runValueIte(mdp, "Net reward" , termValues = scrapValues)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
 #> using quantity 'Net reward' under reward criterion.
-#>  Finished. Cpu time 7.681e-06 sec.
+#>  Finished. Cpu time 7.542e-06 sec.
 plot(mdp, hyperarcColor = "policy")  # highlight optimal policy
 #> Joining with `by = join_by(sId, aIdx)`
 
@@ -112,9 +118,9 @@ plot(mdp, hyperarcShow = "policy", nodeLabel = "weight")  # show only optimal po
 
 #### An infinite-horizon maintenance problem ####
 mdp<-loadMDP("hct611-1_")
-#> Read binary files (9.4552e-05 sec.)
-#> Build the HMDP (2.2364e-05 sec.)
-#> Checking MDP and found no errors (8.21e-07 sec.)
+#> Read binary files (7.9954e-05 sec.)
+#> Build the HMDP (2.6275e-05 sec.)
+#> Checking MDP and found no errors (1.798e-06 sec.)
 plot(mdp)  # plot the first two stages
 
 plot(mdp, hyperarcColor = "label")  # colors based on labels
@@ -124,7 +130,7 @@ plot(mdp, hyperarcColor = "label", nodeLabel = "sId:label")  # node labels are '
 runPolicyIteAve(mdp,"Net reward","Duration")
 #> Run policy iteration under average reward criterion using 
 #> reward 'Net reward' over 'Duration'. Iterations (g): 
-#> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 8.21e-07 sec.
+#> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.798e-06 sec.
 #> [1] -0.43379
 plot(mdp, hyperarcColor = "policy")  # highlight optimal policy
 #> Joining with `by = join_by(sId, aIdx)`
@@ -136,9 +142,9 @@ plot(mdp, hyperarcShow = "policy")  # show only optimal policy
 #### An infinite-horizon hierarchical replacement problem ####
 library(magrittr)
 mdp<-loadMDP("cow_")
-#> Read binary files (0.000180731 sec.)
-#> Build the HMDP (0.000118959 sec.)
-#> Checking MDP and found no errors (1.693e-06 sec.)
+#> Read binary files (0.00023589 sec.)
+#> Build the HMDP (0.000164312 sec.)
+#> Checking MDP and found no errors (5.371e-06 sec.)
 hgf <- getHypergraph(mdp)
 # modify labels
 dat <- hgf$nodes %>% 

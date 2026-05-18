@@ -53,9 +53,9 @@ wd <- setwd(system.file("models", package = "MDP2"))
 
 #### A finite-horizon replacement problem ####
 mdp<-loadMDP("machine1_")
-#> Read binary files (9.5223e-05 sec.)
-#> Build the HMDP (2.5598e-05 sec.)
-#> Checking MDP and found no errors (7.71e-07 sec.)
+#> Read binary files (9.4801e-05 sec.)
+#> Build the HMDP (3.1806e-05 sec.)
+#> Checking MDP and found no errors (1.366e-06 sec.)
 plot(mdp)
 
 plot(mdp, hyperarcColor = "label")  # colors based on labels
@@ -68,7 +68,7 @@ scrapValues <- c(30, 10, 5, 0)  # scrap values (the values of the 4 states at st
 runValueIte(mdp, "Net reward" , termValues = scrapValues)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
 #> using quantity 'Net reward' under reward criterion.
-#>  Finished. Cpu time 7.711e-06 sec.
+#>  Finished. Cpu time 6.597e-06 sec.
 plot(mdp, hyperarcColor = "policy")  # highlight optimal policy
 #> Joining with `by = join_by(sId, aIdx)`
 
@@ -78,9 +78,9 @@ plot(mdp, hyperarcShow = "policy", nodeLabel = "weight")  # show only optimal po
 
 #### An infinite-horizon maintenance problem ####
 mdp<-loadMDP("hct611-1_")
-#> Read binary files (9.7727e-05 sec.)
-#> Build the HMDP (2.2624e-05 sec.)
-#> Checking MDP and found no errors (1.002e-06 sec.)
+#> Read binary files (8.2778e-05 sec.)
+#> Build the HMDP (2.5101e-05 sec.)
+#> Checking MDP and found no errors (1.762e-06 sec.)
 plot(mdp)  # plot the first two stages
 
 plot(mdp, hyperarcColor = "label")  # colors based on labels
@@ -90,7 +90,7 @@ plot(mdp, hyperarcColor = "label", nodeLabel = "sId:label")  # node labels are '
 runPolicyIteAve(mdp,"Net reward","Duration")
 #> Run policy iteration under average reward criterion using 
 #> reward 'Net reward' over 'Duration'. Iterations (g): 
-#> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.002e-06 sec.
+#> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.762e-06 sec.
 #> [1] -0.43379
 plot(mdp, hyperarcColor = "policy")  # highlight optimal policy
 #> Joining with `by = join_by(sId, aIdx)`
@@ -102,9 +102,9 @@ plot(mdp, hyperarcShow = "policy")  # show only optimal policy
 #### An infinite-horizon hierarchical replacement problem ####
 library(magrittr)
 mdp<-loadMDP("cow_")
-#> Read binary files (0.000162915 sec.)
-#> Build the HMDP (0.000114592 sec.)
-#> Checking MDP and found no errors (1.833e-06 sec.)
+#> Read binary files (0.000177561 sec.)
+#> Build the HMDP (0.000158904 sec.)
+#> Checking MDP and found no errors (4.477e-06 sec.)
 hgf <- getHypergraph(mdp)
 # modify labels
 dat <- hgf$nodes %>% 

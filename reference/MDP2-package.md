@@ -11,3 +11,8 @@ space. Both hierarchical and ordinary-traditional MDPs can be modeled.
 
 **Maintainer**: Lars Relund Nielsen <lars@relund.dk>
 ([ORCID](https://orcid.org/0000-0002-4802-3071))
+
+Authors:
+
+- Lars Relund Nielsen <lars@relund.dk>
+  ([ORCID](https://orcid.org/0000-0002-4802-3071))

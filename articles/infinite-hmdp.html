@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>An infinite-horizon HMDP • MDP2</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="An infinite-horizon HMDP">
 </head>
@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Lars Relund <a href="mailto:lars@relund.dk" class="email">lars@relund.dk</a>
 </h4>
             
-            <h4 data-toc-skip class="date">2026-05-08</h4>
+            <h4 data-toc-skip class="date">2026-05-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/relund/mdp/blob/master/vignettes/infinite-hmdp.Rmd" class="external-link"><code>vignettes/infinite-hmdp.Rmd</code></a></small>
       <div class="d-none name"><code>infinite-hmdp.Rmd</code></div>
@@ -213,9 +213,9 @@ lactations.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prefix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"models"</span>, package <span class="op">=</span> <span class="st">"MDP2"</span><span class="op">)</span>, <span class="st">"/cow_"</span><span class="op">)</span></span>
 <span><span class="va">mdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Read binary files (0.000197937 sec.)</span></span>
-<span><span class="co">#&gt; Build the HMDP (0.000114823 sec.)</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (1.473e-06 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Read binary files (0.000228521 sec.)</span></span>
+<span><span class="co">#&gt; Build the HMDP (0.00016256 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (4.92e-06 sec.)</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mdp</span> </span></code></pre></div>
 <pre><code><span><span class="co">#&gt; $binNames</span></span>
@@ -247,7 +247,7 @@ lactations.</p>
 <span><span class="co">#&gt; [1] "Duration"   "Net reward" "Yield"     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $ptr</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x563f8a5b1560&gt; of class 'HMDP' &lt;0x563f8cc98630&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x55bf33e973c0&gt; of class 'HMDP' &lt;0x55bf3387f7e0&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "HMDP" "list"</span></span></code></pre>
@@ -317,7 +317,7 @@ criterion using policy iteration with an interest rate of 10%:</p>
 <span><span class="fu"><a href="../reference/runPolicyIteDiscount.html">runPolicyIteDiscount</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">wLbl</span>, <span class="va">durLbl</span>, rate <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration using quantity 'Net reward' under discounting criterion </span></span>
 <span><span class="co">#&gt; with 'Duration' as duration using discount factor 0.904837. </span></span>
-<span><span class="co">#&gt; Iteration(s): 1 2 3 4 finished. Cpu time: 1.473e-06 sec.</span></span></code></pre>
+<span><span class="co">#&gt; Iteration(s): 1 2 3 4 finished. Cpu time: 4.92e-06 sec.</span></span></code></pre>
 <p>The optimal policy is:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span> <span class="op">&lt;-</span> <span class="fu">right_join</span><span class="op">(</span><span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span>, <span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sId"</span>, <span class="st">"aIdx"</span><span class="op">)</span><span class="op">)</span></span>
@@ -331,7 +331,7 @@ lactation:</p>
 <span><span class="fu"><a href="../reference/runPolicyIteAve.html">runPolicyIteAve</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">wLbl</span>, <span class="va">durLbl</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration under average reward criterion using </span></span>
 <span><span class="co">#&gt; reward 'Net reward' over 'Duration'. Iterations (g): </span></span>
-<span><span class="co">#&gt; 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 1.473e-06 sec.</span></span></code></pre>
+<span><span class="co">#&gt; 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 4.92e-06 sec.</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; [1] 11543.83</span></span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
