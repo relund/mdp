@@ -111,6 +111,7 @@ List GetActionInfo(HMDP* hmdp, idx sId) {
       tmp["aIdx"] = hmdp->GetIdx(iteS,iteA);
       tmp["label"] = iteA->GetLabel();
       tmp["weights"] = iteA->GetW();
+      tmp["transWeights"] = iteA->GetTransW();
       tmp["trans"] = iteA->GetTransIds();
       tmp["pr"] = iteA->GetTransPr();
       lst.push_back(tmp);
@@ -133,6 +134,8 @@ RCPP_MODULE(HMDPModule){
    .field_readonly("okay", &HMDP::okay)
    .field_readonly("levels", &HMDP::levels)
    .field_readonly("wNames", &HMDP::weightNames)
+   .field_readonly("wActionNames", &HMDP::weightActionNames)
+   .field_readonly("wTransNames", &HMDP::weightTransNames)
    .field_readonly("externalProc", &HMDP::externalProc)
    .field("verbose", &HMDP::verbose)
 
@@ -150,6 +153,8 @@ RCPP_MODULE(HMDPModule){
    .method("getExternalInfo", &HMDP::GetExternalInfo)
    .method("getActionSize", GetActionSize)
    .method("getActionInfo", GetActionInfo)
+   .method("getActionWNames", &HMDP::GetActionWNames)
+   .method("getTransWNames", &HMDP::GetTransWNames)
    .method("getIds", &HMDP::GetIds)
    .method("getStateIdsStages", GetStateIdsStages)
    .method("getStateIdsStates", GetStateIdsStates)

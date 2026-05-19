@@ -10,7 +10,7 @@ and that the id of the states is known (can be retrieved using e.g. \code{stateI
 binaryActionWriter(
   prefix = "",
   binNames = c("actionIdx.bin", "actionIdxLbl.bin", "actionWeight.bin",
-    "actionWeightLbl.bin", "transProb.bin"),
+    "actionWeightLbl.bin", "transProb.bin", "transWeight.bin", "transWeightLbl.bin"),
   append = TRUE
 )
 }

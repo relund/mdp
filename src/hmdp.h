@@ -11,6 +11,7 @@
 #include <queue>
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 #include "timer.h"
 #include "basicdt.h"
 #include "matrix.h"    // simple matrix class
@@ -36,9 +37,10 @@ class HMDPTrans {
 
 public:
     /** Create new HMDPTrans. */
-    HMDPTrans(idx idS, flt prS) {
+    HMDPTrans(idx idS, flt prS, const vector<flt> & weights = vector<flt>()) {
         id = idS;
         pr = prS;
+        w = weights;
     }
 
     /** For comparing HMDPTrans objects when sort them against id. */
@@ -50,13 +52,14 @@ private:
     /** Print the transition. */
     string Print() {
         ostringstream out;
-        out << "(" << id << ", " << pr << ")";
+        out << "(" << id << ", " << pr << ", w = " << vec2String(w) << ")";
         return out.str();
     }
 
 private:
     idx id; ///< Id of transition state.
     flt pr; ///< Transition probability.
+    vector<flt> w; ///< Transition-level weights/rewards r(s,a,s').
 };
 
 //-----------------------------------------------------------------------------
@@ -102,6 +105,15 @@ class HMDPAction {
         return w;
     }
 
+    /** Return transition-level weights for all transitions. */
+    vector<flt> GetTransW() {
+        vector<flt> v;
+        for (idx i=0; i<trans.size(); i++) {
+            v.insert(v.end(), trans[i].w.begin(), trans[i].w.end());
+        }
+        return v;
+    }
+
     /** Return label. */
     string GetLabel() {
         return label;
@@ -110,10 +122,11 @@ class HMDPAction {
  private:
 
     /** Create an action. */
-    HMDPAction(vector<idx> & iStates, vector<flt> & transPr, vector<flt> & weights, string & lbl) {
+    HMDPAction(vector<idx> & iStates, vector<flt> & transPr, vector<flt> & weights,
+               vector< vector<flt> > & transWeights, string & lbl) {
         label = lbl;
         w = weights;
-        AddTransPr(iStates,transPr);
+        AddTransPr(iStates,transPr,transWeights);
     }
 
 
@@ -121,9 +134,10 @@ class HMDPAction {
      * \param id Index of transition states.
      * \param pr The probabilities.
      */
-    void AddTransPr(vector<idx> & id, vector<flt> & pr) {
+    void AddTransPr(vector<idx> & id, vector<flt> & pr, vector< vector<flt> > & transWeights) {
         for (idx i=0; i<pr.size(); ++i) {
-            trans.push_back(HMDPTrans(id[i],pr[i]));
+            if (i<transWeights.size()) trans.push_back(HMDPTrans(id[i],pr[i],transWeights[i]));
+            else trans.push_back(HMDPTrans(id[i],pr[i]));
         }
     }
 
@@ -164,7 +178,7 @@ class HMDPAction {
     trans_iterator end() { return trans.end(); }
 
 private:
-    vector<flt> w;    ///< Weights/quantities for the action.
+    vector<flt> w;    ///< Action-level weights/rewards r(s,a).
     string label;     ///< Action label.
     vector<HMDPTrans> trans;     ///< Transitions.
 };
@@ -190,8 +204,9 @@ class HMDPState {
     }
 
 // Add methods --------------
-    void AddAction(vector<flt> & w, vector<idx> & tails, vector<flt> & pr, string & label) {
-        actions.push_back(HMDPAction(tails,pr,w,label));
+    void AddAction(vector<flt> & w, vector<idx> & tails, vector<flt> & pr,
+                   vector< vector<flt> > & transW, string & label) {
+        actions.push_back(HMDPAction(tails,pr,w,transW,label));
     }
 
     string Print() {
@@ -229,7 +244,7 @@ Structure:
       of the stage.
     - A HMDPstate contains a vector of HMDPActions
     - A HMDPAction contains a vector of HMDPtrans which are sorted according to state id
-    - A HMDPTrans contain the id of the stage and the transition pr
+    - A HMDPTrans contain the id of the stage, transition rewards (if any) and the transition pr
 
 
 NOTE when a HMDP is built from binary files the id's to identify states in the
@@ -237,7 +252,7 @@ binary files will not be the same as the id's in \code{states}. After the HMDP
 is built it is not a good idea to add new states since this will invalidate
 the properties of the \code{states} vector.
 
-Algorithms are include inside the class for easy call. However, only public
+Algorithms are included inside the class for easy call. However, only public
 methods and variables are used.
 
 \version{2.0}
@@ -283,8 +298,11 @@ class HMDP
     HMDP(vector<string> binNames, bool verbose_)
     {
         verbose = verbose_;
+        string transWFile = binNames.size()>8 ? binNames[8] : "";
+        string transWLblFile = binNames.size()>9 ? binNames[9] : "";
         LoadBin(binNames[0], binNames[1], binNames[2], binNames[3],
-                binNames[4],  binNames[5], binNames[6], binNames[7]);
+                binNames[4],  binNames[5], binNames[6], binNames[7],
+                transWFile, transWLblFile);
     }
 
 
@@ -302,8 +320,11 @@ class HMDP
         string actionWLblFile = prefix + "actionWeightLbl.bin";
         string transProbFile = prefix + "transProb.bin";
         string externalFile = prefix + "externalProcesses.bin";
+        string transWFile = prefix + "transWeight.bin";
+        string transWLblFile = prefix + "transWeightLbl.bin";
         LoadBin(stateIdxFile, stateIdxLblFile, actionIdxFile, actionIdxLblFile,
-                actionWFile,  actionWLblFile, transProbFile, externalFile);
+                actionWFile,  actionWLblFile, transProbFile, externalFile,
+                transWFile, transWLblFile);
     }
 
     //~HMDP() {cout << "Deconstructor called." << endl;}
@@ -312,7 +333,8 @@ class HMDP
      */
     void LoadBin(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
         string actionIdxLblFile, string actionWFile,  string actionWLblFile,
-        string transProbFile, string externalFile);
+        string transProbFile, string externalFile,
+        string transWFile = "", string transWLblFile = "");
 
 
     /** Check the HMDP for errors.
@@ -474,7 +496,15 @@ class HMDP
 
     /** Set number of weights stored in actions (and their names). */
     void SetActionWeightNames(const vector<string> & names) {
+        weightActionNames = names;
         weightNames = names;
+    }
+
+    /** Set number of weights stored in transitions (and their names). */
+    void SetTransWeightNames(const vector<string> & names) {
+        weightTransNames = names;
+        weightNames = weightActionNames;
+        weightNames.insert(weightNames.end(), weightTransNames.begin(), weightTransNames.end());
     }
 
 
@@ -520,6 +550,7 @@ class HMDP
      * \param iW The weight index.
      */
     void SetActionW(const flt & w, const idx & iS, const idx & iA, const idx & iW) {
+        CheckActionWIdx(iW);
         states[iS].actions[iA].w[iW] = w;
     }
 
@@ -1064,7 +1095,14 @@ class HMDP
     }
 
     /** Action weight name. */
-    string GetWName(idx iW) {return weightNames[iW];}
+    string GetWName(idx iW) {
+        if (IsActionWIdx(iW)) return weightActionNames[iW];
+        if (IsTransWIdx(iW)) return weightTransNames[TransWIdx(iW)];
+        throw runtime_error("Reward index out of range.");
+    }
+
+    vector<string> GetActionWNames() {return weightActionNames;}
+    vector<string> GetTransWNames() {return weightTransNames;}
 
     /** Id of state */
     idx GetId(state_iterator iteS) {return iteS - states.begin();}
@@ -1154,8 +1192,9 @@ class HMDP
 // Accessors (get/set functions for the algorithms, return by reference)
 
     flt & w(state_iterator iteS) {return iteS->w;}
-    flt & w(action_iterator iteA, idx iW) {return iteA->w[iW];}
-    flt & w(state_iterator iteS, idx iA, idx iW) {return iteS->actions[iA].w[iW];}
+    flt & w(action_iterator iteA, idx iW) {CheckActionWIdx(iW); return iteA->w[iW];}
+    flt & w(state_iterator iteS, idx iA, idx iW) {CheckActionWIdx(iW); return iteS->actions[iA].w[iW];}
+    flt & transW(trans_iterator iteT, idx iW) {CheckTransWIdx(iW); return iteT->w[iW];}
     flt & pr(trans_iterator iteT) {return iteT->pr;}
     int & pred(state_iterator iteS) {return iteS->pred;}
     string & label(state_iterator iteS) {return iteS->label;}
@@ -1221,6 +1260,8 @@ class HMDP
         flt wMax;    // max weight of the prececessor not equal idxA
         flt wTmp;    // weight to compare
         flt dB = discountF;      // the discount base   //  cout<< "r:" << rate << " b:" << rateBase << endl;
+        bool useTransW = IsTransWIdx(idxW);
+        idx idxTransW = useTransW ? TransWIdx(idxW) : 0;
         vector<flt> result;
 
         for(idx i=0; i<iS.size(); ++i) {
@@ -1234,19 +1275,31 @@ class HMDP
             for (action_iterator iteA = action_begin(iteS); iteA!=action_end(iteS); ++iteA) { //cout << "    iA: " << GetIdx(iteS,iteA) << " w=" << vec2String(iteA->w) << " ";
                 wTmp=0;
                 bool isMinInf = false;
-                for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) { //cout << "      t: w(" << iteT->id << ")=" << w(GetIte(iteT->id)) << endl;
-                    if ( w(GetIte(iteT->id) ) <= -INF) {
-                        wTmp= -INF;
-                        isMinInf = true;
-                        break;
+                if (useTransW) {
+                    flt continuationFactor = crit==DiscountedReward ? pow(dB,w(iteA,idxDur)) : 1;
+                    for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
+                        if ( w(GetIte(iteT->id) ) <= -INF) {
+                            wTmp= -INF;
+                            isMinInf = true;
+                            break;
+                        }
+                        wTmp += (continuationFactor*w( GetIte(iteT->id) ) + transW(iteT,idxTransW)) * pr(iteT);
                     }
-                    wTmp += w( GetIte(iteT->id) ) * pr(iteT);
+                } else {
+                    for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) { //cout << "      t: w(" << iteT->id << ")=" << w(GetIte(iteT->id)) << endl;
+                        if ( w(GetIte(iteT->id) ) <= -INF) {
+                            wTmp= -INF;
+                            isMinInf = true;
+                            break;
+                        }
+                        wTmp += w( GetIte(iteT->id) ) * pr(iteT);
+                    }
                 }
                 if (isMinInf) continue;
                 switch(crit){
-                    case AverageReward: wTmp += w(iteA,idxW)-w(iteA,idxDur)*g; break;
-                    case Reward: wTmp += w(iteA,idxW); break;
-                    case DiscountedReward: wTmp = wTmp*pow(dB,w(iteA,idxDur)) + w(iteA,idxW); break;
+                    case AverageReward: wTmp += (useTransW ? 0 : w(iteA,idxW))-w(iteA,idxDur)*g; break;
+                    case Reward: wTmp += (useTransW ? 0 : w(iteA,idxW)); break;
+                    case DiscountedReward: wTmp = useTransW ? wTmp : wTmp*pow(dB,w(iteA,idxDur)) + w(iteA,idxW); break;
                     //case TransPr: wTmp = wTmp; break;  // generates warning: explicitly assigning value of variable of type 'flt' (aka 'double') to itself
                     case TransPr: break;
                     case TransPrDiscounted: wTmp = wTmp*pow(dB,w(iteA,idxDur)); break;
@@ -1327,7 +1380,9 @@ class HMDP
 public:
     int levels;                     ///< Number of levels in the HMDP, i.e. the levels are 0, ..., levels-1.
     uInt timeHorizon;               ///< INFINT if consider an infinite time horizon; otherwise the number of stages at the founder level.
-    vector<string> weightNames;     ///< Names of the weights/quantities stored from index 1 in \code w (of a (hyper)arc in the hypergraph).
+    vector<string> weightNames;     ///< Backward compatible concatenation of action and transition weight names.
+    vector<string> weightActionNames; ///< Names of action-level weights/rewards r(s,a).
+    vector<string> weightTransNames;  ///< Names of transition-level weights/rewards r(s,a,s').
     map< string, pair<idx,idx> > stages;   ///< Ordered map of stages. The pair contains (state id to first stage in stages, total number of states at stage).
     vector<HMDPState> states;
     map<string, string> external;     ///< Store the external processes in format <stageIdx, prefix>
@@ -1337,6 +1392,16 @@ public:
     ostringstream log;              ///< Stream to store log messages.
 private:
     Timer timer;
+
+    bool IsActionWIdx(idx iW) const {return iW < weightActionNames.size();}
+    bool IsTransWIdx(idx iW) const {return iW >= weightActionNames.size() && iW < weightActionNames.size() + weightTransNames.size();}
+    idx TransWIdx(idx iW) const {return iW - weightActionNames.size();}
+    void CheckActionWIdx(idx iW) const {
+        if (iW >= weightActionNames.size()) throw runtime_error("Action reward index out of range.");
+    }
+    void CheckTransWIdx(idx iW) const {
+        if (iW >= weightTransNames.size()) throw runtime_error("Transition reward index out of range.");
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -1402,7 +1467,8 @@ public:
      */
     HMDPReader(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
         string actionIdxLblFile, string actionWFile, string actionWLblFile,
-        string transProbFile, string externalFile, HMDP *pHMDP, ostringstream & hmdpLog);
+        string transProbFile, string externalFile, string transWFile, string transWLblFile,
+        HMDP *pHMDP, ostringstream & hmdpLog);
 
 private:
 
@@ -1428,7 +1494,8 @@ private:
      * \param transProbFile Filename of the transition probability file.
      */
     void AddActions(string actionIdxFile, string actionIdxLblFile,
-        string actionWFile, string actionWLblFile, string transProbFile);
+        string actionWFile, string actionWLblFile, string transProbFile,
+        string transWFile = "", string transWLblFile = "");
 
     /** Add the external processes to the HMDP.
      * Store stage idx and prefix in a map
@@ -1478,12 +1545,14 @@ private:
 	    public:
         void Clear() {
             index.clear(); pr.clear(); scp.clear(); w.clear(); label.clear();
+            transW.clear();
         }
         idx sId;
         vector<idx> index;  ///< State indexes.
         vector<flt> pr;   ///< Transition probabilities.
         vector<idx> scp;  ///< The scope of the index. If 1 next stage in current process, if 0 next stage in father process, if 2 next stage in child process (i.e. stage 0) and if 3 a transition to a state specified by it's state id. That is, if scope=3 and idx=5 then we have a transition to the state[5]..
         vector<flt> w;    ///< Weights/quantities for the action.
+        vector< vector<flt> > transW; ///< Transition-level weights/quantities for each transition.
         string label;     ///< Action label.
 	};
 
@@ -1529,12 +1598,14 @@ private:
 
     /** Write value to binary file. */
     void WriteBinary(FILE* pFile, const vector<int> &vec) {
+        if (vec.empty()) return;
         fwrite(&vec[0], sizeof(int), vec.size(), pFile);
         //cout << "W (v(int)): "; for(idx ii=0; ii < vec.size(); ii++) cout << vec[ii] << " " << flush; cout << endl;
     }
 
     /** Write value to binary file. */
     void WriteBinary(FILE* pFile, const vector<flt> &vec) {
+        if (vec.empty()) return;
         fwrite(&vec[0], sizeof(flt), vec.size(), pFile);
         //cout << "W (v(flt)): "; for(idx ii=0; ii < vec.size(); ii++) cout << vec[ii] << " " << flush; cout << endl;
     }
@@ -1570,6 +1641,8 @@ private:
     FILE* pActionWFile;
     FILE* pActionWLblFile;
     FILE* pTransProbFile;
+    FILE* pTransWFile;
+    FILE* pTransWLblFile;
     FILE* pExternalProcessesFile;
 
     HMDP * pHMDP;         ///< Pointer to the HMDP.

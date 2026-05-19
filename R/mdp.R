@@ -29,7 +29,9 @@ loadMDP <-
                "actionWeight.bin",
                "actionWeightLbl.bin",
                "transProb.bin",
-               "externalProcesses.bin"
+               "externalProcesses.bin",
+               "transWeight.bin",
+               "transWeightLbl.bin"
             ),
             eps = 0.00001,
             check = TRUE,
@@ -67,10 +69,13 @@ loadMDP <-
 	}
 	actions <- mdp$getActionSize()
 	levels <- mdp$levels
+	weightActionNames <- mdp$wActionNames
+	weightTransNames <- mdp$wTransNames
 	weightNames <- mdp$wNames
 	v<-list(binNames=binNames, timeHorizon=timeHorizon, states=states, 
 	     founderStatesLast=founderStatesLast, actions=actions, levels=levels, 
-	     weightNames=weightNames, ptr=mdp)
+	     weightNames=weightNames, weightActionNames=weightActionNames,
+	     weightTransNames=weightTransNames, ptr=mdp)
 	if (mdp$externalProc) {
 	   v$external <- as.data.frame(matrix(mdp$getExternalInfo(),ncol = 2, byrow = TRUE), stringsAsFactors=FALSE)
 	   colnames(v$external) <- c("stageStr","prefix")

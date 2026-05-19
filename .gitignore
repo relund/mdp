@@ -4,7 +4,6 @@
 src/*.o
 src/*.so
 src/*.dll
-./*.bin
 *.log
 *.exe
 *cache/*
@@ -18,3 +17,9 @@ docs
 .DS_Store
 /*.hmp
 .positai
+*.bin
+!inst/**/*.bin
+!inst/*.bin
+*.tar.gz
+*.Rcheck
+AGENTS.html

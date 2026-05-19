@@ -13,13 +13,14 @@
 #'   actions. `labels` is a vector of label names. `duration` identifies which
 #'   label corresponds to duration or time. For example, if the first entry in
 #'   `labels` is time, then `duration = 1`. Call this before building the model.
+#' * `setTransWeights(labels)`: sets the labels of transition-level weights.
 #' * `process()`: starts a (sub)process.
 #' * `endProcess()`: ends a (sub)process.
 #' * `stage(label = NULL)`: starts a stage.
 #' * `endStage()`: ends a stage.
 #' * `state(label = NULL)`: starts a state and returns the state index `sIdx`.
 #' * `endState()`: ends a state.
-#' * `action(label = NULL, weights, prob, statesNext = NULL)`: starts an
+#' * `action(label = NULL, weights, prob, statesNext = NULL, transWeights = NULL)`: starts an
 #'   action. `weights` must be a vector of action weights, and `prob` must
 #'   contain triples `(scope, idx, pr)`. `scope` can take three values:
 #'
@@ -80,6 +81,13 @@ hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, de
 		invisible(NULL)
 	}
 
+	setTransWeights<-function(labels) {
+		for (i in seq_along(labels)) {
+		   xml2::xml_add_child(doc, "transQuantities", l = labels[i])
+		}
+		invisible(NULL)
+	}
+
 	process<-function(){
 		if (!wFixed) stop("Weights must be added using 'setWeights' before starting building the HMDP!")
 		# tr$addTag("proc",close=FALSE)
@@ -127,7 +135,7 @@ hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, de
 		invisible(NULL)
 	}
 
-	action<-function(label=NULL, weights, prob, statesNext=NULL){  # prop contain tripeles (scope,idx,prob), statesNext: Number of states in the next stage of the process, only needed if have a transition to the father
+	action<-function(label=NULL, weights, prob, statesNext=NULL, transWeights=NULL){  # prop contain tripeles (scope,idx,prob), statesNext: Number of states in the next stage of the process, only needed if have a transition to the father
 		scope<-prob[3*0:(length(prob)/3-1)+1]   # scopes we consider
 		if (any(scope==3)) {
 			stop("Scope = 3 is not supported in hmp files!")
@@ -155,6 +163,9 @@ hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, de
 		}
 		# tr$addTag("q",paste(weights[which(1:length(weights)!=durIdx)],collapse=" "))  # quantities
 		xml2::xml_add_child(n, "q", paste(weights[which(1:length(weights)!=durIdx)],collapse=" "))
+		if (!is.null(transWeights)) {
+		   xml2::xml_add_child(n, "qt", paste(transWeights, collapse=" "))
+		}
 		probs<-prob[which((1:length(prob)-1)%%3!=0)]   # probs contain pairs (idx,prob)
 		if (length(probs)==2) { # deterministic transition
 			# tr$addTag("p",probs[1],attrs=c(t='d'))
@@ -193,7 +204,7 @@ hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, de
 	doc <- xml2::xml_new_root("mlhmp", l=desc, b=rate, dsl=rateBase, precision=precision, version="1.1")
 	n <- doc  # current node
 	
-	v <- list(setWeights = setWeights,
+	v <- list(setWeights = setWeights, setTransWeights = setTransWeights,
 		stage = stage, endStage = endStage, state = state, endState = endState,
 		action = action, endAction = endAction, process = process, endProcess = endProcess,
 		closeWriter = closeWriter)

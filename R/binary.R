@@ -27,9 +27,11 @@
 #'   That id can later be referenced with scope 3.
 #' * `endState()`: ends a state.
 #' * `action(scope = NULL, id = NULL, pr = NULL, prob = NULL, weights,
-#'   label = NULL, end = FALSE, ...)`: starts an action. `weights` must be a
-#'   vector of action weights. Transition probabilities can be entered in two
-#'   ways:
+#'   transWeights = NULL, label = NULL, end = FALSE, ...)`: starts an action.
+#'   `weights` must be a vector of action weights. `transWeights` must contain
+#'   transition weights ordered by transition, with all transition weight labels
+#'   for the first transition followed by all labels for the second transition,
+#'   and so on. Transition probabilities can be entered in two ways:
 #'
 #'   1. `prob` contains triples `(scope, id, pr)`.
 #'   2. `id` and `pr` are vectors of equal length. If `scope` is omitted, all
@@ -39,13 +41,14 @@
 #'   `endAction()` is not necessary. `...` is currently ignored.
 #' * `endAction()`: ends an action. Do not use this if `end = TRUE` was used
 #'   when the action was specified.
-#' * `includeProcess(prefix, label = NULL, weights, prob, termStates)`: includes
-#'   an external process. External processes are loaded into memory only when
-#'   needed, which helps with large models. `prefix` is the external process
-#'   prefix. `weights` must be a vector of action weights, and `prob` must
-#'   contain triples `(scope, idx, pr)`; see the description of `actionIdx.bin`
-#'   below. `termStates` must specify the number of states at the last stage in
-#'   the external process. Inside an `includeProcess ... endIncludeProcess`
+#' * `includeProcess(prefix, label = NULL, weights, prob, termStates,
+#'   transWeights = NULL)`: includes an external process. External processes are
+#'   loaded into memory only when needed, which helps with large models. `prefix`
+#'   is the external process prefix. `weights` must be a vector of action
+#'   weights, and `prob` must contain triples `(scope, idx, pr)`; see the
+#'   description of `actionIdx.bin` below. `termStates` must specify the number
+#'   of states at the last stage in the external process. Inside an
+#'   `includeProcess ... endIncludeProcess`
 #'   block, you must specify the father jump actions of the last stage in the
 #'   external process. The external process is represented by its first and last
 #'   stage together with its jump actions. The function returns, invisibly, the
@@ -55,7 +58,7 @@
 #' * `closeWriter()`: closes the writer. Call this when the model description is
 #'   finished.
 #'
-#' Eight binary files are created:
+#' Ten binary files are created:
 #'
 #' * `stateIdx.bin`: integers defining all states in the format
 #'   `"n0 s0 -1 n0 s0 a0 n1 s1 -1 n0 s0 a0 n1 s1 a1 n2 s2 -1 n0 s0 ..."`.
@@ -93,6 +96,11 @@
 #'   `stageStr` corresponds to the stage index, for example `n0 s0 a0 n1`, of
 #'   the stage corresponding to the first stage in the external process, and
 #'   `prefix` is the external process prefix. No delimiter is used.
+#' * `transWeight.bin`: doubles containing transition weights in the format
+#'   `"t11 t12 t21 t22 -1 ..."`, assuming two transition weights for each
+#'   transition and two transitions in the first action.
+#' * `transWeightLbl.bin`: character data containing the transition weight
+#'   labels.
 #'
 #' @param prefix A character string with the prefix added to `binNames`.
 #' @param binNames A character vector giving the names of the binary files storing the model.
@@ -112,7 +120,9 @@ binaryMDPWriter <-
                "actionWeight.bin",
                "actionWeightLbl.bin",
                "transProb.bin",
-               "externalProcesses.bin"
+               "externalProcesses.bin",
+               "transWeight.bin",
+               "transWeightLbl.bin"
             ),
             getLog = TRUE
    )
@@ -122,6 +132,14 @@ binaryMDPWriter <-
       wCtr<<-length(labels)
       writeBin(as.character(labels), fACostLbl)
       wFixed<<-TRUE
+      invisible(NULL)
+   }
+
+   setTransWeights<-function(labels,...){
+      if (tWFixed) stop("Transition weights already added!")
+      tWCtr<<-length(labels)
+      writeBin(as.character(labels), fTransWLbl)
+      tWFixed<<-TRUE
       invisible(NULL)
    }
    
@@ -197,6 +215,7 @@ binaryMDPWriter <-
                pr = NULL,
                prob = NULL,
                weights,
+               transWeights = NULL,
                label = NULL,
                end = FALSE,
                ...) {
@@ -227,6 +246,13 @@ binaryMDPWriter <-
          writeBin(as.integer(c(sIdx[length(sIdx)],scpIdx,-1)), fA)
          writeBin(as.numeric(c(pr,-1)), fTransP)
       }
+      nTrans <- length(scpIdx)/2
+      if (tWCtr>0) {
+         if (is.null(transWeights)) transWeights <- rep(0, nTrans * tWCtr)
+         if (length(transWeights) != nTrans * tWCtr)
+            stop("transWeights must have length number of transitions times number of transition weights.")
+         writeBin(as.numeric(c(transWeights,-1)), fTransW)
+      }
       writeBin(as.numeric(weights), fACost)
       if (!is.null(label)) writeBin(c(as.character(aRowId),label), fALbl)   # aRowId added before label
       if (end) endAction()
@@ -239,7 +265,7 @@ binaryMDPWriter <-
       invisible(NULL)
    }
    
-   includeProcess<-function(prefix, label=NULL, weights, prob, termStates){     # prop contain tripeles (scope,idx,prob) - Here all scope must be 2!!
+   includeProcess<-function(prefix, label=NULL, weights, prob, termStates, transWeights = NULL){     # prop contain tripeles (scope,idx,prob) - Here all scope must be 2!!
       stateId<-NULL # to store state id's
       #cat("action:\n")
       #print(weights)
@@ -264,6 +290,13 @@ binaryMDPWriter <-
       writeBin(as.integer(c(sIdx[length(sIdx)],scpIdx,-1)), fA)
       if (!is.null(label)) writeBin(c(as.character(aRowId),label), fALbl)   # aRowId added before label
       writeBin(as.numeric(c(probs,-1)), fTransP)
+      if (tWCtr>0) {
+         nTrans <- length(scpIdx)/2
+         if (is.null(transWeights)) transWeights <- rep(0, nTrans * tWCtr)
+         if (length(transWeights) != nTrans * tWCtr)
+            stop("transWeights must have length number of transitions times number of transition weights.")
+         writeBin(as.numeric(c(transWeights,-1)), fTransW)
+      }
       writeBin(as.numeric(weights), fACost)
       #cat("end action\n")
       maxId<-max(scpIdx[2*(1:(length(scpIdx)/2))])  # number of states to create at the first stage of the child
@@ -307,6 +340,8 @@ binaryMDPWriter <-
       close(fACostLbl)
       close(fTransP)
       close(fExt)
+      close(fTransW)
+      close(fTransWLbl)
       invisible(NULL)
    }
    
@@ -319,18 +354,23 @@ binaryMDPWriter <-
    fACostLbl <- file(binNames[6], "wb")
    fTransP <- file(binNames[7], "wb")
    fExt <- file(binNames[8], "wb")
+   fTransW <- file(binNames[9], "wb")
+   fTransWLbl <- file(binNames[10], "wb")
    idx<-NULL  # containing the stage, state or action idx's
    sIdx<-NULL # containing the state row id's (used to find the state id the action is defined under)
    dCtr<- -1   # current stage at current level
    sCtr<- -1   # current state at current stage
    aCtr<- -1   # current action at current state
    wCtr<- 0    # number of weights in the model
+   tWCtr<- 0    # number of transition weights in the model
    sRowId<- -1    # current row/line of state in stateIdx file
    aRowId<- -1    # current row/line of action in actionIdx file
    wFixed<-FALSE  # TRUE if size of weights are fixed
+   tWFixed<-FALSE  # TRUE if size of transition weights are fixed
    v <-
       list(
          setWeights = setWeights,
+         setTransWeights = setTransWeights,
          stage = stage,
          endStage = endStage,
          state = state,
@@ -414,7 +454,9 @@ binaryActionWriter <- function(prefix = "",
                                   "actionIdxLbl.bin",
                                   "actionWeight.bin",
                                   "actionWeightLbl.bin",
-                                  "transProb.bin"
+                                  "transProb.bin",
+                                  "transWeight.bin",
+                                  "transWeightLbl.bin"
                                ),
                                append = TRUE
 )
@@ -426,8 +468,16 @@ binaryActionWriter <- function(prefix = "",
       wFixed<<-TRUE
       invisible(NULL)
    }
+
+   setTransWeights<-function(labels,...){
+      if (tWFixed) stop("Transition weights already added!")
+      tWCtr<<-length(labels)
+      writeBin(as.character(labels), fTransWLbl)
+      tWFixed<<-TRUE
+      invisible(NULL)
+   }
    
-   addAction<-function(label=NULL, sIdx, weights, prob, ...){     # do not hold now: prop is a matrix with columns (idS,prob)
+   addAction<-function(label=NULL, sIdx, weights, prob, transWeights = NULL, ...){     # do not hold now: prop is a matrix with columns (idS,prob)
       # 		cat("action:\n")
       # 		print(weights)
       # 		print(prob)
@@ -441,6 +491,13 @@ binaryActionWriter <- function(prefix = "",
       writeBin(as.integer(c(sIdx,scpIdx,-1)), fA)
       if (!is.null(label)) writeBin(c(as.character(aRowId),label), fALbl)   # aRowId added before label
       writeBin(as.numeric(c(probs,-1)), fTransP)
+      if (tWCtr>0) {
+         nTrans <- length(scpIdx)/2
+         if (is.null(transWeights)) transWeights <- rep(0, nTrans * tWCtr)
+         if (length(transWeights) != nTrans * tWCtr)
+            stop("transWeights must have length number of transitions times number of transition weights.")
+         writeBin(as.numeric(c(transWeights,-1)), fTransW)
+      }
       writeBin(as.numeric(weights), fACost)
       #cat("end action\n")
       invisible(NULL)
@@ -456,6 +513,8 @@ binaryActionWriter <- function(prefix = "",
       close(fACost)
       close(fACostLbl)
       close(fTransP)
+      close(fTransW)
+      close(fTransWLbl)
       invisible(NULL)
    }
    
@@ -465,10 +524,14 @@ binaryActionWriter <- function(prefix = "",
       tmp<-readBin(binNames[1], integer(),n=file.info(binNames[1])$size/4)
       aRowId<-length(tmp[tmp==-1])-1 # current number of actions defined
       wFixed<-TRUE  # TRUE if size of weights are fixed
+      tWFixed<-TRUE
+      tWCtr<-0
    } else {
       aRowId<- -1    # current row/line of action in actionIdx file
       wCtr<- 0    # number of weights in the model
+      tWCtr<- 0
       wFixed<-FALSE  # TRUE if size of weights are fixed
+      tWFixed<-FALSE
    }
    mode <- ifelse(append,"ab","wb")
    fA <- file(binNames[1], mode)
@@ -476,7 +539,9 @@ binaryActionWriter <- function(prefix = "",
    fACost <- file(binNames[3], mode)
    fACostLbl <- file(binNames[4], mode)
    fTransP <- file(binNames[5], mode)
-   v <- list(setWeights = setWeights, addAction = addAction, closeWriter = closeWriter)
+   fTransW <- file(binNames[6], mode)
+   fTransWLbl <- file(binNames[7], mode)
+   v <- list(setWeights = setWeights, setTransWeights = setTransWeights, addAction = addAction, closeWriter = closeWriter)
    class(v) <- c("binaryActionWriter")
    return(v)
 }

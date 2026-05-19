@@ -1,13 +1,31 @@
 #include "hmdp.h"
 
+static vector<string> ParseBinaryStrings(const char * data, idx size) {
+    vector<string> labels;
+    string label;
+    for (idx i=0; i<size; ++i) {
+        if (data[i]=='\0') {
+            if (!label.empty()) {
+                labels.push_back(label);
+                label.clear();
+            }
+        } else {
+            label.push_back(data[i]);
+        }
+    }
+    if (!label.empty()) labels.push_back(label);
+    return labels;
+}
+
 void HMDP::LoadBin(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
     string actionIdxLblFile, string actionWFile,  string actionWLblFile,
-    string transProbFile, string externalFile)
+    string transProbFile, string externalFile, string transWFile, string transWLblFile)
 {
     okay = true;
     externalProc = false;
     HMDPReader reader(stateIdxFile, stateIdxLblFile, actionIdxFile,
-        actionIdxLblFile, actionWFile, actionWLblFile, transProbFile, externalFile, this, log);
+        actionIdxLblFile, actionWFile, actionWLblFile, transProbFile, externalFile,
+        transWFile, transWLblFile, this, log);
     if (!reader.okay) okay = false;
     else if (external.size()>0) {
         externalProc = true;
@@ -19,14 +37,16 @@ void HMDP::LoadBin(string stateIdxFile, string stateIdxLblFile, string actionIdx
 
 HMDPReader::HMDPReader(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
     string actionIdxLblFile, string actionWFile, string actionWLblFile,
-    string transProbFile, string externalFile, HMDP *pHMDP, ostringstream & hmdpLog)
+    string transProbFile, string externalFile, string transWFile, string transWLblFile,
+    HMDP *pHMDP, ostringstream & hmdpLog)
 {
     pHMDP->ResetLog();
     okay = true;
     this->pHMDP = pHMDP;
     timer.StartTimer();
     AddStates(stateIdxFile, stateIdxLblFile);
-    AddActions(actionIdxFile, actionIdxLblFile, actionWFile, actionWLblFile, transProbFile);
+    AddActions(actionIdxFile, actionIdxLblFile, actionWFile, actionWLblFile, transProbFile,
+        transWFile, transWLblFile);
     AddExternal(externalFile);
     timer.StopTimer();
     pHMDP->log << "Read binary files (" << timer.ElapsedTime("sec") << " sec.)" << endl;
@@ -96,15 +116,7 @@ void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile) {
 	// fix bug show no labels okay
 	if (lblSize==0) {return;}
 	// add labels to a string vector
-	vector<string> labels;
-	char * ptr = lbl;
-	for (int i=0;;++i) {
-		//cout << ptr << endl;
-		labels.push_back(ptr);
-		ptr = strrchr(ptr,'\0');
-		if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
-		++ptr;
-	}
+	vector<string> labels = ParseBinaryStrings(lbl, lblSize);
 	delete [] lbl;
 
 	// move labels to states
@@ -118,7 +130,8 @@ void HMDPReader::AddStates(string stateIdxFile, string stateIdxLblFile) {
 // -----------------------------------------------------------------------------
 
 void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
-	string actionWFile, string actionWLblFile, string transProbFile)
+	string actionWFile, string actionWLblFile, string transProbFile,
+    string transWFile, string transWLblFile)
 {
 	ifstream::pos_type fileSize;
 	ifstream file;
@@ -127,6 +140,8 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	double * aW;
 	char * wLbl;
 	double * tPr;
+    double * tW = NULL;
+    char * tWLbl = NULL;
 	vector<TmpAction> actionVec;  // Vector of all action with actionVec[aId] according to file definitions.
 	foundScp3 = false;
 
@@ -135,26 +150,42 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	idx aWSize = ReadBinary(actionWFile,aW);
 	idx wLblSize = ReadBinary(actionWLblFile,wLbl);
 	idx tPrSize = ReadBinary(transProbFile,tPr);
+    idx tWSize = 0;
+    idx tWLblSize = 0;
+    if (transWFile.length()>0 && transWLblFile.length()>0) {
+        ifstream transWTest(transWFile.c_str(), ios::in|ios::binary);
+        ifstream transWLblTest(transWLblFile.c_str(), ios::in|ios::binary);
+        if (transWTest && transWLblTest) {
+            transWTest.close();
+            transWLblTest.close();
+            tWSize = ReadBinary(transWFile,tW);
+            tWLblSize = ReadBinary(transWLblFile,tWLbl);
+        }
+	}
 	// note that all arrays (except the label arrays) have the same number of rows (same number of -1's).
    // if ( (aIdxSize==0) | (lblSize==0) | (aWSize==0) | (wLblSize==0) | (tPrSize==0) ) {okay = false; return;}
-   // fix bug such that an mdp with no labels okay
-   if ( (aIdxSize==0) | (aWSize==0) | (wLblSize==0) | (tPrSize==0) ) {okay = false; return;}
+   // Models may have no action weights, no transition weights, or neither.
+   if ( (aIdxSize==0) | (tPrSize==0) ) {okay = false; return;}
     
 
 	// add weight labels to HMDP
 	vector<string> labels;
-	char * ptr;
-	ptr = wLbl;
-	for (int i=0;;++i) {
-		labels.push_back(ptr);
-		ptr = strrchr(ptr,'\0');
-		if ( (ptr==0) | (ptr-wLbl>=(int)wLblSize) ) break;
-		++ptr;
+	if (wLblSize>0) {
+		labels = ParseBinaryStrings(wLbl, wLblSize);
 	}
-	labels.pop_back();  // the last element is a dummy
 	pHMDP->SetActionWeightNames(labels);
 	wLblSize = labels.size();   // number of weights
 	delete [] wLbl;
+
+    idx transWLblCount = 0;
+    if (tWLblSize>0) {
+        labels = ParseBinaryStrings(tWLbl, tWLblSize);
+        pHMDP->SetTransWeightNames(labels);
+        transWLblCount = labels.size();
+        delete [] tWLbl;
+    } else {
+        pHMDP->SetTransWeightNames(vector<string>());
+    }
 
     // scan aIdx
 	vector<idx> a;  // vector of index
@@ -182,13 +213,19 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	}
     delete [] aIdx;
 
+	if (wLblSize>0 && aWSize<actionVec.size()*wLblSize) {
+		throw runtime_error("Action weight file has fewer values than required by the action reward labels.");
+	}
+
 	// scan aW
 	vector<double> b;  // vector of doubles
 	idx aId;
 	for(aId=0; aId<actionVec.size(); aId++) {
-		b.assign(aW + aId*wLblSize, aW + (aId+1)*wLblSize);
-		for (idx j=0;j<b.size();j++) {
-			actionVec[aId].w.push_back((flt)b[j]);
+		if (wLblSize>0) {
+			b.assign(aW + aId*wLblSize, aW + (aId+1)*wLblSize);
+			for (idx j=0;j<b.size();j++) {
+				actionVec[aId].w.push_back((flt)b[j]);
+			}
 		}
 	}
 	delete [] aW;
@@ -208,18 +245,37 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 	}
 	delete [] tPr;
 
+    if (tWSize>0 && transWLblCount>0) {
+        prev=0;
+        aId = 0;
+        for(idx i=0; i<tWSize; i++) {
+            if (tW[i]== -1) {
+                b.assign(tW+prev, tW+i);
+                idx transCount = actionVec[aId].pr.size();
+                if (b.size() != transCount * transWLblCount) {
+                    throw runtime_error("Transition weight row length does not match transitions times transition reward names.");
+                }
+                actionVec[aId].transW.resize(transCount);
+                for (idx t=0; t<transCount; ++t) {
+                    for (idx j=0; j<transWLblCount; ++j) {
+                        actionVec[aId].transW[t].push_back((flt)b[t*transWLblCount+j]);
+                    }
+                }
+                prev=i+1;
+                aId++;
+            }
+        }
+        delete [] tW;
+    } else {
+        for(aId=0; aId<actionVec.size(); aId++) {
+            actionVec[aId].transW.resize(actionVec[aId].pr.size());
+        }
+    }
+
 	// scan lbl
 	// fix bug such that an mdp with no labels okay
 	if (lblSize>0) {
-   	labels.clear();
-   	ptr = lbl;
-   	for (int i=0;;++i) {
-   		labels.push_back(ptr);
-   		ptr = strrchr(ptr,'\0');
-   		if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
-   		++ptr;
-   	}
-   	labels.pop_back();  // the last element is a dummy
+   	labels = ParseBinaryStrings(lbl, lblSize);
    	// add labels to actions
    	for(idx i=0;i<labels.size();++i) {
    		if (i % 2 == 0) from_string<idx>(aId, labels[i], std::dec); // if i is even
@@ -314,7 +370,7 @@ void HMDPReader::Compile() {
             sIte = pHMDP->state_end()-1;
             for (idx j=0; j<stateVec[sId].actions.size(); ++j) {
                 TmpAction & a = stateVec[sId].actions[j];
-                sIte->AddAction(a.w, a.index, a.pr, a.label);
+                sIte->AddAction(a.w, a.index, a.pr, a.transW, a.label);
             }
         }
         pHMDP->stages[keys[i]] = pair<idx,idx>(firstSId, sSize);    // store first state id of stage
@@ -416,17 +472,11 @@ void HMDPReader::AddExternal(string externalFile) {
     idx lblSize = ReadBinary<char>(externalFile,lbl);
     if (lblSize==0) return;   // no external processes
 
-    char * ptr = lbl;
-    for (int i=0;;++i) {
-        stageStr = ptr;
-        ptr = strrchr(ptr,'\0');
-        if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
-        ++ptr;
-        prefix = ptr;
+    vector<string> labels = ParseBinaryStrings(lbl, lblSize);
+    for (idx i=0; i+1<labels.size(); i += 2) {
+        stageStr = labels[i];
+        prefix = labels[i+1];
         pHMDP->external[stageStr] = prefix;
-        ptr = strrchr(ptr,'\0');
-        if ( (ptr==0) | (ptr-lbl>=(int)lblSize) ) break;
-        ++ptr;
     }
     delete [] lbl;
     // showing contents:
@@ -492,7 +542,8 @@ string HMDP::Print() {
 	out << "HMDP with " << levels << " level(s), time-horizon: ";
 	if (timeHorizon>=INFINT) out << "infinite";
 	else out << timeHorizon << " (finite)";
-	out << endl << "Weights: " << vec2String(weightNames) << endl;
+	out << endl << "Action weights: " << vec2String(weightActionNames) << endl;
+    out << "Transition weights: " << vec2String(weightTransNames) << endl;
 	for (stage_iterator ite = stage_begin(); ite!=stage_end(); ++ite) {
         idx iS = ite->second.first;
         idx sizeS = ite->second.second;
@@ -859,6 +910,8 @@ bool HMDP::CalcOptPolicy(Crit crit, idx idxW, flt g, idx idxDur, flt discountF) 
 	int oldPred;
 	string externalPrefix; // prefix of the external process in memory
 	flt dB = discountF;      // the discount base     // cout << "dB=" << dB << endl;
+    bool useTransW = IsTransWIdx(idxW);
+    idx idxTransW = useTransW ? TransWIdx(idxW) : 0;
 	HMDP * pExtProc = NULL;    // pointer to external process
     ExternalResetStates();  // set state weight to -INF
     // scan states according to the valid ordering
@@ -873,19 +926,31 @@ bool HMDP::CalcOptPolicy(Crit crit, idx idxW, flt g, idx idxDur, flt discountF) 
             oldPred = pred(iteS);  //cout << "  oldPred=" << oldPred << endl;
             for (action_iterator iteA = action_begin(iteS); iteA!=action_end(iteS); ++iteA) { //cout << "    iA: " << GetIdx(iteS,iteA) << " w=" << vec2String(iteA->w) << " ";
                 wTmp=0; isMinInf = false;
-                for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) { //cout << "      t: w(" << iteT->id << ")=" << w(GetIte(iteT->id)) << endl;
-                    if ( w(GetIte(iteT->id) ) <= -INF) {
-                        wTmp= -INF;
-                        isMinInf = true;
-                        break;
+                if (useTransW) {
+                    flt continuationFactor = crit==DiscountedReward ? pow(dB,w(iteA,idxDur)) : 1;
+                    for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
+                        if ( w(GetIte(iteT->id) ) <= -INF) {
+                            wTmp= -INF;
+                            isMinInf = true;
+                            break;
+                        }
+                        wTmp += (continuationFactor*w( GetIte(iteT->id) ) + transW(iteT,idxTransW)) * pr(iteT);
                     }
-                    wTmp += w( GetIte(iteT->id) ) * pr(iteT);
+                } else {
+                    for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) { //cout << "      t: w(" << iteT->id << ")=" << w(GetIte(iteT->id)) << endl;
+                        if ( w(GetIte(iteT->id) ) <= -INF) {
+                            wTmp= -INF;
+                            isMinInf = true;
+                            break;
+                        }
+                        wTmp += w( GetIte(iteT->id) ) * pr(iteT);
+                    }
                 } //cout << "wTmp tails=" << wTmp << endl;
                 if (isMinInf) continue; // if the (h)arc gives -INF go to next (h)arc
                 switch(crit){
-                    case AverageReward: wTmp += w(iteA,idxW)-w(iteA,idxDur)*g; break;
-                    case Reward: wTmp += w(iteA,idxW); break;
-                    case DiscountedReward: wTmp = wTmp*pow(dB,w(iteA,idxDur)) + w(iteA,idxW); break;
+                    case AverageReward: wTmp += (useTransW ? 0 : w(iteA,idxW))-w(iteA,idxDur)*g; break;
+                    case Reward: if (!useTransW) wTmp += w(iteA,idxW); break;
+                    case DiscountedReward: wTmp = useTransW ? wTmp : wTmp*pow(dB,w(iteA,idxDur)) + w(iteA,idxW); break;
                     //case TransPr: wTmp = wTmp; break;  // generates warning: explicitly assigning value of variable of type 'flt' (aka 'double') to itself
                     case TransPr: break;
                     case TransPrDiscounted: wTmp = wTmp*pow(dB,w(iteA,idxDur)); break;
@@ -912,6 +977,8 @@ void HMDP::CalcPolicy(Crit crit, idx idxW, flt g, idx idxDur, flt discountF) {
 	//cout << "CalcP: idxW=" << idxW << " idxD=" << idxDur << endl;
 	flt wTmp;      // weight to compare
 	flt dB = discountF;      // the discount base   //  cout<< "r:" << rate << " b:" << rateBase << endl;
+    bool useTransW = IsTransWIdx(idxW);
+    idx idxTransW = useTransW ? TransWIdx(idxW) : 0;
     // scan states according to the valid ordering
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         //cout << "State " << GetId(iteS) << " is normal with wPred=" << w(iteS) << endl;
@@ -919,13 +986,20 @@ void HMDP::CalcPolicy(Crit crit, idx idxW, flt g, idx idxDur, flt discountF) {
             w(iteS)= -INF;  // reset weight
             action_iterator iteA = GetIte(iteS, pred(iteS));
             wTmp=0;
-            for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
-                wTmp += w( GetIte(iteT->id) ) * pr(iteT);
+            if (useTransW) {
+                flt continuationFactor = crit==DiscountedReward ? pow(dB,w(iteA,idxDur)) : 1;
+                for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
+                    wTmp += (continuationFactor*w( GetIte(iteT->id) ) + transW(iteT,idxTransW)) * pr(iteT);
+                }
+            } else {
+                for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
+                    wTmp += w( GetIte(iteT->id) ) * pr(iteT);
+                }
             }
             switch(crit){
-                case AverageReward: w(iteS) = wTmp + w(iteA,idxW)-w(iteA,idxDur)*g; break;
-                case Reward: w(iteS) = wTmp + w(iteA,idxW); break;
-                case DiscountedReward: w(iteS) = wTmp*pow(dB,w(iteA,idxDur)) + w(iteA,idxW); break;
+                case AverageReward: w(iteS) = wTmp + (useTransW ? 0 : w(iteA,idxW))-w(iteA,idxDur)*g; break;
+                case Reward: w(iteS) = wTmp + (useTransW ? 0 : w(iteA,idxW)); break;
+                case DiscountedReward: w(iteS) = useTransW ? wTmp : wTmp*pow(dB,w(iteA,idxDur)) + w(iteA,idxW); break;
                 case TransPr: w(iteS) = wTmp; break;
                 case TransPrDiscounted: w(iteS) = wTmp*pow(dB,w(iteA,idxDur)); break;
                 default: log << "Criterion not defined!" << endl; break;
@@ -1002,6 +1076,8 @@ HMDPSave::HMDPSave(string prefix, HMDP * pHMDP){
     string actionWFileN = prefix + "actionWeight.bin";
     string actionWLblFileN = prefix + "actionWeightLbl.bin";
     string transProbFileN = prefix + "transProb.bin";
+    string transWFileN = prefix + "transWeight.bin";
+    string transWLblFileN = prefix + "transWeightLbl.bin";
     string externalProcessesFileN = prefix + "externalProcesses.bin";
     this->pHMDP = pHMDP;
 
@@ -1012,6 +1088,8 @@ HMDPSave::HMDPSave(string prefix, HMDP * pHMDP){
     pActionWFile = fopen(actionWFileN.c_str(), "wb");
     pActionWLblFile = fopen(actionWLblFileN.c_str(), "wb");
     pTransProbFile = fopen(transProbFileN.c_str(), "wb");
+    pTransWFile = fopen(transWFileN.c_str(), "wb");
+    pTransWLblFile = fopen(transWLblFileN.c_str(), "wb");
     pExternalProcessesFile = fopen(externalProcessesFileN.c_str(), "wb");
 
     CreateBinaryFiles();
@@ -1056,9 +1134,11 @@ void HMDPSave::CreateBinaryFiles() {
                     WriteBinary(pActionIdxFile, (int)iteT->id);
                 }
                 WriteBinary(pTransProbFile, iteT->pr);
+                WriteBinary(pTransWFile, iteT->w);
             }
             WriteBinary(pActionIdxFile, (int)-1);
             WriteBinary(pTransProbFile, (flt)-1);
+            WriteBinary(pTransWFile, (flt)-1);
             if (iteA->label.length()>0) {
                 WriteBinary(pActionIdxLblFile, ToString<int>(aId));
                 WriteBinary(pActionIdxLblFile, iteA->label);
@@ -1066,8 +1146,9 @@ void HMDPSave::CreateBinaryFiles() {
             WriteBinary(pActionWFile, iteA->GetW());
         }
     }
-    wLblLth=pHMDP->weightNames.size();
-    for (idx i=0;i<pHMDP->weightNames.size();i++) WriteBinary(pActionWLblFile, pHMDP->weightNames[i]);
+    wLblLth=pHMDP->weightActionNames.size();
+    for (idx i=0;i<pHMDP->weightActionNames.size();i++) WriteBinary(pActionWLblFile, pHMDP->weightActionNames[i]);
+    for (idx i=0;i<pHMDP->weightTransNames.size();i++) WriteBinary(pTransWLblFile, pHMDP->weightTransNames[i]);
     map<string,string>::iterator it;
     for (it=pHMDP->external.begin(); it!=pHMDP->external.end(); ++it) {
         WriteBinary(pExternalProcessesFile,it->first);
@@ -1093,6 +1174,8 @@ HMDPSave::~HMDPSave() {
   fclose(pActionWFile);
   fclose(pActionWLblFile);
   fclose(pTransProbFile);
+  fclose(pTransWFile);
+  fclose(pTransWLblFile);
   fclose(pExternalProcessesFile);
 }
 

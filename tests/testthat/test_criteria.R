@@ -21,6 +21,37 @@ test_that("Total reward",{
    rm(mdp)
 })
 
+test_that("Transition-level total reward",{
+   w <- binaryMDPWriter(prefix = "trans_reward_", getLog = FALSE)
+   w$setWeights(character())
+   w$setTransWeights("Transition reward")
+   w$process()
+      w$stage()
+         w$state()
+            w$action(weights = numeric(0),
+                     prob = c(1, 0, 0.25, 1, 1, 0.75),
+                     transWeights = c(10, 20))
+            w$endAction()
+         w$endState()
+      w$endStage()
+      w$stage()
+         w$state()
+         w$endState()
+         w$state()
+         w$endState()
+      w$endStage()
+   w$endProcess()
+   w$closeWriter()
+
+   mdp <- loadMDP("trans_reward_", getLog = FALSE)
+   expect_equal(mdp$weightActionNames, character())
+   expect_equal(mdp$weightTransNames, "Transition reward")
+   runValueIte(mdp, "Transition reward", termValues = c(100, 200), getLog = FALSE)
+   policy <- getPolicy(mdp)
+   expect_equal(policy$weight[policy$stateStr == "0,0"], 192.5)
+   rm(mdp)
+})
+
 
 test_that("Long run average reward",{
    source("files/two_level_hmdp.R")

@@ -45,13 +45,14 @@ The returned writer exposes these functions:
 actions. \code{labels} is a vector of label names. \code{duration} identifies which
 label corresponds to duration or time. For example, if the first entry in
 \code{labels} is time, then \code{duration = 1}. Call this before building the model.
+\item \code{setTransWeights(labels)}: sets the labels of transition-level weights.
 \item \code{process()}: starts a (sub)process.
 \item \code{endProcess()}: ends a (sub)process.
 \item \code{stage(label = NULL)}: starts a stage.
 \item \code{endStage()}: ends a stage.
 \item \code{state(label = NULL)}: starts a state and returns the state index \code{sIdx}.
 \item \code{endState()}: ends a state.
-\item \code{action(label = NULL, weights, prob, statesNext = NULL)}: starts an
+\item \code{action(label = NULL, weights, prob, statesNext = NULL, transWeights = NULL)}: starts an
 action. \code{weights} must be a vector of action weights, and \code{prob} must
 contain triples \verb{(scope, idx, pr)}. \code{scope} can take three values:
 \itemize{

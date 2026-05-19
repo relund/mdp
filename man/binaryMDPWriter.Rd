@@ -9,7 +9,8 @@ files.}
 binaryMDPWriter(
   prefix = "",
   binNames = c("stateIdx.bin", "stateIdxLbl.bin", "actionIdx.bin", "actionIdxLbl.bin",
-    "actionWeight.bin", "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin"),
+    "actionWeight.bin", "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin",
+    "transWeight.bin", "transWeightLbl.bin"),
   getLog = TRUE
 )
 }
@@ -47,9 +48,11 @@ binary format.
 \item \code{state(label = NULL)}: starts a state and returns, invisibly, the state id.
 That id can later be referenced with scope 3.
 \item \code{endState()}: ends a state.
-\item \code{action(scope = NULL, id = NULL, pr = NULL, prob = NULL, weights, label = NULL, end = FALSE, ...)}: starts an action. \code{weights} must be a
-vector of action weights. Transition probabilities can be entered in two
-ways:
+\item \code{action(scope = NULL, id = NULL, pr = NULL, prob = NULL, weights, transWeights = NULL, label = NULL, end = FALSE, ...)}: starts an action.
+\code{weights} must be a vector of action weights. \code{transWeights} must contain
+transition weights ordered by transition, with all transition weight labels
+for the first transition followed by all labels for the second transition,
+and so on. Transition probabilities can be entered in two ways:
 \enumerate{
 \item \code{prob} contains triples \verb{(scope, id, pr)}.
 \item \code{id} and \code{pr} are vectors of equal length. If \code{scope} is omitted, all
@@ -60,13 +63,13 @@ See the description of \code{actionIdx.bin} below. If \code{end = TRUE}, calling
 \code{endAction()} is not necessary. \code{...} is currently ignored.
 \item \code{endAction()}: ends an action. Do not use this if \code{end = TRUE} was used
 when the action was specified.
-\item \code{includeProcess(prefix, label = NULL, weights, prob, termStates)}: includes
-an external process. External processes are loaded into memory only when
-needed, which helps with large models. \code{prefix} is the external process
-prefix. \code{weights} must be a vector of action weights, and \code{prob} must
-contain triples \verb{(scope, idx, pr)}; see the description of \code{actionIdx.bin}
-below. \code{termStates} must specify the number of states at the last stage in
-the external process. Inside an \verb{includeProcess ... endIncludeProcess}
+\item \code{includeProcess(prefix, label = NULL, weights, prob, termStates, transWeights = NULL)}: includes an external process. External processes are
+loaded into memory only when needed, which helps with large models. \code{prefix}
+is the external process prefix. \code{weights} must be a vector of action
+weights, and \code{prob} must contain triples \verb{(scope, idx, pr)}; see the
+description of \code{actionIdx.bin} below. \code{termStates} must specify the number
+of states at the last stage in the external process. Inside an
+\verb{includeProcess ... endIncludeProcess}
 block, you must specify the father jump actions of the last stage in the
 external process. The external process is represented by its first and last
 stage together with its jump actions. The function returns, invisibly, the
@@ -77,7 +80,7 @@ referenced with scope 3.
 finished.
 }
 
-Eight binary files are created:
+Ten binary files are created:
 \itemize{
 \item \code{stateIdx.bin}: integers defining all states in the format
 \code{"n0 s0 -1 n0 s0 a0 n1 s1 -1 n0 s0 a0 n1 s1 a1 n2 s2 -1 n0 s0 ..."}.
@@ -116,6 +119,11 @@ processes in the format \verb{stageStr prefix stageStr prefix ...}. Here
 \code{stageStr} corresponds to the stage index, for example \verb{n0 s0 a0 n1}, of
 the stage corresponding to the first stage in the external process, and
 \code{prefix} is the external process prefix. No delimiter is used.
+\item \code{transWeight.bin}: doubles containing transition weights in the format
+\code{"t11 t12 t21 t22 -1 ..."}, assuming two transition weights for each
+transition and two transitions in the first action.
+\item \code{transWeightLbl.bin}: character data containing the transition weight
+labels.
 }
 }
 \note{

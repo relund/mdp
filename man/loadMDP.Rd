@@ -8,7 +8,8 @@ using the external C++ library.}
 loadMDP(
   prefix = "",
   binNames = c("stateIdx.bin", "stateIdxLbl.bin", "actionIdx.bin", "actionIdxLbl.bin",
-    "actionWeight.bin", "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin"),
+    "actionWeight.bin", "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin",
+    "transWeight.bin", "transWeightLbl.bin"),
   eps = 1e-05,
   check = TRUE,
   verbose = FALSE,
