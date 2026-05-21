@@ -1242,19 +1242,19 @@ class HMDP
 
 // Algorithms -----------------------------------------------------------------
 
-    /** Calculates the optimal policy of a single stage of the founder (a hypertree).
-     * \pre Moreover, weights in states with no actions must have been set.
-     * \post The policy is defined in pred and weights w[iSW] are calculated in each node.
-     * \param op Bellman operator.
-     * \param idxW The action weight index we want to optimize.
-     * \param sense Optimization direction used for policy improvement.
-     * \param g The average weight (only used when \p op is \code BellmanOp::Average).
-     * \param idxDur The action duration index.
-     * \param discountF The discount factor for one time unit.
+    /**
+     * @brief Calculates the optimal policy of a single stage of the founder (a hypertree).
      *
-     * \note The last three parameters are only used when \p op is \code BellmanOp::Discounted.
-     * \return True if a new policy is found. Remember to reset the predecessors if no old policy before
-     * running this method!
+     * The policy is defined in pred and weights w are calculated in each node.
+     * Weights in states with no actions must have been set.
+     *
+     * @param op Bellman operator.
+     * @param sense Optimization direction used for policy improvement.
+     * @param idxW The action weight index we want to optimize.
+     * @param g The average weight (only used when op is BellmanOp::Average).
+     * @param idxDur The action duration index.
+     * @param discountF The discount factor for one time unit.
+     * @return True if a new policy is found.
      */
     bool CalcOptPolicy(BellmanOp op, OptSense sense, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
@@ -1279,16 +1279,17 @@ class HMDP
     bool CalcOptPolicy(BellmanOp op, OptSense sense, WeightLevel level, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
 
-    /** Calculates weights based on the current policy of a single stage of the founder.
-     * \pre Moreover, weights in states with no actions must have been set.
-     * \post The policy is defined in pred and weights w[iSW] are calculated in each node.
-     * \param op Bellman operator.
-     * \param idxW The action weight index we want to optimize.
-     * \param g The average weight (only used when \p op is \code BellmanOp::Average).
-     * \param idxDur The action duration index.
-     * \param discountF The discount factor for one time unit.
+    /**
+     * @brief Calculates state weights based on the current policy of a single stage of the founder.
      *
-     * \note The last two parameters are only used when \p op is \code BellmanOp::Discounted.
+     * The policy is defined in pred and weights w are calculated in each node.
+     * Weights in states with no actions must have been set.
+     *
+     * @param op Bellman operator.
+     * @param idxW The action weight index we want to optimize.
+     * @param g The average weight (only used when op is BellmanOp::Average).
+     * @param idxDur The action duration index.
+     * @param discountF The discount factor for one time unit.
      */
     void CalcPolicy(BellmanOp op, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
@@ -1312,29 +1313,34 @@ class HMDP
 
 
 
-    /** Calculate retention payoff (RPO) for a state. Normally run
-     * after an optimal policy has been found.
-     * \param iS The id of the state we consider in \code states.
-     * \param idxW The index of weights to calculate.
-     * \param idxA The action index we calculate the RPO with respect to (same size as iS).
-     * \param g The average weight (only used when \p op is \code BellmanOp::Average).
-     * \param idxDur The action duration index.
-     * \param discountF The discount factor for one time unit.
-     *
-     * \return A vector of the same size as the states containing the RPO values.
+    /**
+     * @brief Calculate retention payoff (RPO) for a state. 
+     * 
+     * Normally run after an optimal policy has been found.
+     * 
+     * @param op Bellman operator.
+     * @param sense Optimization direction.
+     * @param iS The id of the state we consider in states.
+     * @param idxW The index of weights to calculate.
+     * @param idxA The action index we calculate the RPO with respect to (same size as iS).
+     * @param g The average weight (only used when op is BellmanOp::Average).
+     * @param idxDur The action duration index.
+     * @param discountF The discount factor for one time unit.
+     * @return A vector of the same size as the states containing the RPO values.
      */
     vector<flt> CalcRPO(BellmanOp op, OptSense sense, vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
 
-    /** Policy iteration algorithm (infinite time-horizon).
-     * \param op Bellman operator.
-     * \param maxIte The max number of iterations. The model may loop if not unichain.
-     * \param idxW Index of the weight used as nominator.
-     * \param idxD The denominator we want to maximize the weight over.
-     * \param discountF The discount factor for one time unit.
-     *
-     * \return g The gain.
-     * \post Use \code GetLog to see the optimization log.
+    /**
+     * @brief Policy iteration algorithm (infinite time-horizon).
+     * 
+     * @param op Bellman operator.
+     * @param sense Optimization direction.
+     * @param maxIte The max number of iterations. The model may loop if not unichain.
+     * @param idxW Index of the weight used as nominator.
+     * @param idxD The denominator we want to optimize the weight over.
+     * @param discountF The discount factor for one time unit.
+     * @return The gain g.
      */
     flt PolicyIte(BellmanOp op, OptSense sense, uSInt maxIte, const idx idxW, const idx idxD, const flt discountF = 1);
 
