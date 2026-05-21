@@ -244,7 +244,7 @@ Structure:
       of the stage.
     - A HMDPstate contains a vector of HMDPActions
     - A HMDPAction contains a vector of HMDPtrans which are sorted according to state id
-    - A HMDPTrans contain the id of the stage, transition rewards (if any) and the transition pr
+    - A HMDPTrans contain the id of the stage, transition weights (if any) and the transition pr
 
 
 NOTE when a HMDP is built from binary files the id's to identify states in the
@@ -263,7 +263,40 @@ class HMDP
     friend class HMDPReader;
     friend class HMDPSave;
 
-    enum Crit {DiscountedReward, AverageReward, Reward, TransPr, TransPrDiscounted};    ///< Criterion used.
+    /** Bellman operator used by the specialized dynamic programming routines.
+     *
+     * The operator is dispatched once before entering the state/action/transition
+     * loops. This avoids virtual calls, function objects, and per-transition
+     * switches in the hot path.
+     */
+    enum class BellmanOp {
+        ExpectedReward,             ///< Total expected weight.
+        DiscountedExpectedReward,   ///< Discounted expected weight.
+        AverageExpectedReward,      ///< Long-run average expected weight.
+        TransPr,            ///< Transition probability Bellman operator.
+        DiscountedTransPr   ///< Discounted transition probability Bellman operator.
+    };
+
+    /** Optimization direction.
+     *
+     * BellmanOp describes the value recursion; OptSense controls whether policy
+     * improvement chooses the largest or smallest Bellman value.
+     */
+    enum class OptSense {
+        Maximize, ///< Choose the action with largest Bellman value.
+        Minimize  ///< Choose the action with smallest Bellman value.
+    };
+
+    /** Storage level of the optimized weight.
+     *
+     * Action weights are stored on \code HMDPAction and represent \f$r(s,a)\f$.
+     * Transition weights are stored on \code HMDPTrans and represent
+     * \f$r(s,a,s')\f$.
+     */
+    enum class WeightLevel {
+        Action,     ///< Action-level weight \f$r(s,a)\f$.
+        Transition  ///< Transition-level weight \f$r(s,a,s')\f$.
+    };
 
 // Iterators --------------------------------------------------------------
     typedef HMDP* HMDPPtr;
@@ -395,7 +428,7 @@ class HMDP
 
 
     /** Update external process states corresponding to the first stage in the external process.
-     * \param crit Criterion used (enum type).
+     * \param op Bellman operator.
      * \param iteS State iterator to state in external stage.
      * \param curPrefix The prefix of the current external process in memory.
      * \param pExt Pointer to the current external process.
@@ -406,7 +439,7 @@ class HMDP
      *
      * \return True if a new policy of the external process is found.
      */
-    bool ExternalStatesUpdate(Crit crit, state_iterator iteS, string & curPrefix, HMDPPtr & pExt,
+    bool ExternalStatesUpdate(BellmanOp op, OptSense sense, state_iterator iteS, string & curPrefix, HMDPPtr & pExt,
         const idx & idxW, const idx & idxD, const flt & g, const flt & discountF);
 
 
@@ -872,18 +905,18 @@ class HMDP
 
 
     /** Calculate the weights of the founder states given a specific policy.
-     * \param crit Criterion used.
+     * \param op Bellman operator.
      * \param w Column matrix storing the calculated weights.
      * \param idxW W  The index we consider.
      * \param pairZero Iterator pair pointing to stage zero at founder level.
      * \param pairOne Iterator pair pointing to stage one at founder level.
      * \note Modify the weights stored in the states of the HMDP.
      */
-    void FounderW(Crit crit, MatSimple<double> &w, const idx &idxW, flt g = 0, idx idxD = 0, flt discountF = 1)
+    void FounderW(BellmanOp op, MatSimple<double> &w, const idx &idxW, flt g = 0, idx idxD = 0, flt discountF = 1)
     {
         //cout << "FounderW: idxW=" << idxW << " idxD=" << idxD << endl;
         SetStateWStage("1",0);
-        CalcPolicy(crit, idxW, g , idxD, discountF);
+        CalcPolicy(op, idxW, g , idxD, discountF);
         SetMatrixVal(w,"0");
     }
 
@@ -891,14 +924,14 @@ class HMDP
     /** Calculate the transition probabilities of the founder states given a specific policy.
      * \note Modify the state weights.
      */
-    void FounderPr(Crit crit, MatSimple<double> &P, idx idxD = 0, flt discountF = 1) {
+    void FounderPr(BellmanOp op, MatSimple<double> &P, idx idxD = 0, flt discountF = 1) {
         idx r,c;
         state_iterator iteS, iteZero;
         SetStateWStage("1", 0);
         for (iteS = state_begin("1"), c=0; iteS!=state_end("1"); ++iteS, ++c) {
             w(iteS) = 1;
             if (c>0) w(iteS-1) = 0; // restore previous
-            CalcPolicy(crit,0,0,idxD,discountF);
+            CalcPolicy(op,0,0,idxD,discountF);
             for (iteZero=state_begin("0"), r=0; iteZero!=state_end("0"); ++iteZero, ++r) { //cout << "WiteZ=" << w(iteZero) << " r=" << r << " c=" << c << endl;
                 P(r,c) = w(iteZero);
             }
@@ -1098,7 +1131,7 @@ class HMDP
     string GetWName(idx iW) {
         if (IsActionWIdx(iW)) return weightActionNames[iW];
         if (IsTransWIdx(iW)) return weightTransNames[TransWIdx(iW)];
-        throw runtime_error("Reward index out of range.");
+        throw runtime_error("Global weight index out of range.");
     }
 
     vector<string> GetActionWNames() {return weightActionNames;}
@@ -1212,113 +1245,89 @@ class HMDP
     /** Calculates the optimal policy of a single stage of the founder (a hypertree).
      * \pre Moreover, weights in states with no actions must have been set.
      * \post The policy is defined in pred and weights w[iSW] are calculated in each node.
-     * \param crit Criterion used (enum type must be AverageReward, Reward, DiscountedReward, TransPr).
+     * \param op Bellman operator.
      * \param idxW The action weight index we want to optimize.
-     * \param g The average reward (only used in criterion is AverageReward).
+     * \param sense Optimization direction used for policy improvement.
+     * \param g The average weight (only used when \p op is \code BellmanOp::AverageExpectedReward).
      * \param idxDur The action duration index.
      * \param discountF The discount factor for one time unit.
      *
-     * \note The last three parameters is only used if criterion is DiscountedReward.
-     * If we are minimizing the weights, i.e. if the goal is to minimize
-     * the cost then the rewards at idxW must be multiplied with -1.
+     * \note The last three parameters are only used when \p op is \code BellmanOp::DiscountedExpectedReward.
      * \return True if a new policy is found. Remember to reset the predecessors if no old policy before
      * running this method!
      */
-    bool CalcOptPolicy(Crit crit, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
+    bool CalcOptPolicy(BellmanOp op, OptSense sense, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
+
+    /** Calculates the optimal policy using a specialized Bellman operator.
+     *
+     * This entry point dispatches once on \p op and \p level, then calls a
+     * specialized implementation with tight transition loops. No operator or
+     * weight-level checks are performed inside the transition loops.
+     *
+     * \param op Bellman operator to apply.
+     * \param level Whether \p idxW refers to action-level or transition-level weights.
+     * \param idxW Local weight index at the selected \p level.
+     * \param g Average weight, used by average expected-weight operators.
+     * \param idxDur Action-level duration index used by discounted and average operators.
+     * \param discountF Discount factor for one time unit.
+     *
+     * \return True if a new policy is found.
+     *
+     * \throw runtime_error If the operator/level combination is not implemented
+     * or requested weight values are missing.
+     */
+    bool CalcOptPolicy(BellmanOp op, OptSense sense, WeightLevel level, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
 
     /** Calculates weights based on the current policy of a single stage of the founder.
      * \pre Moreover, weights in states with no actions must have been set.
      * \post The policy is defined in pred and weights w[iSW] are calculated in each node.
-     * \param crit Criterion used (enum type must be AverageReward, Reward, DiscountedReward, TransPr).
+     * \param op Bellman operator.
      * \param idxW The action weight index we want to optimize.
-     * \param g The average reward (only used in criterion is AverageReward).
+     * \param g The average weight (only used when \p op is \code BellmanOp::AverageExpectedReward).
      * \param idxDur The action duration index.
      * \param discountF The discount factor for one time unit.
      *
-     * \note The last two parameters is only used if criterion is DiscountedReward.
-     * If we are minimizing the weights, i.e. if the goal is to minimize
-     * the cost then the rewards at idxW must be multiplied with -1.
+     * \note The last two parameters are only used when \p op is \code BellmanOp::DiscountedExpectedReward.
      */
-    void CalcPolicy(Crit crit, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
+    void CalcPolicy(BellmanOp op, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
+
+    /** Calculates state weights under the current policy using a specialized Bellman operator.
+     *
+     * The method mirrors \code CalcOptPolicy(BellmanOp, WeightLevel, ...), but
+     * evaluates the already stored policy in \code pred rather than optimizing
+     * over all actions.
+     *
+     * \param op Bellman operator to apply.
+     * \param level Whether \p idxW refers to action-level or transition-level weights.
+     * \param idxW Local weight index at the selected \p level.
+     * \param g Average weight, used by average expected-weight operators.
+     * \param idxDur Action-level duration index used by discounted and average operators.
+     * \param discountF Discount factor for one time unit.
+     *
+     * \throw runtime_error If the operator/level combination is not implemented
+     * or requested weight values are missing.
+     */
+    void CalcPolicy(BellmanOp op, WeightLevel level, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
 
 
-    /** Calculate rentention payoff (RPO) for a state. Normally run
+    /** Calculate retention payoff (RPO) for a state. Normally run
      * after an optimal policy has been found.
      * \param iS The id of the state we consider in \code states.
      * \param idxW The index of weights to calculate.
      * \param idxA The action index we calculate the RPO with respect to (same size as iS).
-     * \param g The average reward (only used in criterion is AverageReward).
+     * \param g The average weight (only used when \p op is \code BellmanOp::AverageExpectedReward).
      * \param idxDur The action duration index.
      * \param discountF The discount factor for one time unit.
      *
      * \return A vector of the same size as the states containing the RPO values.
      */
-    vector<flt> CalcRPO(Crit crit, vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g = 0, idx idxDur = 0, flt discountF = 1) {
-        flt wA;      // weight the idxA
-        flt wMax;    // max weight of the prececessor not equal idxA
-        flt wTmp;    // weight to compare
-        flt dB = discountF;      // the discount base   //  cout<< "r:" << rate << " b:" << rateBase << endl;
-        bool useTransW = IsTransWIdx(idxW);
-        idx idxTransW = useTransW ? TransWIdx(idxW) : 0;
-        vector<flt> result;
-
-        for(idx i=0; i<iS.size(); ++i) {
-            wMax = wA = -INF;
-            state_iterator iteS = GetIte(iS[i]);
-            action_iterator iteAA = GetIte(iteS, idxA[i]);
-            if ( (GetActionSize(iteS)==0) || (GetActionSize(iteS)==1) ) {
-                result.push_back(-INF);
-                continue;
-            }
-            for (action_iterator iteA = action_begin(iteS); iteA!=action_end(iteS); ++iteA) { //cout << "    iA: " << GetIdx(iteS,iteA) << " w=" << vec2String(iteA->w) << " ";
-                wTmp=0;
-                bool isMinInf = false;
-                if (useTransW) {
-                    flt continuationFactor = crit==DiscountedReward ? pow(dB,w(iteA,idxDur)) : 1;
-                    for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
-                        if ( w(GetIte(iteT->id) ) <= -INF) {
-                            wTmp= -INF;
-                            isMinInf = true;
-                            break;
-                        }
-                        wTmp += (continuationFactor*w( GetIte(iteT->id) ) + transW(iteT,idxTransW)) * pr(iteT);
-                    }
-                } else {
-                    for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) { //cout << "      t: w(" << iteT->id << ")=" << w(GetIte(iteT->id)) << endl;
-                        if ( w(GetIte(iteT->id) ) <= -INF) {
-                            wTmp= -INF;
-                            isMinInf = true;
-                            break;
-                        }
-                        wTmp += w( GetIte(iteT->id) ) * pr(iteT);
-                    }
-                }
-                if (isMinInf) continue;
-                switch(crit){
-                    case AverageReward: wTmp += (useTransW ? 0 : w(iteA,idxW))-w(iteA,idxDur)*g; break;
-                    case Reward: wTmp += (useTransW ? 0 : w(iteA,idxW)); break;
-                    case DiscountedReward: wTmp = useTransW ? wTmp : wTmp*pow(dB,w(iteA,idxDur)) + w(iteA,idxW); break;
-                    //case TransPr: wTmp = wTmp; break;  // generates warning: explicitly assigning value of variable of type 'flt' (aka 'double') to itself
-                    case TransPr: break;
-                    case TransPrDiscounted: wTmp = wTmp*pow(dB,w(iteA,idxDur)); break;
-                    default: log << "Criterion not defined!" << endl; break;
-                }
-                if (iteA==iteAA) {
-                    wA = wTmp;
-                    continue;
-                }
-                wMax = max(wMax,wTmp);
-            }
-            result.push_back(wA - wMax);
-        }
-        return result;
-    }
+    vector<flt> CalcRPO(BellmanOp op, OptSense sense, vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
 
     /** Policy iteration algorithm (infinite time-horizon).
-     * \param crit Criterion used (enum type).
+     * \param op Bellman operator.
      * \param maxIte The max number of iterations. The model may loop if not unichain.
      * \param idxW Index of the weight used as nominator.
      * \param idxD The denominator we want to maximize the weight over.
@@ -1327,11 +1336,11 @@ class HMDP
      * \return g The gain.
      * \post Use \code GetLog to see the optimization log.
      */
-    flt PolicyIte(Crit crit, uSInt maxIte, const idx idxW, const idx idxD, const flt discountF = 1);
+    flt PolicyIte(BellmanOp op, OptSense sense, uSInt maxIte, const idx idxW, const idx idxD, const flt discountF = 1);
 
 
     /** Policy iteration algorithm (infinite time-horizon) given a fixed policy.
-     * \param crit Criterion used (enum type).
+     * \param op Bellman operator.
      * \param maxIte The max number of iterations. The model may loop if not unichain.
      * \param idxW Index of the weight used as nominator.
      * \param idxD The denominator we want to maximize the weight over.
@@ -1340,11 +1349,11 @@ class HMDP
      * \return g The gain.
      * \post Use \code GetLog to see the optimization log.
      */
-    flt PolicyIteFixedPolicy(Crit crit, const idx idxW, const idx idxD, const flt discountF = 1);
+    flt PolicyIteFixedPolicy(BellmanOp op, const idx idxW, const idx idxD, const flt discountF = 1);
 
      /** Value iteration algorithm.
      *
-     * \param crit Criterion used (enum type).
+     * \param op Bellman operator.
      * \param maxIte The max number of iterations.
      * \param epsilon If max(w(t)-w(t+1))<epsilon then stop the algorithm, i.e
      *        the policy becomes epsilon optimal (see Puterman p161).
@@ -1356,7 +1365,7 @@ class HMDP
      *
      * \post Use \code GetLog to see the optimization log.
      */
-    void ValueIte(Crit crit, idx maxIte, flt epsilon, const idx idxW,
+    void ValueIte(BellmanOp op, OptSense sense, idx maxIte, flt epsilon, const idx idxW,
      const idx idxDur, vector<flt> & termValues,
      const flt g, const flt discountF);
 
@@ -1381,8 +1390,8 @@ public:
     int levels;                     ///< Number of levels in the HMDP, i.e. the levels are 0, ..., levels-1.
     uInt timeHorizon;               ///< INFINT if consider an infinite time horizon; otherwise the number of stages at the founder level.
     vector<string> weightNames;     ///< Backward compatible concatenation of action and transition weight names.
-    vector<string> weightActionNames; ///< Names of action-level weights/rewards r(s,a).
-    vector<string> weightTransNames;  ///< Names of transition-level weights/rewards r(s,a,s').
+    vector<string> weightActionNames; ///< Names of action-level weights r(s,a).
+    vector<string> weightTransNames;  ///< Names of transition-level weights r(s,a,s').
     map< string, pair<idx,idx> > stages;   ///< Ordered map of stages. The pair contains (state id to first stage in stages, total number of states at stage).
     vector<HMDPState> states;
     map<string, string> external;     ///< Store the external processes in format <stageIdx, prefix>
@@ -1393,15 +1402,134 @@ public:
 private:
     Timer timer;
 
+    /** Return true if \p iW is an action-level weight index. */
     bool IsActionWIdx(idx iW) const {return iW < weightActionNames.size();}
+
+    /** Return true if \p iW is a global transition-level weight index. */
     bool IsTransWIdx(idx iW) const {return iW >= weightActionNames.size() && iW < weightActionNames.size() + weightTransNames.size();}
+
+    /** Convert a global transition weight index to its local transition index. */
     idx TransWIdx(idx iW) const {return iW - weightActionNames.size();}
+
+    /** Human-readable Bellman operator name for diagnostics. */
+    string BellmanOpName(BellmanOp op) const;
+
+    /** Human-readable optimization sense name for diagnostics. */
+    string OptSenseName(OptSense sense) const;
+
+    /** Throw when a global weight index is invalid or unsupported for \p op. */
+    WeightLevel ValidateGlobalWeightForOp(BellmanOp op, idx iW) const;
+
+    /** Throw if \p iW is not a valid action-level weight index. */
     void CheckActionWIdx(idx iW) const {
         if (iW >= weightActionNames.size()) throw runtime_error("Action reward index out of range.");
     }
+
+    /** Throw if \p iW is not a valid transition-level weight index. */
     void CheckTransWIdx(idx iW) const {
         if (iW >= weightTransNames.size()) throw runtime_error("Transition reward index out of range.");
     }
+
+    /** Infer whether a backward-compatible global weight index is action or transition level. */
+    WeightLevel WeightLevelFromGlobalIdx(idx iW) const {
+        if (IsActionWIdx(iW)) return WeightLevel::Action;
+        if (IsTransWIdx(iW)) return WeightLevel::Transition;
+        throw runtime_error("Global weight index out of range.");
+    }
+
+    /** Validate and return the local weight index for a given weight level. */
+    idx LocalWeightIdx(WeightLevel level, idx iW) const {
+        if (level==WeightLevel::Action) {
+            CheckActionWIdx(iW);
+            return iW;
+        }
+        if (!IsTransWIdx(iW)) throw runtime_error("Transition reward index out of range.");
+        return TransWIdx(iW);
+    }
+
+    /** Validate that all actions contain action weight \p idxW. */
+    void CheckActionRewardsAvailable(idx idxW) const;
+
+    /** Validate that all transitions contain transition weight \p idxW. */
+    void CheckTransitionRewardsAvailable(idx idxW) const;
+
+    /** Calculate RPO using action rewards \f$r(s,a)\f$. */
+    vector<flt> CalcRPOActionExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA);
+    vector<flt> CalcRPOActionExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA);
+
+    /** Calculate RPO using transition rewards \f$r(s,a,s')\f$. */
+    vector<flt> CalcRPOTransitionExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA);
+    vector<flt> CalcRPOTransitionExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA);
+
+    /** Calculate RPO using action-level average rewards. */
+    vector<flt> CalcRPOActionAverageExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur);
+    vector<flt> CalcRPOActionAverageExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur);
+
+    /** Calculate RPO using action-level discounted rewards. */
+    vector<flt> CalcRPOActionDiscountedExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF);
+    vector<flt> CalcRPOActionDiscountedExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF);
+
+    /** Calculate RPO using transition probabilities. */
+    vector<flt> CalcRPOActionTransPrMax(vector<idx> & iS, vector<idx> & idxA);
+    vector<flt> CalcRPOActionTransPrMin(vector<idx> & iS, vector<idx> & idxA);
+
+    /** Calculate RPO using discounted transition probabilities. */
+    vector<flt> CalcRPOActionDiscountedTransPrMax(vector<idx> & iS, vector<idx> & idxA, idx idxDur, flt discountF);
+    vector<flt> CalcRPOActionDiscountedTransPrMin(vector<idx> & iS, vector<idx> & idxA, idx idxDur, flt discountF);
+
+    /** Optimize a finite-stage policy using action rewards \f$r(s,a)\f$. */
+    bool CalcOptPolicyActionExpectedRewardMax(idx idxW);
+
+    /** Optimize a finite-stage policy using action rewards \f$r(s,a)\f$ by minimization. */
+    bool CalcOptPolicyActionExpectedRewardMin(idx idxW);
+
+    /** Optimize a finite-stage policy using transition rewards \f$r(s,a,s')\f$. */
+    bool CalcOptPolicyTransitionExpectedRewardMax(idx idxW);
+
+    /** Optimize a finite-stage policy using transition rewards \f$r(s,a,s')\f$ by minimization. */
+    bool CalcOptPolicyTransitionExpectedRewardMin(idx idxW);
+
+    /** Optimize a finite-stage policy using action-level average rewards. */
+    bool CalcOptPolicyActionAverageExpectedRewardMax(idx idxW, flt g, idx idxDur);
+
+    /** Optimize a finite-stage policy using action-level average weights by minimization. */
+    bool CalcOptPolicyActionAverageExpectedRewardMin(idx idxW, flt g, idx idxDur);
+
+    /** Optimize a finite-stage policy using action-level discounted rewards. */
+    bool CalcOptPolicyActionDiscountedExpectedRewardMax(idx idxW, idx idxDur, flt discountF);
+
+    /** Optimize a finite-stage policy using action-level discounted weights by minimization. */
+    bool CalcOptPolicyActionDiscountedExpectedRewardMin(idx idxW, idx idxDur, flt discountF);
+
+    /** Optimize a finite-stage policy using transition probabilities. */
+    bool CalcOptPolicyActionTransPrMax();
+
+    /** Optimize a finite-stage policy using transition probabilities by minimization. */
+    bool CalcOptPolicyActionTransPrMin();
+
+    /** Optimize a finite-stage policy using discounted transition probabilities. */
+    bool CalcOptPolicyActionDiscountedTransPrMax(idx idxDur, flt discountF);
+
+    /** Optimize a finite-stage policy using discounted transition probabilities by minimization. */
+    bool CalcOptPolicyActionDiscountedTransPrMin(idx idxDur, flt discountF);
+
+    /** Evaluate the current policy using action rewards \f$r(s,a)\f$. */
+    void CalcPolicyActionReward(idx idxW);
+
+    /** Evaluate the current policy using transition rewards \f$r(s,a,s')\f$. */
+    void CalcPolicyTransitionReward(idx idxW);
+
+    /** Evaluate the current policy using action-level average rewards. */
+    void CalcPolicyActionAverageReward(idx idxW, flt g, idx idxDur);
+
+    /** Evaluate the current policy using action-level discounted rewards. */
+    void CalcPolicyActionDiscountedReward(idx idxW, idx idxDur, flt discountF);
+
+    /** Evaluate the current policy using transition probabilities. */
+    void CalcPolicyActionTransPr();
+
+    /** Evaluate the current policy using discounted transition probabilities. */
+    void CalcPolicyActionDiscountedTransPr(idx idxDur, flt discountF);
 };
 
 //-----------------------------------------------------------------------------

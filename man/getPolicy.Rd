@@ -31,7 +31,7 @@ getPolicy(
 
 \item{actionIdx}{Add action index.}
 
-\item{rewards}{Add rewards calculated for each state.}
+\item{rewards}{Add weights calculated for each state.}
 
 \item{stateStr}{Add the state string for each state.}
 
@@ -41,7 +41,7 @@ getPolicy(
 
 Note if external is specified then it must contain stage strings from \code{mdp$external}. Moreover you
 must specify further arguments passed on to \code{\link[=runValueIte]{runValueIte()}} used for recreating the optimal policy e.g.
-the g value and the label for reward and duration. See the vignette about external processes.}
+the g value and the label for weight and duration. See the vignette about external processes.}
 }
 \value{
 The policy (data frame).

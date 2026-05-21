@@ -46,10 +46,53 @@ test_that("Transition-level total reward",{
    mdp <- loadMDP("trans_reward_", getLog = FALSE)
    expect_equal(mdp$weightActionNames, character())
    expect_equal(mdp$weightTransNames, "Transition reward")
+   expect_error(
+      mdp$ptr$valueIte(0, 0, 1L, 0, 0L, 0L, c(0, 0), 0, 1),
+      "Transition-level weights are not supported for BellmanOp::DiscountedExpectedReward"
+   )
    runValueIte(mdp, "Transition reward", termValues = c(100, 200), getLog = FALSE)
    policy <- getPolicy(mdp)
    expect_equal(policy$weight[policy$stateStr == "0,0"], 192.5)
    rm(mdp)
+})
+
+test_that("Global weight lookup rejects ambiguous names", {
+   mdp <- list(weightNames = c("Net", "Net reward"))
+   expect_equal(getWIdx(mdp, "Net"), 0)
+   expect_error(getWIdx(mdp, "e"), "ambiguous")
+})
+
+test_that("Value iteration supports minimization objective", {
+   w <- binaryMDPWriter(prefix = "sense_", getLog = FALSE)
+   w$setWeights("Cost")
+   w$process()
+      w$stage()
+         w$state()
+            w$action(weights = 10, prob = c(1, 0, 1), end = TRUE)
+            w$endAction()
+            w$action(weights = 1, prob = c(1, 0, 1), end = TRUE)
+            w$endAction()
+         w$endState()
+      w$endStage()
+      w$stage()
+         w$state()
+         w$endState()
+      w$endStage()
+   w$endProcess()
+   w$closeWriter()
+
+   mdp <- loadMDP("sense_", getLog = FALSE)
+   runValueIte(mdp, "Cost", termValues = 0, objective = "max", getLog = FALSE)
+   policy <- getPolicy(mdp)
+   expect_equal(policy$aIdx[policy$stateStr == "0,0"], 0)
+   expect_equal(policy$weight[policy$stateStr == "0,0"], 10)
+   expect_equal(getRPO(mdp, "Cost", iA = 0, sId = 1, objective = "max")$rpo, 9)
+
+   runValueIte(mdp, "Cost", termValues = 0, objective = "min", getLog = FALSE)
+   policy <- getPolicy(mdp)
+   expect_equal(policy$aIdx[policy$stateStr == "0,0"], 1)
+   expect_equal(policy$weight[policy$stateStr == "0,0"], 1)
+   expect_equal(getRPO(mdp, "Cost", iA = 1, sId = 1, objective = "min")$rpo, 9)
 })
 
 

@@ -15,6 +15,7 @@ runValueIte(
   eps = 1e-05,
   termValues = NULL,
   g = NULL,
+  objective = c("max", "min"),
   getLog = TRUE,
   discountMethod = "continuous"
 )
@@ -34,11 +35,13 @@ runValueIte(
 
 \item{maxIte}{The max number of iterations value iteration is performed.}
 
-\item{eps}{Stopping criterion. If $max(w(t)-w(t+1)) < \code{eps}$ then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).}
+\item{eps}{Stopping tolerance. If $max(w(t)-w(t+1)) < \code{eps}$ then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).}
 
 \item{termValues}{The terminal values used (values of the last stage in the MDP).}
 
-\item{g}{Average reward. If specified then do a single iteration using the update equations under average reward criterion with the specified g value.}
+\item{g}{Average weight. If specified then do a single iteration using the update equations under the average expected-weight Bellman operator with the specified g value.}
+
+\item{objective}{Optimize by maximizing (\code{"max"}) or minimizing (\code{"min"}) the Bellman value.}
 
 \item{getLog}{Output the log messages.}
 

@@ -21,7 +21,7 @@ runCalcWeights(
 
 \item{wLbl}{The label of the weight we consider.}
 
-\item{criterion}{The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.}
+\item{criterion}{The Bellman operator shortcut. If \code{expected} use expected weights, if \code{discount} use discounted expected weights, if \code{average} use average expected weights.}
 
 \item{durLbl}{The label of the duration/time such that discount rates can be calculated.}
 

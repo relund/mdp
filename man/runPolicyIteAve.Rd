@@ -2,9 +2,16 @@
 % Please edit documentation in R/mdp.R
 \name{runPolicyIteAve}
 \alias{runPolicyIteAve}
-\title{Perform policy iteration (average reward criterion) on the MDP.}
+\title{Perform policy iteration using the average expected-weight Bellman operator on the MDP.}
 \usage{
-runPolicyIteAve(mdp, w, dur, maxIte = 100, getLog = TRUE)
+runPolicyIteAve(
+  mdp,
+  w,
+  dur,
+  maxIte = 100,
+  objective = c("max", "min"),
+  getLog = TRUE
+)
 }
 \arguments{
 \item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
@@ -14,6 +21,8 @@ runPolicyIteAve(mdp, w, dur, maxIte = 100, getLog = TRUE)
 \item{dur}{The label of the duration/time such that discount rates can be calculated.}
 
 \item{maxIte}{Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.}
+
+\item{objective}{Optimize by maximizing (\code{"max"}) or minimizing (\code{"min"}) the Bellman value.}
 
 \item{getLog}{Output the log messages.}
 }

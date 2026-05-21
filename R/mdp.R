@@ -97,13 +97,13 @@ loadMDP <-
 #' @keywords internal
 .checkWDurIdx<-function(iW, iDur, wLth) {
 	if (length(iW)!=1) stop("Index iW must be of length one!",call. = FALSE)
-	if (iW>wLth-1) stop("Index iW must be less than ",wLth,"!",call. = FALSE)
-	if (iW<0) stop("Index iW must be greater or equal zero!",call. = FALSE)
+	if (iW>wLth-1) stop("Global weight index iW must be less than ",wLth,"!",call. = FALSE)
+	if (iW<0) stop("Global weight index iW must be greater or equal zero!",call. = FALSE)
 	if (!is.null(iDur)) {
 		if (length(iDur)!=1) stop("Index iDur must be of length one!",call. = FALSE)
 		if (iW==iDur) stop("Indices iW and iDur must not be the same!",call. = FALSE)
-		if (iDur>wLth-1) stop("Index iDur must be less than ",wLth,"!",call. = FALSE)
-		if (iDur<0) stop("Index iDur must be greater or equal zero!",call. = FALSE)
+		if (iDur>wLth-1) stop("Global duration weight index iDur must be less than ",wLth,"!",call. = FALSE)
+		if (iDur<0) stop("Global duration weight index iDur must be greater or equal zero!",call. = FALSE)
 	}
 	invisible()
 }
@@ -118,8 +118,8 @@ loadMDP <-
 #' @name checkWIdx
 #' @keywords internal
 .checkWIdx<-function(iW, wLth) {
-	if (max(iW)>wLth-1) stop("Index iW must be less than ",wLth,"!",call. = FALSE)
-	if (min(iW)<0) stop("Index iW must be greater or equal zero!",call. = FALSE)
+	if (max(iW)>wLth-1) stop("Global weight index iW must be less than ",wLth,"!",call. = FALSE)
+	if (min(iW)<0) stop("Global weight index iW must be greater or equal zero!",call. = FALSE)
 	invisible()
 }
 
@@ -131,15 +131,23 @@ loadMDP <-
 #' @return The index (integer).
 #' @export
 getWIdx <- function(mdp, wLbl) {
-   idx <- grepl(wLbl, mdp$weightNames, fixed = TRUE)
-   if (!any(idx))
-      # we do not have a match
-      stop("The weight name does not seem to exist!", call. = FALSE)
-   return(which(idx) - 1)
+   idx <- which(mdp$weightNames == wLbl)
+   if (length(idx) == 0) idx <- which(grepl(wLbl, mdp$weightNames, fixed = TRUE))
+   if (length(idx) == 0)
+      stop("The weight name does not seem to exist in the global weight namespace.", call. = FALSE)
+   if (length(idx) > 1)
+      stop("The weight name is ambiguous in the global weight namespace.", call. = FALSE)
+   return(idx - 1)
+}
+
+.optSenseIdx <- function(objective) {
+   objective <- match.arg(objective, c("max", "min"))
+   if (objective == "max") return(0)
+   1
 }
 
 
-#' Perform policy iteration (average reward criterion) on the MDP.
+#' Perform policy iteration using the average expected-weight Bellman operator on the MDP.
 #'
 #' The policy can afterwards be received using functions `getPolicy` and `getPolicyW`.
 #'
@@ -147,23 +155,25 @@ getWIdx <- function(mdp, wLbl) {
 #' @param w The label of the weight we optimize.
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param maxIte Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.
+#' @param objective Optimize by maximizing (`"max"`) or minimizing (`"min"`) the Bellman value.
 #' @param getLog Output the log messages.
 #' 
 #' @return The optimal gain (g) calculated.
 #' @seealso [getPolicy()].
 #' @export
-runPolicyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
+runPolicyIteAve<-function(mdp, w, dur, maxIte=100, objective = c("max", "min"), getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
 	iDur<-getWIdx(mdp,dur)
+	sense <- .optSenseIdx(objective)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
-	g<-mdp$ptr$policyIte(1, as.integer(maxIte), as.integer(iW), as.integer(iDur), discountFactor=1)
+	g<-mdp$ptr$policyIte(1, sense, as.integer(maxIte), as.integer(iW), as.integer(iDur), discountFactor=1)
 	#message(mdp$ptr$getLog())
 	if (getLog) cat(mdp$ptr$getLog())
 	return(g)
 }
 
 
-#' Perform policy iteration (discounted reward criterion) on the MDP.
+#' Perform policy iteration using the discounted expected-weight Bellman operator on the MDP.
 #'
 #' The policy can afterwards be received using functions `getPolicy` and `getPolicyW`.
 #'
@@ -175,21 +185,23 @@ runPolicyIteAve<-function(mdp, w, dur, maxIte=100, getLog = TRUE) {
 #' @param discountFactor The discount rate for one time unit. If specified `rate` and `rateBase` are not used to calculate the discount rate.
 #' @param maxIte Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.
 #' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
+#' @param objective Optimize by maximizing (`"max"`) or minimizing (`"min"`) the Bellman value.
 #' @param getLog Output the log messages.
 #' 
 #' @return Nothing.
 #' @seealso [getPolicy()].
 #' @export
 runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
-                            discountMethod="continuous", getLog = TRUE) {
+                            discountMethod="continuous", objective = c("max", "min"), getLog = TRUE) {
 	iW<-getWIdx(mdp,w)
 	iDur<-getWIdx(mdp,dur)
+	sense <- .optSenseIdx(objective)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	if (is.null(discountFactor)) {
 	   if (discountMethod=="continuous") discountFactor<-exp(-rate/rateBase)
 	   if (discountMethod=="discrete") discountFactor<-1/(1 + rate/rateBase)
 	}
-	g<-mdp$ptr$policyIte(0, as.integer(maxIte), as.integer(iW), as.integer(iDur), discountFactor)
+	g<-mdp$ptr$policyIte(0, sense, as.integer(maxIte), as.integer(iW), as.integer(iDur), discountFactor)
 	if (getLog) cat(mdp$ptr$getLog())
 	invisible()
 }
@@ -207,9 +219,10 @@ runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFact
 #' @param rateBase The time-horizon the rate is valid over.
 #' @param discountFactor The discount rate for one time unit. If specified `rate` and `rateBase` are not used to calculate the discount rate.
 #' @param maxIte The max number of iterations value iteration is performed.
-#' @param eps Stopping criterion. If $max(w(t)-w(t+1)) < `eps`$ then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).
+#' @param eps Stopping tolerance. If $max(w(t)-w(t+1)) < `eps`$ then stop the algorithm, i.e the policy becomes epsilon optimal (see Puterman p161).
 #' @param termValues The terminal values used (values of the last stage in the MDP).
-#' @param g Average reward. If specified then do a single iteration using the update equations under average reward criterion with the specified g value.
+#' @param g Average weight. If specified then do a single iteration using the update equations under the average expected-weight Bellman operator with the specified g value.
+#' @param objective Optimize by maximizing (`"max"`) or minimizing (`"min"`) the Bellman value.
 #' @param getLog Output the log messages.
 #' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
 #' 
@@ -218,9 +231,10 @@ runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFact
 #' @example inst/examples/machine-ex.R
 #' @export
 runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
-                   eps = 1e-05, termValues = NULL, g=NULL, getLog = TRUE, discountMethod="continuous") {
+                   eps = 1e-05, termValues = NULL, g=NULL, objective = c("max", "min"), getLog = TRUE, discountMethod="continuous") {
 	iW<-getWIdx(mdp,w)
 	iDur<-NULL
+	sense <- .optSenseIdx(objective)
 	if (!is.null(dur)) iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	if (is.null(discountFactor)) {
@@ -231,20 +245,20 @@ runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor
 	if (is.null(g)) {
    	if (mdp$timeHorizon>=Inf) {
    		if (is.null(iDur)) stop("A duration index must be specified under infinite time-horizon!")
-   	   mdp$ptr$valueIte(0, as.integer(maxIte),
+	      mdp$ptr$valueIte(0, sense, as.integer(maxIte),
    			as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(termValues),
    			as.numeric(0),	as.numeric(discountFactor) )
    	} else {
-   		if (!is.null(iDur)) mdp$ptr$valueIte(0, as.integer(1),
+	      if (!is.null(iDur)) mdp$ptr$valueIte(0, sense, as.integer(1),
                 as.numeric(0), as.integer(iW), as.integer(iDur), as.numeric(termValues),
                 as.numeric(0), as.numeric(discountFactor) )
-   		if (is.null(iDur)) mdp$ptr$valueIte(2, as.integer(1),
+	      if (is.null(iDur)) mdp$ptr$valueIte(2, sense, as.integer(1),
                as.numeric(0), as.integer(iW), as.integer(0), as.numeric(termValues),
                as.numeric(0), as.numeric(1) )
    	}
-	} else {  # value ite under ave reward criterion
-	   if (is.null(iDur)) stop("A duration index must be specified under average reward criterion!")
-	   mdp$ptr$valueIte(1, as.integer(1),
+	} else {  # value ite under average expected-weight Bellman operator
+	   if (is.null(iDur)) stop("A duration index must be specified under the average expected-weight Bellman operator!")
+	   mdp$ptr$valueIte(1, sense, as.integer(1),
            as.numeric(eps), as.integer(iW), as.integer(iDur), as.numeric(termValues),
            as.numeric(g), as.numeric(1) )
 	}
@@ -261,14 +275,14 @@ runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor
 #' @param stateLabels Add state labels.
 #' @param actionLabels Add action labels of policy.
 #' @param actionIdx Add action index.
-#' @param rewards Add rewards calculated for each state.
+#' @param rewards Add weights calculated for each state.
 #' @param stateStr Add the state string for each state.
 #' @param external A vector of stage strings corresponding to external processes we want the optimal policy of.
 #' @param ... Parameters passed on when find the optimal policy of the external processes.
 #' 
 #' Note if external is specified then it must contain stage strings from `mdp$external`. Moreover you 
 #' must specify further arguments passed on to [runValueIte()] used for recreating the optimal policy e.g. 
-#' the g value and the label for reward and duration. See the vignette about external processes. 
+#' the g value and the label for weight and duration. See the vignette about external processes.
 #' 
 #' @return The policy (data frame).
 #' @example inst/examples/machine-ex.R
@@ -468,7 +482,7 @@ setPolicy<-function(mdp, policy) {
 #'
 #' @param mdp The MDP loaded using [loadMDP()].
 #' @param wLbl The label of the weight we consider.
-#' @param criterion The criterion used. If `expected` used expected reward, if `discount` used discounted rewards, if `average` use average rewards.
+#' @param criterion The Bellman operator shortcut. If `expected` use expected weights, if `discount` use discounted expected weights, if `average` use average expected weights.
 #' @param durLbl The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
@@ -491,10 +505,10 @@ runCalcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 
 	if (mdp$timeHorizon<Inf) {
 		if (is.null(termValues)) stop("Terminal values must be specified under finite time-horizon!")
 		if (criterion=="expected") mdp$ptr$calcPolicy(2,iW,0,1,discountFactor)
-		if (criterion=="discount") mdp$ptr$calcPolicy(1,iW,0,iDur,discountFactor)
+		if (criterion=="discount") mdp$ptr$calcPolicy(0,iW,0,iDur,discountFactor)
 	} else {
-		if (criterion=="discount") mdp$ptr$policyIteFixedPolicy(1,iW,iDur,discountFactor)
-		if (criterion=="average") return( mdp$ptr$policyIteFixedPolicy(0,iW,iDur,discountFactor) )
+		if (criterion=="discount") mdp$ptr$policyIteFixedPolicy(0,iW,iDur,discountFactor)
+		if (criterion=="average") return( mdp$ptr$policyIteFixedPolicy(1,iW,iDur,discountFactor) )
 		#if (criterion=="expected") .Call("MDP_CalcWeightsFinite", mdp$ptr, as.integer(iW), as.numeric(termValues), PACKAGE="MDP")
 	}
 	invisible(NULL)
@@ -508,15 +522,16 @@ runCalcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 
 #' weight of the node when using another predecessor different from `iA`.
 #'
 #' @param mdp The MDP loaded using [loadMDP()].
-#' @param w The label of the weight/reward we calculate RPO for.
+#' @param w The label of the weight we calculate RPO for.
 #' @param iA  The action index we calculate the RPO with respect to (same size as `sId`).
 #' @param sId Vector of id's of the states we want to retrieve.
-#' @param criterion The criterion used. If `expected` used expected reward, if `discount` used discounted rewards, if `average` use average rewards.
+#' @param criterion The Bellman operator shortcut. If `expected` use expected weights, if `discount` use discounted expected weights, if `average` use average expected weights.
 #' @param dur The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
 #' @param discountFactor The discount rate for one time unit. If specified `rate` and `rateBase` are not used to calculate the discount rate.
 #' @param g The optimal gain (g) calculated (used if `criterion = "average"`).
+#' @param objective Optimize by maximizing (`"max"`) or minimizing (`"min"`) the Bellman value.
 #' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
 #' @param stateStr Output the state string. 
 #' 
@@ -526,9 +541,12 @@ runCalcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 
 getRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderStatesLast+1,1):
                     ifelse(mdp$timeHorizon>=Inf, mdp$states + mdp$founderStatesLast,mdp$states)-1, 
                   criterion="expected", dur = "", rate = 0, rateBase = 1, discountFactor = NULL, 
-                  g = 0, discountMethod="continuous", stateStr = TRUE) {
+                  g = 0, objective = c("max", "min"), discountMethod="continuous", stateStr = TRUE) {
    iW<-getWIdx(mdp,w)
-   iDur<-getWIdx(mdp,dur)
+   sense <- .optSenseIdx(objective)
+   if (criterion != "expected" && !nzchar(dur))
+      stop("A duration weight must be specified for this Bellman operator.", call. = FALSE)
+   iDur<-if (nzchar(dur)) getWIdx(mdp,dur) else 0
    .checkWIdx(iW,length(mdp$weightNames))
    if (is.null(discountFactor)) {
       if (discountMethod=="continuous") discountFactor<-exp(-rate/rateBase)
@@ -540,9 +558,9 @@ getRPO<-function(mdp, w, iA, sId = ifelse(mdp$timeHorizon>=Inf, mdp$founderState
    if (length(sId)!=length(iA))
       stop("Vectors sId and iA must have same length!")
    rpo<-NA
-   if (criterion=="expected") rpo<-mdp$ptr$calcRPO(2, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
-   if (criterion=="discount") rpo<-mdp$ptr$calcRPO(1, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
-   if (criterion=="average")  rpo<-mdp$ptr$calcRPO(0, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
+   if (criterion=="expected") rpo<-mdp$ptr$calcRPO(2, sense, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
+   if (criterion=="discount") rpo<-mdp$ptr$calcRPO(0, sense, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
+   if (criterion=="average")  rpo<-mdp$ptr$calcRPO(1, sense, as.integer(sId), iW, as.integer(iA), g, iDur, discountFactor)
    rpo[rpo <= -1.8e+16]<-NA # less than 2 actions
    rpo <- dplyr::tibble(sId=sId, rpo=rpo)
    if (stateStr) {

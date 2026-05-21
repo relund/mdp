@@ -16,6 +16,7 @@ getRPO(
   rateBase = 1,
   discountFactor = NULL,
   g = 0,
+  objective = c("max", "min"),
   discountMethod = "continuous",
   stateStr = TRUE
 )
@@ -23,13 +24,13 @@ getRPO(
 \arguments{
 \item{mdp}{The MDP loaded using \code{\link[=loadMDP]{loadMDP()}}.}
 
-\item{w}{The label of the weight/reward we calculate RPO for.}
+\item{w}{The label of the weight we calculate RPO for.}
 
 \item{iA}{The action index we calculate the RPO with respect to (same size as \code{sId}).}
 
 \item{sId}{Vector of id's of the states we want to retrieve.}
 
-\item{criterion}{The criterion used. If \code{expected} used expected reward, if \code{discount} used discounted rewards, if \code{average} use average rewards.}
+\item{criterion}{The Bellman operator shortcut. If \code{expected} use expected weights, if \code{discount} use discounted expected weights, if \code{average} use average expected weights.}
 
 \item{dur}{The label of the duration/time such that discount rates can be calculated.}
 
@@ -40,6 +41,8 @@ getRPO(
 \item{discountFactor}{The discount rate for one time unit. If specified \code{rate} and \code{rateBase} are not used to calculate the discount rate.}
 
 \item{g}{The optimal gain (g) calculated (used if \code{criterion = "average"}).}
+
+\item{objective}{Optimize by maximizing (\code{"max"}) or minimizing (\code{"min"}) the Bellman value.}
 
 \item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor \code{exp(-rate/rateBase)} or \code{1/(1 + rate/rateBase)}, respectively. Only used if \code{discountFactor} is \code{NULL}.}
 

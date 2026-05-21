@@ -2,7 +2,7 @@
 % Please edit documentation in R/mdp.R
 \name{runPolicyIteDiscount}
 \alias{runPolicyIteDiscount}
-\title{Perform policy iteration (discounted reward criterion) on the MDP.}
+\title{Perform policy iteration using the discounted expected-weight Bellman operator on the MDP.}
 \usage{
 runPolicyIteDiscount(
   mdp,
@@ -13,6 +13,7 @@ runPolicyIteDiscount(
   discountFactor = NULL,
   maxIte = 100,
   discountMethod = "continuous",
+  objective = c("max", "min"),
   getLog = TRUE
 )
 }
@@ -32,6 +33,8 @@ runPolicyIteDiscount(
 \item{maxIte}{Max number of iterations. If the model does not satisfy the unichain assumption the algorithm may loop.}
 
 \item{discountMethod}{Either 'continuous' or 'discrete', corresponding to discount factor \code{exp(-rate/rateBase)} or \code{1/(1 + rate/rateBase)}, respectively. Only used if \code{discountFactor} is \code{NULL}.}
+
+\item{objective}{Optimize by maximizing (\code{"max"}) or minimizing (\code{"min"}) the Bellman value.}
 
 \item{getLog}{Output the log messages.}
 }
