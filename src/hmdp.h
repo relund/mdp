@@ -59,7 +59,7 @@ private:
 private:
     idx id; ///< Id of transition state.
     flt pr; ///< Transition probability.
-    vector<flt> w; ///< Transition-level weights/rewards r(s,a,s').
+    vector<flt> w; ///< Transition-level weights/weights r(s,a,s').
 };
 
 //-----------------------------------------------------------------------------
@@ -178,7 +178,7 @@ class HMDPAction {
     trans_iterator end() { return trans.end(); }
 
 private:
-    vector<flt> w;    ///< Action-level weights/rewards r(s,a).
+    vector<flt> w;    ///< Action-level weights/weights r(s,a).
     string label;     ///< Action label.
     vector<HMDPTrans> trans;     ///< Transitions.
 };
@@ -224,7 +224,7 @@ class HMDPState {
 private:
     vector<HMDPAction> actions;  ///< Actions of the state.
     string label;   ///< State label.
-    flt w;          ///< Weight/reward for the state.
+    flt w;          ///< Weight/weight for the state.
     int pred;   ///< Index of predecessor action (negative if not allocated).
 };
 
@@ -420,7 +420,7 @@ class HMDP
     void ExternalResetStates();
 
 
-    /** Set the reward, duration and trans pr of external process actions to zero.
+    /** Set the weight, duration and trans pr of external process actions to zero.
      * \param idxW Index of the weight used.
      * \param idxD Index of the duration.
      */
@@ -434,7 +434,7 @@ class HMDP
      * \param pExt Pointer to the current external process.
      * \param idxW Index of the weight used.
      * \param idxD Index of duration.
-     * \param g Current average reward.
+     * \param g Current average weight.
      * \param discountF The discount factor for one time unit.
      *
      * \return True if a new policy of the external process is found.
@@ -473,7 +473,7 @@ class HMDP
     void ExternalAllocteMem(HMDPPtr & pExt, const string & prefix, string & curPrefix);
 
 
-    /** Set the values of the external actions to the reward, duration and trans pr of the external process
+    /** Set the values of the external actions to the weight, duration and trans pr of the external process
      * \param stageStr Stage string of states corresponding to the first stage in the external process
      * \param pExt Pointer to the current external process.
      * \param idxW Index of the weight used.
@@ -1448,10 +1448,10 @@ private:
     }
 
     /** Validate that all actions contain action weight \p idxW. */
-    void CheckActionRewardsAvailable(idx idxW) const;
+    void CheckActionWeightsAvailable(idx idxW) const;
 
     /** Validate that all transitions contain transition weight \p idxW. */
-    void CheckTransitionRewardsAvailable(idx idxW) const;
+    void CheckTransitionWeightsAvailable(idx idxW) const;
 
     /** Calculate RPO using action weights \f$r(s,a)\f$. */
     vector<flt> CalcRPOActionExpectedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA);
@@ -1513,17 +1513,17 @@ private:
     /** Optimize a finite-stage policy using discounted transition probabilities by minimization. */
     bool CalcOptPolicyActionDiscountedTransPrMin(idx idxDur, flt discountF);
 
-    /** Evaluate the current policy using action rewards \f$r(s,a)\f$. */
-    void CalcPolicyActionReward(idx idxW);
+    /** Evaluate the current policy using action weights \f$r(s,a)\f$. */
+    void CalcPolicyActionWeight(idx idxW);
 
-    /** Evaluate the current policy using transition rewards \f$r(s,a,s')\f$. */
-    void CalcPolicyTransitionReward(idx idxW);
+    /** Evaluate the current policy using transition weights \f$r(s,a,s')\f$. */
+    void CalcPolicyTransitionWeight(idx idxW);
 
-    /** Evaluate the current policy using action-level average rewards. */
-    void CalcPolicyActionAverageReward(idx idxW, flt g, idx idxDur);
+    /** Evaluate the current policy using action-level average weights. */
+    void CalcPolicyActionAverageWeight(idx idxW, flt g, idx idxDur);
 
-    /** Evaluate the current policy using action-level discounted rewards. */
-    void CalcPolicyActionDiscountedReward(idx idxW, idx idxDur, flt discountF);
+    /** Evaluate the current policy using action-level discounted weights. */
+    void CalcPolicyActionDiscountedWeight(idx idxW, idx idxDur, flt discountF);
 
     /** Evaluate the current policy using transition probabilities. */
     void CalcPolicyActionTransPr();

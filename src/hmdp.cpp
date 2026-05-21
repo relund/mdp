@@ -610,10 +610,10 @@ bool HMDP::ExternalStatesUpdate(BellmanOp op, OptSense sense, state_iterator ite
     ExternalAllocteMem(pExt, prefix, curPrefix);
     if (!okay) return false;
     string stageNextStr = GetNextStageStr(stageStr);  // external stage in HMDP corresponding to last stage in external
-    vector<flt> rewards = GetStageW(stageNextStr);   // get the rewards from external nodes corresponding to last stage //cout << "next stage: " << stageNextStr << endl; //cout << "Start valueIte\n";
-    pExt->ValueIte(op, sense, 1, 0, idxW, idxD, rewards, g, discountF);
+    vector<flt> weights = GetStageW(stageNextStr);   // get the weights from external nodes corresponding to last stage //cout << "next stage: " << stageNextStr << endl; //cout << "Start valueIte\n";
+    pExt->ValueIte(op, sense, 1, 0, idxW, idxD, weights, g, discountF);
     string stageZeroExtStr = "0"; // first stage in external //cout << "Copy from external:" << endl;
-    ExternalCopyWState(stageStr, stageZeroExtStr, pExt, false);   // copy rewards to the HMDP //cout << "Update actions:" << endl;
+    ExternalCopyWState(stageStr, stageZeroExtStr, pExt, false);   // copy weights to the HMDP //cout << "Update actions:" << endl;
     bool newPred = ExternalSetActions(stageStr, pExt, idxW, idxD);
     return newPred;
 }
@@ -666,7 +666,7 @@ bool HMDP::ExternalSetActions(string stageStr, const HMDPPtr & pExt, const idx &
     string stageZeroExtStr = "0";
     string stageNextStr = GetNextStageStr(stageStr);
 	bool newPolicy = false;
-	// rewards
+	// weights
 	pExt->SetStateWStage(stageLastExtStr,0);  // reset weights
 	pExt->CalcPolicy(BellmanOp::Expected,idxW);
     for (state_iterator iteTo = state_begin(stageStr), iteFrom=pExt->state_begin(stageZeroExtStr);
@@ -731,7 +731,7 @@ flt HMDP::PolicyIte(BellmanOp op, OptSense sense, uSInt maxIte, const idx idxW, 
 	timer.StartTimer();
 	SetStateWStage("1", (flt)0);
 	int rows = GetStateSize("0");
-	MatSimple<double> r(rows,1),   // Matrix of founder rewards
+	MatSimple<double> r(rows,1),   // Matrix of founder weights
 				   w(rows,1),      // Matrix of weights (the unknown)
 				   d(rows,1),      // Matrix of denominator values
 				   P(rows,rows);   // Matrix of prob values
@@ -781,7 +781,7 @@ flt HMDP::PolicyIte(BellmanOp op, OptSense sense, uSInt maxIte, const idx idxW, 
 		if (k>=maxIte) { log << "\nReached upper limit of iterations! Seems to loop. \nIs the model fulfilling the model assumptions (e.g. unichain)?\n"; break;}
 	}
 	log << "finished. Cpu time: " << timer.ElapsedTime("sec") << " sec." << endl;
-	if (op==BellmanOp::Average) return g; //cout << "Rewards: " << vec2String(GetStageW("0")) << endl;
+	if (op==BellmanOp::Average) return g; //cout << "Weights: " << vec2String(GetStageW("0")) << endl;
 	return -INF;
 }
 
@@ -812,7 +812,7 @@ flt HMDP::PolicyIteFixedPolicy(BellmanOp op, const idx idxW, const idx idxD, con
 	timer.StartTimer();
 	SetStateWStage("1", (flt)0);
 	int rows = GetStateSize("0");
-	MatSimple<double> r(rows,1),   // Matrix of founder rewards
+	MatSimple<double> r(rows,1),   // Matrix of founder weights
 				   w(rows,1),      // Matrix of weights (the unknown)
 				   d(rows,1),      // Matrix of denominator values
 				   P(rows,rows);   // Matrix of prob values
@@ -847,7 +847,7 @@ flt HMDP::PolicyIteFixedPolicy(BellmanOp op, const idx idxW, const idx idxD, con
     CalcPolicy(op, idxW, g, idxD, discountF);
 
 	log << "finished. Cpu time: " << timer.ElapsedTime("sec") << " sec." << endl;
-	if (op==BellmanOp::Average) return g; //cout << "Rewards: " << vec2String(GetStageW("0")) << endl;
+	if (op==BellmanOp::Average) return g; //cout << "Weights: " << vec2String(GetStageW("0")) << endl;
 	return -INF;
 }
 
@@ -918,7 +918,7 @@ bool HMDP::CalcOptPolicy(BellmanOp op, OptSense sense, idx idxW, flt g, idx idxD
  *
  * The dispatch happens before entering any state/action/transition loop. The
  * specialized methods keep the hot transition loops free of operator switches,
- * reward-level checks, virtual calls, and function-object calls.
+ * weight-level checks, virtual calls, and function-object calls.
  */
 bool HMDP::CalcOptPolicy(BellmanOp op, OptSense sense, WeightLevel level, idx idxW, flt g, idx idxDur, flt discountF) {
     if (level==WeightLevel::Transition && op!=BellmanOp::Expected) {
@@ -971,27 +971,27 @@ HMDP::WeightLevel HMDP::ValidateGlobalWeightForOp(BellmanOp op, idx iW) const {
     return level;
 }
 
-/** Validate that an action reward is present on every action.
+/** Validate that an action weight is present on every action.
  *
  * This check is intentionally performed before dynamic programming starts so
  * the specialized Bellman loops can access \code iteA->w[idxW] directly.
  */
-void HMDP::CheckActionRewardsAvailable(idx idxW) const {
-    if (idxW>=weightActionNames.size()) throw runtime_error("Action reward index out of range.");
+void HMDP::CheckActionWeightsAvailable(idx idxW) const {
+    if (idxW>=weightActionNames.size()) throw runtime_error("Action weight index out of range.");
     for (vector<HMDPState>::const_iterator iteS=states.begin(); iteS!=states.end(); ++iteS) {
         for (vector<HMDPAction>::const_iterator iteA=iteS->actions.begin(); iteA!=iteS->actions.end(); ++iteA) {
-            if (idxW>=iteA->w.size()) throw runtime_error("Action reward value is missing for the requested index.");
+            if (idxW>=iteA->w.size()) throw runtime_error("Action weight value is missing for the requested index.");
         }
     }
 }
 
-/** Validate that a transition reward is present on every transition.
+/** Validate that a transition weight is present on every transition.
  *
  * This check is intentionally performed before dynamic programming starts so
  * the specialized Bellman loops can access \code iteT->w[idxW] directly.
  */
-void HMDP::CheckTransitionRewardsAvailable(idx idxW) const {
-    if (idxW>=weightTransNames.size()) throw runtime_error("Transition reward index out of range.");
+void HMDP::CheckTransitionWeightsAvailable(idx idxW) const {
+    if (idxW>=weightTransNames.size()) throw runtime_error("Transition weight index out of range.");
     for (vector<HMDPState>::const_iterator iteS=states.begin(); iteS!=states.end(); ++iteS) {
         for (vector<HMDPAction>::const_iterator iteA=iteS->actions.begin(); iteA!=iteS->actions.end(); ++iteA) {
             for (vector<HMDPTrans>::const_iterator iteT=iteA->trans.begin(); iteT!=iteA->trans.end(); ++iteT) {
@@ -1034,7 +1034,7 @@ vector<flt> HMDP::CalcRPO(BellmanOp op, OptSense sense, vector<idx> & iS, idx id
 }
 
 vector<flt> HMDP::CalcRPOActionExpectedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
-    CheckActionRewardsAvailable(idxW);
+    CheckActionWeightsAvailable(idxW);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = -INF;
@@ -1067,7 +1067,7 @@ vector<flt> HMDP::CalcRPOActionExpectedMax(vector<idx> & iS, idx idxW, vector<id
 }
 
 vector<flt> HMDP::CalcRPOTransitionExpectedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
-    CheckTransitionRewardsAvailable(idxW);
+    CheckTransitionWeightsAvailable(idxW);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = -INF;
@@ -1100,8 +1100,8 @@ vector<flt> HMDP::CalcRPOTransitionExpectedMax(vector<idx> & iS, idx idxW, vecto
 }
 
 vector<flt> HMDP::CalcRPOActionAverageMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = -INF;
@@ -1134,8 +1134,8 @@ vector<flt> HMDP::CalcRPOActionAverageMax(vector<idx> & iS, idx idxW, vector<idx
 }
 
 vector<flt> HMDP::CalcRPOActionDiscountedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = -INF;
@@ -1201,7 +1201,7 @@ vector<flt> HMDP::CalcRPOActionTransPrMax(vector<idx> & iS, vector<idx> & idxA) 
 }
 
 vector<flt> HMDP::CalcRPOActionDiscountedTransPrMax(vector<idx> & iS, vector<idx> & idxA, idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxDur);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = -INF;
@@ -1235,7 +1235,7 @@ vector<flt> HMDP::CalcRPOActionDiscountedTransPrMax(vector<idx> & iS, vector<idx
 }
 
 vector<flt> HMDP::CalcRPOActionExpectedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
-    CheckActionRewardsAvailable(idxW);
+    CheckActionWeightsAvailable(idxW);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = INF;
@@ -1268,7 +1268,7 @@ vector<flt> HMDP::CalcRPOActionExpectedMin(vector<idx> & iS, idx idxW, vector<id
 }
 
 vector<flt> HMDP::CalcRPOTransitionExpectedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
-    CheckTransitionRewardsAvailable(idxW);
+    CheckTransitionWeightsAvailable(idxW);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = INF;
@@ -1301,8 +1301,8 @@ vector<flt> HMDP::CalcRPOTransitionExpectedMin(vector<idx> & iS, idx idxW, vecto
 }
 
 vector<flt> HMDP::CalcRPOActionAverageMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = INF;
@@ -1335,8 +1335,8 @@ vector<flt> HMDP::CalcRPOActionAverageMin(vector<idx> & iS, idx idxW, vector<idx
 }
 
 vector<flt> HMDP::CalcRPOActionDiscountedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = INF;
@@ -1402,7 +1402,7 @@ vector<flt> HMDP::CalcRPOActionTransPrMin(vector<idx> & iS, vector<idx> & idxA) 
 }
 
 vector<flt> HMDP::CalcRPOActionDiscountedTransPrMin(vector<idx> & iS, vector<idx> & idxA, idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxDur);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
         flt wA = INF;
@@ -1435,7 +1435,7 @@ vector<flt> HMDP::CalcRPOActionDiscountedTransPrMin(vector<idx> & iS, vector<idx
     return result;
 }
 
-/** Optimize a policy using action rewards.
+/** Optimize a policy using action weights.
  *
  * Implements
  * \f[
@@ -1444,7 +1444,7 @@ vector<flt> HMDP::CalcRPOActionDiscountedTransPrMin(vector<idx> & iS, vector<idx
  * where \f$r(s,a)\f$ is stored in \code HMDPAction::w.
  */
 bool HMDP::CalcOptPolicyActionExpectedMax(idx idxW) {
-    CheckActionRewardsAvailable(idxW);
+    CheckActionWeightsAvailable(idxW);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
@@ -1461,7 +1461,7 @@ bool HMDP::CalcOptPolicyActionExpectedMax(idx idxW) {
             if (GetActionSize(iteS)>0) iteS->w = -INF;
             oldPred = iteS->pred;
             for (action_iterator iteA = action_begin(iteS); iteA!=action_end(iteS); ++iteA) {
-                // Action reward means r(s,a): add it once, outside the transition loop.
+                // Action weight means r(s,a): add it once, outside the transition loop.
                 wTmp = iteA->w[idxW];
                 isMinInf = false;
                 for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
@@ -1487,7 +1487,7 @@ bool HMDP::CalcOptPolicyActionExpectedMax(idx idxW) {
     return newPred;
 }
 
-/** Optimize a policy using transition rewards.
+/** Optimize a policy using transition weights.
  *
  * Implements
  * \f[
@@ -1496,20 +1496,20 @@ bool HMDP::CalcOptPolicyActionExpectedMax(idx idxW) {
  * where \f$r(s,a,s')\f$ is stored in \code HMDPTrans::w.
  */
 bool HMDP::CalcOptPolicyTransitionExpectedMax(idx idxW) {
-    CheckTransitionRewardsAvailable(idxW);
+    CheckTransitionWeightsAvailable(idxW);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
     int oldPred;
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
-        if (ExternalState(iteS)) throw runtime_error("Transition-level rewards are not implemented for external process states.");
+        if (ExternalState(iteS)) throw runtime_error("Transition-level weights are not implemented for external process states.");
         if (GetActionSize(iteS)>0) iteS->w = -INF;
         oldPred = iteS->pred;
         for (action_iterator iteA = action_begin(iteS); iteA!=action_end(iteS); ++iteA) {
             wTmp = 0;
             isMinInf = false;
             for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
-                // Transition reward means r(s,a,s'): add it per transition.
+                // Transition weight means r(s,a,s'): add it per transition.
                 flt nextW = states[iteT->id].w;
                 if (nextW <= -INF) {
                     wTmp = -INF;
@@ -1529,14 +1529,14 @@ bool HMDP::CalcOptPolicyTransitionExpectedMax(idx idxW) {
     return newPred;
 }
 
-/** Optimize a policy using action-level average rewards.
+/** Optimize a policy using action-level average weights.
  *
- * This preserves the existing average-reward behaviour for action weights while
+ * This preserves the existing average-weight behaviour for action weights while
  * keeping the transition loop specialized for this operator.
  */
 bool HMDP::CalcOptPolicyActionAverageMax(idx idxW, flt g, idx idxDur) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
@@ -1578,14 +1578,14 @@ bool HMDP::CalcOptPolicyActionAverageMax(idx idxW, flt g, idx idxDur) {
     return newPred;
 }
 
-/** Optimize a policy using action-level discounted rewards.
+/** Optimize a policy using action-level discounted weights.
  *
- * This preserves the existing discounted-reward behaviour for action weights
+ * This preserves the existing discounted-weight behaviour for action weights
  * and performs discounting outside the transition loop.
  */
 bool HMDP::CalcOptPolicyActionDiscountedMax(idx idxW, idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
@@ -1673,7 +1673,7 @@ bool HMDP::CalcOptPolicyActionTransPrMax() {
 
 /** Optimize a policy using discounted transition probabilities as the Bellman value. */
 bool HMDP::CalcOptPolicyActionDiscountedTransPrMax(idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxDur);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
@@ -1717,7 +1717,7 @@ bool HMDP::CalcOptPolicyActionDiscountedTransPrMax(idx idxDur, flt discountF) {
 }
 
 bool HMDP::CalcOptPolicyActionExpectedMin(idx idxW) {
-    CheckActionRewardsAvailable(idxW);
+    CheckActionWeightsAvailable(idxW);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
@@ -1760,13 +1760,13 @@ bool HMDP::CalcOptPolicyActionExpectedMin(idx idxW) {
 }
 
 bool HMDP::CalcOptPolicyTransitionExpectedMin(idx idxW) {
-    CheckTransitionRewardsAvailable(idxW);
+    CheckTransitionWeightsAvailable(idxW);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
     int oldPred;
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
-        if (ExternalState(iteS)) throw runtime_error("Transition-level rewards are not implemented for external process states.");
+        if (ExternalState(iteS)) throw runtime_error("Transition-level weights are not implemented for external process states.");
         if (GetActionSize(iteS)>0) iteS->w = INF;
         oldPred = iteS->pred;
         for (action_iterator iteA = action_begin(iteS); iteA!=action_end(iteS); ++iteA) {
@@ -1793,8 +1793,8 @@ bool HMDP::CalcOptPolicyTransitionExpectedMin(idx idxW) {
 }
 
 bool HMDP::CalcOptPolicyActionAverageMin(idx idxW, flt g, idx idxDur) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
@@ -1837,8 +1837,8 @@ bool HMDP::CalcOptPolicyActionAverageMin(idx idxW, flt g, idx idxDur) {
 }
 
 bool HMDP::CalcOptPolicyActionDiscountedMin(idx idxW, idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
@@ -1924,7 +1924,7 @@ bool HMDP::CalcOptPolicyActionTransPrMin() {
 }
 
 bool HMDP::CalcOptPolicyActionDiscountedTransPrMin(idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxDur);
     flt wTmp;
     bool newPred = false;
     bool isMinInf;
@@ -1989,19 +1989,19 @@ void HMDP::CalcPolicy(BellmanOp op, WeightLevel level, idx idxW, flt g, idx idxD
         throw runtime_error("Transition-level weights are not supported for " + BellmanOpName(op) + ".");
     }
     if (op==BellmanOp::Expected && level==WeightLevel::Action) {
-        CalcPolicyActionReward(idxW);
+        CalcPolicyActionWeight(idxW);
         return;
     }
     if (op==BellmanOp::Expected && level==WeightLevel::Transition) {
-        CalcPolicyTransitionReward(idxW);
+        CalcPolicyTransitionWeight(idxW);
         return;
     }
     if (op==BellmanOp::Average && level==WeightLevel::Action) {
-        CalcPolicyActionAverageReward(idxW, g, idxDur);
+        CalcPolicyActionAverageWeight(idxW, g, idxDur);
         return;
     }
     if (op==BellmanOp::Discounted && level==WeightLevel::Action) {
-        CalcPolicyActionDiscountedReward(idxW, idxDur, discountF);
+        CalcPolicyActionDiscountedWeight(idxW, idxDur, discountF);
         return;
     }
     if (op==BellmanOp::TransPr && level==WeightLevel::Action) {
@@ -2015,14 +2015,14 @@ void HMDP::CalcPolicy(BellmanOp op, WeightLevel level, idx idxW, flt g, idx idxD
     throw runtime_error("Bellman operator not implemented.");
 }
 
-/** Evaluate the current policy using action rewards \f$r(s,a)\f$. */
-void HMDP::CalcPolicyActionReward(idx idxW) {
-    CheckActionRewardsAvailable(idxW);
+/** Evaluate the current policy using action weights \f$r(s,a)\f$. */
+void HMDP::CalcPolicyActionWeight(idx idxW) {
+    CheckActionWeightsAvailable(idxW);
     flt wTmp;
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (GetActionSize(iteS)>0) {
             action_iterator iteA = GetIte(iteS, iteS->pred);
-            // Action reward means r(s,a): add it once, outside the transition loop.
+            // Action weight means r(s,a): add it once, outside the transition loop.
             wTmp = iteA->w[idxW];
             for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
                 wTmp += iteT->pr * states[iteT->id].w;
@@ -2032,17 +2032,17 @@ void HMDP::CalcPolicyActionReward(idx idxW) {
     }
 }
 
-/** Evaluate the current policy using transition rewards \f$r(s,a,s')\f$. */
-void HMDP::CalcPolicyTransitionReward(idx idxW) {
-    CheckTransitionRewardsAvailable(idxW);
+/** Evaluate the current policy using transition weights \f$r(s,a,s')\f$. */
+void HMDP::CalcPolicyTransitionWeight(idx idxW) {
+    CheckTransitionWeightsAvailable(idxW);
     flt wTmp;
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
-        if (ExternalState(iteS)) throw runtime_error("Transition-level rewards are not implemented for external process states.");
+        if (ExternalState(iteS)) throw runtime_error("Transition-level weights are not implemented for external process states.");
         if (GetActionSize(iteS)>0) {
             action_iterator iteA = GetIte(iteS, iteS->pred);
             wTmp = 0;
             for (trans_iterator iteT = trans_begin(iteA); iteT!=trans_end(iteA); ++iteT) {
-                // Transition reward means r(s,a,s'): add it per transition.
+                // Transition weight means r(s,a,s'): add it per transition.
                 wTmp += iteT->pr * (iteT->w[idxW] + states[iteT->id].w);
             }
             iteS->w = wTmp;
@@ -2050,10 +2050,10 @@ void HMDP::CalcPolicyTransitionReward(idx idxW) {
     }
 }
 
-/** Evaluate the current policy using action-level average rewards. */
-void HMDP::CalcPolicyActionAverageReward(idx idxW, flt g, idx idxDur) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+/** Evaluate the current policy using action-level average weights. */
+void HMDP::CalcPolicyActionAverageWeight(idx idxW, flt g, idx idxDur) {
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     flt wTmp;
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (GetActionSize(iteS)>0) {
@@ -2067,10 +2067,10 @@ void HMDP::CalcPolicyActionAverageReward(idx idxW, flt g, idx idxDur) {
     }
 }
 
-/** Evaluate the current policy using action-level discounted rewards. */
-void HMDP::CalcPolicyActionDiscountedReward(idx idxW, idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxW);
-    CheckActionRewardsAvailable(idxDur);
+/** Evaluate the current policy using action-level discounted weights. */
+void HMDP::CalcPolicyActionDiscountedWeight(idx idxW, idx idxDur, flt discountF) {
+    CheckActionWeightsAvailable(idxW);
+    CheckActionWeightsAvailable(idxDur);
     flt wTmp;
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (GetActionSize(iteS)>0) {
@@ -2101,7 +2101,7 @@ void HMDP::CalcPolicyActionTransPr() {
 
 /** Evaluate the current policy using discounted transition probabilities. */
 void HMDP::CalcPolicyActionDiscountedTransPr(idx idxDur, flt discountF) {
-    CheckActionRewardsAvailable(idxDur);
+    CheckActionWeightsAvailable(idxDur);
     flt wTmp;
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (GetActionSize(iteS)>0) {
