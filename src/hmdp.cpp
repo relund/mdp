@@ -214,7 +214,7 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
     delete [] aIdx;
 
 	if (wLblSize>0 && aWSize<actionVec.size()*wLblSize) {
-		throw runtime_error("Action weight file has fewer values than required by the action reward labels.");
+		throw runtime_error("Action weight file has fewer values than required by the action weight labels.");
 	}
 
 	// scan aW
@@ -253,7 +253,7 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
                 b.assign(tW+prev, tW+i);
                 idx transCount = actionVec[aId].pr.size();
                 if (b.size() != transCount * transWLblCount) {
-                    throw runtime_error("Transition weight row length does not match transitions times transition reward names.");
+                    throw runtime_error("Transition weight row length does not match transitions times transition weight names.");
                 }
                 actionVec[aId].transW.resize(transCount);
                 for (idx t=0; t<transCount; ++t) {
@@ -668,7 +668,7 @@ bool HMDP::ExternalSetActions(string stageStr, const HMDPPtr & pExt, const idx &
 	bool newPolicy = false;
 	// rewards
 	pExt->SetStateWStage(stageLastExtStr,0);  // reset weights
-	pExt->CalcPolicy(BellmanOp::ExpectedReward,idxW);
+	pExt->CalcPolicy(BellmanOp::Expected,idxW);
     for (state_iterator iteTo = state_begin(stageStr), iteFrom=pExt->state_begin(stageZeroExtStr);
          iteTo!=state_end(stageStr); ++iteTo, ++iteFrom)
     {
@@ -677,7 +677,7 @@ bool HMDP::ExternalSetActions(string stageStr, const HMDPPtr & pExt, const idx &
     }
     // durations
     pExt->SetStateWStage(stageLastExtStr,0);  // reset weights
-    pExt->CalcPolicy(BellmanOp::ExpectedReward,idxD);  // calc durations of external actions
+    pExt->CalcPolicy(BellmanOp::Expected,idxD);  // calc durations of external actions
     for (state_iterator iteTo = state_begin(stageStr), iteFrom=pExt->state_begin(stageZeroExtStr);
          iteTo!=state_end(stageStr); ++iteTo, ++iteFrom)
     {
@@ -716,10 +716,10 @@ flt HMDP::PolicyIte(BellmanOp op, OptSense sense, uSInt maxIte, const idx idxW, 
 	}
     log << "Run policy iteration ";
 	switch (op) {
-        case BellmanOp::AverageExpectedReward: log << "under average expected-weight Bellman operator using \nweight '" <<
+        case BellmanOp::Average: log << "under average expected-weight Bellman operator using \nweight '" <<
             GetWName(idxW) << "' over '" << GetWName(idxD) << "'. Iterations (g): " << endl;
             break;
-        case BellmanOp::DiscountedExpectedReward: log << "using weight '" << GetWName(idxW)
+        case BellmanOp::Discounted: log << "using weight '" << GetWName(idxW)
             << "' under discounted expected-weight Bellman operator \nwith '" << GetWName(idxD)
             << "' as duration using discount factor " << discountF
             << ". \nIteration(s): ";
@@ -746,42 +746,42 @@ flt HMDP::PolicyIte(BellmanOp op, OptSense sense, uSInt maxIte, const idx idxW, 
 		log << k << " "; 
 		if (verbose) log << endl;
 		// find weights, dur, trans pr at founder given policy
-		if (op==BellmanOp::AverageExpectedReward) {
-            FounderW(BellmanOp::ExpectedReward, r, idxW);
+		if (op==BellmanOp::Average) {
+            FounderW(BellmanOp::Expected, r, idxW);
             FounderPr(BellmanOp::TransPr,P);
-            FounderW(BellmanOp::ExpectedReward, d, idxD);
+            FounderW(BellmanOp::Expected, d, idxD);
         }
         else {
             FounderW(op, r, idxW,g,idxD,discountF); //cout << "r mat: " << r << endl;
             FounderPr(BellmanOp::DiscountedTransPr,P,idxD,discountF); //cout << "P mat: " << P << endl;
         }
-		// If AverageExpectedReward solve equations h = r - dg + Ph where r, d and P have been calculated for the founder. This is equivalent to solving (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equivalent to solving Qw = r (equation (8.6.8) in Puterman) where last col in (I-P) replaced with d.
-		// If DiscountedExpectedReward solve equations w = r + Pw -> (I-P)w = r
+		// If Average solve equations h = r - dg + Ph where r, d and P have been calculated for the founder. This is equivalent to solving (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equivalent to solving Qw = r (equation (8.6.8) in Puterman) where last col in (I-P) replaced with d.
+		// If Discounted solve equations w = r + Pw -> (I-P)w = r
 		matAlg.IMinusP(P);  // Set P := I-P
-		if (op==BellmanOp::AverageExpectedReward) for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
+		if (op==BellmanOp::Average) for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
 		if (matAlg.LASolve(P,w,r)) {g = -INF; log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; break;}
-		if (op==BellmanOp::AverageExpectedReward) {
+		if (op==BellmanOp::Average) {
             g = w(rows-1,0);
             log << "(" << g << ") "; if (verbose) log << endl; //cout << "g=" << g << endl;
 		} //cout << "w mat: " << w << endl;
 		state_iterator iteL; idx j;
 		for (iteL=state_begin("1"), j=0; iteL!=state_end("1"); ++iteL, ++j) {
             if (j<(idx)rows-1 ) HMDP::w(iteL) = w(j,0);
-            else if (op==BellmanOp::DiscountedExpectedReward) HMDP::w(iteL) = w(j,0);
+            else if (op==BellmanOp::Discounted) HMDP::w(iteL) = w(j,0);
 		}
 		// update policy
 		newPred = CalcOptPolicy(op, sense, idxW, g, idxD, discountF);
 		if (!okay) {g=-INF; break;}   // something went wrong (see the log)
 		if (!newPred) {
 			log << k+1;
-			if (op==BellmanOp::AverageExpectedReward) log << " (" << g << ") "; else log << " ";
+			if (op==BellmanOp::Average) log << " (" << g << ") "; else log << " ";
 			if (verbose) log << endl;
 			break;    // optimal strategy found
 		}
 		if (k>=maxIte) { log << "\nReached upper limit of iterations! Seems to loop. \nIs the model fulfilling the model assumptions (e.g. unichain)?\n"; break;}
 	}
 	log << "finished. Cpu time: " << timer.ElapsedTime("sec") << " sec." << endl;
-	if (op==BellmanOp::AverageExpectedReward) return g; //cout << "Rewards: " << vec2String(GetStageW("0")) << endl;
+	if (op==BellmanOp::Average) return g; //cout << "Rewards: " << vec2String(GetStageW("0")) << endl;
 	return -INF;
 }
 
@@ -797,10 +797,10 @@ flt HMDP::PolicyIteFixedPolicy(BellmanOp op, const idx idxW, const idx idxD, con
 	}
     log << "Run policy iteration (given a fixed policy) ";
 	switch (op) {
-        case BellmanOp::AverageExpectedReward: log << "under average expected-weight Bellman operator using \nweight '" <<
+        case BellmanOp::Average: log << "under average expected-weight Bellman operator using \nweight '" <<
             GetWName(idxW) << "' over '" << GetWName(idxD) << "'. Iterations (g):" << endl;
             break;
-        case BellmanOp::DiscountedExpectedReward: log << "using weight '" << GetWName(idxW)
+        case BellmanOp::Discounted: log << "using weight '" << GetWName(idxW)
             << "' under discounted expected-weight Bellman operator \nwith '" << GetWName(idxD)
             << "' as duration using discount factor " << discountF
             << ". \nIteration(s):";
@@ -821,33 +821,33 @@ flt HMDP::PolicyIteFixedPolicy(BellmanOp op, const idx idxW, const idx idxD, con
 	okay = true;
 
     // find weights, dur, trans pr at founder given policy
-    if (op==BellmanOp::AverageExpectedReward) {
-        FounderW(BellmanOp::ExpectedReward, r, idxW);
+    if (op==BellmanOp::Average) {
+        FounderW(BellmanOp::Expected, r, idxW);
         FounderPr(BellmanOp::TransPr,P);
-        FounderW(BellmanOp::ExpectedReward, d, idxD);
+        FounderW(BellmanOp::Expected, d, idxD);
     }
     else {
         FounderW(op, r, idxW,g,idxD,discountF); //cout << "r mat: " << r << endl;
         FounderPr(BellmanOp::DiscountedTransPr,P,idxD,discountF); //cout << "P mat: " << P << endl;
     }
-    // If AverageExpectedReward solve equations h = r - dg + Ph where r, d and P have been calculated for the founder. This is equivalent to solving (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equivalent to solving Qw = r (equation (8.6.8) in Puterman) where last col in (I-P) replaced with d.
-    // If DiscountedExpectedReward solve equations w = r + Pw -> (I-P)w = r
+    // If Average solve equations h = r - dg + Ph where r, d and P have been calculated for the founder. This is equivalent to solving (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equivalent to solving Qw = r (equation (8.6.8) in Puterman) where last col in (I-P) replaced with d.
+    // If Discounted solve equations w = r + Pw -> (I-P)w = r
     matAlg.IMinusP(P);  // Set P := I-P
-    if (op==BellmanOp::AverageExpectedReward) for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
+    if (op==BellmanOp::Average) for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
     if (matAlg.LASolve(P,w,r)) {g = -INF; log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; return -INF;}
-    if (op==BellmanOp::AverageExpectedReward) {
+    if (op==BellmanOp::Average) {
         g = w(rows-1,0);
     }
     state_iterator iteL; idx j;
     for (iteL=state_begin("1"), j=0; iteL!=state_end("1"); ++iteL, ++j) {
         if (j<(idx)rows-1 ) HMDP::w(iteL) = w(j,0);
-        else if (op==BellmanOp::DiscountedExpectedReward) HMDP::w(iteL) = w(j,0);
+        else if (op==BellmanOp::Discounted) HMDP::w(iteL) = w(j,0);
     }
     // calc weights policy
     CalcPolicy(op, idxW, g, idxD, discountF);
 
 	log << "finished. Cpu time: " << timer.ElapsedTime("sec") << " sec." << endl;
-	if (op==BellmanOp::AverageExpectedReward) return g; //cout << "Rewards: " << vec2String(GetStageW("0")) << endl;
+	if (op==BellmanOp::Average) return g; //cout << "Rewards: " << vec2String(GetStageW("0")) << endl;
 	return -INF;
 }
 
@@ -863,11 +863,11 @@ void HMDP::ValueIte(BellmanOp op, OptSense sense, idx maxIte, flt epsilon, const
 	log << "Run value iteration with epsilon = " << epsilon  << " at most "
 		<< maxIte << " time(s)" << endl << "using weight '" << GetWName(idxW) << "'";
 	switch (op) {
-        case BellmanOp::AverageExpectedReward: log << " under average expected-weight Bellman operator given an average weight g = " << g << ".\n";
+        case BellmanOp::Average: log << " under average expected-weight Bellman operator given an average weight g = " << g << ".\n";
             maxIte = 1;     // not implemented more than one time yet
             break;
-        case BellmanOp::ExpectedReward: log << " under expected-weight Bellman operator." << endl; break;
-        case BellmanOp::DiscountedExpectedReward: log << " under discounted expected-weight Bellman operator \nwith '" <<
+        case BellmanOp::Expected: log << " under expected-weight Bellman operator." << endl; break;
+        case BellmanOp::Discounted: log << " under discounted expected-weight Bellman operator \nwith '" <<
             GetWName(idxDur) << "' as duration using discount factor " << discountF <<
             ".\nIterations:"; break;
         default: log << "Bellman operator not defined for value iteration!" << endl; return;
@@ -888,7 +888,7 @@ void HMDP::ValueIte(BellmanOp op, OptSense sense, idx maxIte, flt epsilon, const
 	idx i;
 	for (i=1;; ++i) { //cout << "Ite: " << i+1 << endl;
         CalcOptPolicy(op,sense,idxW,g,idxDur,discountF);
-		if (op==BellmanOp::DiscountedExpectedReward)
+		if (op==BellmanOp::Discounted)
             if(MaxDiffFounder()<epsilon) break;
 		if (i<maxIte) {    // set next last stage values to stage zero values
             for (state_iterator iteZ = state_begin(stageZeroStr), iteL=state_begin(stageLastStr);
@@ -897,7 +897,7 @@ void HMDP::ValueIte(BellmanOp op, OptSense sense, idx maxIte, flt epsilon, const
 		}
 		else break;
 	}
-	if (op==BellmanOp::DiscountedExpectedReward && timeHorizon>=INFINT) log << " " << i;
+	if (op==BellmanOp::Discounted && timeHorizon>=INFINT) log << " " << i;
 	timer.StopTimer();
 	log << " Finished. Cpu time " << timer.ElapsedTime("sec") << " sec." << endl;
 	if ( (i==maxIte) & (maxIte!=1) ) log << "Reached upper limit of iterations! Should the limit be increased or \nis the model fulfilling the model assumptions (e.g. no periodicity)?\n";
@@ -921,21 +921,21 @@ bool HMDP::CalcOptPolicy(BellmanOp op, OptSense sense, idx idxW, flt g, idx idxD
  * reward-level checks, virtual calls, and function-object calls.
  */
 bool HMDP::CalcOptPolicy(BellmanOp op, OptSense sense, WeightLevel level, idx idxW, flt g, idx idxDur, flt discountF) {
-    if (level==WeightLevel::Transition && op!=BellmanOp::ExpectedReward) {
+    if (level==WeightLevel::Transition && op!=BellmanOp::Expected) {
         throw runtime_error("Transition-level weights are not supported for " + BellmanOpName(op) + ".");
     }
     if (sense==OptSense::Maximize) {
-        if (op==BellmanOp::ExpectedReward && level==WeightLevel::Action) return CalcOptPolicyActionExpectedRewardMax(idxW);
-        if (op==BellmanOp::ExpectedReward && level==WeightLevel::Transition) return CalcOptPolicyTransitionExpectedRewardMax(idxW);
-        if (op==BellmanOp::AverageExpectedReward && level==WeightLevel::Action) return CalcOptPolicyActionAverageExpectedRewardMax(idxW, g, idxDur);
-        if (op==BellmanOp::DiscountedExpectedReward && level==WeightLevel::Action) return CalcOptPolicyActionDiscountedExpectedRewardMax(idxW, idxDur, discountF);
+        if (op==BellmanOp::Expected && level==WeightLevel::Action) return CalcOptPolicyActionExpectedMax(idxW);
+        if (op==BellmanOp::Expected && level==WeightLevel::Transition) return CalcOptPolicyTransitionExpectedMax(idxW);
+        if (op==BellmanOp::Average && level==WeightLevel::Action) return CalcOptPolicyActionAverageMax(idxW, g, idxDur);
+        if (op==BellmanOp::Discounted && level==WeightLevel::Action) return CalcOptPolicyActionDiscountedMax(idxW, idxDur, discountF);
         if (op==BellmanOp::TransPr && level==WeightLevel::Action) return CalcOptPolicyActionTransPrMax();
         if (op==BellmanOp::DiscountedTransPr && level==WeightLevel::Action) return CalcOptPolicyActionDiscountedTransPrMax(idxDur, discountF);
     } else if (sense==OptSense::Minimize) {
-        if (op==BellmanOp::ExpectedReward && level==WeightLevel::Action) return CalcOptPolicyActionExpectedRewardMin(idxW);
-        if (op==BellmanOp::ExpectedReward && level==WeightLevel::Transition) return CalcOptPolicyTransitionExpectedRewardMin(idxW);
-        if (op==BellmanOp::AverageExpectedReward && level==WeightLevel::Action) return CalcOptPolicyActionAverageExpectedRewardMin(idxW, g, idxDur);
-        if (op==BellmanOp::DiscountedExpectedReward && level==WeightLevel::Action) return CalcOptPolicyActionDiscountedExpectedRewardMin(idxW, idxDur, discountF);
+        if (op==BellmanOp::Expected && level==WeightLevel::Action) return CalcOptPolicyActionExpectedMin(idxW);
+        if (op==BellmanOp::Expected && level==WeightLevel::Transition) return CalcOptPolicyTransitionExpectedMin(idxW);
+        if (op==BellmanOp::Average && level==WeightLevel::Action) return CalcOptPolicyActionAverageMin(idxW, g, idxDur);
+        if (op==BellmanOp::Discounted && level==WeightLevel::Action) return CalcOptPolicyActionDiscountedMin(idxW, idxDur, discountF);
         if (op==BellmanOp::TransPr && level==WeightLevel::Action) return CalcOptPolicyActionTransPrMin();
         if (op==BellmanOp::DiscountedTransPr && level==WeightLevel::Action) return CalcOptPolicyActionDiscountedTransPrMin(idxDur, discountF);
     } else {
@@ -946,9 +946,9 @@ bool HMDP::CalcOptPolicy(BellmanOp op, OptSense sense, WeightLevel level, idx id
 
 string HMDP::BellmanOpName(BellmanOp op) const {
     switch (op) {
-        case BellmanOp::ExpectedReward: return "BellmanOp::ExpectedReward";
-        case BellmanOp::DiscountedExpectedReward: return "BellmanOp::DiscountedExpectedReward";
-        case BellmanOp::AverageExpectedReward: return "BellmanOp::AverageExpectedReward";
+        case BellmanOp::Expected: return "BellmanOp::Expected";
+        case BellmanOp::Discounted: return "BellmanOp::Discounted";
+        case BellmanOp::Average: return "BellmanOp::Average";
         case BellmanOp::TransPr: return "BellmanOp::TransPr";
         case BellmanOp::DiscountedTransPr: return "BellmanOp::DiscountedTransPr";
     }
@@ -965,7 +965,7 @@ string HMDP::OptSenseName(OptSense sense) const {
 
 HMDP::WeightLevel HMDP::ValidateGlobalWeightForOp(BellmanOp op, idx iW) const {
     WeightLevel level = WeightLevelFromGlobalIdx(iW);
-    if (level==WeightLevel::Transition && op!=BellmanOp::ExpectedReward) {
+    if (level==WeightLevel::Transition && op!=BellmanOp::Expected) {
         throw runtime_error("Transition-level weights are not supported for " + BellmanOpName(op) + ".");
     }
     return level;
@@ -1017,15 +1017,15 @@ vector<flt> HMDP::CalcRPO(BellmanOp op, OptSense sense, vector<idx> & iS, idx id
     idx localIdxW = LocalWeightIdx(level, idxW);
 
     if (sense==OptSense::Maximize) {
-        if (op==BellmanOp::ExpectedReward && level==WeightLevel::Action) return CalcRPOActionExpectedRewardMax(iS, localIdxW, idxA);
-        if (op==BellmanOp::ExpectedReward && level==WeightLevel::Transition) return CalcRPOTransitionExpectedRewardMax(iS, localIdxW, idxA);
-        if (op==BellmanOp::AverageExpectedReward && level==WeightLevel::Action) return CalcRPOActionAverageExpectedRewardMax(iS, localIdxW, idxA, g, idxDur);
-        if (op==BellmanOp::DiscountedExpectedReward && level==WeightLevel::Action) return CalcRPOActionDiscountedExpectedRewardMax(iS, localIdxW, idxA, idxDur, discountF);
+        if (op==BellmanOp::Expected && level==WeightLevel::Action) return CalcRPOActionExpectedMax(iS, localIdxW, idxA);
+        if (op==BellmanOp::Expected && level==WeightLevel::Transition) return CalcRPOTransitionExpectedMax(iS, localIdxW, idxA);
+        if (op==BellmanOp::Average && level==WeightLevel::Action) return CalcRPOActionAverageMax(iS, localIdxW, idxA, g, idxDur);
+        if (op==BellmanOp::Discounted && level==WeightLevel::Action) return CalcRPOActionDiscountedMax(iS, localIdxW, idxA, idxDur, discountF);
     } else if (sense==OptSense::Minimize) {
-        if (op==BellmanOp::ExpectedReward && level==WeightLevel::Action) return CalcRPOActionExpectedRewardMin(iS, localIdxW, idxA);
-        if (op==BellmanOp::ExpectedReward && level==WeightLevel::Transition) return CalcRPOTransitionExpectedRewardMin(iS, localIdxW, idxA);
-        if (op==BellmanOp::AverageExpectedReward && level==WeightLevel::Action) return CalcRPOActionAverageExpectedRewardMin(iS, localIdxW, idxA, g, idxDur);
-        if (op==BellmanOp::DiscountedExpectedReward && level==WeightLevel::Action) return CalcRPOActionDiscountedExpectedRewardMin(iS, localIdxW, idxA, idxDur, discountF);
+        if (op==BellmanOp::Expected && level==WeightLevel::Action) return CalcRPOActionExpectedMin(iS, localIdxW, idxA);
+        if (op==BellmanOp::Expected && level==WeightLevel::Transition) return CalcRPOTransitionExpectedMin(iS, localIdxW, idxA);
+        if (op==BellmanOp::Average && level==WeightLevel::Action) return CalcRPOActionAverageMin(iS, localIdxW, idxA, g, idxDur);
+        if (op==BellmanOp::Discounted && level==WeightLevel::Action) return CalcRPOActionDiscountedMin(iS, localIdxW, idxA, idxDur, discountF);
     } else {
         throw runtime_error("Invalid optimization sense.");
     }
@@ -1033,7 +1033,7 @@ vector<flt> HMDP::CalcRPO(BellmanOp op, OptSense sense, vector<idx> & iS, idx id
     throw runtime_error("Bellman operator not implemented.");
 }
 
-vector<flt> HMDP::CalcRPOActionExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
+vector<flt> HMDP::CalcRPOActionExpectedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
     CheckActionRewardsAvailable(idxW);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
@@ -1066,7 +1066,7 @@ vector<flt> HMDP::CalcRPOActionExpectedRewardMax(vector<idx> & iS, idx idxW, vec
     return result;
 }
 
-vector<flt> HMDP::CalcRPOTransitionExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
+vector<flt> HMDP::CalcRPOTransitionExpectedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
     CheckTransitionRewardsAvailable(idxW);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
@@ -1099,7 +1099,7 @@ vector<flt> HMDP::CalcRPOTransitionExpectedRewardMax(vector<idx> & iS, idx idxW,
     return result;
 }
 
-vector<flt> HMDP::CalcRPOActionAverageExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur) {
+vector<flt> HMDP::CalcRPOActionAverageMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur) {
     CheckActionRewardsAvailable(idxW);
     CheckActionRewardsAvailable(idxDur);
     vector<flt> result;
@@ -1133,7 +1133,7 @@ vector<flt> HMDP::CalcRPOActionAverageExpectedRewardMax(vector<idx> & iS, idx id
     return result;
 }
 
-vector<flt> HMDP::CalcRPOActionDiscountedExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF) {
+vector<flt> HMDP::CalcRPOActionDiscountedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF) {
     CheckActionRewardsAvailable(idxW);
     CheckActionRewardsAvailable(idxDur);
     vector<flt> result;
@@ -1234,7 +1234,7 @@ vector<flt> HMDP::CalcRPOActionDiscountedTransPrMax(vector<idx> & iS, vector<idx
     return result;
 }
 
-vector<flt> HMDP::CalcRPOActionExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
+vector<flt> HMDP::CalcRPOActionExpectedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
     CheckActionRewardsAvailable(idxW);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
@@ -1267,7 +1267,7 @@ vector<flt> HMDP::CalcRPOActionExpectedRewardMin(vector<idx> & iS, idx idxW, vec
     return result;
 }
 
-vector<flt> HMDP::CalcRPOTransitionExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
+vector<flt> HMDP::CalcRPOTransitionExpectedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA) {
     CheckTransitionRewardsAvailable(idxW);
     vector<flt> result;
     for (idx i=0; i<iS.size(); ++i) {
@@ -1300,7 +1300,7 @@ vector<flt> HMDP::CalcRPOTransitionExpectedRewardMin(vector<idx> & iS, idx idxW,
     return result;
 }
 
-vector<flt> HMDP::CalcRPOActionAverageExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur) {
+vector<flt> HMDP::CalcRPOActionAverageMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur) {
     CheckActionRewardsAvailable(idxW);
     CheckActionRewardsAvailable(idxDur);
     vector<flt> result;
@@ -1334,7 +1334,7 @@ vector<flt> HMDP::CalcRPOActionAverageExpectedRewardMin(vector<idx> & iS, idx id
     return result;
 }
 
-vector<flt> HMDP::CalcRPOActionDiscountedExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF) {
+vector<flt> HMDP::CalcRPOActionDiscountedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF) {
     CheckActionRewardsAvailable(idxW);
     CheckActionRewardsAvailable(idxDur);
     vector<flt> result;
@@ -1443,7 +1443,7 @@ vector<flt> HMDP::CalcRPOActionDiscountedTransPrMin(vector<idx> & iS, vector<idx
  * \f]
  * where \f$r(s,a)\f$ is stored in \code HMDPAction::w.
  */
-bool HMDP::CalcOptPolicyActionExpectedRewardMax(idx idxW) {
+bool HMDP::CalcOptPolicyActionExpectedMax(idx idxW) {
     CheckActionRewardsAvailable(idxW);
     flt wTmp;
     bool newPred = false;
@@ -1454,7 +1454,7 @@ bool HMDP::CalcOptPolicyActionExpectedRewardMax(idx idxW) {
     ExternalResetStates();
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (ExternalState(iteS)) {
-            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::ExpectedReward, OptSense::Maximize, iteS, externalPrefix, pExtProc, idxW, 0, 0, 1);
+            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::Expected, OptSense::Maximize, iteS, externalPrefix, pExtProc, idxW, 0, 0, 1);
             if (!okay) return false;
             pred(iteS) = 0;
         } else {
@@ -1495,7 +1495,7 @@ bool HMDP::CalcOptPolicyActionExpectedRewardMax(idx idxW) {
  * \f]
  * where \f$r(s,a,s')\f$ is stored in \code HMDPTrans::w.
  */
-bool HMDP::CalcOptPolicyTransitionExpectedRewardMax(idx idxW) {
+bool HMDP::CalcOptPolicyTransitionExpectedMax(idx idxW) {
     CheckTransitionRewardsAvailable(idxW);
     flt wTmp;
     bool newPred = false;
@@ -1534,7 +1534,7 @@ bool HMDP::CalcOptPolicyTransitionExpectedRewardMax(idx idxW) {
  * This preserves the existing average-reward behaviour for action weights while
  * keeping the transition loop specialized for this operator.
  */
-bool HMDP::CalcOptPolicyActionAverageExpectedRewardMax(idx idxW, flt g, idx idxDur) {
+bool HMDP::CalcOptPolicyActionAverageMax(idx idxW, flt g, idx idxDur) {
     CheckActionRewardsAvailable(idxW);
     CheckActionRewardsAvailable(idxDur);
     flt wTmp;
@@ -1546,7 +1546,7 @@ bool HMDP::CalcOptPolicyActionAverageExpectedRewardMax(idx idxW, flt g, idx idxD
     ExternalResetStates();
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (ExternalState(iteS)) {
-            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::AverageExpectedReward, OptSense::Maximize, iteS, externalPrefix, pExtProc, idxW, idxDur, g, 1);
+            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::Average, OptSense::Maximize, iteS, externalPrefix, pExtProc, idxW, idxDur, g, 1);
             if (!okay) return false;
             iteS->pred = 0;
         } else {
@@ -1583,7 +1583,7 @@ bool HMDP::CalcOptPolicyActionAverageExpectedRewardMax(idx idxW, flt g, idx idxD
  * This preserves the existing discounted-reward behaviour for action weights
  * and performs discounting outside the transition loop.
  */
-bool HMDP::CalcOptPolicyActionDiscountedExpectedRewardMax(idx idxW, idx idxDur, flt discountF) {
+bool HMDP::CalcOptPolicyActionDiscountedMax(idx idxW, idx idxDur, flt discountF) {
     CheckActionRewardsAvailable(idxW);
     CheckActionRewardsAvailable(idxDur);
     flt wTmp;
@@ -1595,7 +1595,7 @@ bool HMDP::CalcOptPolicyActionDiscountedExpectedRewardMax(idx idxW, idx idxDur, 
     ExternalResetStates();
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (ExternalState(iteS)) {
-            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::DiscountedExpectedReward, OptSense::Maximize, iteS, externalPrefix, pExtProc, idxW, idxDur, 0, discountF);
+            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::Discounted, OptSense::Maximize, iteS, externalPrefix, pExtProc, idxW, idxDur, 0, discountF);
             if (!okay) return false;
             iteS->pred = 0;
         } else {
@@ -1716,7 +1716,7 @@ bool HMDP::CalcOptPolicyActionDiscountedTransPrMax(idx idxDur, flt discountF) {
     return newPred;
 }
 
-bool HMDP::CalcOptPolicyActionExpectedRewardMin(idx idxW) {
+bool HMDP::CalcOptPolicyActionExpectedMin(idx idxW) {
     CheckActionRewardsAvailable(idxW);
     flt wTmp;
     bool newPred = false;
@@ -1727,7 +1727,7 @@ bool HMDP::CalcOptPolicyActionExpectedRewardMin(idx idxW) {
     ExternalResetStates();
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (ExternalState(iteS)) {
-            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::ExpectedReward, OptSense::Minimize, iteS, externalPrefix, pExtProc, idxW, 0, 0, 1);
+            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::Expected, OptSense::Minimize, iteS, externalPrefix, pExtProc, idxW, 0, 0, 1);
             if (!okay) return false;
             pred(iteS) = 0;
         } else {
@@ -1759,7 +1759,7 @@ bool HMDP::CalcOptPolicyActionExpectedRewardMin(idx idxW) {
     return newPred;
 }
 
-bool HMDP::CalcOptPolicyTransitionExpectedRewardMin(idx idxW) {
+bool HMDP::CalcOptPolicyTransitionExpectedMin(idx idxW) {
     CheckTransitionRewardsAvailable(idxW);
     flt wTmp;
     bool newPred = false;
@@ -1792,7 +1792,7 @@ bool HMDP::CalcOptPolicyTransitionExpectedRewardMin(idx idxW) {
     return newPred;
 }
 
-bool HMDP::CalcOptPolicyActionAverageExpectedRewardMin(idx idxW, flt g, idx idxDur) {
+bool HMDP::CalcOptPolicyActionAverageMin(idx idxW, flt g, idx idxDur) {
     CheckActionRewardsAvailable(idxW);
     CheckActionRewardsAvailable(idxDur);
     flt wTmp;
@@ -1804,7 +1804,7 @@ bool HMDP::CalcOptPolicyActionAverageExpectedRewardMin(idx idxW, flt g, idx idxD
     ExternalResetStates();
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (ExternalState(iteS)) {
-            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::AverageExpectedReward, OptSense::Minimize, iteS, externalPrefix, pExtProc, idxW, idxDur, g, 1);
+            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::Average, OptSense::Minimize, iteS, externalPrefix, pExtProc, idxW, idxDur, g, 1);
             if (!okay) return false;
             iteS->pred = 0;
         } else {
@@ -1836,7 +1836,7 @@ bool HMDP::CalcOptPolicyActionAverageExpectedRewardMin(idx idxW, flt g, idx idxD
     return newPred;
 }
 
-bool HMDP::CalcOptPolicyActionDiscountedExpectedRewardMin(idx idxW, idx idxDur, flt discountF) {
+bool HMDP::CalcOptPolicyActionDiscountedMin(idx idxW, idx idxDur, flt discountF) {
     CheckActionRewardsAvailable(idxW);
     CheckActionRewardsAvailable(idxDur);
     flt wTmp;
@@ -1848,7 +1848,7 @@ bool HMDP::CalcOptPolicyActionDiscountedExpectedRewardMin(idx idxW, idx idxDur, 
     ExternalResetStates();
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
         if (ExternalState(iteS)) {
-            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::DiscountedExpectedReward, OptSense::Minimize, iteS, externalPrefix, pExtProc, idxW, idxDur, 0, discountF);
+            if (iteS->w== -INF) newPred = ExternalStatesUpdate(BellmanOp::Discounted, OptSense::Minimize, iteS, externalPrefix, pExtProc, idxW, idxDur, 0, discountF);
             if (!okay) return false;
             iteS->pred = 0;
         } else {
@@ -1985,22 +1985,22 @@ void HMDP::CalcPolicy(BellmanOp op, idx idxW, flt g, idx idxDur, flt discountF) 
  * evaluates the current policy stored in \code pred.
  */
 void HMDP::CalcPolicy(BellmanOp op, WeightLevel level, idx idxW, flt g, idx idxDur, flt discountF) {
-    if (level==WeightLevel::Transition && op!=BellmanOp::ExpectedReward) {
+    if (level==WeightLevel::Transition && op!=BellmanOp::Expected) {
         throw runtime_error("Transition-level weights are not supported for " + BellmanOpName(op) + ".");
     }
-    if (op==BellmanOp::ExpectedReward && level==WeightLevel::Action) {
+    if (op==BellmanOp::Expected && level==WeightLevel::Action) {
         CalcPolicyActionReward(idxW);
         return;
     }
-    if (op==BellmanOp::ExpectedReward && level==WeightLevel::Transition) {
+    if (op==BellmanOp::Expected && level==WeightLevel::Transition) {
         CalcPolicyTransitionReward(idxW);
         return;
     }
-    if (op==BellmanOp::AverageExpectedReward && level==WeightLevel::Action) {
+    if (op==BellmanOp::Average && level==WeightLevel::Action) {
         CalcPolicyActionAverageReward(idxW, g, idxDur);
         return;
     }
-    if (op==BellmanOp::DiscountedExpectedReward && level==WeightLevel::Action) {
+    if (op==BellmanOp::Discounted && level==WeightLevel::Action) {
         CalcPolicyActionDiscountedReward(idxW, idxDur, discountF);
         return;
     }

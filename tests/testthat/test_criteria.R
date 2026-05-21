@@ -48,7 +48,7 @@ test_that("Transition-level total reward",{
    expect_equal(mdp$weightTransNames, "Transition reward")
    expect_error(
       mdp$ptr$valueIte(0, 0, 1L, 0, 0L, 0L, c(0, 0), 0, 1),
-      "Transition-level weights are not supported for BellmanOp::DiscountedExpectedReward"
+      "Transition-level weights are not supported for BellmanOp::Discounted"
    )
    runValueIte(mdp, "Transition reward", termValues = c(100, 200), getLog = FALSE)
    policy <- getPolicy(mdp)

@@ -270,9 +270,9 @@ class HMDP
      * switches in the hot path.
      */
     enum class BellmanOp {
-        ExpectedReward,             ///< Total expected weight.
-        DiscountedExpectedReward,   ///< Discounted expected weight.
-        AverageExpectedReward,      ///< Long-run average expected weight.
+        Expected,             ///< Total expected weight.
+        Discounted,   ///< Discounted expected weight.
+        Average,      ///< Long-run average expected weight.
         TransPr,            ///< Transition probability Bellman operator.
         DiscountedTransPr   ///< Discounted transition probability Bellman operator.
     };
@@ -1248,11 +1248,11 @@ class HMDP
      * \param op Bellman operator.
      * \param idxW The action weight index we want to optimize.
      * \param sense Optimization direction used for policy improvement.
-     * \param g The average weight (only used when \p op is \code BellmanOp::AverageExpectedReward).
+     * \param g The average weight (only used when \p op is \code BellmanOp::Average).
      * \param idxDur The action duration index.
      * \param discountF The discount factor for one time unit.
      *
-     * \note The last three parameters are only used when \p op is \code BellmanOp::DiscountedExpectedReward.
+     * \note The last three parameters are only used when \p op is \code BellmanOp::Discounted.
      * \return True if a new policy is found. Remember to reset the predecessors if no old policy before
      * running this method!
      */
@@ -1284,11 +1284,11 @@ class HMDP
      * \post The policy is defined in pred and weights w[iSW] are calculated in each node.
      * \param op Bellman operator.
      * \param idxW The action weight index we want to optimize.
-     * \param g The average weight (only used when \p op is \code BellmanOp::AverageExpectedReward).
+     * \param g The average weight (only used when \p op is \code BellmanOp::Average).
      * \param idxDur The action duration index.
      * \param discountF The discount factor for one time unit.
      *
-     * \note The last two parameters are only used when \p op is \code BellmanOp::DiscountedExpectedReward.
+     * \note The last two parameters are only used when \p op is \code BellmanOp::Discounted.
      */
     void CalcPolicy(BellmanOp op, idx idxW = 0, flt g = 0, idx idxDur = 0, flt discountF = 1);
 
@@ -1317,7 +1317,7 @@ class HMDP
      * \param iS The id of the state we consider in \code states.
      * \param idxW The index of weights to calculate.
      * \param idxA The action index we calculate the RPO with respect to (same size as iS).
-     * \param g The average weight (only used when \p op is \code BellmanOp::AverageExpectedReward).
+     * \param g The average weight (only used when \p op is \code BellmanOp::Average).
      * \param idxDur The action duration index.
      * \param discountF The discount factor for one time unit.
      *
@@ -1454,20 +1454,20 @@ private:
     void CheckTransitionRewardsAvailable(idx idxW) const;
 
     /** Calculate RPO using action rewards \f$r(s,a)\f$. */
-    vector<flt> CalcRPOActionExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA);
-    vector<flt> CalcRPOActionExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA);
+    vector<flt> CalcRPOActionExpectedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA);
+    vector<flt> CalcRPOActionExpectedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA);
 
     /** Calculate RPO using transition rewards \f$r(s,a,s')\f$. */
-    vector<flt> CalcRPOTransitionExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA);
-    vector<flt> CalcRPOTransitionExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA);
+    vector<flt> CalcRPOTransitionExpectedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA);
+    vector<flt> CalcRPOTransitionExpectedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA);
 
     /** Calculate RPO using action-level average rewards. */
-    vector<flt> CalcRPOActionAverageExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur);
-    vector<flt> CalcRPOActionAverageExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur);
+    vector<flt> CalcRPOActionAverageMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur);
+    vector<flt> CalcRPOActionAverageMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur);
 
     /** Calculate RPO using action-level discounted rewards. */
-    vector<flt> CalcRPOActionDiscountedExpectedRewardMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF);
-    vector<flt> CalcRPOActionDiscountedExpectedRewardMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF);
+    vector<flt> CalcRPOActionDiscountedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF);
+    vector<flt> CalcRPOActionDiscountedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF);
 
     /** Calculate RPO using transition probabilities. */
     vector<flt> CalcRPOActionTransPrMax(vector<idx> & iS, vector<idx> & idxA);
@@ -1478,28 +1478,28 @@ private:
     vector<flt> CalcRPOActionDiscountedTransPrMin(vector<idx> & iS, vector<idx> & idxA, idx idxDur, flt discountF);
 
     /** Optimize a finite-stage policy using action rewards \f$r(s,a)\f$. */
-    bool CalcOptPolicyActionExpectedRewardMax(idx idxW);
+    bool CalcOptPolicyActionExpectedMax(idx idxW);
 
     /** Optimize a finite-stage policy using action rewards \f$r(s,a)\f$ by minimization. */
-    bool CalcOptPolicyActionExpectedRewardMin(idx idxW);
+    bool CalcOptPolicyActionExpectedMin(idx idxW);
 
     /** Optimize a finite-stage policy using transition rewards \f$r(s,a,s')\f$. */
-    bool CalcOptPolicyTransitionExpectedRewardMax(idx idxW);
+    bool CalcOptPolicyTransitionExpectedMax(idx idxW);
 
     /** Optimize a finite-stage policy using transition rewards \f$r(s,a,s')\f$ by minimization. */
-    bool CalcOptPolicyTransitionExpectedRewardMin(idx idxW);
+    bool CalcOptPolicyTransitionExpectedMin(idx idxW);
 
     /** Optimize a finite-stage policy using action-level average rewards. */
-    bool CalcOptPolicyActionAverageExpectedRewardMax(idx idxW, flt g, idx idxDur);
+    bool CalcOptPolicyActionAverageMax(idx idxW, flt g, idx idxDur);
 
     /** Optimize a finite-stage policy using action-level average weights by minimization. */
-    bool CalcOptPolicyActionAverageExpectedRewardMin(idx idxW, flt g, idx idxDur);
+    bool CalcOptPolicyActionAverageMin(idx idxW, flt g, idx idxDur);
 
     /** Optimize a finite-stage policy using action-level discounted rewards. */
-    bool CalcOptPolicyActionDiscountedExpectedRewardMax(idx idxW, idx idxDur, flt discountF);
+    bool CalcOptPolicyActionDiscountedMax(idx idxW, idx idxDur, flt discountF);
 
     /** Optimize a finite-stage policy using action-level discounted weights by minimization. */
-    bool CalcOptPolicyActionDiscountedExpectedRewardMin(idx idxW, idx idxDur, flt discountF);
+    bool CalcOptPolicyActionDiscountedMin(idx idxW, idx idxDur, flt discountF);
 
     /** Optimize a finite-stage policy using transition probabilities. */
     bool CalcOptPolicyActionTransPrMax();

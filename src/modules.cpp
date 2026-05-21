@@ -6,9 +6,9 @@ using namespace Rcpp;
 /** Convert the integer R API Bellman-operator code to a Bellman operator. */
 HMDP::BellmanOp ToBellmanOp(idx op) {
    switch (op) {
-      case 0: return HMDP::BellmanOp::DiscountedExpectedReward;
-      case 1: return HMDP::BellmanOp::AverageExpectedReward;
-      case 2: return HMDP::BellmanOp::ExpectedReward;
+      case 0: return HMDP::BellmanOp::Discounted;
+      case 1: return HMDP::BellmanOp::Average;
+      case 2: return HMDP::BellmanOp::Expected;
       case 3: return HMDP::BellmanOp::TransPr;
       case 4: return HMDP::BellmanOp::DiscountedTransPr;
       default: throw std::runtime_error("Invalid Bellman operator.");
