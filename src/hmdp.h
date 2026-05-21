@@ -1422,12 +1422,12 @@ private:
 
     /** Throw if \p iW is not a valid action-level weight index. */
     void CheckActionWIdx(idx iW) const {
-        if (iW >= weightActionNames.size()) throw runtime_error("Action reward index out of range.");
+        if (iW >= weightActionNames.size()) throw runtime_error("Action weight index out of range.");
     }
 
     /** Throw if \p iW is not a valid transition-level weight index. */
     void CheckTransWIdx(idx iW) const {
-        if (iW >= weightTransNames.size()) throw runtime_error("Transition reward index out of range.");
+        if (iW >= weightTransNames.size()) throw runtime_error("Transition weight index out of range.");
     }
 
     /** Infer whether a backward-compatible global weight index is action or transition level. */
@@ -1443,7 +1443,7 @@ private:
             CheckActionWIdx(iW);
             return iW;
         }
-        if (!IsTransWIdx(iW)) throw runtime_error("Transition reward index out of range.");
+        if (!IsTransWIdx(iW)) throw runtime_error("Transition weight index out of range.");
         return TransWIdx(iW);
     }
 
@@ -1453,19 +1453,19 @@ private:
     /** Validate that all transitions contain transition weight \p idxW. */
     void CheckTransitionRewardsAvailable(idx idxW) const;
 
-    /** Calculate RPO using action rewards \f$r(s,a)\f$. */
+    /** Calculate RPO using action weights \f$r(s,a)\f$. */
     vector<flt> CalcRPOActionExpectedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA);
     vector<flt> CalcRPOActionExpectedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA);
 
-    /** Calculate RPO using transition rewards \f$r(s,a,s')\f$. */
+    /** Calculate RPO using transition weights \f$r(s,a,s')\f$. */
     vector<flt> CalcRPOTransitionExpectedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA);
     vector<flt> CalcRPOTransitionExpectedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA);
 
-    /** Calculate RPO using action-level average rewards. */
+    /** Calculate RPO using action-level average weights. */
     vector<flt> CalcRPOActionAverageMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur);
     vector<flt> CalcRPOActionAverageMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g, idx idxDur);
 
-    /** Calculate RPO using action-level discounted rewards. */
+    /** Calculate RPO using action-level discounted weights. */
     vector<flt> CalcRPOActionDiscountedMax(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF);
     vector<flt> CalcRPOActionDiscountedMin(vector<idx> & iS, idx idxW, vector<idx> & idxA, idx idxDur, flt discountF);
 
@@ -1477,25 +1477,25 @@ private:
     vector<flt> CalcRPOActionDiscountedTransPrMax(vector<idx> & iS, vector<idx> & idxA, idx idxDur, flt discountF);
     vector<flt> CalcRPOActionDiscountedTransPrMin(vector<idx> & iS, vector<idx> & idxA, idx idxDur, flt discountF);
 
-    /** Optimize a finite-stage policy using action rewards \f$r(s,a)\f$. */
+    /** Optimize a finite-stage policy using action weights \f$r(s,a)\f$. */
     bool CalcOptPolicyActionExpectedMax(idx idxW);
 
-    /** Optimize a finite-stage policy using action rewards \f$r(s,a)\f$ by minimization. */
+    /** Optimize a finite-stage policy using action weights \f$r(s,a)\f$ by minimization. */
     bool CalcOptPolicyActionExpectedMin(idx idxW);
 
-    /** Optimize a finite-stage policy using transition rewards \f$r(s,a,s')\f$. */
+    /** Optimize a finite-stage policy using transition weights \f$r(s,a,s')\f$. */
     bool CalcOptPolicyTransitionExpectedMax(idx idxW);
 
-    /** Optimize a finite-stage policy using transition rewards \f$r(s,a,s')\f$ by minimization. */
+    /** Optimize a finite-stage policy using transition weights \f$r(s,a,s')\f$ by minimization. */
     bool CalcOptPolicyTransitionExpectedMin(idx idxW);
 
-    /** Optimize a finite-stage policy using action-level average rewards. */
+    /** Optimize a finite-stage policy using action-level average weights. */
     bool CalcOptPolicyActionAverageMax(idx idxW, flt g, idx idxDur);
 
     /** Optimize a finite-stage policy using action-level average weights by minimization. */
     bool CalcOptPolicyActionAverageMin(idx idxW, flt g, idx idxDur);
 
-    /** Optimize a finite-stage policy using action-level discounted rewards. */
+    /** Optimize a finite-stage policy using action-level discounted weights. */
     bool CalcOptPolicyActionDiscountedMax(idx idxW, idx idxDur, flt discountF);
 
     /** Optimize a finite-stage policy using action-level discounted weights by minimization. */
