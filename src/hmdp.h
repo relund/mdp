@@ -1519,22 +1519,44 @@ private:
     /** Optimize a finite-stage policy using discounted transition probabilities by minimization. */
     bool CalcOptPolicyActionDiscountedTransPrMin(idx idxDur, flt discountF);
 
-    /** Evaluate the current policy using action weights \f$r(s,a)\f$. */
+    /** 
+     * @brief Evaluate the current policy using action weights \f$r(s,a)\f$. 
+     * @param idxW The weight index.
+     */
     void CalcPolicyActionWeight(idx idxW);
 
-    /** Evaluate the current policy using transition weights \f$r(s,a,s')\f$. */
+    /** 
+     * @brief Evaluate the current policy using transition weights \f$r(s,a,s')\f$. 
+     * @param idxW The weight index.
+     */
     void CalcPolicyTransitionWeight(idx idxW);
 
-    /** Evaluate the current policy using action-level average weights. */
+    /** 
+     * @brief Evaluate the current policy using action-level average weights. 
+     * @param idxW The weight index.
+     * @param g The average weight.
+     * @param idxDur The duration index.
+     */
     void CalcPolicyActionAverageWeight(idx idxW, flt g, idx idxDur);
 
-    /** Evaluate the current policy using action-level discounted weights. */
+    /** 
+     * @brief Evaluate the current policy using action-level discounted weights. 
+     * @param idxW The weight index.
+     * @param idxDur The duration index.
+     * @param discountF The discount factor.
+     */
     void CalcPolicyActionDiscountedWeight(idx idxW, idx idxDur, flt discountF);
 
-    /** Evaluate the current policy using transition probabilities. */
+    /** 
+     * @brief Evaluate the current policy using transition probabilities. 
+     */
     void CalcPolicyActionTransPr();
 
-    /** Evaluate the current policy using discounted transition probabilities. */
+    /** 
+     * @brief Evaluate the current policy using discounted transition probabilities. 
+     * @param idxDur The duration index.
+     * @param discountF The discount factor.
+     */
     void CalcPolicyActionDiscountedTransPr(idx idxDur, flt discountF);
 };
 
