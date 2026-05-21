@@ -3,7 +3,7 @@
 
 using namespace Rcpp;
 
-/** Convert the integer R API Bellman-operator code to a Bellman operator. */
+// Convert the integer R API Bellman-operator code to a Bellman operator.
 HMDP::BellmanOp ToBellmanOp(idx op) {
    switch (op) {
       case 0: return HMDP::BellmanOp::Discounted;
@@ -15,7 +15,7 @@ HMDP::BellmanOp ToBellmanOp(idx op) {
    }
 }
 
-/** Convert the integer R API optimization-sense code to an optimization sense. */
+// Convert the integer R API optimization-sense code to an optimization sense.
 HMDP::OptSense ToOptSense(idx sense) {
    switch (sense) {
       case 0: return HMDP::OptSense::Maximize;
@@ -24,7 +24,7 @@ HMDP::OptSense ToOptSense(idx sense) {
    }
 }
 
-/** Function to call ValueIte since Rcpp cannot handle enum types. */
+// Function to call ValueIte since Rcpp cannot handle enum types.
 void RunValueIte(HMDP* hmdp, idx op, idx sense, idx maxIte, flt epsilon, const idx idxW,
               const idx idxDur, vector<flt> & termValues,
               const flt g, const flt discountF)
@@ -32,20 +32,20 @@ void RunValueIte(HMDP* hmdp, idx op, idx sense, idx maxIte, flt epsilon, const i
    hmdp->ValueIte(ToBellmanOp(op), ToOptSense(sense), maxIte, epsilon, idxW, idxDur, termValues, g, discountF);
 }
 
-/** Function to call PolicyIte since Rcpp cannot handle enum types. */
+// Function to call PolicyIte since Rcpp cannot handle enum types.
 flt RunPolicyIte(HMDP* hmdp, idx op, idx sense, uSInt maxIte, const idx idxW, const idx idxD, const flt discountF)
 {
    return hmdp->PolicyIte(ToBellmanOp(op), ToOptSense(sense), maxIte, idxW, idxD, discountF);
 }
 
 
-/** Function to call PolicyIteFixedPolicy since Rcpp cannot handle enum types. */
+// Function to call PolicyIteFixedPolicy since Rcpp cannot handle enum types.
 flt RunPolicyIteFixedPolicy(HMDP* hmdp, idx op, const idx idxW, const idx idxD, const flt discountF)
 {
    return hmdp->PolicyIteFixedPolicy(ToBellmanOp(op), idxW, idxD, discountF);
 }
 
-/** Function to call since Rcpp cannot handle enum types. */
+// Function to call since Rcpp cannot handle enum types.
 void RunCalcPolicy(HMDP* hmdp, idx op, idx idxW, flt g, idx idxD, flt discountF)
 {
    hmdp->CalcPolicy(ToBellmanOp(op), idxW, g, idxD, discountF);
@@ -53,7 +53,7 @@ void RunCalcPolicy(HMDP* hmdp, idx op, idx idxW, flt g, idx idxD, flt discountF)
 
 
 
-/** Function to call since Rcpp cannot handle enum types. */
+// Function to call since Rcpp cannot handle enum types.
 vector<flt> RunCalcRPO(HMDP* hmdp, idx op, idx sense, vector<idx> & iS, idx idxW, vector<idx> & idxA, flt g,
                 idx idxDur, flt discountF)
 {
@@ -67,7 +67,7 @@ idx GetActionSize(HMDP* hmdp) {return hmdp->GetActionSize();}
 
 string GetNextStageStr(HMDP* hmdp, string stageStr) {return hmdp->GetNextStageStr(stageStr);}
 
-/** Get state ids of a vector of stage strings. */
+// Get state ids of a vector of stage strings.
 vector<idx> GetStateIdsStages(HMDP* hmdp, vector<string> stages) {
    vector<idx> v;
    for (idx i=0; i<stages.size(); ++i) {
@@ -78,7 +78,7 @@ vector<idx> GetStateIdsStages(HMDP* hmdp, vector<string> stages) {
 }
 
 
-/** Get state ids of a vector of state strings. */
+// Get state ids of a vector of state strings.
 vector<idx> GetStateIdsStates(HMDP* hmdp, vector<string> states) {
    vector<idx> v;
    for (idx i=0; i<states.size(); ++i) {
@@ -88,13 +88,13 @@ vector<idx> GetStateIdsStates(HMDP* hmdp, vector<string> states) {
 }
 
 
-/** Get the state string of a state given sId. */
+// Get the state string of a state given sId.
 vector<string> GetStateStr(HMDP* hmdp, vector<idx> sId) {
    return hmdp->GetStatesStr(sId);
 }
 
 
-/** Get info of actions of a state as a List. */
+// Get info of actions of a state as a List.
 List GetActionInfo(HMDP* hmdp, idx sId) {
    HMDP::state_iterator iteS = hmdp->GetIte(sId);
    List lst;

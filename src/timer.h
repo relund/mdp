@@ -43,93 +43,99 @@
 typedef uint64_t nanotime_t;
 
 /**
-* Class for measuring CPU time (Timer). Can be used on most OS.
-* \note The measure unit is nanoseconds (10e-9 of a second) which are stored as a uint64_t,
-* i.e. on my 64-bit windows machine maximum time measured can be 18446744073709551615
-* nanoseconds = 213504 days.
-*
-* \author Lars Relund.
-* \version 1.0
-*/
+ * @brief Class for measuring CPU time (Timer). 
+ * 
+ * Can be used on most OS.
+ * The measure unit is nanoseconds (10e-9 of a second) which are stored as a uint64_t.
+ */
 class Timer
 {
 public:
 
-/** Initialize the timer. i.e. reset to zero.
-*/
-Timer() {Reset();}
+    /** 
+     * @brief Initialize the timer. i.e. reset to zero.
+     */
+    Timer() {Reset();}
 
 
-/** Reset the timer to zero. */
-void Reset() { startT = endT = elapsedT = cumulT = 0; }
+    /** 
+     * @brief Reset the timer to zero. 
+     */
+    void Reset() { startT = endT = elapsedT = cumulT = 0; }
 
 
-/** Return the time between first \code StartTimer() and \code last StopTimer() call.
-* \see StartTimer
-* \see StopTimer
-*/
-nanotime_t CumulativeTime() const { return cumulT; }
+    /** 
+     * @brief Return the time between first StartTimer() and last StopTimer() call.
+     * @return Cumulative time in nanoseconds.
+     */
+    nanotime_t CumulativeTime() const { return cumulT; }
 
 
-/** Return the time between first \code StartTimer() and \code last StopTimer() call.
-* \see StartTimer
-* \see StopTimer
-*/
-double CumulativeTime(std::string unit) const {
-    if (unit=="nano") return double(cumulT);
-    else if (unit=="micro") return double(cumulT)/1000;
-    else if (unit=="mili")  return double(cumulT)/1000000;
-    else if (unit=="sec")   return double(cumulT)/1000000000LL;
-    else if (unit=="min")   return double(cumulT)/(1000000000LL*60);
-    else if (unit=="hour")  return double(cumulT)/(1000000000LL*60*60);
-    else if (unit=="day")   return double(cumulT)/(1000000000LL*60*60*24);
-    // std::cerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
-    Rcpp::Rcerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
-    return -1;
-}
+    /** 
+     * @brief Return the time between first StartTimer() and last StopTimer() call.
+     * @param unit The time unit ('nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day').
+     * @return Cumulative time in the specified unit.
+     */
+    double CumulativeTime(std::string unit) const {
+        if (unit=="nano") return double(cumulT);
+        else if (unit=="micro") return double(cumulT)/1000;
+        else if (unit=="mili")  return double(cumulT)/1000000;
+        else if (unit=="sec")   return double(cumulT)/1000000000LL;
+        else if (unit=="min")   return double(cumulT)/(1000000000LL*60);
+        else if (unit=="hour")  return double(cumulT)/(1000000000LL*60*60);
+        else if (unit=="day")   return double(cumulT)/(1000000000LL*60*60*24);
+        // std::cerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
+        Rcpp::Rcerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
+        return -1;
+    }
 
 
-/** Return the time between last \code StartTimer() and \code StopTimer() call.
-* \see StartTimer
-* \see StopTimer
-*/
-double ElapsedTime() const { return elapsedT; }
+    /** 
+     * @brief Return the time between last StartTimer() and StopTimer() call.
+     * @return Elapsed time in nanoseconds.
+     */
+    double ElapsedTime() const { return elapsedT; }
 
 
-/** Return the time between last \code StartTimer() and \code StopTimer() call.
-* \see StartTimer
-* \see StopTimer
-*/
-double ElapsedTime(std::string unit) const {
-    if (unit=="nano") return double(elapsedT);
-    else if (unit=="micro") return double(elapsedT)/1000;
-    else if (unit=="mili")  return double(elapsedT)/1000000;
-    else if (unit=="sec")   return double(elapsedT)/1000000000LL;
-    else if (unit=="min")   return double(elapsedT)/(1000000000LL*60);
-    else if (unit=="hour")  return double(elapsedT)/(1000000000LL*60*60);
-    else if (unit=="day")   return double(elapsedT)/(1000000000LL*60*60*24);
-    // std::cerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
-    Rcpp::Rcerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
-    return -1;
-}
-/** Start the timer.
-* \see StopTimer
-*/
-void StartTimer() { startT = GetNanoTime(); }
+    /** 
+     * @brief Return the time between last StartTimer() and StopTimer() call.
+     * @param unit The time unit ('nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day').
+     * @return Elapsed time in the specified unit.
+     */
+    double ElapsedTime(std::string unit) const {
+        if (unit=="nano") return double(elapsedT);
+        else if (unit=="micro") return double(elapsedT)/1000;
+        else if (unit=="mili")  return double(elapsedT)/1000000;
+        else if (unit=="sec")   return double(elapsedT)/1000000000LL;
+        else if (unit=="min")   return double(elapsedT)/(1000000000LL*60);
+        else if (unit=="hour")  return double(elapsedT)/(1000000000LL*60*60);
+        else if (unit=="day")   return double(elapsedT)/(1000000000LL*60*60*24);
+        // std::cerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
+        Rcpp::Rcerr << "Time unit not defined! Use 'nano', 'micro', 'mili', 'sec', 'min', 'hour' or 'day'\n";
+        return -1;
+    }
+
+    /** 
+     * @brief Start the timer.
+     */
+    void StartTimer() { startT = GetNanoTime(); }
 
 
-/** Stop the timer.
-* \see StartTimer
-*/
-void StopTimer()
-{
-    endT = GetNanoTime();
-    elapsedT = endT - startT;
-    cumulT += elapsedT;
-}
+    /** 
+     * @brief Stop the timer.
+     */
+    void StopTimer()
+    {
+        endT = GetNanoTime();
+        elapsedT = endT - startT;
+        cumulT += elapsedT;
+    }
 
-/** Max time which can be measured. */
-nanotime_t MaxTime() { return std::numeric_limits<uint64_t>::max(); }
+    /** 
+     * @brief Max time which can be measured. 
+     * @return Maximum nanoseconds.
+     */
+    nanotime_t MaxTime() { return std::numeric_limits<uint64_t>::max(); }
 
 private:
 

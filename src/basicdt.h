@@ -42,15 +42,23 @@ const flt PRECISION = 1e-10;  ///< used for comparison floats
 //const int FALSE = 0;
 //const int TRUE = 1;
 
-/** Global function for comparing two floats. Assume equal if their difference
-* if less than PRECISION.
-* \return True if equal.
-*/
+/** 
+ * @brief Global function for comparing two floats. 
+ * 
+ * Assume equal if their difference is less than PRECISION.
+ * @param n1 First number.
+ * @param n2 Second number.
+ * @return True if equal.
+ */
 inline bool Equal(flt n1,flt n2) {
     return ((n2-PRECISION)<=n1 && n1<=(n2+PRECISION));
 }
 
-/** Global function for converting a number to a string */
+/** 
+ * @brief Global function for converting a number to a string.
+ * @param t The number to convert.
+ * @return The string representation.
+ */
 template <typename T>
 std::string inline ToString(T t) {
     std::ostringstream s;
@@ -58,22 +66,12 @@ std::string inline ToString(T t) {
     return s.str();
 }
 
-/** Global function for converting a string
- \param t The variable of the result.
- \param s The string.
- \param *f One of std::hex, std::dec or std::oct.
- \return 0 if failed and 1 otherwise.
- Example
-
- if(from_string<float>(f, std::string("123.456"), std::dec))
-  {
-    std::cout << f << std::endl;
-  }
-  else
-  {
-    std::cout << "from_string failed" << std::endl;
-  }
-
+/** 
+ * @brief Global function for converting a string to a value.
+ * @param t The variable to store the result.
+ * @param s The string to convert.
+ * @param f The base (one of std::hex, std::dec or std::oct).
+ * @return True if successful, false otherwise.
  */
 template <typename T>
 bool inline from_string(T& t,
@@ -84,7 +82,11 @@ bool inline from_string(T& t,
   return !(iss >> f >> t).fail();
 }
 
-/** convert a vector to a comma separated string. */
+/** 
+ * @brief Convert a vector to a comma separated string.
+ * @param v The vector.
+ * @return The string representation.
+ */
 template <typename T>
 string inline vec2String(const vector<T>& v) {
     if (v.size()==0) return string();
@@ -96,7 +98,11 @@ string inline vec2String(const vector<T>& v) {
 }
 
 
-/** convert a string of comma separated numbers to a vector. */
+/** 
+ * @brief Convert a string of comma separated numbers to a vector.
+ * @param str The string.
+ * @return The vector.
+ */
 template <typename T>
 vector<T> inline string2vec(const string str) {
     vector<T> vect;

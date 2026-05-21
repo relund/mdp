@@ -34,9 +34,9 @@ This repository contains an R package with integrated C++ source code via `Rcpp`
      * @return Description.
      */
 
-   Add this documentation in the header files. Document classes, functions, procedues, methods, enums, 
-   variables and important implementation details. This will help maintain clarity and ease of use 
-   for future developers and users of the package.
+   Add this documentation in the header files (only keep a single line in .cpp files). Document
+   classes, functions, procedues, methods, enums, variables and important implementation details.
+   This will help maintain clarity and ease of use for future developers and users of the package.
 
 ## Embedded instructions for you (AI) to follow
 Instructions for you are given as comments starting with 

@@ -4,7 +4,8 @@
 #include "basicdt.h"
 #include <iostream>
 
-/** Simple Dense Rectangular Matrix Class.
+/** 
+ * @brief Simple Dense Rectangular Matrix Class.
  *
  *  - allows 2-d indexing
  *  - inject assignment
@@ -17,10 +18,11 @@ class MatSimple
 {
 public:
 
-    /** Constructs a column-wise matrix.
-     \note Elements are not initialized!
-     \param r Number of rows.
-     \param c Number of columns.
+    /** 
+     * @brief Constructs a column-wise matrix.
+     * @note Elements are not initialized!
+     * @param r Number of rows.
+     * @param c Number of columns.
      */
     MatSimple(int r, int c) {
         rows = r;
@@ -28,9 +30,10 @@ public:
         v = new T[rows*cols];
     }
 
-    /** Constructs a column-wise square matrix.
-     \param identity If true create an identity matrix.
-     \param r Number of rows and columns.
+    /** 
+     * @brief Constructs a column-wise square matrix.
+     * @param r Number of rows and columns.
+     * @param identity If true create an identity matrix.
      */
     MatSimple(int r, bool identity) {
         rows = cols = r;
@@ -41,7 +44,10 @@ public:
         }
     }
 
-    /** Copy constructor. */
+    /** 
+     * @brief Copy constructor. 
+     * @param mat The matrix to copy.
+     */
     MatSimple(const MatSimple & mat) {
         rows = mat.rows;
         cols = mat.cols;
@@ -49,12 +55,18 @@ public:
         Inject(mat);
     }
 
-    /** Deconstructor. */
+    /** 
+     * @brief Deconstructor. 
+     */
     ~MatSimple() {
         delete [] v;
     }
 
-    /* Assignment operator. */
+    /**
+     * @brief Assignment operator.
+     * @param rhs The right-hand side matrix.
+     * @return Reference to this matrix.
+     */
     T& operator=(const T & rhs) {
         if (this == &rhs) return *this;
         rows = rhs.rows;
@@ -65,32 +77,54 @@ public:
         return this;
     }
 
-    /** Set all entries to val. */
+    /** 
+     * @brief Set all entries to val. 
+     * @param val The value to set.
+     */
     void Set(T val) {
         for (idx i=0; i<rows*cols; i++) v[i] = val;
     }
 
-    /** Copy mat. */
+    /** 
+     * @brief Copy mat. 
+     * @param mat The matrix to copy.
+     */
     void Inject(const MatSimple & mat) {
         for (idx i=0; i<rows*cols; i++) v[i] = mat(i);
     }
 
-    /** Multiply the matrix with -1. */
+    /** 
+     * @brief Multiply the matrix with -1. 
+     */
     void MultWithMinusOne() {
         for (idx i=0; i<rows*cols; i++) v[i] = -v[i];
     }
 
-    /* Get entry (r,c). */
+    /**
+     * @brief Get entry (r,c). 
+     * @param r Row index.
+     * @param c Column index.
+     * @return Reference to the entry.
+     */
     T& operator()(int r, int c) {
        return v[rows*c+r];
     }
 
-    /* Get entry (r,c). */
+    /**
+     * @brief Get entry (r,c). 
+     * @param r Row index.
+     * @param c Column index.
+     * @return Const reference to the entry.
+     */
     T& operator()(int r, int c) const {
        return v[rows*c+r];
     }
 
-    /* Get entry i in the vector. */
+    /**
+     * @brief Get entry i in the underlying array. 
+     * @param i The index.
+     * @return Const reference to the entry.
+     */
     T& operator()(int i) const {
        return v[i];
     }

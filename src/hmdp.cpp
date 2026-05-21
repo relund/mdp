@@ -914,12 +914,7 @@ bool HMDP::CalcOptPolicy(BellmanOp op, OptSense sense, idx idxW, flt g, idx idxD
     return CalcOptPolicy(op, sense, level, localIdxW, g, idxDur, discountF);
 }
 
-/** Dispatch optimal-policy calculation to a specialized Bellman implementation.
- *
- * The dispatch happens before entering any state/action/transition loop. The
- * specialized methods keep the hot transition loops free of operator switches,
- * weight-level checks, virtual calls, and function-object calls.
- */
+// Dispatch optimal-policy calculation to a specialized Bellman implementation.
 bool HMDP::CalcOptPolicy(BellmanOp op, OptSense sense, WeightLevel level, idx idxW, flt g, idx idxDur, flt discountF) {
     if (level==WeightLevel::Transition && op!=BellmanOp::Expected) {
         throw runtime_error("Transition-level weights are not supported for " + BellmanOpName(op) + ".");
@@ -971,11 +966,7 @@ HMDP::WeightLevel HMDP::ValidateGlobalWeightForOp(BellmanOp op, idx iW) const {
     return level;
 }
 
-/** Validate that an action weight is present on every action.
- *
- * This check is intentionally performed before dynamic programming starts so
- * the specialized Bellman loops can access \code iteA->w[idxW] directly.
- */
+// Validate that an action weight is present on every action.
 void HMDP::CheckActionWeightsAvailable(idx idxW) const {
     if (idxW>=weightActionNames.size()) throw runtime_error("Action weight index out of range.");
     for (vector<HMDPState>::const_iterator iteS=states.begin(); iteS!=states.end(); ++iteS) {
@@ -985,11 +976,7 @@ void HMDP::CheckActionWeightsAvailable(idx idxW) const {
     }
 }
 
-/** Validate that a transition weight is present on every transition.
- *
- * This check is intentionally performed before dynamic programming starts so
- * the specialized Bellman loops can access \code iteT->w[idxW] directly.
- */
+// Validate that a transition weight is present on every transition.
 void HMDP::CheckTransitionWeightsAvailable(idx idxW) const {
     if (idxW>=weightTransNames.size()) throw runtime_error("Transition weight index out of range.");
     for (vector<HMDPState>::const_iterator iteS=states.begin(); iteS!=states.end(); ++iteS) {
@@ -1435,14 +1422,7 @@ vector<flt> HMDP::CalcRPOActionDiscountedTransPrMin(vector<idx> & iS, vector<idx
     return result;
 }
 
-/** Optimize a policy using action weights.
- *
- * Implements
- * \f[
- *   V(s) = r(s,a) + \sum_{s'} P(s'|s,a)V(s')
- * \f]
- * where \f$r(s,a)\f$ is stored in \code HMDPAction::w.
- */
+// Optimize a policy using action weights.
 bool HMDP::CalcOptPolicyActionExpectedMax(idx idxW) {
     CheckActionWeightsAvailable(idxW);
     flt wTmp;
@@ -1487,14 +1467,7 @@ bool HMDP::CalcOptPolicyActionExpectedMax(idx idxW) {
     return newPred;
 }
 
-/** Optimize a policy using transition weights.
- *
- * Implements
- * \f[
- *   V(s) = \sum_{s'} P(s'|s,a)\{r(s,a,s') + V(s')\}
- * \f]
- * where \f$r(s,a,s')\f$ is stored in \code HMDPTrans::w.
- */
+// Optimize a policy using transition weights.
 bool HMDP::CalcOptPolicyTransitionExpectedMax(idx idxW) {
     CheckTransitionWeightsAvailable(idxW);
     flt wTmp;
@@ -1529,11 +1502,7 @@ bool HMDP::CalcOptPolicyTransitionExpectedMax(idx idxW) {
     return newPred;
 }
 
-/** Optimize a policy using action-level average weights.
- *
- * This preserves the existing average-weight behaviour for action weights while
- * keeping the transition loop specialized for this operator.
- */
+// Optimize a policy using action-level average weights.
 bool HMDP::CalcOptPolicyActionAverageMax(idx idxW, flt g, idx idxDur) {
     CheckActionWeightsAvailable(idxW);
     CheckActionWeightsAvailable(idxDur);
@@ -1578,11 +1547,7 @@ bool HMDP::CalcOptPolicyActionAverageMax(idx idxW, flt g, idx idxDur) {
     return newPred;
 }
 
-/** Optimize a policy using action-level discounted weights.
- *
- * This preserves the existing discounted-weight behaviour for action weights
- * and performs discounting outside the transition loop.
- */
+// Optimize a policy using action-level discounted weights.
 bool HMDP::CalcOptPolicyActionDiscountedMax(idx idxW, idx idxDur, flt discountF) {
     CheckActionWeightsAvailable(idxW);
     CheckActionWeightsAvailable(idxDur);
@@ -1979,11 +1944,7 @@ void HMDP::CalcPolicy(BellmanOp op, idx idxW, flt g, idx idxDur, flt discountF) 
     CalcPolicy(op, level, localIdxW, g, idxDur, discountF);
 }
 
-/** Dispatch fixed-policy evaluation to a specialized Bellman implementation.
- *
- * The dispatch happens once before the loops. The selected implementation
- * evaluates the current policy stored in \code pred.
- */
+// Dispatch fixed-policy evaluation to a specialized Bellman implementation.
 void HMDP::CalcPolicy(BellmanOp op, WeightLevel level, idx idxW, flt g, idx idxDur, flt discountF) {
     if (level==WeightLevel::Transition && op!=BellmanOp::Expected) {
         throw runtime_error("Transition-level weights are not supported for " + BellmanOpName(op) + ".");
@@ -2015,7 +1976,7 @@ void HMDP::CalcPolicy(BellmanOp op, WeightLevel level, idx idxW, flt g, idx idxD
     throw runtime_error("Bellman operator not implemented.");
 }
 
-/** Evaluate the current policy using action weights \f$r(s,a)\f$. */
+// Evaluate the current policy using action weights.
 void HMDP::CalcPolicyActionWeight(idx idxW) {
     CheckActionWeightsAvailable(idxW);
     flt wTmp;
@@ -2032,7 +1993,7 @@ void HMDP::CalcPolicyActionWeight(idx idxW) {
     }
 }
 
-/** Evaluate the current policy using transition weights \f$r(s,a,s')\f$. */
+// Evaluate the current policy using transition weights.
 void HMDP::CalcPolicyTransitionWeight(idx idxW) {
     CheckTransitionWeightsAvailable(idxW);
     flt wTmp;
@@ -2050,7 +2011,7 @@ void HMDP::CalcPolicyTransitionWeight(idx idxW) {
     }
 }
 
-/** Evaluate the current policy using action-level average weights. */
+// Evaluate the current policy using action-level average weights.
 void HMDP::CalcPolicyActionAverageWeight(idx idxW, flt g, idx idxDur) {
     CheckActionWeightsAvailable(idxW);
     CheckActionWeightsAvailable(idxDur);
@@ -2067,7 +2028,7 @@ void HMDP::CalcPolicyActionAverageWeight(idx idxW, flt g, idx idxDur) {
     }
 }
 
-/** Evaluate the current policy using action-level discounted weights. */
+// Evaluate the current policy using action-level discounted weights.
 void HMDP::CalcPolicyActionDiscountedWeight(idx idxW, idx idxDur, flt discountF) {
     CheckActionWeightsAvailable(idxW);
     CheckActionWeightsAvailable(idxDur);
@@ -2084,7 +2045,7 @@ void HMDP::CalcPolicyActionDiscountedWeight(idx idxW, idx idxDur, flt discountF)
     }
 }
 
-/** Evaluate the current policy using transition probabilities. */
+// Evaluate the current policy using transition probabilities.
 void HMDP::CalcPolicyActionTransPr() {
     flt wTmp;
     for(state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
@@ -2099,7 +2060,7 @@ void HMDP::CalcPolicyActionTransPr() {
     }
 }
 
-/** Evaluate the current policy using discounted transition probabilities. */
+// Evaluate the current policy using discounted transition probabilities.
 void HMDP::CalcPolicyActionDiscountedTransPr(idx idxDur, flt discountF) {
     CheckActionWeightsAvailable(idxDur);
     flt wTmp;

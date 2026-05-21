@@ -9,28 +9,36 @@
 #include <R_ext/Lapack.h>
 // #include <R_ext/BLAS.h>
 
-/** Few algorithms for manipulating and solving matrices. */
+/** 
+ * @brief Algorithms for manipulating and solving matrices. 
+ */
 class MatAlg
 {
 public:
-    /** Set P := I-P.
-     \pre P is a square matrix.
+    /** 
+     * @brief Set P := I-P.
+     * @param P A square matrix.
      */
     void IMinusP(MatSimple<double> &P) const {
         P.MultWithMinusOne();
         for (idx i=0; i<P.rows; i++) P(i,i) = 1+P(i,i);
     }
 
-    /** Set P := P-I.
-     \pre P is a square matrix.
+    /** 
+     * @brief Set P := P-I.
+     * @param P A square matrix.
      */
     void PMinusI(MatSimple<double> &P) const {
         for (idx i=0; i<P.rows; i++) P(i,i) = P(i,i)-1;
     }
 
-    /** Solve equations Pw = r.
-     \return 0 if okay 1 if not.
-    */
+    /** 
+     * @brief Solve equations Pw = r.
+     * @param P The matrix P.
+     * @param w The result vector w.
+     * @param r The right-hand side vector r.
+     * @return 0 if successful, 1 otherwise.
+     */
     int LASolve(const MatSimple<double> &P, MatSimple<double> &w, const MatSimple<double> &r) {
         int rows = P.rows;
         int nrhs = 1;
@@ -52,7 +60,13 @@ public:
         return 0;
     }
 
-    /** Solve equations transpose(P)w = r. */
+    /** 
+     * @brief Solve equations transpose(P)w = r. 
+     * @param P The matrix P.
+     * @param w The result vector w.
+     * @param r The right-hand side vector r.
+     * @return 0 if successful, 1 otherwise.
+     */
     int LASolveT(MatSimple<double> &P, MatSimple<double> &w, const MatSimple<double> &r) {
         int rows = P.rows;
         int nrhs = 1;
