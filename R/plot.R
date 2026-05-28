@@ -1,4 +1,4 @@
-#' Plot parts of the state expanded hypergraph (experimental).
+#' Plot parts of the state expanded hypergraph.
 #' 
 #' The plot is created based on a grid `(rows, cols)`. Each grid point is numbered from bottom to
 #' top and left to right (starting from 1), i.e. given grid point with coordinates `(r, c)` (where
@@ -8,8 +8,11 @@
 #' @param hgf A list with the hypergraph containing two data frames, normally found using
 #'   [getHypergraph()]. The data frame `nodes` must have columns: `sId` (state id), `gId` (grid id)
 #'   and `label` (node label). The data frame `hyperarcs` must have columns `sId` (head node),
-#'   `trans<n>` (tail nodes), `aIdx` (action index), `label` (action label), `lwd` (hyperarc line
-#'   width), `lty` (hyperarc line type) and `col` (hyperarc color).
+#'   `trans` (a list-column of tail node ids), `pr` (a list-column of transition
+#'   probabilities), `actionWeights` (a list-column of action weights),
+#'   `transWeights` (a list-column of transition-by-weight matrices), `aIdx`
+#'   (action index), `label` (action label), `lwd` (hyperarc line width), `lty`
+#'   (hyperarc line type) and `col` (hyperarc color).
 #' @param gridDim A 2-dim vector (rows, cols) representing the size of the grid.
 #' @param showGrid If true show the grid points (good for debugging).
 #' @param radx Horizontal radius of the box.
@@ -18,7 +21,34 @@
 #' @param marX Horizontal margin.
 #' @param marY Vertical margin.
 #' @param drawBorder If `TRUE`, draw a border around the plot region and report the
-#'   outside and inside padding.
+#'   outside and inside padding (good for debugging).
+#' @param actionOffset Distance used to separate actions with the same
+#'   start and trans states. Set to `0` to draw overlapping actions.
+#' @param transLabels Transition-label mode. `"none"` draws no transition labels
+#'   (the default); `"custom"` draws values from an optional `transLabels`
+#'   list-column in `hgf$hyperarcs`; otherwise use a `|`-separated
+#'   combination of `"label"`, `"sId"`, `"prob"`, and `"weights"`, for example
+#'   `"prob|weights"`. The older `"state"` spelling is treated as `"label"`.
+#' @param transLabelCex Relative size of transition-label text.
+#' @param transLabelAdj Position adjustment passed to `textempty()` for transition
+#'   labels, drawn at the middle of each split-to-transition branch.
+#' @param stateLabel What to plot in states. `"custom"` uses a `stateLabel`
+#'   column in `hgf$nodes`; otherwise use a `|`-separated combination of
+#'   `"label"` (state label, default), `"sId"` (state id), `"sIdx"`
+#'   (stage-based state index), and `"weight"` (optimal weight of the state).
+#' @param actionLabel What to plot near the split. One of `"none"`, `"custom"`
+#'   (uses an `actionLabel` column in `hgf$hyperarcs`), or a `|`-separated
+#'   combination of `"label"` (action label, default) and `"aIdx"`.
+#' @param actionWLabel What to plot from the start state to the split. One of
+#'   `"none"` (default), `"weight"`, or `"custom"` (uses an `actionWLabel`
+#'   column in `hgf$hyperarcs`).
+#' @param actionColor Action coloring scheme. Default `""` uses black lines. `"label"` uses different colors based on the action labels. `"policy"` highlights the current policy.
+#' @param actionsVisible Action visibility mode. `"all"` (default) shows all actions. `"policy"` only shows actions in the current policy.
+#' @param connectedTo Optional vector of state ids. If supplied, plot only states
+#'   reachable from these states by following visible hyperarcs forward,
+#'   and trim hyperarcs and transition-level data to the remaining states.
+#' @param mdp The MDP model. Required if `stateLabel` contains `"weight"`,
+#'   `actionColor = "policy"`, or `actionsVisible = "policy"`.
 #' @param ... Graphical parameters passed to `textempty`. 
 #'   
 #' @return No return value (NULL invisible), called for side effects (plotting).
@@ -36,7 +66,294 @@ plotHypergraph <-
             marX = 0.035,
             marY = 0.15,
             drawBorder = FALSE,
+            actionOffset = 0.025,
+            transLabels = "none",
+            transLabelCex = 0.8 * cex,
+            transLabelAdj = c(0.5, -0.6),
+            stateLabel = "label",
+            actionLabel = "label",
+            actionWLabel = "none",
+            actionColor = c("", "label", "policy"),
+            actionsVisible = c("all", "policy"),
+            connectedTo = NULL,
+            mdp = NULL,
             ...) {
+   normalizeLabelArg <- function(x, default, arg) {
+      if (missing(x) || is.null(x) || identical(x, "")) return(default)
+      if (!is.character(x) || length(x) != 1) {
+         stop(paste0(arg, " must be a single character string."), call. = FALSE)
+      }
+      x
+   }
+   parseLabelSpec <- function(x, allowed, arg, special = character(0), aliases = character(0)) {
+      if (x %in% special) return(x)
+      tokens <- trimws(strsplit(x, "|", fixed = TRUE)[[1]])
+      tokens <- tokens[tokens != ""]
+      tokens <- dplyr::recode(tokens, !!!as.list(aliases), .default = tokens)
+      invalid <- setdiff(tokens, allowed)
+      if (length(tokens) == 0 || length(invalid) > 0) {
+         stop(
+            paste0(arg, " must use ", paste(c(special, allowed), collapse = ", "), "."),
+            call. = FALSE
+         )
+      }
+      tokens
+   }
+   collapseLabelParts <- function(parts) {
+      parts <- as.character(parts)
+      parts <- parts[!is.na(parts) & parts != ""]
+      if (length(parts) == 0) return(NA_character_)
+      paste(parts, collapse = " | ")
+   }
+   formatNumericLabel <- function(x) {
+      as.character(round(as.numeric(x), 2))
+   }
+   formatWeightVector <- function(w) {
+      w <- w[!is.na(w)]
+      if (length(w) == 0) {
+         NA_character_
+      } else if (length(w) == 1) {
+         formatNumericLabel(w)
+      } else {
+         paste0("(", paste(formatNumericLabel(w), collapse = ", "), ")")
+      }
+   }
+
+   transLabels <- normalizeLabelArg(transLabels, "none", "transLabels")
+   stateLabel <- normalizeLabelArg(stateLabel, "label", "stateLabel")
+   actionLabel <- normalizeLabelArg(actionLabel, "label", "actionLabel")
+   actionWLabel <- normalizeLabelArg(actionWLabel, "none", "actionWLabel")
+   transLabelSpec <- parseLabelSpec(
+      transLabels,
+      c("label", "sId", "prob", "weights"),
+      "transLabels",
+      special = c("none", "custom"),
+      aliases = c(state = "label")
+   )
+   stateLabelSpec <- parseLabelSpec(
+      stateLabel,
+      c("label", "sId", "sIdx", "weight"),
+      "stateLabel",
+      special = "custom"
+   )
+   actionLabelSpec <- parseLabelSpec(
+      actionLabel,
+      c("label", "aIdx"),
+      "actionLabel",
+      special = c("none", "custom")
+   )
+   actionWLabelSpec <- parseLabelSpec(
+      actionWLabel,
+      "weight",
+      "actionWLabel",
+      special = c("none", "custom")
+   )
+   actionColor <- match.arg(actionColor)
+   actionsVisible <- match.arg(actionsVisible)
+
+   # Apply actionsVisible and actionColor logic to hgf$hyperarcs
+   if (!is.null(hgf$hyperarcs)) {
+      if (actionsVisible == "policy") {
+         if (is.null(mdp)) {
+            stop("mdp model must be provided to plotHypergraph when actionsVisible = \"policy\".", call. = FALSE)
+         }
+         policy_arcs <- getPolicy(mdp) %>% dplyr::select("sId", "aIdx") %>% dplyr::mutate(is_policy = TRUE)
+         hgf$hyperarcs <- hgf$hyperarcs %>% 
+            dplyr::inner_join(policy_arcs, by = c("sId", "aIdx"))
+      }
+      if (actionColor == "label") {
+         colDF <- tibble::tibble(label = unique(hgf$hyperarcs$label), 
+                                 col = grDevices::rainbow(length(unique(hgf$hyperarcs$label))))
+         hgf$hyperarcs <- hgf$hyperarcs %>% 
+            dplyr::select(-col) %>% 
+            dplyr::left_join(colDF, by = "label") 
+      }
+      if (actionColor == "policy") {
+         if (is.null(mdp)) {
+            stop("mdp model must be provided to plotHypergraph when actionColor = \"policy\".", call. = FALSE)
+         }
+         policy_arcs <- getPolicy(mdp) %>% dplyr::select("sId", "aIdx") %>% dplyr::mutate(is_policy = TRUE)
+         hgf$hyperarcs <- hgf$hyperarcs %>% 
+            dplyr::left_join(policy_arcs, by = c("sId", "aIdx")) %>% 
+            dplyr::mutate(col = ifelse(is.na(.data$is_policy), "black", "blue")) %>%
+            dplyr::select(-"is_policy")
+      }
+   }
+
+   filterConnectedHypergraph <- function(hgf, connectedTo) {
+      if (is.null(connectedTo)) return(hgf)
+      if (!is.numeric(connectedTo)) {
+         stop("connectedTo must be a numeric vector of state ids.", call. = FALSE)
+      }
+      connectedTo <- unique(stats::na.omit(as.numeric(connectedTo)))
+      if (length(connectedTo) == 0) return(hgf)
+      if (is.null(hgf$nodes) || !"sId" %in% names(hgf$nodes)) {
+         stop("connectedTo requires hgf$nodes to contain an sId column.", call. = FALSE)
+      }
+      missingSId <- setdiff(connectedTo, hgf$nodes$sId)
+      if (length(missingSId) > 0) {
+         stop(
+            paste0("connectedTo contains sId values not present in hgf$nodes: ", paste(missingSId, collapse = ", ")),
+            call. = FALSE
+         )
+      }
+      if (is.null(hgf$hyperarcs) || nrow(hgf$hyperarcs) == 0) {
+         hgf$nodes <- hgf$nodes[hgf$nodes$sId %in% connectedTo, , drop = FALSE]
+         return(hgf)
+      }
+      if (!"trans" %in% names(hgf$hyperarcs)) {
+         stop("connectedTo requires hgf$hyperarcs to contain a trans list-column.", call. = FALSE)
+      }
+
+      forwardEdges <- lapply(hgf$nodes$sId, function(x) numeric(0))
+      names(forwardEdges) <- as.character(hgf$nodes$sId)
+      for (i in seq_len(nrow(hgf$hyperarcs))) {
+         trans <- as.numeric(hgf$hyperarcs$trans[[i]])
+         trans <- trans[!is.na(trans)]
+         key <- as.character(hgf$hyperarcs$sId[i])
+         if (!is.null(forwardEdges[[key]])) {
+            forwardEdges[[key]] <- unique(c(forwardEdges[[key]], trans))
+         }
+      }
+
+      reachable <- connectedTo
+      queue <- connectedTo
+      while (length(queue) > 0) {
+         current <- queue[1]
+         queue <- queue[-1]
+         nextStates <- forwardEdges[[as.character(current)]]
+         nextStates <- nextStates[nextStates %in% hgf$nodes$sId]
+         nextStates <- nextStates[!nextStates %in% reachable]
+         if (length(nextStates) > 0) {
+            reachable <- c(reachable, nextStates)
+            queue <- c(queue, nextStates)
+         }
+      }
+      reachable <- unique(reachable)
+
+      keepArc <- logical(nrow(hgf$hyperarcs))
+      transKeep <- vector("list", nrow(hgf$hyperarcs))
+      for (i in seq_len(nrow(hgf$hyperarcs))) {
+         trans <- as.numeric(hgf$hyperarcs$trans[[i]])
+         transKeep[[i]] <- !is.na(trans) & trans %in% reachable
+         keepArc[i] <- hgf$hyperarcs$sId[i] %in% reachable && any(transKeep[[i]])
+      }
+      hgf$hyperarcs <- hgf$hyperarcs[keepArc, , drop = FALSE]
+      transKeep <- transKeep[keepArc]
+
+      for (i in seq_len(nrow(hgf$hyperarcs))) {
+         keep <- transKeep[[i]]
+         hgf$hyperarcs$trans[[i]] <- hgf$hyperarcs$trans[[i]][keep]
+         if ("pr" %in% names(hgf$hyperarcs) && length(hgf$hyperarcs$pr[[i]]) == length(keep)) {
+            hgf$hyperarcs$pr[[i]] <- hgf$hyperarcs$pr[[i]][keep]
+         }
+         if ("transLabels" %in% names(hgf$hyperarcs) && length(hgf$hyperarcs$transLabels[[i]]) == length(keep)) {
+            hgf$hyperarcs$transLabels[[i]] <- hgf$hyperarcs$transLabels[[i]][keep]
+         }
+         if ("transWeights" %in% names(hgf$hyperarcs) && is.matrix(hgf$hyperarcs$transWeights[[i]]) &&
+             nrow(hgf$hyperarcs$transWeights[[i]]) == length(keep)) {
+            hgf$hyperarcs$transWeights[[i]] <- hgf$hyperarcs$transWeights[[i]][keep, , drop = FALSE]
+         }
+      }
+      hgf$nodes <- hgf$nodes[hgf$nodes$sId %in% reachable, , drop = FALSE]
+      return(hgf)
+   }
+
+   hgf <- filterConnectedHypergraph(hgf, connectedTo)
+
+   # Apply stateLabel logic to hgf$nodes$label
+   if (!is.null(hgf$nodes)) {
+      if (identical(stateLabelSpec, "custom")) {
+         if (!"stateLabel" %in% names(hgf$nodes)) {
+            stop(
+               "stateLabel = \"custom\" requires a stateLabel column in hgf$nodes.",
+               call. = FALSE
+            )
+         }
+         hgf$nodes$label <- as.character(hgf$nodes$stateLabel)
+      } else {
+         stateLabels <- as.character(hgf$nodes$label)
+         stateSIdx <- NULL
+         stateWeights <- NULL
+         if ("sIdx" %in% stateLabelSpec) {
+            if (!"stateStr" %in% names(hgf$nodes)) {
+               stop("stateLabel containing \"sIdx\" requires a stateStr column in hgf$nodes.", call. = FALSE)
+            }
+            parts <- strsplit(hgf$nodes$stateStr, ",")
+            stateSIdx <- vapply(parts, function(x) {
+               if (length(x) > 0) x[length(x)] else ""
+            }, character(1))
+         }
+         if ("weight" %in% stateLabelSpec) {
+            if (is.null(mdp)) {
+               stop(
+                  "mdp model must be provided to plotHypergraph when stateLabel contains \"weight\".",
+                  call. = FALSE
+               )
+            }
+            policy_weights <- getPolicy(mdp) %>% dplyr::select("sId", "weight")
+            hgf$nodes <- hgf$nodes %>% dplyr::left_join(policy_weights, by = "sId")
+            stateWeights <- formatNumericLabel(hgf$nodes$weight)
+         }
+         hgf$nodes$label <- vapply(seq_len(nrow(hgf$nodes)), function(i) {
+            collapseLabelParts(vapply(stateLabelSpec, function(part) {
+               switch(
+                  part,
+                  label = stateLabels[i],
+                  sId = as.character(hgf$nodes$sId[i]),
+                  sIdx = stateSIdx[i],
+                  weight = stateWeights[i],
+                  NA_character_
+               )
+            }, character(1)))
+         }, character(1))
+         hgf$nodes <- hgf$nodes %>% dplyr::select(-dplyr::any_of("weight"))
+      }
+   }
+
+   # Apply actionLabel and actionWLabel logic to hgf$hyperarcs
+   if (!is.null(hgf$hyperarcs)) {
+      orig_label <- hgf$hyperarcs$label
+      if (identical(actionLabelSpec, "none")) {
+         hgf$hyperarcs$label <- NA_character_
+      } else if (identical(actionLabelSpec, "custom")) {
+         if (!"actionLabel" %in% names(hgf$hyperarcs)) {
+            stop(
+               "actionLabel = \"custom\" requires an actionLabel column in hgf$hyperarcs.",
+               call. = FALSE
+            )
+         }
+         hgf$hyperarcs$label <- as.character(hgf$hyperarcs$actionLabel)
+      } else {
+         hgf$hyperarcs$label <- vapply(seq_len(nrow(hgf$hyperarcs)), function(i) {
+            collapseLabelParts(vapply(actionLabelSpec, function(part) {
+               switch(
+                  part,
+                  label = as.character(orig_label[i]),
+                  aIdx = as.character(hgf$hyperarcs$aIdx[i]),
+                  NA_character_
+               )
+            }, character(1)))
+         }, character(1))
+      }
+
+      if (identical(actionWLabelSpec, "weight")) {
+         hgf$hyperarcs$actionWLabel <- purrr::map_chr(hgf$hyperarcs$actionWeights, function(w) {
+            formatWeightVector(w)
+         })
+      } else if (identical(actionWLabelSpec, "custom")) {
+         if (!"actionWLabel" %in% names(hgf$hyperarcs)) {
+            stop(
+               "actionWLabel = \"custom\" requires an actionWLabel column in hgf$hyperarcs.",
+               call. = FALSE
+            )
+         }
+         hgf$hyperarcs$actionWLabel <- as.character(hgf$hyperarcs$actionWLabel)
+      } else {
+         hgf$hyperarcs$actionWLabel <- NA_character_
+      }
+   }
+
    # internal functions
    gMap<-function(sId) return(hgf$nodes$gId[hgf$nodes$sId %in% sId])		# return gId given sId
    sMap<-function(gId) return(hgf$nodes$sId[hgf$nodes$gId %in% gId])		# return sId given gId
@@ -85,16 +402,110 @@ plotHypergraph <-
 
    # plot actions
    if (!is.null(hgf$hyperarcs)) {
-      tailCols <- hgf$hyperarcs %>% dplyr::select(dplyr::starts_with("trans"))
-      for (i in 1:nrow(hgf$hyperarcs)) {
-         tails <- tailCols[i, ] %>% as.numeric()
+      if (!"trans" %in% names(hgf$hyperarcs)) {
+         stop("hgf$hyperarcs must contain a trans list-column.", call. = FALSE)
+      }
+      if (!identical(transLabelSpec, "none") && !identical(transLabelSpec, "custom") &&
+          "prob" %in% transLabelSpec && !"pr" %in% names(hgf$hyperarcs)) {
+         stop(
+            "transLabels containing \"prob\" requires a pr list-column in hgf$hyperarcs.",
+            call. = FALSE
+         )
+      }
+      if (!identical(transLabelSpec, "none") && !identical(transLabelSpec, "custom") &&
+          "weights" %in% transLabelSpec && !"transWeights" %in% names(hgf$hyperarcs)) {
+         stop(
+            "transLabels containing \"weights\" requires a transWeights list-column in hgf$hyperarcs.",
+            call. = FALSE
+         )
+      }
+      if (identical(transLabelSpec, "custom") && !"transLabels" %in% names(hgf$hyperarcs)) {
+         stop(
+            "transLabels = \"custom\" requires a transLabels list-column in hgf$hyperarcs.",
+            call. = FALSE
+         )
+      }
+
+      # Pre-populate transLabels based on transLabels option
+      if (!identical(transLabelSpec, "none") && !identical(transLabelSpec, "custom")) {
+         hgf$hyperarcs$transLabels <- purrr::pmap(
+            list(
+               trans = hgf$hyperarcs$trans,
+               pr = if ("pr" %in% names(hgf$hyperarcs)) hgf$hyperarcs$pr else rep(list(NULL), nrow(hgf$hyperarcs)),
+               transWeights = if ("transWeights" %in% names(hgf$hyperarcs)) hgf$hyperarcs$transWeights else rep(list(NULL), nrow(hgf$hyperarcs))
+            ),
+            function(trans, pr, transWeights) {
+               trans <- as.numeric(trans)
+               nTrans <- length(trans)
+               weightLabels <- NULL
+               if ("weights" %in% transLabelSpec) {
+                  if (!is.matrix(transWeights)) {
+                     stop(
+                        "transLabels containing \"weights\" requires a transition-by-weight matrix in each transWeights row.",
+                        call. = FALSE
+                     )
+                  }
+                  if (ncol(transWeights) == 0) {
+                     weightLabels <- rep(NA_character_, nrow(transWeights))
+                  } else {
+                     weightLabels <- apply(transWeights, 1, formatWeightVector)
+                  }
+               }
+               vapply(seq_len(nTrans), function(j) {
+                  collapseLabelParts(vapply(transLabelSpec, function(part) {
+                     switch(
+                        part,
+                        label = hgf$nodes$label[match(trans[j], hgf$nodes$sId)],
+                        sId = as.character(trans[j]),
+                        prob = formatNumericLabel(pr[j]),
+                        weights = weightLabels[j],
+                        NA_character_
+                     )
+                  }, character(1)))
+               }, character(1))
+            }
+         )
+      }
+
+      actionKeys <- vapply(
+         seq_len(nrow(hgf$hyperarcs)),
+         function(i) {
+            trans <- as.numeric(hgf$hyperarcs$trans[[i]])
+            trans <- trans[!is.na(trans)]
+            paste(hgf$hyperarcs$sId[i], paste(trans, collapse = ","), sep = ":")
+         },
+         character(1)
+      )
+      actionOffsets <- stats::ave(
+         seq_along(actionKeys),
+         actionKeys,
+         FUN = function(x) seq_along(x) - (length(x) + 1) / 2
+      )
+      for (i in seq_len(nrow(hgf$hyperarcs))) {
+         trans <- as.numeric(hgf$hyperarcs$trans[[i]])
+         validTrans <- !is.na(trans)
+         trans <- trans[validTrans]
+         if (length(trans) == 0) next
+         fromPos <- pos[gMap(trans), , drop = FALSE]
+         toPos <- pos[gMap(hgf$hyperarcs$sId[i]), ]
+         centre <- NULL
+         if (actionOffsets[i] != 0 && actionOffset != 0) {
+            baseCentre <- colMeans(fromPos) + 0.5 * (toPos - colMeans(fromPos))
+            direction <- toPos - colMeans(fromPos)
+            directionLength <- sqrt(sum(direction^2))
+            if (directionLength > 0) {
+               perpendicular <- c(-direction[2], direction[1]) / directionLength
+               centre <- baseCentre + actionOffsets[i] * actionOffset * perpendicular
+            }
+         }
          #cat("i:",i,"highlight:",hgf$hyperarcs$highlight[i],"\n")
-         # if (hgf$hyperarcs$highlight[i]) splitarrow(from = pos[gMap(tails), ], to = pos[gMap(hgf$hyperarcs[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=2, lty=1,
+         # if (hgf$hyperarcs$highlight[i]) splitarrow(from = pos[gMap(trans), ], to = pos[gMap(hgf$hyperarcs[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=2, lty=1,
          #                                      arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol="gray")
          pt <-
             splitarrow(
-               from = pos[gMap(tails),],
-               to = pos[gMap(hgf$hyperarcs[i, 1]), ],
+               from = fromPos,
+               to = toPos,
+               centre = centre,
                arr.side = 2,
                arr.pos = 0.1,
                lwd = hgf$hyperarcs$lwd[i],
@@ -112,19 +523,50 @@ plotHypergraph <-
             cex = cex,
             ...
          )
+         if ("actionWLabel" %in% names(hgf$hyperarcs) && !is.na(hgf$hyperarcs$actionWLabel[i]) && hgf$hyperarcs$actionWLabel[i] != "") {
+            textempty(
+               (toPos + pt) / 2,
+               lab = hgf$hyperarcs$actionWLabel[i],
+               adj = c(0.5, -0.6),
+               cex = cex,
+               ...
+            )
+         }
+         if (!identical(transLabelSpec, "none")) {
+            labs <- hgf$hyperarcs$transLabels[[i]][validTrans]
+            if (length(labs) != length(trans)) {
+               stop(
+                  paste0("transLabels = \"", transLabels, "\" requires one label per plotted transition."),
+                  call. = FALSE
+               )
+            }
+            for (j in seq_along(trans)) {
+               stateIndex <- match(trans[j], hgf$nodes$sId)
+               if (is.na(stateIndex) || is.na(labs[j])) next
+               transPos <- pos[hgf$nodes$gId[stateIndex], ]
+               labelPos <- (pt + transPos) / 2
+               textempty(
+                  labelPos,
+                  lab = labs[j],
+                  adj = transLabelAdj,
+                  cex = transLabelCex,
+                  ...
+               )
+            }
+         }
       }
    }	   
    
    # plot states
    if (!is.null(hgf$nodes)) {
-      for (i in 1:nrow(hgf$nodes)) { 
+      for (i in seq_len(nrow(hgf$nodes))) { 
          textellipse(pos[hgf$nodes$gId[i], ], lab = hgf$nodes$label[i], radx = radx, rady=rady, shadow.size = 0, lwd=0.5, cex=cex) 
       }
    }
    
    # visual view of the point numbers (for figuring out how to map stateId to gridId)
    if (showGrid) {
-      for (i in 1:dim(pos)[1]) textrect(pos[i, ], lab = i, radx = 0.0, cex=cex)
+      for (i in seq_len(dim(pos)[1])) textrect(pos[i, ], lab = i, radx = 0.0, cex=cex)
    }
    if (drawBorder) {
       graphics::box(which = "plot")
@@ -137,33 +579,16 @@ plotHypergraph <-
 #' Plot the state-expanded hypergraph of the MDP. 
 #'
 #' @param x The MDP model. 
-#' @param ... Arguments passed to [plotHypergraph()]. Moreover, you may use 
-#'    * `hyperarcColor`: A string. If empty string no colors are used (default). If `label` then 
-#'       use different colors based on the hyperarc/action labels. If `policy` then use highlight 
-#'       the current policy.
-#'    * `nodeLabel`: A string. If empty string, then display node labels (default). If `sId` then 
-#'       display the state ids. If `sId:label` then display the state ids together with the label. 
-#'       If `sIdx:label` then display the state index and the label. If `weight` then display the 
-#'       node weight. 
-#'    * `hyperarcShow` A string. If `all` then show all hyperarcs (default). If `policy` then only 
-#'       show the current policy.
+#' @param ... Arguments passed to [plotHypergraph()].
 #'
 #' @return No return value (NULL invisible), called for side effects (plotting).
-#' @seealso [getHypergraph()] and [plotHypergraph()].
+#' @seealso [getHypergraph()] and [plotHypergraph()] for possible arguments.
 #' @example inst/examples/plot-ex.R
 #' @importFrom rlang .data
 #' @export
 plot.HMDP <- function(x, ...) {
    args <- list(...)
-   # set defaults
-   hyperarcColor <- ifelse(is.null(args$hyperarcColor), "", args$hyperarcColor)
-   nodeLabel <- ifelse(is.null(args$nodeLabel), "", args$nodeLabel)
-   hyperarcShow <- ifelse(is.null(args$hyperarcShow), "all", args$hyperarcShow) 
    mdp <- x
-   # prepare args for plotHypergraph
-   args$hyperarcColor <- NULL
-   args$nodeLabel <- NULL
-   args$hyperarcShow <- NULL
    
    if (mdp$levels != 1) {
       message("Cannot plot a hierarchical MDP without specifying the placement of\n", 
@@ -182,41 +607,8 @@ plot.HMDP <- function(x, ...) {
       dplyr::mutate(c = .data$c + 1, 
                     r = .data$r + 1, 
                     gId = (.data$c - 1) * max(.data$r) + .data$r) 
-   if (hyperarcShow == "policy") {
-      hgf$hyperarcs <- hgf$hyperarcs %>% 
-         dplyr::left_join(getPolicy(mdp), by = c("sId", "aIdx")) %>% 
-         dplyr::filter(!is.na(.data$actionLabel))
-   }
-   if (hyperarcColor == "label") {
-      colDF <- tibble::tibble(label = unique(hgf$hyperarcs$label), 
-                              col = grDevices::rainbow(length(unique(hgf$hyperarcs$label))))
-      hgf$hyperarcs <- hgf$hyperarcs %>% 
-         dplyr::select(-col) %>% 
-         dplyr::left_join(colDF, by = "label") 
-   }
-   if (hyperarcColor == "policy") {
-      hgf$hyperarcs <- hgf$hyperarcs %>% 
-         dplyr::left_join(getPolicy(mdp)) %>% 
-         dplyr::mutate(col = ifelse(is.na(.data$actionLabel), "black", "blue"))
-   }
-   if (nodeLabel == "sId") {
-      hgf$nodes <- hgf$nodes %>% 
-         dplyr::mutate(label = .data$sId)
-   }
-   if (nodeLabel == "sId:label") {
-      hgf$nodes <- hgf$nodes %>% 
-         dplyr::mutate(label = paste0(.data$sId, ": ", .data$label))
-   }
-   if (nodeLabel == "sIdx:label") {
-      hgf$nodes <- hgf$nodes %>% 
-         dplyr::mutate(label = paste0(.data$r - 1, ": ", .data$label))
-   }
-   if (nodeLabel == "weight") {
-      hgf$nodes <- hgf$nodes %>%
-         dplyr::left_join(getPolicy(mdp), by = "sId") %>% 
-         dplyr::mutate(label = round(.data$weight, 2))
-   }
-   do.call(plotHypergraph, args = c(list(hgf, gridDim), args))
+
+   do.call(plotHypergraph, args = c(list(hgf, gridDim, mdp = mdp), args))
    return(invisible(NULL))
 }
 
@@ -228,88 +620,72 @@ plot.HMDP <- function(x, ...) {
 #' @param mdp The MDP loaded using [loadMDP()].
 #' @param ... Arguments passed to [getInfo()].
 #'
-#' @return A list representing the hypergraph with two elements: A tibble `nodes` and a 
-#'    tibble `hyperarcs`. 
+#' @return A list representing the hypergraph with two elements: a tibble
+#'   `nodes` and a tibble `hyperarcs`. `hyperarcs` stores `actionWeights`,
+#'   `trans`, and `pr` as list-columns of vectors. `transWeights` is a
+#'   list-column of matrices with one row per transition and one column per
+#'   transition-weight namespace.
 #' @seealso [plotHypergraph()] and [plot.HMDP()].
 #' @importFrom rlang .data
 #' @export
 #' @example inst/examples/plot-ex.R
 getHypergraph <- function(mdp, ...) {
    dat <- getInfo(mdp, withList = FALSE, ...)
+   nActionWeights <- length(mdp$weightActionNames)
+   nTransWeights <- length(mdp$weightTransNames)
+   normalizeActionWeights <- function(x) {
+      if (nActionWeights == 0) return(numeric(0))
+      x <- as.numeric(x)
+      if (length(x) == 0 || all(is.na(x))) return(rep(NA_real_, nActionWeights))
+      if (length(x) != nActionWeights) {
+         stop("Action weights do not match action weight names.", call. = FALSE)
+      }
+      x
+   }
+   normalizeTransWeights <- function(x, nTrans) {
+      if (nTransWeights == 0) {
+         return(matrix(numeric(0), nrow = nTrans, ncol = 0))
+      }
+      x <- as.numeric(x)
+      if (length(x) == 0 || all(is.na(x))) x <- rep(NA_real_, nTrans * nTransWeights)
+      if (length(x) != nTrans * nTransWeights) {
+         stop("Transition weights do not match transitions and weight names.", call. = FALSE)
+      }
+      matrix(
+         x,
+         nrow = nTrans,
+         ncol = nTransWeights,
+         byrow = TRUE,
+         dimnames = list(NULL, mdp$weightTransNames)
+      )
+   }
    actions <- dat$df %>% 
       tidyr::unnest_longer("actions") %>% # convert actions (one row for each action)
       tidyr::unnest_wider("actions", names_repair = tidyr::tidyr_legacy) %>% 
+      dplyr::rename(stateLabel = "label") %>%
       dplyr::filter(!is.na(.data$aIdx)) %>% 
-      tidyr::unnest_wider(.data$trans, names_sep = "") %>% 
-      tidyr::unnest_wider(.data$pr, names_sep = "") %>% 
-      dplyr::rename(labelAction = .data$label1) %>% 
+      dplyr::mutate(
+         actionWeights = purrr::map(.data$weights, normalizeActionWeights),
+         trans = purrr::map(.data$trans, as.numeric),
+         pr = purrr::map(.data$pr, as.numeric),
+         transWeights = purrr::map2(
+            .data$transWeights,
+            .data$trans,
+            ~ normalizeTransWeights(.x, length(.y))
+         ),
+         transLabels = purrr::map(.data$trans, ~ rep(NA_character_, length(.x))),
+         actionWLabel = NA_character_,
+         label = as.character(.data$label1)
+      ) %>%
       dplyr::mutate(lwd = 1, lty = 1, col = "black") %>% 
-      dplyr::select(-.data$stateStr, -.data$label) %>% 
-      dplyr::rename(label = .data$labelAction)
+      dplyr::select(-"stateStr", -"stateLabel", -"weights", -"label1")
+
    states <- dat$df %>% 
       dplyr::mutate(gId = NA_integer_) %>% 
-      dplyr::select(.data$sId, .data$stateStr, .data$label, .data$gId)
+      dplyr::select("sId", "stateStr", "label", "gId")
    if (mdp$timeHorizon == Inf) {
       states$label[1:mdp$founderStatesLast] <- states$label[(nrow(states) - mdp$founderStatesLast + 1):nrow(states)]
    }
+
    return(list(nodes = states, hyperarcs = actions))
 }
-
-
-
-
-
-
-
-
-# plotHypergraphOld <-
-#    function(gridDim,
-#             states = NULL,
-#             actions = NULL,
-#             showGrid = FALSE,
-#             radx = 0.02,
-#             rady = 0.03,
-#             cex = 1,
-#             marX = 0.03,
-#             marY = 0.05,
-#             ...) {
-#    # internal functions
-#    gMap<-function(sId) return(states$gId[states$sId %in% sId])		# return gId given sId
-#    sMap<-function(gId) return(states$sId[states$gId %in% gId])		# return sId given gId
-#    
-#    # fontf<-"Times"
-#    # width=8 # A4 is 8.25 x 11.75 inch
-#    # height=5	
-#    # if (!is.null(fileN)) pdf(file=fileN, width=width, height=height, family=fontf)
-#    
-#    pos <- coordinates(rep(gridDim[2], gridDim[1]))  # coordinates of each point in the grid
-#    openplotmat(xlim=c(min(pos[,1])-marX,max(pos[,1])+marX), 
-#                ylim=c(min(pos[,2])-marY,max(pos[,2])+marY) )  #main = "State expanded hypergraph"
-#    
-#    # plot actions
-#    if (!is.null(actions)) {
-#       tailCols<-3:grep('label',colnames(actions))-1
-#       for (i in 1:(dim(actions)[1])) {
-#          tails<-actions[i,tailCols]
-#          #cat("i:",i,"highlight:",actions$highlight[i],"\n")
-#          if (actions$highlight[i]) splitarrow(from = pos[gMap(tails), ], to = pos[gMap(actions[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=2, lty=1, 
-#                                               arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol="gray")
-#          pt<-splitarrow(from = pos[gMap(tails), ], to = pos[gMap(actions[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=actions$lwd[i], lty=actions$lty[i], 
-#                         arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol=actions$col[i])
-#          textempty(pt,lab=actions$label[i],adj=c(-0.1,0.1), cex=cex, ...)
-#       }
-#    }	
-#    
-#    # visual view of the point numbers (for figuring out how to map stateId to gridId)
-#    if (showGrid) {
-#       for (i in 1:dim(pos)[1]) textrect(pos[i, ], lab = i, radx = 0.0, cex=cex)
-#    }
-#    
-#    # plot states
-#    if (!is.null(states)) {
-#       for (i in 1:length(states$gId)) { 
-#          textellipse(pos[states$gId[i], ], lab = states$label[i], radx = radx, rady=rady, shadow.size = 0, lwd=0.5, cex=cex) 
-#       }
-#    }
-#    return(invisible(NULL))
-#    }

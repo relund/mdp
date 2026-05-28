@@ -140,7 +140,7 @@ The state-expanded hypergraph representing the semi-MDP with finite time-horizon
 using
 
 ```{r, par=TRUE}
-plot(mdp, hyperarcColor = "label", radx = 0.06, marX = 0.065, marY = 0.055)
+plot(mdp, actionColor = "label", radx = 0.06, marX = 0.065, marY = 0.055)
 ```
 
 Each node corresponds to a specific state
@@ -162,7 +162,7 @@ The optimal policy is:
 ```{r, par=TRUE}
 pol <- getPolicy(mdp)
 tail(pol)
-plot(mdp, hyperarcShow = "policy", nodeLabel = "weight", 
+plot(mdp, actionsVisible = "policy", stateLabel = "weight", 
      radx = 0.06, marX = 0.065, marY = 0.055)
 ```
 

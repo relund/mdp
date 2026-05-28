@@ -16,6 +16,7 @@ runValueIte(
   termValues = NULL,
   g = NULL,
   objective = c("max", "min"),
+  bellmanOp = c("auto", "expected", "discount", "average", "min", "max"),
   getLog = TRUE,
   discountMethod = "continuous"
 )
@@ -42,6 +43,8 @@ runValueIte(
 \item{g}{Average weight. If specified then do a single iteration using the update equations under the average expected-weight Bellman operator with the specified g value.}
 
 \item{objective}{Optimize by maximizing (\code{"max"}) or minimizing (\code{"min"}) the Bellman value.}
+
+\item{bellmanOp}{Bellman operator. Use \code{"auto"} for existing behaviour, \code{"min"} for the minimum-successor operator, or \code{"max"} for the maximum-successor operator.}
 
 \item{getLog}{Output the log messages.}
 

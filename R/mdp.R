@@ -146,6 +146,18 @@ getWIdx <- function(mdp, wLbl) {
    1
 }
 
+.bellmanOpIdx <- function(bellmanOp) {
+   if (length(bellmanOp) > 1) bellmanOp <- bellmanOp[1]
+   bellmanOp <- match.arg(bellmanOp, c("auto", "discount", "average", "expected", "min", "max"))
+   switch(bellmanOp,
+          discount = 0,
+          average = 1,
+          expected = 2,
+          min = 5,
+          max = 6,
+          auto = NA_integer_)
+}
+
 
 #' Perform policy iteration using the average expected-weight Bellman operator on the MDP.
 #'
@@ -223,6 +235,7 @@ runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFact
 #' @param termValues The terminal values used (values of the last stage in the MDP).
 #' @param g Average weight. If specified then do a single iteration using the update equations under the average expected-weight Bellman operator with the specified g value.
 #' @param objective Optimize by maximizing (`"max"`) or minimizing (`"min"`) the Bellman value.
+#' @param bellmanOp Bellman operator. Use `"auto"` for existing behaviour, `"min"` for the minimum-successor operator, or `"max"` for the maximum-successor operator.
 #' @param getLog Output the log messages.
 #' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
 #' 
@@ -231,10 +244,13 @@ runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFact
 #' @example inst/examples/machine-ex.R
 #' @export
 runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor = NULL, maxIte = 100, 
-                   eps = 1e-05, termValues = NULL, g=NULL, objective = c("max", "min"), getLog = TRUE, discountMethod="continuous") {
+                   eps = 1e-05, termValues = NULL, g=NULL, objective = c("max", "min"),
+                   bellmanOp = c("auto", "expected", "discount", "average", "min", "max"),
+                   getLog = TRUE, discountMethod="continuous") {
 	iW<-getWIdx(mdp,w)
 	iDur<-NULL
 	sense <- .optSenseIdx(objective)
+	op <- .bellmanOpIdx(bellmanOp)
 	if (!is.null(dur)) iDur<-getWIdx(mdp,dur)
 	.checkWDurIdx(iW,iDur,length(mdp$weightNames))
 	if (is.null(discountFactor)) {
@@ -242,7 +258,15 @@ runValueIte<-function(mdp, w, dur = NULL, rate = 0, rateBase = 1, discountFactor
 	   if (discountMethod=="discrete") discountFactor<-1/(1 + rate/rateBase)
 	}
 	if (is.null(termValues)) termValues<-rep(0,mdp$founderStatesLast)
-	if (is.null(g)) {
+	if (!is.na(op)) {
+	   if (op %in% c(0L, 1L) && is.null(iDur))
+	      stop("A duration index must be specified for this Bellman operator.", call. = FALSE)
+	   if (op == 1L && is.null(g))
+	      stop("The average weight g must be specified for the average Bellman operator.", call. = FALSE)
+	   mdp$ptr$valueIte(op, sense, as.integer(ifelse(mdp$timeHorizon>=Inf, maxIte, 1)),
+            as.numeric(eps), as.integer(iW), as.integer(ifelse(is.null(iDur), 0, iDur)),
+            as.numeric(termValues), as.numeric(ifelse(is.null(g), 0, g)), as.numeric(discountFactor))
+	} else if (is.null(g)) {
    	if (mdp$timeHorizon>=Inf) {
    		if (is.null(iDur)) stop("A duration index must be specified under infinite time-horizon!")
 	      mdp$ptr$valueIte(0, sense, as.integer(maxIte),
@@ -482,7 +506,7 @@ setPolicy<-function(mdp, policy) {
 #'
 #' @param mdp The MDP loaded using [loadMDP()].
 #' @param wLbl The label of the weight we consider.
-#' @param criterion The Bellman operator shortcut. If `expected` use expected weights, if `discount` use discounted expected weights, if `average` use average expected weights.
+#' @param criterion The Bellman operator shortcut. If `expected` use expected weights, if `discount` use discounted expected weights, if `average` use average expected weights, if `min` use minimum-successor weights, and if `max` use maximum-successor weights.
 #' @param durLbl The label of the duration/time such that discount rates can be calculated.
 #' @param rate The interest rate.
 #' @param rateBase The time-horizon the rate is valid over.
@@ -505,6 +529,8 @@ runCalcWeights<-function(mdp, wLbl, criterion="expected", durLbl = NULL, rate = 
 	if (mdp$timeHorizon<Inf) {
 		if (is.null(termValues)) stop("Terminal values must be specified under finite time-horizon!")
 		if (criterion=="expected") mdp$ptr$calcPolicy(2,iW,0,1,discountFactor)
+		if (criterion=="min") mdp$ptr$calcPolicy(5,iW,0,1,discountFactor)
+		if (criterion=="max") mdp$ptr$calcPolicy(6,iW,0,1,discountFactor)
 		if (criterion=="discount") mdp$ptr$calcPolicy(0,iW,0,iDur,discountFactor)
 	} else {
 		if (criterion=="discount") mdp$ptr$policyIteFixedPolicy(0,iW,iDur,discountFactor)

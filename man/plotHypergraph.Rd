@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plotHypergraph}
 \alias{plotHypergraph}
-\title{Plot parts of the state expanded hypergraph (experimental).}
+\title{Plot parts of the state expanded hypergraph.}
 \usage{
 plotHypergraph(
   hgf,
@@ -14,6 +14,17 @@ plotHypergraph(
   marX = 0.035,
   marY = 0.15,
   drawBorder = FALSE,
+  actionOffset = 0.025,
+  transLabels = "none",
+  transLabelCex = 0.8 * cex,
+  transLabelAdj = c(0.5, -0.6),
+  stateLabel = "label",
+  actionLabel = "label",
+  actionWLabel = "none",
+  actionColor = c("", "label", "policy"),
+  actionsVisible = c("all", "policy"),
+  connectedTo = NULL,
+  mdp = NULL,
   ...
 )
 }
@@ -21,8 +32,11 @@ plotHypergraph(
 \item{hgf}{A list with the hypergraph containing two data frames, normally found using
 \code{\link[=getHypergraph]{getHypergraph()}}. The data frame \code{nodes} must have columns: \code{sId} (state id), \code{gId} (grid id)
 and \code{label} (node label). The data frame \code{hyperarcs} must have columns \code{sId} (head node),
-\verb{trans<n>} (tail nodes), \code{aIdx} (action index), \code{label} (action label), \code{lwd} (hyperarc line
-width), \code{lty} (hyperarc line type) and \code{col} (hyperarc color).}
+\code{trans} (a list-column of tail node ids), \code{pr} (a list-column of transition
+probabilities), \code{actionWeights} (a list-column of action weights),
+\code{transWeights} (a list-column of transition-by-weight matrices), \code{aIdx}
+(action index), \code{label} (action label), \code{lwd} (hyperarc line width), \code{lty}
+(hyperarc line type) and \code{col} (hyperarc color).}
 
 \item{gridDim}{A 2-dim vector (rows, cols) representing the size of the grid.}
 
@@ -39,7 +53,45 @@ width), \code{lty} (hyperarc line type) and \code{col} (hyperarc color).}
 \item{marY}{Vertical margin.}
 
 \item{drawBorder}{If \code{TRUE}, draw a border around the plot region and report the
-outside and inside padding.}
+outside and inside padding (good for debugging).}
+
+\item{actionOffset}{Distance used to separate actions with the same
+start and trans states. Set to \code{0} to draw overlapping actions.}
+
+\item{transLabels}{Transition-label mode. \code{"none"} draws no transition labels
+(the default); \code{"custom"} draws values from an optional \code{transLabels}
+list-column in \code{hgf$hyperarcs}; otherwise use a \code{|}-separated
+combination of \code{"label"}, \code{"sId"}, \code{"prob"}, and \code{"weights"}, for example
+\code{"prob|weights"}. The older \code{"state"} spelling is treated as \code{"label"}.}
+
+\item{transLabelCex}{Relative size of transition-label text.}
+
+\item{transLabelAdj}{Position adjustment passed to \code{textempty()} for transition
+labels, drawn at the middle of each split-to-transition branch.}
+
+\item{stateLabel}{What to plot in states. \code{"custom"} uses a \code{stateLabel}
+column in \code{hgf$nodes}; otherwise use a \code{|}-separated combination of
+\code{"label"} (state label, default), \code{"sId"} (state id), \code{"sIdx"}
+(stage-based state index), and \code{"weight"} (optimal weight of the state).}
+
+\item{actionLabel}{What to plot near the split. One of \code{"none"}, \code{"custom"}
+(uses an \code{actionLabel} column in \code{hgf$hyperarcs}), or a \code{|}-separated
+combination of \code{"label"} (action label, default) and \code{"aIdx"}.}
+
+\item{actionWLabel}{What to plot from the start state to the split. One of
+\code{"none"} (default), \code{"weight"}, or \code{"custom"} (uses an \code{actionWLabel}
+column in \code{hgf$hyperarcs}).}
+
+\item{actionColor}{Action coloring scheme. Default \code{""} uses black lines. \code{"label"} uses different colors based on the action labels. \code{"policy"} highlights the current policy.}
+
+\item{actionsVisible}{Action visibility mode. \code{"all"} (default) shows all actions. \code{"policy"} only shows actions in the current policy.}
+
+\item{connectedTo}{Optional vector of state ids. If supplied, plot only states
+reachable from these states by following visible hyperarcs forward,
+and trim hyperarcs and transition-level data to the remaining states.}
+
+\item{mdp}{The MDP model. Required if \code{stateLabel} contains \code{"weight"},
+\code{actionColor = "policy"}, or \code{actionsVisible = "policy"}.}
 
 \item{...}{Graphical parameters passed to \code{textempty}.}
 }
@@ -67,23 +119,28 @@ wd <- setwd(system.file("models", package = "MDP2"))
 #### A finite-horizon replacement problem ####
 mdp<-loadMDP("machine1_")
 plot(mdp)
-plot(mdp, hyperarcColor = "label")  # colors based on labels
-plot(mdp, hyperarcColor = "label", nodeLabel = "sId:label")  # node labels are 'sId: label'
-plot(mdp, nodeLabel = "sIdx:label", radx = 0.02)  # adjust radx in nodes
+plot(mdp, actionColor = "label")  # colors based on labels
+plot(mdp, transLabels = "state")  # label transitions with target state labels
+plot(mdp, transLabels = "prob")  # label transitions with transition probabilities
+plot(mdp, actionColor = "label", stateLabel = "sId|label")  # state labels are 'sId | label'
+plot(mdp, stateLabel = "sIdx|label", radx = 0.01)  # adjust radx in states
+plot(mdp, stateLabel = "label", actionWLabel = "none", actionLabel = "label", 
+     transLabels = "sId", radx = 0.01)
+
 scrapValues <- c(30, 10, 5, 0)  # scrap values (the values of the 4 states at stage 4)
 runValueIte(mdp, "Net reward" , termValues = scrapValues)
-plot(mdp, hyperarcColor = "policy")  # highlight optimal policy
-plot(mdp, hyperarcShow = "policy", nodeLabel = "weight")  # show only optimal policy
+plot(mdp, actionColor = "policy")  # highlight optimal policy
+plot(mdp, actionsVisible = "policy", stateLabel = "weight")  # show only optimal policy
 
 
 #### An infinite-horizon maintenance problem ####
 mdp<-loadMDP("hct611-1_")
 plot(mdp)  # plot the first two stages
-plot(mdp, hyperarcColor = "label")  # colors based on labels
-plot(mdp, hyperarcColor = "label", nodeLabel = "sId:label")  # node labels are 'sId: label'
+plot(mdp, actionColor = "label")  # colors based on labels
+plot(mdp, actionColor = "label", stateLabel = "sId|label")  # state labels are 'sId | label'
 runPolicyIteAve(mdp,"Net reward","Duration")
-plot(mdp, hyperarcColor = "policy")  # highlight optimal policy
-plot(mdp, hyperarcShow = "policy")  # show only optimal policy
+plot(mdp, actionColor = "policy")  # highlight optimal policy
+plot(mdp, actionsVisible = "policy")  # show only optimal policy
 
 
 #### An infinite-horizon hierarchical replacement problem ####
@@ -143,6 +200,59 @@ hgf$hyperarcs <- dat
 oldpar <- par(mai = c(0, 0, 0, 0))
 plotHypergraph(gridDim = c(14, 7), hgf, cex = 0.8, radx = 0.02, rady = 0.03)
 par(oldpar)
+
+
+## A simple finite-horizon MDP with action and transition weights
+prefix <- file.path(tempdir(), "plot_transition_rewards_")
+w <- binaryMDPWriter(prefix)
+w$setWeights("Cost")
+w$setTransWeights(c("Reward", "Disease"))
+w$process()
+   w$stage()
+      w$state(label = "S1")
+         w$action(
+            label = "A1", weights = 2, id = c(1), pr = c(1),
+            transWeights = c(20, 0.3), end = TRUE
+         )
+         w$action(
+            label = "A2", weights = 1, id = c(0, 1), pr = c(0.3, 0.7),
+            transWeights = c(25, 0.4, 15, 0.2), end = TRUE
+         )
+      w$endState()
+   w$endStage()
+   w$stage()
+      w$state(label = "S2")
+         w$action(
+            label = "A3", weights = 3, id = c(0, 1, 2), pr = c(0.5, 0.3, 0.2),
+            transWeights = c(0, 0.05, 12, 0.2, 30, 0.8), end = TRUE
+         )
+         w$action(
+            label = "A4", weights = 2, id = c(1, 2), pr = c(0.6, 0.4),
+            transWeights = c(22, 0.35, 27, 0.7), end = TRUE
+         )
+      w$endState()
+      w$state(label = "S3")
+         w$action(
+            label = "A5", weights = 1, id = c(0, 1), pr = c(0.4, 0.6),
+            transWeights = c(5, 0, 16, 0.25), end = TRUE
+         )
+         w$action(
+            label = "A6", weights = 4, id = c(0, 1, 2), pr = c(0.1, 0.3, 0.6),
+            transWeights = c(14, 0.15, 21, 0.45, 29, 1), end = TRUE
+         )
+      w$endState()
+   w$endStage()
+   w$stage()
+      w$state(label = "S4", end = TRUE)
+      w$state(label = "S5", end = TRUE)
+      w$state(label = "S6", end = TRUE)
+   w$endStage()
+w$endProcess()
+w$closeWriter()
+
+mdp <- loadMDP(prefix, getLog = FALSE)
+plot(mdp, actionColor = "label", transLabels = "weights", actionWLabel = "weight", 
+     radx = 0.005, rady = 0.01)
 
 ## Reset working dir
 setwd(wd)

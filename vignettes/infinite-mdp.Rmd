@@ -185,7 +185,7 @@ The state-expanded hypergraph representing the semi-MDP with infinite time-horiz
 using
 
 ```{r plotHgf, par=TRUE}
-plot(mdp, hyperarcColor = "label", nodeLabel = "sId:label")
+plot(mdp, actionColor = "label", stateLabel = "sId|label")
 ```
 
 Each node corresponds to a specific state in the MDP and is a *unique id* (`sId`) such that you can
@@ -202,7 +202,7 @@ try to optimize the average reward per time unit.
 ```{r solve1_ave, par=TRUE}
 runPolicyIteAve(mdp,"Net reward","Duration")
 getPolicy(mdp)
-plot(mdp, hyperarcShow = "policy")
+plot(mdp, actionsVisible = "policy")
 ```
 
 Note it is optimal to do a preventive repair in state $i=4$. Let us try to optimize the expected 
@@ -211,7 +211,7 @@ total discounted reward with a discount factor of 0.5 using policy iteration:
 ```{r, par=TRUE}
 runPolicyIteDiscount(mdp,"Net reward","Duration", discountFactor = 0.5)
 getPolicy(mdp)
-plot(mdp, hyperarcShow = "policy")
+plot(mdp, actionsVisible = "policy")
 ```
 
 Note given a discount factor of 0.5, it is optimal to not do a preventive repair in state $i=4$. 

@@ -95,6 +95,65 @@ test_that("Value iteration supports minimization objective", {
    expect_equal(getRPO(mdp, "Cost", iA = 1, sId = 1, objective = "min")$rpo, 9)
 })
 
+test_that("Value iteration supports minimum and maximum successor Bellman operators", {
+   w <- binaryMDPWriter(prefix = "minmax_", getLog = FALSE)
+   w$setWeights("Weight")
+   w$setTransWeights("Trans weight")
+   w$process()
+      w$stage()
+         w$state()
+            w$action(weights = 0,
+                     prob = c(1, 0, 0.5, 1, 1, 0.5),
+                     transWeights = c(100, 0))
+            w$endAction()
+            w$action(weights = 5,
+                     prob = c(1, 0, 1),
+                     transWeights = 5)
+            w$endAction()
+         w$endState()
+      w$endStage()
+      w$stage()
+         w$state()
+         w$endState()
+         w$state()
+         w$endState()
+      w$endStage()
+   w$endProcess()
+   w$closeWriter()
+
+   mdp <- loadMDP("minmax_", getLog = FALSE)
+
+   runValueIte(mdp, "Weight", termValues = c(1, 10), bellmanOp = "min", objective = "max", getLog = FALSE)
+   policy <- getPolicy(mdp)
+   expect_equal(policy$aIdx[policy$stateStr == "0,0"], 1)
+   expect_equal(policy$weight[policy$stateStr == "0,0"], 6)
+
+   runValueIte(mdp, "Weight", termValues = c(1, 10), bellmanOp = "max", objective = "max", getLog = FALSE)
+   policy <- getPolicy(mdp)
+   expect_equal(policy$aIdx[policy$stateStr == "0,0"], 0)
+   expect_equal(policy$weight[policy$stateStr == "0,0"], 10)
+
+   runValueIte(mdp, "Weight", termValues = c(1, 10), bellmanOp = "min", objective = "min", getLog = FALSE)
+   policy <- getPolicy(mdp)
+   expect_equal(policy$aIdx[policy$stateStr == "0,0"], 0)
+   expect_equal(policy$weight[policy$stateStr == "0,0"], 1)
+
+   runValueIte(mdp, "Weight", termValues = c(1, 10), bellmanOp = "max", objective = "min", getLog = FALSE)
+   policy <- getPolicy(mdp)
+   expect_equal(policy$aIdx[policy$stateStr == "0,0"], 1)
+   expect_equal(policy$weight[policy$stateStr == "0,0"], 6)
+
+   runValueIte(mdp, "Trans weight", termValues = c(1, 10), bellmanOp = "min", objective = "max", getLog = FALSE)
+   policy <- getPolicy(mdp)
+   expect_equal(policy$aIdx[policy$stateStr == "0,0"], 0)
+   expect_equal(policy$weight[policy$stateStr == "0,0"], 10)
+
+   runValueIte(mdp, "Trans weight", termValues = c(1, 10), bellmanOp = "max", objective = "max", getLog = FALSE)
+   policy <- getPolicy(mdp)
+   expect_equal(policy$aIdx[policy$stateStr == "0,0"], 0)
+   expect_equal(policy$weight[policy$stateStr == "0,0"], 101)
+})
+
 
 test_that("Long run average reward",{
    source("files/two_level_hmdp.R")

@@ -1,7 +1,7 @@
 Type: Package
 Package: MDP2
 Title: Markov Decision Processes (MDPs)
-Version: 2.2.0.2
+Version: 2.2.0.14
 Authors@R: c(
     person("Lars", "Relund Nielsen", , "lars@relund.dk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4802-3071")))
@@ -33,7 +33,8 @@ Suggests:
     testthat,
     readr,
     xml2,
-    covr
+    covr, 
+    roxygen2
 LinkingTo: 
     Rcpp
 VignetteBuilder: 
