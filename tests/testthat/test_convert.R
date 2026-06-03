@@ -1,5 +1,4 @@
 library(MDP2)
-context("Test model conversion")
 cleanUp<-function() {
    unlink("*.bin")
    unlink("*.hmp")

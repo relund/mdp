@@ -1,5 +1,4 @@
 library(MDP2)
-context("Test plotting")
 
 test_that("plotHypergraph draws optional trans labels", {
    hgf <- list(

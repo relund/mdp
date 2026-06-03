@@ -1,7 +1,7 @@
 Type: Package
 Package: MDP2
 Title: Markov Decision Processes (MDPs)
-Version: 2.2.1.0
+Version: 2.2.1.1
 Authors@R: c(
     person("Lars", "Relund Nielsen", , "lars@relund.dk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4802-3071")))
@@ -30,7 +30,7 @@ Suggests:
     knitr,
     Matrix,
     rmarkdown,
-    testthat,
+    testthat (>= 3.0.0),
     readr,
     xml2,
     covr, 
@@ -44,3 +44,4 @@ Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.0.0
+Config/testthat/edition: 3

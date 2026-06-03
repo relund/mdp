@@ -1,5 +1,4 @@
 library(MDP2)
-context("Test calc of steady state pr")
 cleanUp<-function() unlink("*.bin")
 
 test_that("steadyStatePr",{
