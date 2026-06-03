@@ -1,4 +1,4 @@
-# Perform policy iteration (average reward criterion) on the MDP.
+# Perform policy iteration using the average expected-weight Bellman operator on the MDP.
 
 The policy can afterwards be received using functions `getPolicy` and
 `getPolicyW`.
@@ -6,7 +6,14 @@ The policy can afterwards be received using functions `getPolicy` and
 ## Usage
 
 ``` r
-runPolicyIteAve(mdp, w, dur, maxIte = 100, getLog = TRUE)
+runPolicyIteAve(
+  mdp,
+  w,
+  dur,
+  maxIte = 100,
+  objective = c("max", "min"),
+  getLog = TRUE
+)
 ```
 
 ## Arguments
@@ -29,6 +36,11 @@ runPolicyIteAve(mdp, w, dur, maxIte = 100, getLog = TRUE)
 
   Max number of iterations. If the model does not satisfy the unichain
   assumption the algorithm may loop.
+
+- objective:
+
+  Optimize by maximizing (`"max"`) or minimizing (`"min"`) the Bellman
+  value.
 
 - getLog:
 

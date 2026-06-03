@@ -9,7 +9,7 @@ using the external C++ library."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">MDP2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,8 @@ using the external C++ library.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">loadMDP</span><span class="op">(</span></span>
 <span>  prefix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  binNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"stateIdx.bin"</span>, <span class="st">"stateIdxLbl.bin"</span>, <span class="st">"actionIdx.bin"</span>, <span class="st">"actionIdxLbl.bin"</span>,</span>
-<span>    <span class="st">"actionWeight.bin"</span>, <span class="st">"actionWeightLbl.bin"</span>, <span class="st">"transProb.bin"</span>, <span class="st">"externalProcesses.bin"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"actionWeight.bin"</span>, <span class="st">"actionWeightLbl.bin"</span>, <span class="st">"transProb.bin"</span>, <span class="st">"externalProcesses.bin"</span>,</span>
+<span>    <span class="st">"transWeight.bin"</span>, <span class="st">"transWeightLbl.bin"</span><span class="op">)</span>,</span>
 <span>  eps <span class="op">=</span> <span class="fl">1e-05</span>,</span>
 <span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -181,15 +182,16 @@ a double array representation.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load the model into memory</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu">loadMDP</span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (9.3164e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (3.2992e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.63e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000125125 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (3.4611e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.262e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $binNames</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "machine1_actionIdx.bin"         "machine1_actionIdxLbl.bin"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "machine1_actionWeight.bin"      "machine1_actionWeightLbl.bin"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "machine1_transProb.bin"         "machine1_externalProcesses.bin"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "machine1_actionIdx.bin"         "machine1_actionIdxLbl.bin"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "machine1_actionWeight.bin"      "machine1_actionWeightLbl.bin"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "machine1_transProb.bin"         "machine1_externalProcesses.bin"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "machine1_transWeight.bin"       "machine1_transWeightLbl.bin"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $timeHorizon</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
@@ -209,8 +211,14 @@ a double array representation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $weightNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Net reward"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $weightActionNames</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Net reward"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $weightTransNames</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55a88bc88410&gt; of class 'HMDP' &lt;0x55a887db2f30&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55eaced8f1a0&gt; of class 'HMDP' &lt;0x55eace834030&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "HMDP" "list"</span>
@@ -239,51 +247,51 @@ a double array representation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="getInfo.html">getInfo</a></span><span class="op">(</span><span class="va">mdp</span>, withList <span class="op">=</span> <span class="cn">FALSE</span>, dfLevel <span class="op">=</span> <span class="st">"action"</span>, asStringsActions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $df</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr label        aIdx label_action weights trans pr     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     4 3,0      good            0 mt           55      0     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     4 3,0      good            1 nmt          70      0,1   0.2,0.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     5 3,1      average         0 mt           40      0     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     5 3,1      average         1 nmt          50      1,2   0.2,0.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     6 3,2      not working     0 mt           30      0     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     6 3,2      not working     1 rep          5       3     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     7 3,3      replaced        0 Dummy        0       3     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8 2,0      good            0 mt           55      4     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     8 2,0      good            1 nmt          70      4,5   0.5,0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     9 2,1      average         0 mt           40      4     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>     9 2,1      average         1 nmt          50      5,6   0.5,0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>    10 2,2      not working     0 mt           30      4     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>    10 2,2      not working     1 rep          5       7     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>    11 1,0      good            0 mt           55      8     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>    11 1,0      good            1 nmt          70      8,9   0.6,0.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>    12 1,1      average         0 mt           40      8     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>    12 1,1      average         1 nmt          50      9,10  0.6,0.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>    13 0,0      Dummy           0 buy          -100    11,12 0.7,0.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr label       aIdx label_action weights transWeights trans pr   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     4 3,0      good           0 mt           55      <span style="color: #BB0000;">NA</span>           0     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     4 3,0      good           1 nmt          70      <span style="color: #BB0000;">NA</span>           0,1   0.2,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     5 3,1      average        0 mt           40      <span style="color: #BB0000;">NA</span>           0     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     5 3,1      average        1 nmt          50      <span style="color: #BB0000;">NA</span>           1,2   0.2,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     6 3,2      not worki…     0 mt           30      <span style="color: #BB0000;">NA</span>           0     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     6 3,2      not worki…     1 rep          5       <span style="color: #BB0000;">NA</span>           3     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     7 3,3      replaced       0 Dummy        0       <span style="color: #BB0000;">NA</span>           3     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8 2,0      good           0 mt           55      <span style="color: #BB0000;">NA</span>           4     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     8 2,0      good           1 nmt          70      <span style="color: #BB0000;">NA</span>           4,5   0.5,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     9 2,1      average        0 mt           40      <span style="color: #BB0000;">NA</span>           4     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>     9 2,1      average        1 nmt          50      <span style="color: #BB0000;">NA</span>           5,6   0.5,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>    10 2,2      not worki…     0 mt           30      <span style="color: #BB0000;">NA</span>           4     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>    10 2,2      not worki…     1 rep          5       <span style="color: #BB0000;">NA</span>           7     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>    11 1,0      good           0 mt           55      <span style="color: #BB0000;">NA</span>           8     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>    11 1,0      good           1 nmt          70      <span style="color: #BB0000;">NA</span>           8,9   0.6,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>    12 1,1      average        0 mt           40      <span style="color: #BB0000;">NA</span>           8     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>    12 1,1      average        1 nmt          50      <span style="color: #BB0000;">NA</span>           9,10  0.6,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>    13 0,0      Dummy          0 buy          -100    <span style="color: #BB0000;">NA</span>           11,12 0.7,…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="getInfo.html">getInfo</a></span><span class="op">(</span><span class="va">mdp</span>, withList <span class="op">=</span> <span class="cn">FALSE</span>, dfLevel <span class="op">=</span> <span class="st">"action"</span>, asStringsActions <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $df</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr label        aIdx label_action weights trans     pr       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     4 3,0      good            0 mt                55 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     4 3,0      good            1 nmt               70 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     5 3,1      average         0 mt                40 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     5 3,1      average         1 nmt               50 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     6 3,2      not working     0 mt                30 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     6 3,2      not working     1 rep                5 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     7 3,3      replaced        0 Dummy              0 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8 2,0      good            0 mt                55 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     8 2,0      good            1 nmt               70 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     9 2,1      average         0 mt                40 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>     9 2,1      average         1 nmt               50 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>    10 2,2      not working     0 mt                30 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>    10 2,2      not working     1 rep                5 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>    11 1,0      good            0 mt                55 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>    11 1,0      good            1 nmt               70 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>    12 1,1      average         0 mt                40 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>    12 1,1      average         1 nmt               50 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>    13 0,0      Dummy           0 buy             -<span style="color: #BB0000;">100</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 18 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr label       aIdx label_action weights transWeights trans pr   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     4 3,0      good           0 mt                55 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     4 3,0      good           1 nmt               70 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     5 3,1      average        0 mt                40 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     5 3,1      average        1 nmt               50 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     6 3,2      not worki…     0 mt                30 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     6 3,2      not worki…     1 rep                5 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     7 3,3      replaced       0 Dummy              0 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8 2,0      good           0 mt                55 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     8 2,0      good           1 nmt               70 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     9 2,1      average        0 mt                40 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>     9 2,1      average        1 nmt               50 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>    10 2,2      not worki…     0 mt                30 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>    10 2,2      not worki…     1 rep                5 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>    11 1,0      good           0 mt                55 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>    11 1,0      good           1 nmt               70 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>    12 1,1      average        0 mt                40 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>    12 1,1      average        1 nmt               50 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>    13 0,0      Dummy          0 buy             -<span style="color: #BB0000;">100</span> <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Perform value iteration</span></span></span>
@@ -291,8 +299,8 @@ a double array representation.</p>
 <span class="r-in"><span><span class="va">scrapValues</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>,<span class="fl">10</span>,<span class="fl">5</span>,<span class="fl">0</span><span class="op">)</span>   <span class="co"># scrap values (the values of the 4 states at stage 4)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="runValueIte.html">runValueIte</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w</span>, termValues<span class="op">=</span><span class="va">scrapValues</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> using quantity 'Net reward' under reward criterion.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 7.467e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> using weight 'Net reward' under expected-weight Bellman operator.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 8.283e-06 sec.</span>
 <span class="r-in"><span><span class="fu"><a href="getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>     <span class="co"># optimal policy</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr stateLabel   aIdx actionLabel weight</span>
@@ -421,15 +429,16 @@ a double array representation.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Have a look at the state-expanded hypergraph</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu">loadMDP</span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000128474 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (3.3656e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (2.896e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000139116 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (3.6374e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.443e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $binNames</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "machine2_actionIdx.bin"         "machine2_actionIdxLbl.bin"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "machine2_actionWeight.bin"      "machine2_actionWeightLbl.bin"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "machine2_transProb.bin"         "machine2_externalProcesses.bin"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "machine2_actionIdx.bin"         "machine2_actionIdxLbl.bin"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "machine2_actionWeight.bin"      "machine2_actionWeightLbl.bin"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "machine2_transProb.bin"         "machine2_externalProcesses.bin"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "machine2_transWeight.bin"       "machine2_transWeightLbl.bin"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $timeHorizon</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6</span>
@@ -449,8 +458,14 @@ a double array representation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $weightNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Net reward"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $weightActionNames</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Net reward"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $weightTransNames</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55a88d273ee0&gt; of class 'HMDP' &lt;0x55a887db2f30&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55eacf301110&gt; of class 'HMDP' &lt;0x55eace834030&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "HMDP" "list"</span>
@@ -478,63 +493,63 @@ a double array representation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="getInfo.html">getInfo</a></span><span class="op">(</span><span class="va">mdp</span>, withList <span class="op">=</span> <span class="cn">FALSE</span>, dfLevel <span class="op">=</span> <span class="st">"action"</span>, asStringsActions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $df</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr label        aIdx label_action weights trans pr     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 4,0      good            0 rep          30      0     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     2 4,1      average         0 rep          10      0     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3 4,2      not working     0 rep          5       0     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     4 3,0      good            0 mt           55      1     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     4 3,0      good            1 nmt          70      1,2   0.2,0.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     5 3,1      average         0 mt           40      1     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     5 3,1      average         1 nmt          50      2,3   0.2,0.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     6 3,2      not working     0 mt           30      1     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     6 3,2      not working     1 rep          5       0     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     7 2,0      good            0 mt           55      4     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>     7 2,0      good            1 nmt          70      4,5   0.5,0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>     8 2,1      average         0 mt           40      4     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>     8 2,1      average         1 nmt          50      5,6   0.5,0.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>     9 2,2      not working     0 mt           30      4     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>     9 2,2      not working     1 rep          5       0     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>    10 1,0      good            0 mt           55      7     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>    10 1,0      good            1 nmt          70      7,8   0.6,0.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>    11 1,1      average         0 mt           40      7     1      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span>    11 1,1      average         1 nmt          50      8,9   0.6,0.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span>    12 0,0      Dummy           0 buy          -100    10,11 0.7,0.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr label       aIdx label_action weights transWeights trans pr   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 4,0      good           0 rep          30      <span style="color: #BB0000;">NA</span>           0     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     2 4,1      average        0 rep          10      <span style="color: #BB0000;">NA</span>           0     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3 4,2      not worki…     0 rep          5       <span style="color: #BB0000;">NA</span>           0     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     4 3,0      good           0 mt           55      <span style="color: #BB0000;">NA</span>           1     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     4 3,0      good           1 nmt          70      <span style="color: #BB0000;">NA</span>           1,2   0.2,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     5 3,1      average        0 mt           40      <span style="color: #BB0000;">NA</span>           1     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     5 3,1      average        1 nmt          50      <span style="color: #BB0000;">NA</span>           2,3   0.2,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     6 3,2      not worki…     0 mt           30      <span style="color: #BB0000;">NA</span>           1     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     6 3,2      not worki…     1 rep          5       <span style="color: #BB0000;">NA</span>           0     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     7 2,0      good           0 mt           55      <span style="color: #BB0000;">NA</span>           4     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>     7 2,0      good           1 nmt          70      <span style="color: #BB0000;">NA</span>           4,5   0.5,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>     8 2,1      average        0 mt           40      <span style="color: #BB0000;">NA</span>           4     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>     8 2,1      average        1 nmt          50      <span style="color: #BB0000;">NA</span>           5,6   0.5,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>     9 2,2      not worki…     0 mt           30      <span style="color: #BB0000;">NA</span>           4     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>     9 2,2      not worki…     1 rep          5       <span style="color: #BB0000;">NA</span>           0     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>    10 1,0      good           0 mt           55      <span style="color: #BB0000;">NA</span>           7     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>    10 1,0      good           1 nmt          70      <span style="color: #BB0000;">NA</span>           7,8   0.6,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>    11 1,1      average        0 mt           40      <span style="color: #BB0000;">NA</span>           7     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span>    11 1,1      average        1 nmt          50      <span style="color: #BB0000;">NA</span>           8,9   0.6,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span>    12 0,0      Dummy          0 buy          -100    <span style="color: #BB0000;">NA</span>           10,11 0.7,…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="getInfo.html">getInfo</a></span><span class="op">(</span><span class="va">mdp</span>, withList <span class="op">=</span> <span class="cn">FALSE</span>, dfLevel <span class="op">=</span> <span class="st">"action"</span>, asStringsActions <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $df</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr label        aIdx label_action weights trans     pr       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 4,0      good            0 rep               30 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     2 4,1      average         0 rep               10 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3 4,2      not working     0 rep                5 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     4 3,0      good            0 mt                55 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     4 3,0      good            1 nmt               70 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     5 3,1      average         0 mt                40 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     5 3,1      average         1 nmt               50 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     6 3,2      not working     0 mt                30 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     6 3,2      not working     1 rep                5 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     7 2,0      good            0 mt                55 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>     7 2,0      good            1 nmt               70 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>     8 2,1      average         0 mt                40 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>     8 2,1      average         1 nmt               50 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>     9 2,2      not working     0 mt                30 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>     9 2,2      not working     1 rep                5 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>    10 1,0      good            0 mt                55 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>    10 1,0      good            1 nmt               70 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>    11 1,1      average         0 mt                40 <span style="color: #949494;">&lt;dbl [1]&gt;</span> <span style="color: #949494;">&lt;dbl [1]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span>    11 1,1      average         1 nmt               50 <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span>    12 0,0      Dummy           0 buy             -<span style="color: #BB0000;">100</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span> <span style="color: #949494;">&lt;dbl [2]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr label       aIdx label_action weights transWeights trans pr   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lis&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 4,0      good           0 rep               30 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     2 4,1      average        0 rep               10 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3 4,2      not worki…     0 rep                5 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     4 3,0      good           0 mt                55 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     4 3,0      good           1 nmt               70 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     5 3,1      average        0 mt                40 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     5 3,1      average        1 nmt               50 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     6 3,2      not worki…     0 mt                30 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     6 3,2      not worki…     1 rep                5 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     7 2,0      good           0 mt                55 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>     7 2,0      good           1 nmt               70 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>     8 2,1      average        0 mt                40 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>     8 2,1      average        1 nmt               50 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>     9 2,2      not worki…     0 mt                30 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>     9 2,2      not worki…     1 rep                5 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>    10 1,0      good           0 mt                55 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>    10 1,0      good           1 nmt               70 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>    11 1,1      average        0 mt                40 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span>    11 1,1      average        1 nmt               50 <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span>    12 0,0      Dummy          0 buy             -<span style="color: #BB0000;">100</span> <span style="color: #BB0000;">NA</span>           <span style="color: #949494;">&lt;dbl&gt;</span> <span style="color: #949494;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Perform value iteration</span></span></span>
 <span class="r-in"><span><span class="va">w</span><span class="op">&lt;-</span><span class="st">"Net reward"</span>             <span class="co"># label of the weight we want to optimize</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="runValueIte.html">runValueIte</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w</span>, termValues <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> using quantity 'Net reward' under reward criterion.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 7.72e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> using weight 'Net reward' under expected-weight Bellman operator.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 7.962e-06 sec.</span>
 <span class="r-in"><span><span class="fu"><a href="getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>     <span class="co"># optimal policy</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 13 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr stateLabel   aIdx actionLabel weight</span>

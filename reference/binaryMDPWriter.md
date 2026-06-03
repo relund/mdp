@@ -10,7 +10,8 @@ faster.
 binaryMDPWriter(
   prefix = "",
   binNames = c("stateIdx.bin", "stateIdxLbl.bin", "actionIdx.bin", "actionIdxLbl.bin",
-    "actionWeight.bin", "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin"),
+    "actionWeight.bin", "actionWeightLbl.bin", "transProb.bin", "externalProcesses.bin",
+    "transWeight.bin", "transWeightLbl.bin"),
   getLog = TRUE
 )
 ```
@@ -63,9 +64,12 @@ The returned writer exposes these functions:
 
 - `endState()`: ends a state.
 
-- `action(scope = NULL, id = NULL, pr = NULL, prob = NULL, weights, label = NULL, end = FALSE, ...)`:
+- `action(scope = NULL, id = NULL, pr = NULL, prob = NULL, weights, transWeights = NULL, label = NULL, end = FALSE, ...)`:
   starts an action. `weights` must be a vector of action weights.
-  Transition probabilities can be entered in two ways:
+  `transWeights` must contain transition weights ordered by transition,
+  with all transition weight labels for the first transition followed by
+  all labels for the second transition, and so on. Transition
+  probabilities can be entered in two ways:
 
   1.  `prob` contains triples `(scope, id, pr)`.
 
@@ -78,7 +82,7 @@ The returned writer exposes these functions:
 - `endAction()`: ends an action. Do not use this if `end = TRUE` was
   used when the action was specified.
 
-- `includeProcess(prefix, label = NULL, weights, prob, termStates)`:
+- `includeProcess(prefix, label = NULL, weights, prob, termStates, transWeights = NULL)`:
   includes an external process. External processes are loaded into
   memory only when needed, which helps with large models. `prefix` is
   the external process prefix. `weights` must be a vector of action
@@ -97,7 +101,7 @@ The returned writer exposes these functions:
 - `closeWriter()`: closes the writer. Call this when the model
   description is finished.
 
-Eight binary files are created:
+Ten binary files are created:
 
 - `stateIdx.bin`: integers defining all states in the format
   `"n0 s0 -1 n0 s0 a0 n1 s1 -1 n0 s0 a0 n1 s1 a1 n2 s2 -1 n0 s0 ..."`.
@@ -149,6 +153,13 @@ Eight binary files are created:
   `stageStr` corresponds to the stage index, for example `n0 s0 a0 n1`,
   of the stage corresponding to the first stage in the external process,
   and `prefix` is the external process prefix. No delimiter is used.
+
+- `transWeight.bin`: doubles containing transition weights in the format
+  `"t11 t12 t21 t22 -1 ..."`, assuming two transition weights for each
+  transition and two transitions in the first action.
+
+- `transWeightLbl.bin`: character data containing the transition weight
+  labels.
 
 ## Note
 

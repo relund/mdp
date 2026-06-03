@@ -110,10 +110,10 @@ prefix <- paste0(system.file("models", package = "MDP2"), "/cow_")
 mdp <- loadMDP(prefix)
 ```
 
-    #> Read binary files (0.000228521 sec.)
-    #> Build the HMDP (0.00016256 sec.)
+    #> Read binary files (0.000245513 sec.)
+    #> Build the HMDP (0.000120388 sec.)
 
-    #> Checking MDP and found no errors (4.92e-06 sec.)
+    #> Checking MDP and found no errors (1.542e-06 sec.)
 
 ``` r
 
@@ -121,14 +121,16 @@ mdp
 ```
 
     #> $binNames
-    #> [1] "/home/runner/work/_temp/Library/MDP2/models/cow_stateIdx.bin"         
-    #> [2] "/home/runner/work/_temp/Library/MDP2/models/cow_stateIdxLbl.bin"      
-    #> [3] "/home/runner/work/_temp/Library/MDP2/models/cow_actionIdx.bin"        
-    #> [4] "/home/runner/work/_temp/Library/MDP2/models/cow_actionIdxLbl.bin"     
-    #> [5] "/home/runner/work/_temp/Library/MDP2/models/cow_actionWeight.bin"     
-    #> [6] "/home/runner/work/_temp/Library/MDP2/models/cow_actionWeightLbl.bin"  
-    #> [7] "/home/runner/work/_temp/Library/MDP2/models/cow_transProb.bin"        
-    #> [8] "/home/runner/work/_temp/Library/MDP2/models/cow_externalProcesses.bin"
+    #>  [1] "/home/runner/work/_temp/Library/MDP2/models/cow_stateIdx.bin"         
+    #>  [2] "/home/runner/work/_temp/Library/MDP2/models/cow_stateIdxLbl.bin"      
+    #>  [3] "/home/runner/work/_temp/Library/MDP2/models/cow_actionIdx.bin"        
+    #>  [4] "/home/runner/work/_temp/Library/MDP2/models/cow_actionIdxLbl.bin"     
+    #>  [5] "/home/runner/work/_temp/Library/MDP2/models/cow_actionWeight.bin"     
+    #>  [6] "/home/runner/work/_temp/Library/MDP2/models/cow_actionWeightLbl.bin"  
+    #>  [7] "/home/runner/work/_temp/Library/MDP2/models/cow_transProb.bin"        
+    #>  [8] "/home/runner/work/_temp/Library/MDP2/models/cow_externalProcesses.bin"
+    #>  [9] "/home/runner/work/_temp/Library/MDP2/models/cow_transWeight.bin"      
+    #> [10] "/home/runner/work/_temp/Library/MDP2/models/cow_transWeightLbl.bin"   
     #> 
     #> $timeHorizon
     #> [1] Inf
@@ -148,8 +150,14 @@ mdp
     #> $weightNames
     #> [1] "Duration"   "Net reward" "Yield"     
     #> 
+    #> $weightActionNames
+    #> [1] "Duration"   "Net reward" "Yield"     
+    #> 
+    #> $weightTransNames
+    #> character(0)
+    #> 
     #> $ptr
-    #> C++ object <0x55bf33e973c0> of class 'HMDP' <0x55bf3387f7e0>
+    #> C++ object <0x55c5311454c0> of class 'HMDP' <0x55c531f9aad0>
     #> 
     #> attr(,"class")
     #> [1] "HMDP" "list"
@@ -228,9 +236,9 @@ durLbl<-"Duration"         # the duration/time label
 runPolicyIteDiscount(mdp, wLbl, durLbl, rate = 0.1)
 ```
 
-    #> Run policy iteration using quantity 'Net reward' under discounting criterion 
+    #> Run policy iteration using weight 'Net reward' under discounted expected-weight Bellman operator 
     #> with 'Duration' as duration using discount factor 0.904837. 
-    #> Iteration(s): 1 2 3 4 finished. Cpu time: 4.92e-06 sec.
+    #> Iteration(s): 1 2 3 4 finished. Cpu time: 1.542e-06 sec.
 
 The optimal policy is:
 
@@ -252,9 +260,9 @@ durLbl<-"Duration"         # the duration/time label
 runPolicyIteAve(mdp, wLbl, durLbl)
 ```
 
-    #> Run policy iteration under average reward criterion using 
-    #> reward 'Net reward' over 'Duration'. Iterations (g): 
-    #> 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 4.92e-06 sec.
+    #> Run policy iteration under average expected-weight Bellman operator using 
+    #> weight 'Net reward' over 'Duration'. Iterations (g): 
+    #> 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 1.542e-06 sec.
 
     #> [1] 11543.83
 

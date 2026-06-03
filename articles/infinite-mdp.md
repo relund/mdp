@@ -108,10 +108,10 @@ prefix <- paste0(system.file("models", package = "MDP2"), "/hct611-1_")
 mdp <- loadMDP(prefix)
 ```
 
-    #> Read binary files (0.000110664 sec.)
-    #> Build the HMDP (2.8275e-05 sec.)
+    #> Read binary files (0.000146047 sec.)
+    #> Build the HMDP (2.2563e-05 sec.)
 
-    #> Checking MDP and found no errors (1.623e-06 sec.)
+    #> Checking MDP and found no errors (7.81e-07 sec.)
 
 The variable `mdp` is a list with a pointer to the MDP object stored in
 memory.
@@ -122,14 +122,16 @@ mdp
 ```
 
     #> $binNames
-    #> [1] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_stateIdx.bin"         
-    #> [2] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_stateIdxLbl.bin"      
-    #> [3] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionIdx.bin"        
-    #> [4] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionIdxLbl.bin"     
-    #> [5] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionWeight.bin"     
-    #> [6] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionWeightLbl.bin"  
-    #> [7] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_transProb.bin"        
-    #> [8] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_externalProcesses.bin"
+    #>  [1] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_stateIdx.bin"         
+    #>  [2] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_stateIdxLbl.bin"      
+    #>  [3] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionIdx.bin"        
+    #>  [4] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionIdxLbl.bin"     
+    #>  [5] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionWeight.bin"     
+    #>  [6] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionWeightLbl.bin"  
+    #>  [7] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_transProb.bin"        
+    #>  [8] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_externalProcesses.bin"
+    #>  [9] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_transWeight.bin"      
+    #> [10] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_transWeightLbl.bin"   
     #> 
     #> $timeHorizon
     #> [1] Inf
@@ -149,8 +151,14 @@ mdp
     #> $weightNames
     #> [1] "Duration"   "Net reward"
     #> 
+    #> $weightActionNames
+    #> [1] "Duration"   "Net reward"
+    #> 
+    #> $weightTransNames
+    #> character(0)
+    #> 
     #> $ptr
-    #> C++ object <0x559967690210> of class 'HMDP' <0x559963666890>
+    #> C++ object <0x564f673eafd0> of class 'HMDP' <0x564f666c5ad0>
     #> 
     #> attr(,"class")
     #> [1] "HMDP" "list"
@@ -166,17 +174,17 @@ getInfo(mdp, withList = F, dfLevel = "action", asStringsActions = TRUE)
 ```
 
     #> $df
-    #> # A tibble: 8 × 8
-    #>     sId stateStr label  aIdx label_action      weights trans   pr               
-    #>   <dbl> <chr>    <chr> <dbl> <chr>             <chr>   <chr>   <chr>            
-    #> 1     5 0,0      i=1       0 no repair         1,0     0,1     0.9,0.1          
-    #> 2     6 0,1      i=2       0 no repair         1,0     1,2,3,4 0.8,0.1,0.05,0.05
-    #> 3     6 0,1      i=2       1 preventive repair 1,-7    0       1                
-    #> 4     7 0,2      i=3       0 no repair         1,0     2,3,4   0.7,0.1,0.2      
-    #> 5     7 0,2      i=3       1 preventive repair 1,-7    0       1                
-    #> 6     8 0,3      i=4       0 no repair         1,0     3,4     0.5,0.5          
-    #> 7     8 0,3      i=4       1 preventive repair 1,-5    0       1                
-    #> 8     9 0,4      i=5       0 forced repair     2,-10   0       1
+    #> # A tibble: 8 × 9
+    #>     sId stateStr label  aIdx label_action      weights transWeights trans   pr            
+    #>   <dbl> <chr>    <chr> <dbl> <chr>             <chr>   <lgl>        <chr>   <chr>         
+    #> 1     5 0,0      i=1       0 no repair         1,0     NA           0,1     0.9,0.1       
+    #> 2     6 0,1      i=2       0 no repair         1,0     NA           1,2,3,4 0.8,0.1,0.05,…
+    #> 3     6 0,1      i=2       1 preventive repair 1,-7    NA           0       1             
+    #> 4     7 0,2      i=3       0 no repair         1,0     NA           2,3,4   0.7,0.1,0.2   
+    #> 5     7 0,2      i=3       1 preventive repair 1,-7    NA           0       1             
+    #> 6     8 0,3      i=4       0 no repair         1,0     NA           3,4     0.5,0.5       
+    #> 7     8 0,3      i=4       1 preventive repair 1,-5    NA           0       1             
+    #> 8     9 0,4      i=5       0 forced repair     2,-10   NA           0       1
 
 Here the tibble has a row for each state and action. For instance the
 weight “Duration” equals 1 day except in state $`i=5`$ where a forced
@@ -187,7 +195,7 @@ time-horizon can be plotted using
 
 ``` r
 
-plot(mdp, hyperarcColor = "label", nodeLabel = "sId:label")
+plot(mdp, actionColor = "label", stateLabel = "sId|label")
 ```
 
 ![](infinite-mdp_files/figure-html/plotHgf-1.png)
@@ -211,9 +219,9 @@ time unit.
 runPolicyIteAve(mdp,"Net reward","Duration")
 ```
 
-    #> Run policy iteration under average reward criterion using 
-    #> reward 'Net reward' over 'Duration'. Iterations (g): 
-    #> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.623e-06 sec.
+    #> Run policy iteration under average expected-weight Bellman operator using 
+    #> weight 'Net reward' over 'Duration'. Iterations (g): 
+    #> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 7.81e-07 sec.
 
     #> [1] -0.43379
 
@@ -233,7 +241,7 @@ getPolicy(mdp)
 
 ``` r
 
-plot(mdp, hyperarcShow = "policy")
+plot(mdp, actionsVisible = "policy")
 ```
 
 ![](infinite-mdp_files/figure-html/solve1_ave-1.png)
@@ -247,9 +255,9 @@ factor of 0.5 using policy iteration:
 runPolicyIteDiscount(mdp,"Net reward","Duration", discountFactor = 0.5)
 ```
 
-    #> Run policy iteration using quantity 'Net reward' under discounting criterion 
+    #> Run policy iteration using weight 'Net reward' under discounted expected-weight Bellman operator 
     #> with 'Duration' as duration using discount factor 0.5. 
-    #> Iteration(s): 1 2 finished. Cpu time: 1.623e-06 sec.
+    #> Iteration(s): 1 2 finished. Cpu time: 7.81e-07 sec.
 
 ``` r
 
@@ -267,7 +275,7 @@ getPolicy(mdp)
 
 ``` r
 
-plot(mdp, hyperarcShow = "policy")
+plot(mdp, actionsVisible = "policy")
 ```
 
 ![](infinite-mdp_files/figure-html/unnamed-chunk-5-1.png)
@@ -282,9 +290,9 @@ runValueIte(mdp,"Net reward","Duration", discountFactor = 0.5, eps = 1e-10, maxI
 ```
 
     #> Run value iteration with epsilon = 1e-10 at most 1000 time(s)
-    #> using quantity 'Net reward' under expected discounted reward criterion 
+    #> using weight 'Net reward' under discounted expected-weight Bellman operator 
     #> with 'Duration' as duration using discount factor 0.5.
-    #> Iterations: 33 Finished. Cpu time 2.0498e-05 sec.
+    #> Iterations: 33 Finished. Cpu time 1.8608e-05 sec.
 
 ``` r
 

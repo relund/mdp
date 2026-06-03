@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MDP2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,8 +64,11 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list representing the hypergraph with two elements: A tibble <code>nodes</code> and a
-tibble <code>hyperarcs</code>.</p>
+    <p>A list representing the hypergraph with two elements: a tibble
+<code>nodes</code> and a tibble <code>hyperarcs</code>. <code>hyperarcs</code> stores <code>actionWeights</code>,
+<code>trans</code>, and <code>pr</code> as list-columns of vectors. <code>transWeights</code> is a
+list-column of matrices with one row per transition and one column per
+transition-weight namespace.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -79,58 +82,64 @@ tibble <code>hyperarcs</code>.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#### A finite-horizon replacement problem ####</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="st">"machine1_"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.00011301 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.1116e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.769e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000163061 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (2.697e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (8.61e-07 sec.)</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="getHypergraph-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span>  <span class="co"># colors based on labels</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span>  <span class="co"># colors based on labels</span></span></span>
 <span class="r-plt img"><img src="getHypergraph-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"label"</span>, nodeLabel <span class="op">=</span> <span class="st">"sId:label"</span><span class="op">)</span>  <span class="co"># node labels are 'sId: label'</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, transLabels <span class="op">=</span> <span class="st">"state"</span><span class="op">)</span>  <span class="co"># label transitions with target state labels</span></span></span>
 <span class="r-plt img"><img src="getHypergraph-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, nodeLabel <span class="op">=</span> <span class="st">"sIdx:label"</span>, radx <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span>  <span class="co"># adjust radx in nodes</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, transLabels <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span>  <span class="co"># label transitions with transition probabilities</span></span></span>
 <span class="r-plt img"><img src="getHypergraph-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"label"</span>, stateLabel <span class="op">=</span> <span class="st">"sId|label"</span><span class="op">)</span>  <span class="co"># state labels are 'sId | label'</span></span></span>
+<span class="r-plt img"><img src="getHypergraph-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, stateLabel <span class="op">=</span> <span class="st">"sIdx|label"</span>, radx <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span>  <span class="co"># adjust radx in states</span></span></span>
+<span class="r-plt img"><img src="getHypergraph-6.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, stateLabel <span class="op">=</span> <span class="st">"label"</span>, actionWLabel <span class="op">=</span> <span class="st">"none"</span>, actionLabel <span class="op">=</span> <span class="st">"label"</span>, </span></span>
+<span class="r-in"><span>     transLabels <span class="op">=</span> <span class="st">"sId"</span>, radx <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="getHypergraph-7.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">scrapValues</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">10</span>, <span class="fl">5</span>, <span class="fl">0</span><span class="op">)</span>  <span class="co"># scrap values (the values of the 4 states at stage 4)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="runValueIte.html">runValueIte</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="st">"Net reward"</span> , termValues <span class="op">=</span> <span class="va">scrapValues</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> using quantity 'Net reward' under reward criterion.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 6.228e-06 sec.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># highlight optimal policy</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(sId, aIdx)`</span>
-<span class="r-plt img"><img src="getHypergraph-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcShow <span class="op">=</span> <span class="st">"policy"</span>, nodeLabel <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span>  <span class="co"># show only optimal policy</span></span></span>
-<span class="r-plt img"><img src="getHypergraph-6.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> using weight 'Net reward' under expected-weight Bellman operator.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 8.242e-06 sec.</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># highlight optimal policy</span></span></span>
+<span class="r-plt img"><img src="getHypergraph-8.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionsVisible <span class="op">=</span> <span class="st">"policy"</span>, stateLabel <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span>  <span class="co"># show only optimal policy</span></span></span>
+<span class="r-plt img"><img src="getHypergraph-9.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#### An infinite-horizon maintenance problem ####</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="st">"hct611-1_"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (8.9826e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (2.0632e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.241e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000152155 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (2.1683e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (9.21e-07 sec.)</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>  <span class="co"># plot the first two stages</span></span></span>
-<span class="r-plt img"><img src="getHypergraph-7.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span>  <span class="co"># colors based on labels</span></span></span>
-<span class="r-plt img"><img src="getHypergraph-8.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"label"</span>, nodeLabel <span class="op">=</span> <span class="st">"sId:label"</span><span class="op">)</span>  <span class="co"># node labels are 'sId: label'</span></span></span>
-<span class="r-plt img"><img src="getHypergraph-9.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="runPolicyIteAve.html">runPolicyIteAve</a></span><span class="op">(</span><span class="va">mdp</span>,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Run policy iteration under average reward criterion using </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> reward 'Net reward' over 'Duration'. Iterations (g): </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.241e-06 sec.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.43379</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcColor <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># highlight optimal policy</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(sId, aIdx)`</span>
 <span class="r-plt img"><img src="getHypergraph-10.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, hyperarcShow <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># show only optimal policy</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span>  <span class="co"># colors based on labels</span></span></span>
 <span class="r-plt img"><img src="getHypergraph-11.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"label"</span>, stateLabel <span class="op">=</span> <span class="st">"sId|label"</span><span class="op">)</span>  <span class="co"># state labels are 'sId | label'</span></span></span>
+<span class="r-plt img"><img src="getHypergraph-12.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="runPolicyIteAve.html">runPolicyIteAve</a></span><span class="op">(</span><span class="va">mdp</span>,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Run policy iteration under average expected-weight Bellman operator using </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> weight 'Net reward' over 'Duration'. Iterations (g): </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 9.21e-07 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.43379</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># highlight optimal policy</span></span></span>
+<span class="r-plt img"><img src="getHypergraph-13.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionsVisible <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># show only optimal policy</span></span></span>
+<span class="r-plt img"><img src="getHypergraph-14.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#### An infinite-horizon hierarchical replacement problem ####</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="st">"cow_"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000184772 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (0.000144295 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (3.728e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.00018954 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (0.000107549 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.723e-06 sec.)</span>
 <span class="r-in"><span><span class="va">hgf</span> <span class="op">&lt;-</span> <span class="fu">getHypergraph</span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># modify labels</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">hgf</span><span class="op">$</span><span class="va">nodes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>
@@ -184,8 +193,70 @@ tibble <code>hyperarcs</code>.</p>
 <span class="r-in"><span><span class="co"># plot hypergraph</span></span></span>
 <span class="r-in"><span><span class="va">oldpar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mai <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plotHypergraph.html">plotHypergraph</a></span><span class="op">(</span>gridDim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">7</span><span class="op">)</span>, <span class="va">hgf</span>, cex <span class="op">=</span> <span class="fl">0.8</span>, radx <span class="op">=</span> <span class="fl">0.02</span>, rady <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="getHypergraph-12.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="getHypergraph-15.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldpar</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## A simple finite-horizon MDP with action and transition weights</span></span></span>
+<span class="r-in"><span><span class="va">prefix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"plot_transition_rewards_"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="binaryMDPWriter.html">binaryMDPWriter</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="fu">setWeights</span><span class="op">(</span><span class="st">"Cost"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="fu">setTransWeights</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reward"</span>, <span class="st">"Disease"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="fu">process</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="va">w</span><span class="op">$</span><span class="fu">stage</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">w</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span>label <span class="op">=</span> <span class="st">"S1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>         <span class="va">w</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span></span>
+<span class="r-in"><span>            label <span class="op">=</span> <span class="st">"A1"</span>, weights <span class="op">=</span> <span class="fl">2</span>, id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, pr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            transWeights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">0.3</span><span class="op">)</span>, end <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>         <span class="op">)</span></span></span>
+<span class="r-in"><span>         <span class="va">w</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span></span>
+<span class="r-in"><span>            label <span class="op">=</span> <span class="st">"A2"</span>, weights <span class="op">=</span> <span class="fl">1</span>, id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, pr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.7</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            transWeights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">0.4</span>, <span class="fl">15</span>, <span class="fl">0.2</span><span class="op">)</span>, end <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>         <span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">w</span><span class="op">$</span><span class="fu">endState</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="va">w</span><span class="op">$</span><span class="fu">endStage</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="va">w</span><span class="op">$</span><span class="fu">stage</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">w</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span>label <span class="op">=</span> <span class="st">"S2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>         <span class="va">w</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span></span>
+<span class="r-in"><span>            label <span class="op">=</span> <span class="st">"A3"</span>, weights <span class="op">=</span> <span class="fl">3</span>, id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, pr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            transWeights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.05</span>, <span class="fl">12</span>, <span class="fl">0.2</span>, <span class="fl">30</span>, <span class="fl">0.8</span><span class="op">)</span>, end <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>         <span class="op">)</span></span></span>
+<span class="r-in"><span>         <span class="va">w</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span></span>
+<span class="r-in"><span>            label <span class="op">=</span> <span class="st">"A4"</span>, weights <span class="op">=</span> <span class="fl">2</span>, id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, pr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            transWeights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">22</span>, <span class="fl">0.35</span>, <span class="fl">27</span>, <span class="fl">0.7</span><span class="op">)</span>, end <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>         <span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">w</span><span class="op">$</span><span class="fu">endState</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">w</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span>label <span class="op">=</span> <span class="st">"S3"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>         <span class="va">w</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span></span>
+<span class="r-in"><span>            label <span class="op">=</span> <span class="st">"A5"</span>, weights <span class="op">=</span> <span class="fl">1</span>, id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, pr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">0.6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            transWeights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0</span>, <span class="fl">16</span>, <span class="fl">0.25</span><span class="op">)</span>, end <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>         <span class="op">)</span></span></span>
+<span class="r-in"><span>         <span class="va">w</span><span class="op">$</span><span class="fu">action</span><span class="op">(</span></span></span>
+<span class="r-in"><span>            label <span class="op">=</span> <span class="st">"A6"</span>, weights <span class="op">=</span> <span class="fl">4</span>, id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, pr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            transWeights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">0.15</span>, <span class="fl">21</span>, <span class="fl">0.45</span>, <span class="fl">29</span>, <span class="fl">1</span><span class="op">)</span>, end <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>         <span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">w</span><span class="op">$</span><span class="fu">endState</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="va">w</span><span class="op">$</span><span class="fu">endStage</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="va">w</span><span class="op">$</span><span class="fu">stage</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">w</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span>label <span class="op">=</span> <span class="st">"S4"</span>, end <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">w</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span>label <span class="op">=</span> <span class="st">"S5"</span>, end <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="va">w</span><span class="op">$</span><span class="fu">state</span><span class="op">(</span>label <span class="op">=</span> <span class="st">"S6"</span>, end <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="va">w</span><span class="op">$</span><span class="fu">endStage</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="fu">endProcess</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">w</span><span class="op">$</span><span class="fu">closeWriter</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Statistics:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     states : 6 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     actions: 6 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     weights: 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Closing binary MDP writer.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">mdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span>, getLog <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"label"</span>, transLabels <span class="op">=</span> <span class="st">"weights"</span>, actionWLabel <span class="op">=</span> <span class="st">"weight"</span>, </span></span>
+<span class="r-in"><span>     radx <span class="op">=</span> <span class="fl">0.005</span>, rady <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="getHypergraph-16.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Reset working dir</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="va">wd</span><span class="op">)</span></span></span>

@@ -62,6 +62,9 @@ The returned writer exposes these functions:
   if the first entry in `labels` is time, then `duration = 1`. Call this
   before building the model.
 
+- `setTransWeights(labels)`: sets the labels of transition-level
+  weights.
+
 - `process()`: starts a (sub)process.
 
 - `endProcess()`: ends a (sub)process.
@@ -75,9 +78,10 @@ The returned writer exposes these functions:
 
 - `endState()`: ends a state.
 
-- `action(label = NULL, weights, prob, statesNext = NULL)`: starts an
-  action. `weights` must be a vector of action weights, and `prob` must
-  contain triples `(scope, idx, pr)`. `scope` can take three values:
+- `action(label = NULL, weights, prob, statesNext = NULL, transWeights = NULL)`:
+  starts an action. `weights` must be a vector of action weights, and
+  `prob` must contain triples `(scope, idx, pr)`. `scope` can take three
+  values:
 
   - `0`: a transition to the next stage in the father process.
 

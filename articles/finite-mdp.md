@@ -82,10 +82,10 @@ prefix <- paste0(system.file("models", package = "MDP2"), "/machine1_")
 mdp <- loadMDP(prefix)
 ```
 
-    #> Read binary files (0.000143877 sec.)
-    #> Build the HMDP (3.608e-05 sec.)
+    #> Read binary files (0.000163081 sec.)
+    #> Build the HMDP (3.0115e-05 sec.)
 
-    #> Checking MDP and found no errors (2.466e-06 sec.)
+    #> Checking MDP and found no errors (9.41e-07 sec.)
 
 ``` r
 
@@ -93,34 +93,34 @@ getInfo(mdp, withList = F, dfLevel = "action", asStringsActions = TRUE)
 ```
 
     #> $df
-    #> # A tibble: 18 × 8
-    #>      sId stateStr label        aIdx label_action weights trans pr     
-    #>    <dbl> <chr>    <chr>       <dbl> <chr>        <chr>   <chr> <chr>  
-    #>  1     4 3,0      good            0 mt           55      0     1      
-    #>  2     4 3,0      good            1 nmt          70      0,1   0.2,0.8
-    #>  3     5 3,1      average         0 mt           40      0     1      
-    #>  4     5 3,1      average         1 nmt          50      1,2   0.2,0.8
-    #>  5     6 3,2      not working     0 mt           30      0     1      
-    #>  6     6 3,2      not working     1 rep          5       3     1      
-    #>  7     7 3,3      replaced        0 Dummy        0       3     1      
-    #>  8     8 2,0      good            0 mt           55      4     1      
-    #>  9     8 2,0      good            1 nmt          70      4,5   0.5,0.5
-    #> 10     9 2,1      average         0 mt           40      4     1      
-    #> 11     9 2,1      average         1 nmt          50      5,6   0.5,0.5
-    #> 12    10 2,2      not working     0 mt           30      4     1      
-    #> 13    10 2,2      not working     1 rep          5       7     1      
-    #> 14    11 1,0      good            0 mt           55      8     1      
-    #> 15    11 1,0      good            1 nmt          70      8,9   0.6,0.4
-    #> 16    12 1,1      average         0 mt           40      8     1      
-    #> 17    12 1,1      average         1 nmt          50      9,10  0.6,0.4
-    #> 18    13 0,0      Dummy           0 buy          -100    11,12 0.7,0.3
+    #> # A tibble: 18 × 9
+    #>      sId stateStr label        aIdx label_action weights transWeights trans pr     
+    #>    <dbl> <chr>    <chr>       <dbl> <chr>        <chr>   <lgl>        <chr> <chr>  
+    #>  1     4 3,0      good            0 mt           55      NA           0     1      
+    #>  2     4 3,0      good            1 nmt          70      NA           0,1   0.2,0.8
+    #>  3     5 3,1      average         0 mt           40      NA           0     1      
+    #>  4     5 3,1      average         1 nmt          50      NA           1,2   0.2,0.8
+    #>  5     6 3,2      not working     0 mt           30      NA           0     1      
+    #>  6     6 3,2      not working     1 rep          5       NA           3     1      
+    #>  7     7 3,3      replaced        0 Dummy        0       NA           3     1      
+    #>  8     8 2,0      good            0 mt           55      NA           4     1      
+    #>  9     8 2,0      good            1 nmt          70      NA           4,5   0.5,0.5
+    #> 10     9 2,1      average         0 mt           40      NA           4     1      
+    #> 11     9 2,1      average         1 nmt          50      NA           5,6   0.5,0.5
+    #> 12    10 2,2      not working     0 mt           30      NA           4     1      
+    #> 13    10 2,2      not working     1 rep          5       NA           7     1      
+    #> 14    11 1,0      good            0 mt           55      NA           8     1      
+    #> 15    11 1,0      good            1 nmt          70      NA           8,9   0.6,0.4
+    #> 16    12 1,1      average         0 mt           40      NA           8     1      
+    #> 17    12 1,1      average         1 nmt          50      NA           9,10  0.6,0.4
+    #> 18    13 0,0      Dummy           0 buy          -100    NA           11,12 0.7,0.3
 
 The state-expanded hypergraph representing the semi-MDP with finite
 time-horizon can be plotted using
 
 ``` r
 
-plot(mdp, hyperarcColor = "label", radx = 0.06, marX = 0.065, marY = 0.055)
+plot(mdp, actionColor = "label", radx = 0.06, marX = 0.065, marY = 0.055)
 ```
 
 ![](finite-mdp_files/figure-html/unnamed-chunk-3-1.png)
@@ -142,8 +142,8 @@ runValueIte(mdp, "Net reward", termValues = scrapValues)
 ```
 
     #> Run value iteration with epsilon = 0 at most 1 time(s)
-    #> using quantity 'Net reward' under reward criterion.
-    #>  Finished. Cpu time 7.542e-06 sec.
+    #> using weight 'Net reward' under expected-weight Bellman operator.
+    #>  Finished. Cpu time 1.0275e-05 sec.
 
 The optimal policy is:
 
@@ -165,7 +165,7 @@ tail(pol)
 
 ``` r
 
-plot(mdp, hyperarcShow = "policy", nodeLabel = "weight", 
+plot(mdp, actionsVisible = "policy", stateLabel = "weight", 
      radx = 0.06, marX = 0.065, marY = 0.055)
 ```
 

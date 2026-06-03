@@ -19,6 +19,7 @@ getRPO(
   rateBase = 1,
   discountFactor = NULL,
   g = 0,
+  objective = c("max", "min"),
   discountMethod = "continuous",
   stateStr = TRUE
 )
@@ -33,7 +34,7 @@ getRPO(
 
 - w:
 
-  The label of the weight/reward we calculate RPO for.
+  The label of the weight we calculate RPO for.
 
 - iA:
 
@@ -46,8 +47,9 @@ getRPO(
 
 - criterion:
 
-  The criterion used. If `expected` used expected reward, if `discount`
-  used discounted rewards, if `average` use average rewards.
+  The Bellman operator shortcut. If `expected` use expected weights, if
+  `discount` use discounted expected weights, if `average` use average
+  expected weights.
 
 - dur:
 
@@ -70,6 +72,11 @@ getRPO(
 - g:
 
   The optimal gain (g) calculated (used if `criterion = "average"`).
+
+- objective:
+
+  Optimize by maximizing (`"max"`) or minimizing (`"min"`) the Bellman
+  value.
 
 - discountMethod:
 

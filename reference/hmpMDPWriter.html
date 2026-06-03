@@ -15,7 +15,7 @@ models then use the binary file format instead."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">MDP2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,13 +108,14 @@ then we have an interest rate of 10 percent over the year.</p></dd>
 actions. <code>labels</code> is a vector of label names. <code>duration</code> identifies which
 label corresponds to duration or time. For example, if the first entry in
 <code>labels</code> is time, then <code>duration = 1</code>. Call this before building the model.</p></li>
+<li><p><code>setTransWeights(labels)</code>: sets the labels of transition-level weights.</p></li>
 <li><p><code>process()</code>: starts a (sub)process.</p></li>
 <li><p><code>endProcess()</code>: ends a (sub)process.</p></li>
 <li><p><code>stage(label = NULL)</code>: starts a stage.</p></li>
 <li><p><code>endStage()</code>: ends a stage.</p></li>
 <li><p><code>state(label = NULL)</code>: starts a state and returns the state index <code>sIdx</code>.</p></li>
 <li><p><code>endState()</code>: ends a state.</p></li>
-<li><p><code>action(label = NULL, weights, prob, statesNext = NULL)</code>: starts an
+<li><p><code>action(label = NULL, weights, prob, statesNext = NULL, transWeights = NULL)</code>: starts an
 action. <code>weights</code> must be a vector of action weights, and <code>prob</code> must
 contain triples <code>(scope, idx, pr)</code>. <code>scope</code> can take three values:</p><ul><li><p><code>0</code>: a transition to the next stage in the father process.</p></li>
 <li><p><code>1</code>: a transition to the next stage in the current process.</p></li>

@@ -154,15 +154,16 @@ w$closeWriter()
 
 ## Load the model into memory
 mdp<-loadMDP(prefix)
-#> Read binary files (9.8297e-05 sec.)
-#> Build the HMDP (3.5535e-05 sec.)
-#> Checking MDP and found no errors (2.078e-06 sec.)
+#> Read binary files (0.000131215 sec.)
+#> Build the HMDP (3.2638e-05 sec.)
+#> Checking MDP and found no errors (1.051e-06 sec.)
 mdp
 #> $binNames
-#> [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      
-#> [3] "machine1_actionIdx.bin"         "machine1_actionIdxLbl.bin"     
-#> [5] "machine1_actionWeight.bin"      "machine1_actionWeightLbl.bin"  
-#> [7] "machine1_transProb.bin"         "machine1_externalProcesses.bin"
+#>  [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      
+#>  [3] "machine1_actionIdx.bin"         "machine1_actionIdxLbl.bin"     
+#>  [5] "machine1_actionWeight.bin"      "machine1_actionWeightLbl.bin"  
+#>  [7] "machine1_transProb.bin"         "machine1_externalProcesses.bin"
+#>  [9] "machine1_transWeight.bin"       "machine1_transWeightLbl.bin"   
 #> 
 #> $timeHorizon
 #> [1] 5
@@ -182,8 +183,14 @@ mdp
 #> $weightNames
 #> [1] "Net reward"
 #> 
+#> $weightActionNames
+#> [1] "Net reward"
+#> 
+#> $weightTransNames
+#> character(0)
+#> 
 #> $ptr
-#> C++ object <0x55a884bbe4d0> of class 'HMDP' <0x55a887db2f30>
+#> C++ object <0x55ead177d710> of class 'HMDP' <0x55eace834030>
 #> 
 #> attr(,"class")
 #> [1] "HMDP" "list"
@@ -212,51 +219,51 @@ getInfo(mdp, withList = FALSE)
 #> 
 getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
 #> $df
-#> # A tibble: 18 × 8
-#>      sId stateStr label        aIdx label_action weights trans pr     
-#>    <dbl> <chr>    <chr>       <dbl> <chr>        <chr>   <chr> <chr>  
-#>  1     4 3,0      good            0 mt           55      0     1      
-#>  2     4 3,0      good            1 nmt          70      0,1   0.2,0.8
-#>  3     5 3,1      average         0 mt           40      0     1      
-#>  4     5 3,1      average         1 nmt          50      1,2   0.2,0.8
-#>  5     6 3,2      not working     0 mt           30      0     1      
-#>  6     6 3,2      not working     1 rep          5       3     1      
-#>  7     7 3,3      replaced        0 Dummy        0       3     1      
-#>  8     8 2,0      good            0 mt           55      4     1      
-#>  9     8 2,0      good            1 nmt          70      4,5   0.5,0.5
-#> 10     9 2,1      average         0 mt           40      4     1      
-#> 11     9 2,1      average         1 nmt          50      5,6   0.5,0.5
-#> 12    10 2,2      not working     0 mt           30      4     1      
-#> 13    10 2,2      not working     1 rep          5       7     1      
-#> 14    11 1,0      good            0 mt           55      8     1      
-#> 15    11 1,0      good            1 nmt          70      8,9   0.6,0.4
-#> 16    12 1,1      average         0 mt           40      8     1      
-#> 17    12 1,1      average         1 nmt          50      9,10  0.6,0.4
-#> 18    13 0,0      Dummy           0 buy          -100    11,12 0.7,0.3
+#> # A tibble: 18 × 9
+#>      sId stateStr label       aIdx label_action weights transWeights trans pr   
+#>    <dbl> <chr>    <chr>      <dbl> <chr>        <chr>   <lgl>        <chr> <chr>
+#>  1     4 3,0      good           0 mt           55      NA           0     1    
+#>  2     4 3,0      good           1 nmt          70      NA           0,1   0.2,…
+#>  3     5 3,1      average        0 mt           40      NA           0     1    
+#>  4     5 3,1      average        1 nmt          50      NA           1,2   0.2,…
+#>  5     6 3,2      not worki…     0 mt           30      NA           0     1    
+#>  6     6 3,2      not worki…     1 rep          5       NA           3     1    
+#>  7     7 3,3      replaced       0 Dummy        0       NA           3     1    
+#>  8     8 2,0      good           0 mt           55      NA           4     1    
+#>  9     8 2,0      good           1 nmt          70      NA           4,5   0.5,…
+#> 10     9 2,1      average        0 mt           40      NA           4     1    
+#> 11     9 2,1      average        1 nmt          50      NA           5,6   0.5,…
+#> 12    10 2,2      not worki…     0 mt           30      NA           4     1    
+#> 13    10 2,2      not worki…     1 rep          5       NA           7     1    
+#> 14    11 1,0      good           0 mt           55      NA           8     1    
+#> 15    11 1,0      good           1 nmt          70      NA           8,9   0.6,…
+#> 16    12 1,1      average        0 mt           40      NA           8     1    
+#> 17    12 1,1      average        1 nmt          50      NA           9,10  0.6,…
+#> 18    13 0,0      Dummy          0 buy          -100    NA           11,12 0.7,…
 #> 
 getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = FALSE)
 #> $df
-#> # A tibble: 18 × 8
-#>      sId stateStr label        aIdx label_action weights trans     pr       
-#>    <dbl> <chr>    <chr>       <dbl> <chr>          <dbl> <list>    <list>   
-#>  1     4 3,0      good            0 mt                55 <dbl [1]> <dbl [1]>
-#>  2     4 3,0      good            1 nmt               70 <dbl [2]> <dbl [2]>
-#>  3     5 3,1      average         0 mt                40 <dbl [1]> <dbl [1]>
-#>  4     5 3,1      average         1 nmt               50 <dbl [2]> <dbl [2]>
-#>  5     6 3,2      not working     0 mt                30 <dbl [1]> <dbl [1]>
-#>  6     6 3,2      not working     1 rep                5 <dbl [1]> <dbl [1]>
-#>  7     7 3,3      replaced        0 Dummy              0 <dbl [1]> <dbl [1]>
-#>  8     8 2,0      good            0 mt                55 <dbl [1]> <dbl [1]>
-#>  9     8 2,0      good            1 nmt               70 <dbl [2]> <dbl [2]>
-#> 10     9 2,1      average         0 mt                40 <dbl [1]> <dbl [1]>
-#> 11     9 2,1      average         1 nmt               50 <dbl [2]> <dbl [2]>
-#> 12    10 2,2      not working     0 mt                30 <dbl [1]> <dbl [1]>
-#> 13    10 2,2      not working     1 rep                5 <dbl [1]> <dbl [1]>
-#> 14    11 1,0      good            0 mt                55 <dbl [1]> <dbl [1]>
-#> 15    11 1,0      good            1 nmt               70 <dbl [2]> <dbl [2]>
-#> 16    12 1,1      average         0 mt                40 <dbl [1]> <dbl [1]>
-#> 17    12 1,1      average         1 nmt               50 <dbl [2]> <dbl [2]>
-#> 18    13 0,0      Dummy           0 buy             -100 <dbl [2]> <dbl [2]>
+#> # A tibble: 18 × 9
+#>      sId stateStr label       aIdx label_action weights transWeights trans pr   
+#>    <dbl> <chr>    <chr>      <dbl> <chr>          <dbl> <lgl>        <lis> <lis>
+#>  1     4 3,0      good           0 mt                55 NA           <dbl> <dbl>
+#>  2     4 3,0      good           1 nmt               70 NA           <dbl> <dbl>
+#>  3     5 3,1      average        0 mt                40 NA           <dbl> <dbl>
+#>  4     5 3,1      average        1 nmt               50 NA           <dbl> <dbl>
+#>  5     6 3,2      not worki…     0 mt                30 NA           <dbl> <dbl>
+#>  6     6 3,2      not worki…     1 rep                5 NA           <dbl> <dbl>
+#>  7     7 3,3      replaced       0 Dummy              0 NA           <dbl> <dbl>
+#>  8     8 2,0      good           0 mt                55 NA           <dbl> <dbl>
+#>  9     8 2,0      good           1 nmt               70 NA           <dbl> <dbl>
+#> 10     9 2,1      average        0 mt                40 NA           <dbl> <dbl>
+#> 11     9 2,1      average        1 nmt               50 NA           <dbl> <dbl>
+#> 12    10 2,2      not worki…     0 mt                30 NA           <dbl> <dbl>
+#> 13    10 2,2      not worki…     1 rep                5 NA           <dbl> <dbl>
+#> 14    11 1,0      good           0 mt                55 NA           <dbl> <dbl>
+#> 15    11 1,0      good           1 nmt               70 NA           <dbl> <dbl>
+#> 16    12 1,1      average        0 mt                40 NA           <dbl> <dbl>
+#> 17    12 1,1      average        1 nmt               50 NA           <dbl> <dbl>
+#> 18    13 0,0      Dummy          0 buy             -100 NA           <dbl> <dbl>
 #> 
 
 ## Perform value iteration
@@ -264,8 +271,8 @@ w<-"Net reward"             # label of the weight we want to optimize
 scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 4)
 runValueIte(mdp, w, termValues=scrapValues)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
-#> using quantity 'Net reward' under reward criterion.
-#>  Finished. Cpu time 7.111e-06 sec.
+#> using weight 'Net reward' under expected-weight Bellman operator.
+#>  Finished. Cpu time 8.423e-06 sec.
 getPolicy(mdp)     # optimal policy
 #> # A tibble: 14 × 6
 #>      sId stateStr stateLabel   aIdx actionLabel weight
@@ -394,15 +401,16 @@ w$closeWriter()
 
 ## Have a look at the state-expanded hypergraph
 mdp<-loadMDP(prefix)
-#> Read binary files (0.000113075 sec.)
-#> Build the HMDP (3.7553e-05 sec.)
-#> Checking MDP and found no errors (2.806e-06 sec.)
+#> Read binary files (0.00014855 sec.)
+#> Build the HMDP (3.7645e-05 sec.)
+#> Checking MDP and found no errors (1.352e-06 sec.)
 mdp
 #> $binNames
-#> [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      
-#> [3] "machine2_actionIdx.bin"         "machine2_actionIdxLbl.bin"     
-#> [5] "machine2_actionWeight.bin"      "machine2_actionWeightLbl.bin"  
-#> [7] "machine2_transProb.bin"         "machine2_externalProcesses.bin"
+#>  [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      
+#>  [3] "machine2_actionIdx.bin"         "machine2_actionIdxLbl.bin"     
+#>  [5] "machine2_actionWeight.bin"      "machine2_actionWeightLbl.bin"  
+#>  [7] "machine2_transProb.bin"         "machine2_externalProcesses.bin"
+#>  [9] "machine2_transWeight.bin"       "machine2_transWeightLbl.bin"   
 #> 
 #> $timeHorizon
 #> [1] 6
@@ -422,8 +430,14 @@ mdp
 #> $weightNames
 #> [1] "Net reward"
 #> 
+#> $weightActionNames
+#> [1] "Net reward"
+#> 
+#> $weightTransNames
+#> character(0)
+#> 
 #> $ptr
-#> C++ object <0x55a8828e8860> of class 'HMDP' <0x55a887db2f30>
+#> C++ object <0x55eac944ab80> of class 'HMDP' <0x55eace834030>
 #> 
 #> attr(,"class")
 #> [1] "HMDP" "list"
@@ -451,63 +465,63 @@ getInfo(mdp, withList = FALSE)
 #> 
 getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
 #> $df
-#> # A tibble: 20 × 8
-#>      sId stateStr label        aIdx label_action weights trans pr     
-#>    <dbl> <chr>    <chr>       <dbl> <chr>        <chr>   <chr> <chr>  
-#>  1     1 4,0      good            0 rep          30      0     1      
-#>  2     2 4,1      average         0 rep          10      0     1      
-#>  3     3 4,2      not working     0 rep          5       0     1      
-#>  4     4 3,0      good            0 mt           55      1     1      
-#>  5     4 3,0      good            1 nmt          70      1,2   0.2,0.8
-#>  6     5 3,1      average         0 mt           40      1     1      
-#>  7     5 3,1      average         1 nmt          50      2,3   0.2,0.8
-#>  8     6 3,2      not working     0 mt           30      1     1      
-#>  9     6 3,2      not working     1 rep          5       0     1      
-#> 10     7 2,0      good            0 mt           55      4     1      
-#> 11     7 2,0      good            1 nmt          70      4,5   0.5,0.5
-#> 12     8 2,1      average         0 mt           40      4     1      
-#> 13     8 2,1      average         1 nmt          50      5,6   0.5,0.5
-#> 14     9 2,2      not working     0 mt           30      4     1      
-#> 15     9 2,2      not working     1 rep          5       0     1      
-#> 16    10 1,0      good            0 mt           55      7     1      
-#> 17    10 1,0      good            1 nmt          70      7,8   0.6,0.4
-#> 18    11 1,1      average         0 mt           40      7     1      
-#> 19    11 1,1      average         1 nmt          50      8,9   0.6,0.4
-#> 20    12 0,0      Dummy           0 buy          -100    10,11 0.7,0.3
+#> # A tibble: 20 × 9
+#>      sId stateStr label       aIdx label_action weights transWeights trans pr   
+#>    <dbl> <chr>    <chr>      <dbl> <chr>        <chr>   <lgl>        <chr> <chr>
+#>  1     1 4,0      good           0 rep          30      NA           0     1    
+#>  2     2 4,1      average        0 rep          10      NA           0     1    
+#>  3     3 4,2      not worki…     0 rep          5       NA           0     1    
+#>  4     4 3,0      good           0 mt           55      NA           1     1    
+#>  5     4 3,0      good           1 nmt          70      NA           1,2   0.2,…
+#>  6     5 3,1      average        0 mt           40      NA           1     1    
+#>  7     5 3,1      average        1 nmt          50      NA           2,3   0.2,…
+#>  8     6 3,2      not worki…     0 mt           30      NA           1     1    
+#>  9     6 3,2      not worki…     1 rep          5       NA           0     1    
+#> 10     7 2,0      good           0 mt           55      NA           4     1    
+#> 11     7 2,0      good           1 nmt          70      NA           4,5   0.5,…
+#> 12     8 2,1      average        0 mt           40      NA           4     1    
+#> 13     8 2,1      average        1 nmt          50      NA           5,6   0.5,…
+#> 14     9 2,2      not worki…     0 mt           30      NA           4     1    
+#> 15     9 2,2      not worki…     1 rep          5       NA           0     1    
+#> 16    10 1,0      good           0 mt           55      NA           7     1    
+#> 17    10 1,0      good           1 nmt          70      NA           7,8   0.6,…
+#> 18    11 1,1      average        0 mt           40      NA           7     1    
+#> 19    11 1,1      average        1 nmt          50      NA           8,9   0.6,…
+#> 20    12 0,0      Dummy          0 buy          -100    NA           10,11 0.7,…
 #> 
 getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = FALSE)
 #> $df
-#> # A tibble: 20 × 8
-#>      sId stateStr label        aIdx label_action weights trans     pr       
-#>    <dbl> <chr>    <chr>       <dbl> <chr>          <dbl> <list>    <list>   
-#>  1     1 4,0      good            0 rep               30 <dbl [1]> <dbl [1]>
-#>  2     2 4,1      average         0 rep               10 <dbl [1]> <dbl [1]>
-#>  3     3 4,2      not working     0 rep                5 <dbl [1]> <dbl [1]>
-#>  4     4 3,0      good            0 mt                55 <dbl [1]> <dbl [1]>
-#>  5     4 3,0      good            1 nmt               70 <dbl [2]> <dbl [2]>
-#>  6     5 3,1      average         0 mt                40 <dbl [1]> <dbl [1]>
-#>  7     5 3,1      average         1 nmt               50 <dbl [2]> <dbl [2]>
-#>  8     6 3,2      not working     0 mt                30 <dbl [1]> <dbl [1]>
-#>  9     6 3,2      not working     1 rep                5 <dbl [1]> <dbl [1]>
-#> 10     7 2,0      good            0 mt                55 <dbl [1]> <dbl [1]>
-#> 11     7 2,0      good            1 nmt               70 <dbl [2]> <dbl [2]>
-#> 12     8 2,1      average         0 mt                40 <dbl [1]> <dbl [1]>
-#> 13     8 2,1      average         1 nmt               50 <dbl [2]> <dbl [2]>
-#> 14     9 2,2      not working     0 mt                30 <dbl [1]> <dbl [1]>
-#> 15     9 2,2      not working     1 rep                5 <dbl [1]> <dbl [1]>
-#> 16    10 1,0      good            0 mt                55 <dbl [1]> <dbl [1]>
-#> 17    10 1,0      good            1 nmt               70 <dbl [2]> <dbl [2]>
-#> 18    11 1,1      average         0 mt                40 <dbl [1]> <dbl [1]>
-#> 19    11 1,1      average         1 nmt               50 <dbl [2]> <dbl [2]>
-#> 20    12 0,0      Dummy           0 buy             -100 <dbl [2]> <dbl [2]>
+#> # A tibble: 20 × 9
+#>      sId stateStr label       aIdx label_action weights transWeights trans pr   
+#>    <dbl> <chr>    <chr>      <dbl> <chr>          <dbl> <lgl>        <lis> <lis>
+#>  1     1 4,0      good           0 rep               30 NA           <dbl> <dbl>
+#>  2     2 4,1      average        0 rep               10 NA           <dbl> <dbl>
+#>  3     3 4,2      not worki…     0 rep                5 NA           <dbl> <dbl>
+#>  4     4 3,0      good           0 mt                55 NA           <dbl> <dbl>
+#>  5     4 3,0      good           1 nmt               70 NA           <dbl> <dbl>
+#>  6     5 3,1      average        0 mt                40 NA           <dbl> <dbl>
+#>  7     5 3,1      average        1 nmt               50 NA           <dbl> <dbl>
+#>  8     6 3,2      not worki…     0 mt                30 NA           <dbl> <dbl>
+#>  9     6 3,2      not worki…     1 rep                5 NA           <dbl> <dbl>
+#> 10     7 2,0      good           0 mt                55 NA           <dbl> <dbl>
+#> 11     7 2,0      good           1 nmt               70 NA           <dbl> <dbl>
+#> 12     8 2,1      average        0 mt                40 NA           <dbl> <dbl>
+#> 13     8 2,1      average        1 nmt               50 NA           <dbl> <dbl>
+#> 14     9 2,2      not worki…     0 mt                30 NA           <dbl> <dbl>
+#> 15     9 2,2      not worki…     1 rep                5 NA           <dbl> <dbl>
+#> 16    10 1,0      good           0 mt                55 NA           <dbl> <dbl>
+#> 17    10 1,0      good           1 nmt               70 NA           <dbl> <dbl>
+#> 18    11 1,1      average        0 mt                40 NA           <dbl> <dbl>
+#> 19    11 1,1      average        1 nmt               50 NA           <dbl> <dbl>
+#> 20    12 0,0      Dummy          0 buy             -100 NA           <dbl> <dbl>
 #> 
 
 ## Perform value iteration
 w<-"Net reward"             # label of the weight we want to optimize
 runValueIte(mdp, w, termValues = 0)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
-#> using quantity 'Net reward' under reward criterion.
-#>  Finished. Cpu time 6.564e-06 sec.
+#> using weight 'Net reward' under expected-weight Bellman operator.
+#>  Finished. Cpu time 8.643e-06 sec.
 getPolicy(mdp)     # optimal policy
 #> # A tibble: 13 × 6
 #>      sId stateStr stateLabel   aIdx actionLabel weight

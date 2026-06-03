@@ -10,7 +10,7 @@ model is faster.
 binaryActionWriter(
   prefix = "",
   binNames = c("actionIdx.bin", "actionIdxLbl.bin", "actionWeight.bin",
-    "actionWeightLbl.bin", "transProb.bin"),
+    "actionWeightLbl.bin", "transProb.bin", "transWeight.bin", "transWeightLbl.bin"),
   append = TRUE
 )
 ```

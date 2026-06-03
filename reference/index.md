@@ -46,7 +46,7 @@
 - [`plot(`*`<HMDP>`*`)`](http://relund.github.io/mdp/reference/plot.HMDP.md)
   : Plot the state-expanded hypergraph of the MDP.
 - [`plotHypergraph()`](http://relund.github.io/mdp/reference/plotHypergraph.md)
-  : Plot parts of the state expanded hypergraph (experimental).
+  : Plot parts of the state expanded hypergraph.
 - [`getHypergraph()`](http://relund.github.io/mdp/reference/getHypergraph.md)
   : Return the (parts of) state-expanded hypergraph
 - [`getWIdx()`](http://relund.github.io/mdp/reference/getWIdx.md) :
@@ -57,9 +57,11 @@
 ## Finding the optimal policy
 
 - [`runPolicyIteAve()`](http://relund.github.io/mdp/reference/runPolicyIteAve.md)
-  : Perform policy iteration (average reward criterion) on the MDP.
+  : Perform policy iteration using the average expected-weight Bellman
+  operator on the MDP.
 - [`runPolicyIteDiscount()`](http://relund.github.io/mdp/reference/runPolicyIteDiscount.md)
-  : Perform policy iteration (discounted reward criterion) on the MDP.
+  : Perform policy iteration using the discounted expected-weight
+  Bellman operator on the MDP.
 - [`runValueIte()`](http://relund.github.io/mdp/reference/runValueIte.md)
   : Perform value iteration on the MDP.
 

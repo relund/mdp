@@ -19,21 +19,6 @@ plot(x, ...)
 
   Arguments passed to
   [`plotHypergraph()`](http://relund.github.io/mdp/reference/plotHypergraph.md).
-  Moreover, you may use
-
-  - `hyperarcColor`: A string. If empty string no colors are used
-    (default). If `label` then use different colors based on the
-    hyperarc/action labels. If `policy` then use highlight the current
-    policy.
-
-  - `nodeLabel`: A string. If empty string, then display node labels
-    (default). If `sId` then display the state ids. If `sId:label` then
-    display the state ids together with the label. If `sIdx:label` then
-    display the state index and the label. If `weight` then display the
-    node weight.
-
-  - `hyperarcShow` A string. If `all` then show all hyperarcs (default).
-    If `policy` then only show the current policy.
 
 ## Value
 
@@ -43,7 +28,8 @@ No return value (NULL invisible), called for side effects (plotting).
 
 [`getHypergraph()`](http://relund.github.io/mdp/reference/getHypergraph.md)
 and
-[`plotHypergraph()`](http://relund.github.io/mdp/reference/plotHypergraph.md).
+[`plotHypergraph()`](http://relund.github.io/mdp/reference/plotHypergraph.md)
+for possible arguments.
 
 ## Examples
 
@@ -53,58 +39,64 @@ wd <- setwd(system.file("models", package = "MDP2"))
 
 #### A finite-horizon replacement problem ####
 mdp<-loadMDP("machine1_")
-#> Read binary files (9.4801e-05 sec.)
-#> Build the HMDP (3.1806e-05 sec.)
-#> Checking MDP and found no errors (1.366e-06 sec.)
+#> Read binary files (0.000105956 sec.)
+#> Build the HMDP (3.2529e-05 sec.)
+#> Checking MDP and found no errors (9.51e-07 sec.)
 plot(mdp)
 
-plot(mdp, hyperarcColor = "label")  # colors based on labels
+plot(mdp, actionColor = "label")  # colors based on labels
 
-plot(mdp, hyperarcColor = "label", nodeLabel = "sId:label")  # node labels are 'sId: label'
+plot(mdp, transLabels = "state")  # label transitions with target state labels
 
-plot(mdp, nodeLabel = "sIdx:label", radx = 0.02)  # adjust radx in nodes
+plot(mdp, transLabels = "prob")  # label transitions with transition probabilities
+
+plot(mdp, actionColor = "label", stateLabel = "sId|label")  # state labels are 'sId | label'
+
+plot(mdp, stateLabel = "sIdx|label", radx = 0.01)  # adjust radx in states
+
+plot(mdp, stateLabel = "label", actionWLabel = "none", actionLabel = "label", 
+     transLabels = "sId", radx = 0.01)
+
 
 scrapValues <- c(30, 10, 5, 0)  # scrap values (the values of the 4 states at stage 4)
 runValueIte(mdp, "Net reward" , termValues = scrapValues)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
-#> using quantity 'Net reward' under reward criterion.
-#>  Finished. Cpu time 6.597e-06 sec.
-plot(mdp, hyperarcColor = "policy")  # highlight optimal policy
-#> Joining with `by = join_by(sId, aIdx)`
+#> using weight 'Net reward' under expected-weight Bellman operator.
+#>  Finished. Cpu time 1.9098e-05 sec.
+plot(mdp, actionColor = "policy")  # highlight optimal policy
 
-plot(mdp, hyperarcShow = "policy", nodeLabel = "weight")  # show only optimal policy
+plot(mdp, actionsVisible = "policy", stateLabel = "weight")  # show only optimal policy
 
 
 
 #### An infinite-horizon maintenance problem ####
 mdp<-loadMDP("hct611-1_")
-#> Read binary files (8.2778e-05 sec.)
-#> Build the HMDP (2.5101e-05 sec.)
-#> Checking MDP and found no errors (1.762e-06 sec.)
+#> Read binary files (0.000112146 sec.)
+#> Build the HMDP (2.5899e-05 sec.)
+#> Checking MDP and found no errors (1.582e-06 sec.)
 plot(mdp)  # plot the first two stages
 
-plot(mdp, hyperarcColor = "label")  # colors based on labels
+plot(mdp, actionColor = "label")  # colors based on labels
 
-plot(mdp, hyperarcColor = "label", nodeLabel = "sId:label")  # node labels are 'sId: label'
+plot(mdp, actionColor = "label", stateLabel = "sId|label")  # state labels are 'sId | label'
 
 runPolicyIteAve(mdp,"Net reward","Duration")
-#> Run policy iteration under average reward criterion using 
-#> reward 'Net reward' over 'Duration'. Iterations (g): 
-#> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.762e-06 sec.
+#> Run policy iteration under average expected-weight Bellman operator using 
+#> weight 'Net reward' over 'Duration'. Iterations (g): 
+#> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.582e-06 sec.
 #> [1] -0.43379
-plot(mdp, hyperarcColor = "policy")  # highlight optimal policy
-#> Joining with `by = join_by(sId, aIdx)`
+plot(mdp, actionColor = "policy")  # highlight optimal policy
 
-plot(mdp, hyperarcShow = "policy")  # show only optimal policy
+plot(mdp, actionsVisible = "policy")  # show only optimal policy
 
 
 
 #### An infinite-horizon hierarchical replacement problem ####
 library(magrittr)
 mdp<-loadMDP("cow_")
-#> Read binary files (0.000177561 sec.)
-#> Build the HMDP (0.000158904 sec.)
-#> Checking MDP and found no errors (4.477e-06 sec.)
+#> Read binary files (0.000204563 sec.)
+#> Build the HMDP (0.000127408 sec.)
+#> Checking MDP and found no errors (4.447e-06 sec.)
 hgf <- getHypergraph(mdp)
 # modify labels
 dat <- hgf$nodes %>% 
@@ -160,6 +152,68 @@ oldpar <- par(mai = c(0, 0, 0, 0))
 plotHypergraph(gridDim = c(14, 7), hgf, cex = 0.8, radx = 0.02, rady = 0.03)
 
 par(oldpar)
+
+
+## A simple finite-horizon MDP with action and transition weights
+prefix <- file.path(tempdir(), "plot_transition_rewards_")
+w <- binaryMDPWriter(prefix)
+w$setWeights("Cost")
+w$setTransWeights(c("Reward", "Disease"))
+w$process()
+   w$stage()
+      w$state(label = "S1")
+         w$action(
+            label = "A1", weights = 2, id = c(1), pr = c(1),
+            transWeights = c(20, 0.3), end = TRUE
+         )
+         w$action(
+            label = "A2", weights = 1, id = c(0, 1), pr = c(0.3, 0.7),
+            transWeights = c(25, 0.4, 15, 0.2), end = TRUE
+         )
+      w$endState()
+   w$endStage()
+   w$stage()
+      w$state(label = "S2")
+         w$action(
+            label = "A3", weights = 3, id = c(0, 1, 2), pr = c(0.5, 0.3, 0.2),
+            transWeights = c(0, 0.05, 12, 0.2, 30, 0.8), end = TRUE
+         )
+         w$action(
+            label = "A4", weights = 2, id = c(1, 2), pr = c(0.6, 0.4),
+            transWeights = c(22, 0.35, 27, 0.7), end = TRUE
+         )
+      w$endState()
+      w$state(label = "S3")
+         w$action(
+            label = "A5", weights = 1, id = c(0, 1), pr = c(0.4, 0.6),
+            transWeights = c(5, 0, 16, 0.25), end = TRUE
+         )
+         w$action(
+            label = "A6", weights = 4, id = c(0, 1, 2), pr = c(0.1, 0.3, 0.6),
+            transWeights = c(14, 0.15, 21, 0.45, 29, 1), end = TRUE
+         )
+      w$endState()
+   w$endStage()
+   w$stage()
+      w$state(label = "S4", end = TRUE)
+      w$state(label = "S5", end = TRUE)
+      w$state(label = "S6", end = TRUE)
+   w$endStage()
+w$endProcess()
+w$closeWriter()
+#> 
+#>   Statistics:
+#>     states : 6 
+#>     actions: 6 
+#>     weights: 1 
+#> 
+#>   Closing binary MDP writer.
+#> 
+
+mdp <- loadMDP(prefix, getLog = FALSE)
+plot(mdp, actionColor = "label", transLabels = "weights", actionWLabel = "weight", 
+     radx = 0.005, rady = 0.01)
+
 
 ## Reset working dir
 setwd(wd)

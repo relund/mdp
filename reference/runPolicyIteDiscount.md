@@ -1,4 +1,4 @@
-# Perform policy iteration (discounted reward criterion) on the MDP.
+# Perform policy iteration using the discounted expected-weight Bellman operator on the MDP.
 
 The policy can afterwards be received using functions `getPolicy` and
 `getPolicyW`.
@@ -15,6 +15,7 @@ runPolicyIteDiscount(
   discountFactor = NULL,
   maxIte = 100,
   discountMethod = "continuous",
+  objective = c("max", "min"),
   getLog = TRUE
 )
 ```
@@ -58,6 +59,11 @@ runPolicyIteDiscount(
   Either 'continuous' or 'discrete', corresponding to discount factor
   `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only
   used if `discountFactor` is `NULL`.
+
+- objective:
+
+  Optimize by maximizing (`"max"`) or minimizing (`"min"`) the Bellman
+  value.
 
 - getLog:
 
