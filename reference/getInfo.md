@@ -154,9 +154,9 @@ w$closeWriter()
 
 ## Load the model into memory
 mdp<-loadMDP(prefix)
-#> Read binary files (0.000124872 sec.)
-#> Build the HMDP (3.1559e-05 sec.)
-#> Checking MDP and found no errors (1.483e-06 sec.)
+#> Read binary files (0.000132747 sec.)
+#> Build the HMDP (3.1839e-05 sec.)
+#> Checking MDP and found no errors (1.232e-06 sec.)
 mdp
 #> $binNames
 #>  [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      
@@ -190,7 +190,7 @@ mdp
 #> character(0)
 #> 
 #> $ptr
-#> C++ object <0x5571af0ba470> of class 'HMDP' <0x5571adae1de0>
+#> C++ object <0x557bc72c5250> of class 'HMDP' <0x557bc3143d40>
 #> 
 #> attr(,"class")
 #> [1] "HMDP" "list"
@@ -272,7 +272,7 @@ scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 
 runValueIte(mdp, w, termValues=scrapValues)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
 #> using weight 'Net reward' under expected-weight Bellman operator.
-#>  Finished. Cpu time 6.942e-06 sec.
+#>  Finished. Cpu time 7.324e-06 sec.
 getPolicy(mdp)     # optimal policy
 #> # A tibble: 14 × 6
 #>      sId stateStr stateLabel   aIdx actionLabel weight
@@ -401,8 +401,8 @@ w$closeWriter()
 
 ## Have a look at the state-expanded hypergraph
 mdp<-loadMDP(prefix)
-#> Read binary files (0.000137275 sec.)
-#> Build the HMDP (3.5687e-05 sec.)
+#> Read binary files (0.000145342 sec.)
+#> Build the HMDP (3.6408e-05 sec.)
 #> Checking MDP and found no errors (1.323e-06 sec.)
 mdp
 #> $binNames
@@ -437,7 +437,7 @@ mdp
 #> character(0)
 #> 
 #> $ptr
-#> C++ object <0x5571ada87c70> of class 'HMDP' <0x5571adae1de0>
+#> C++ object <0x557bbfd4aac0> of class 'HMDP' <0x557bc3143d40>
 #> 
 #> attr(,"class")
 #> [1] "HMDP" "list"
@@ -521,7 +521,7 @@ w<-"Net reward"             # label of the weight we want to optimize
 runValueIte(mdp, w, termValues = 0)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
 #> using weight 'Net reward' under expected-weight Bellman operator.
-#>  Finished. Cpu time 5.961e-06 sec.
+#>  Finished. Cpu time 7.163e-06 sec.
 getPolicy(mdp)     # optimal policy
 #> # A tibble: 13 × 6
 #>      sId stateStr stateLabel   aIdx actionLabel weight

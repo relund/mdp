@@ -82,9 +82,9 @@ transition-weight namespace.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#### A finite-horizon replacement problem ####</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="st">"machine1_"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000152222 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (2.8132e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.102e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000159208 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (2.9145e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (9.71e-07 sec.)</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="getHypergraph-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span>  <span class="co"># colors based on labels</span></span></span>
@@ -105,7 +105,7 @@ transition-weight namespace.</p>
 <span class="r-in"><span><span class="fu"><a href="runValueIte.html">runValueIte</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="st">"Net reward"</span> , termValues <span class="op">=</span> <span class="va">scrapValues</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> using weight 'Net reward' under expected-weight Bellman operator.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 6.161e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 7.323e-06 sec.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># highlight optimal policy</span></span></span>
 <span class="r-plt img"><img src="getHypergraph-8.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionsVisible <span class="op">=</span> <span class="st">"policy"</span>, stateLabel <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span>  <span class="co"># show only optimal policy</span></span></span>
@@ -114,9 +114,9 @@ transition-weight namespace.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#### An infinite-horizon maintenance problem ####</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="st">"hct611-1_"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000130823 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (2.147e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.533e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000136254 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (2.2291e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (9.52e-07 sec.)</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>  <span class="co"># plot the first two stages</span></span></span>
 <span class="r-plt img"><img src="getHypergraph-10.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span>  <span class="co"># colors based on labels</span></span></span>
@@ -126,7 +126,7 @@ transition-weight namespace.</p>
 <span class="r-in"><span><span class="fu"><a href="runPolicyIteAve.html">runPolicyIteAve</a></span><span class="op">(</span><span class="va">mdp</span>,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run policy iteration under average expected-weight Bellman operator using </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> weight 'Net reward' over 'Duration'. Iterations (g): </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 1.533e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 9.52e-07 sec.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.43379</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span>  <span class="co"># highlight optimal policy</span></span></span>
 <span class="r-plt img"><img src="getHypergraph-13.png" alt="" width="700" height="433"></span>
@@ -137,9 +137,9 @@ transition-weight namespace.</p>
 <span class="r-in"><span><span class="co">#### An infinite-horizon hierarchical replacement problem ####</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="st">"cow_"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000190003 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (0.000149597 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (2.034e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000200875 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (0.000136735 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (2.415e-06 sec.)</span>
 <span class="r-in"><span><span class="va">hgf</span> <span class="op">&lt;-</span> <span class="fu">getHypergraph</span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># modify labels</span></span></span>
 <span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">hgf</span><span class="op">$</span><span class="va">nodes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span></span>

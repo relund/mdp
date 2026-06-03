@@ -82,10 +82,10 @@ prefix <- paste0(system.file("models", package = "MDP2"), "/machine1_")
 mdp <- loadMDP(prefix)
 ```
 
-    #> Read binary files (0.000155609 sec.)
-    #> Build the HMDP (3.0306e-05 sec.)
+    #> Read binary files (0.000151162 sec.)
+    #> Build the HMDP (2.9625e-05 sec.)
 
-    #> Checking MDP and found no errors (1.543e-06 sec.)
+    #> Checking MDP and found no errors (1.022e-06 sec.)
 
 ``` r
 
