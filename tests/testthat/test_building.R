@@ -90,4 +90,26 @@ test_that("binaryMDPWriter",{
    expect_equal(weightsPolicyIte1, weightsPolicyIte2)
 })
 
+test_that("loadMDP supports models with states and no actions",{
+   prefix <- paste0(tempfile("no_actions_"), "_")
+   w <- binaryMDPWriter(prefix, getLog = FALSE)
+   w$setWeights(c("Duration", "Net reward"))
+   w$process()
+      w$stage()
+         for (ii in 2:10) {
+            w$state(label = "test")
+            w$endState()
+         }
+      w$endStage()
+   w$endProcess()
+   w$closeWriter()
+
+   mdp <- loadMDP(prefix, getLog = FALSE)
+
+   expect_s3_class(mdp, "HMDP")
+   expect_equal(mdp$states, 9)
+   expect_equal(mdp$actions, 0)
+   expect_equal(mdp$weightNames, c("Duration", "Net reward"))
+})
+
 cleanUp()

@@ -63,6 +63,7 @@ template <class T>
 idx HMDPReader::ReadBinary(string fileName, T *&p) {
 	ifstream::pos_type fileSize;
 	ifstream file;
+	p = NULL;
 
 	// read idx
 	file.open(fileName.c_str() ,ios::in|ios::binary|ios::ate);    // open binary file for reading with pointer at end of file to get filesize
@@ -72,6 +73,10 @@ idx HMDPReader::ReadBinary(string fileName, T *&p) {
 	}
 	fileSize = file.tellg();
 	idx size = fileSize/sizeof(T);
+	if (size==0) {
+		file.close();
+		return(0);
+	}
 	p = new T[size];
 	file.seekg (0, ios::beg);   // set pointer to start of file
 	file.read((char *)p,fileSize);
@@ -135,11 +140,11 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
 {
 	ifstream::pos_type fileSize;
 	ifstream file;
-	int * aIdx;    // raw idx data
-	char * lbl;    // raw labels
-	double * aW;
-	char * wLbl;
-	double * tPr;
+	int * aIdx = NULL;    // raw idx data
+	char * lbl = NULL;    // raw labels
+	double * aW = NULL;
+	char * wLbl = NULL;
+	double * tPr = NULL;
     double * tW = NULL;
     char * tWLbl = NULL;
 	vector<TmpAction> actionVec;  // Vector of all action with actionVec[aId] according to file definitions.
@@ -162,12 +167,6 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
             tWLblSize = ReadBinary(transWLblFile,tWLbl);
         }
 	}
-	// note that all arrays (except the label arrays) have the same number of rows (same number of -1's).
-   // if ( (aIdxSize==0) | (lblSize==0) | (aWSize==0) | (wLblSize==0) | (tPrSize==0) ) {okay = false; return;}
-   // Models may have no action weights, no transition weights, or neither.
-   if ( (aIdxSize==0) | (tPrSize==0) ) {okay = false; return;}
-    
-
 	// add weight labels to HMDP
 	vector<string> labels;
 	if (wLblSize>0) {
@@ -186,6 +185,23 @@ void HMDPReader::AddActions(string actionIdxFile, string actionIdxLblFile,
     } else {
         pHMDP->SetTransWeightNames(vector<string>());
     }
+
+	// Models with states and no actions are valid. In that case the action,
+	// action-weight and transition-probability files are empty, but weight label
+	// files may still define the model's weight names.
+	if (aIdxSize==0 && aWSize==0 && tPrSize==0) {
+		delete [] aIdx;
+		delete [] lbl;
+		delete [] aW;
+		delete [] tPr;
+		delete [] tW;
+		return;
+	}
+
+	// Note that all action arrays have the same number of rows (same number of
+	// -1 row terminators). If one of the required action files is empty while
+	// others contain data, the binary model is malformed.
+	if (aIdxSize==0 || tPrSize==0) {okay = false; return;}
 
     // scan aIdx
 	vector<idx> a;  // vector of index
@@ -326,6 +342,38 @@ void HMDPReader::Compile() {
 			s.pop_back();
 		}
 	}
+
+    bool hasActions = false;
+    for (idx sId=0; sId<stateVec.size(); ++sId) {
+        if (stateVec[sId].actions.size()>0) {
+            hasActions = true;
+            break;
+        }
+    }
+    if (!hasActions) {
+        vector<string> keys;
+        set<string> keySet;
+        pair<set<string>::iterator, bool> ret;
+        for (idx sId=stateVec.size(); sId>0; --sId) {
+            string str = pHMDP->GetStageStr(stateVec[sId-1].iHMDP);
+            ret = keySet.insert(str);
+            if (ret.second==true) keys.push_back(str);
+        }
+        pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairS;
+        multimap<string, int>::iterator ite;
+        for (idx i=0; i<keys.size(); i++) {
+            pairS = stagesMap.equal_range(keys[i]);
+            idx sSize;
+            idx firstSId = pHMDP->states.size();
+            for (ite=pairS.first, sSize = 0; ite!=pairS.second; ++ite, ++sSize) {
+                idx sId = ite->second;
+                pHMDP->states.push_back(HMDPState(stateVec[sId].label));
+            }
+            pHMDP->stages[keys[i]] = pair<idx,idx>(firstSId, sSize);
+        }
+        return;
+    }
+
     // set state ids which are stored in idx of an action
     cpu.StartTimer();
     foundScp3 = false;
