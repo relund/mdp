@@ -216,9 +216,9 @@ are ignored.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load the model into memory</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.00016648 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (3.8578e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.302e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000167408 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (3.8587e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.032e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $binNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      </span>
@@ -252,7 +252,7 @@ are ignored.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55df5da85220&gt; of class 'HMDP' &lt;0x55df5b4b0640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x560841f54300&gt; of class 'HMDP' &lt;0x56083a3616c0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "HMDP" "list"</span>
@@ -334,7 +334,7 @@ are ignored.</p>
 <span class="r-in"><span><span class="fu">runValueIte</span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w</span>, termValues<span class="op">=</span><span class="va">scrapValues</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> using weight 'Net reward' under expected-weight Bellman operator.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 1.4652e-05 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 8.783e-06 sec.</span>
 <span class="r-in"><span><span class="fu"><a href="getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>     <span class="co"># optimal policy</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr stateLabel   aIdx actionLabel weight</span>
@@ -463,9 +463,9 @@ are ignored.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Have a look at the state-expanded hypergraph</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000184007 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.5559e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (2.995e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000183 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.06e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (2.564e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $binNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      </span>
@@ -499,7 +499,7 @@ are ignored.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55df621ee5e0&gt; of class 'HMDP' &lt;0x55df5b4b0640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x56083f08e180&gt; of class 'HMDP' &lt;0x56083a3616c0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "HMDP" "list"</span>
@@ -583,7 +583,7 @@ are ignored.</p>
 <span class="r-in"><span><span class="fu">runValueIte</span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w</span>, termValues <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> using weight 'Net reward' under expected-weight Bellman operator.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 9.444e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 9.644e-06 sec.</span>
 <span class="r-in"><span><span class="fu"><a href="getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>     <span class="co"># optimal policy</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 13 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      sId stateStr stateLabel   aIdx actionLabel weight</span>
