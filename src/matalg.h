@@ -34,12 +34,12 @@ public:
 
     /** 
      * @brief Solve equations Pw = r.
-     * @param P The matrix P.
+     * @param P The coefficient matrix. Overwritten by LAPACK with its LU factorization.
      * @param w The result vector w.
      * @param r The right-hand side vector r.
      * @return 0 if successful, 1 otherwise.
      */
-    int LASolve(const MatSimple<double> &P, MatSimple<double> &w, const MatSimple<double> &r) {
+    int LASolve(MatSimple<double> &P, MatSimple<double> &w, const MatSimple<double> &r) {
         int rows = P.rows;
         int nrhs = 1;
         int ldp = P.rows;
@@ -94,4 +94,3 @@ public:
 
 
 #endif
-
