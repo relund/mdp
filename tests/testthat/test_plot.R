@@ -322,3 +322,28 @@ test_that("plotHypergraph connectedTo uses policy-visible actions", {
 
    expect_invisible(plotHypergraph(hgf, c(1, 2), actionsVisible = "policy", connectedTo = 0, mdp = list()))
 })
+
+test_that("plotHypergraph recalculates visible grid after connectedTo filtering", {
+   hgf <- list(
+      nodes = tibble::tibble(
+         sId = c(0, 1, 2, 3, 4, 5, 6),
+         gId = c(1, 5, 6, 10, 12, 99, 100),
+         label = paste0("S", c(0, 1, 2, 3, 4, 5, 6))
+      ),
+      hyperarcs = tibble::tibble(
+         sId = c(0, 1, 2, 5),
+         actionWeights = list(numeric(0), numeric(0), numeric(0), numeric(0)),
+         trans = list(c(1, 2), 3, 4, 6),
+         pr = list(c(0.5, 0.5), 1, 1, 1),
+         aIdx = c(0, 0, 0, 0),
+         label = c("A", "B", "C", "D"),
+         lwd = c(1, 1, 1, 1),
+         lty = c(1, 1, 1, 1),
+         col = c("black", "black", "black", "black")
+      )
+   )
+   grDevices::pdf(file = tempfile(fileext = ".pdf"))
+   on.exit(grDevices::dev.off(), add = TRUE)
+
+   expect_invisible(plotHypergraph(hgf, c(6, 2), connectedTo = 0, recalcGrid = TRUE))
+})

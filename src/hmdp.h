@@ -336,7 +336,9 @@ class HMDP
         TransPr = 3,           ///< Transition probability Bellman operator.
         DiscountedTransPr = 4, ///< Discounted transition probability Bellman operator.
         Min = 5,               ///< Inner minimum over feasible successor states.
-        Max = 6                ///< Inner maximum over feasible successor states.
+        Max = 6,               ///< Inner maximum over feasible successor states.
+        SecondMoment = 7,      ///< Second moment of total weight.
+        Variance = 8           ///< Variance of total accumulated weight under a fixed policy.
     };
 
     /**
@@ -676,6 +678,21 @@ class HMDP
         pair<idx,idx> pS = stages[stageStr];
         idx iS = pS.first;
         for (idx i=0; i<pS.second; ++i, ++iS) states[iS].w = val;
+    }
+
+    /**
+     * @brief Set terminal state weights on the last founder stage.
+     * @param values Terminal weights.
+     * @throw runtime_error If the vector length does not match the last-stage size.
+     */
+    void SetTerminalW(vector<flt> values) {
+        string stageLastStr = GetLastStageStr();
+        if (values.size()!=GetStateSize(stageLastStr)) throw runtime_error("Terminal values vector length does not match the last-stage state count.");
+        vector<flt>::iterator iteV;
+        state_iterator iteS;
+        for (iteS = state_begin(stageLastStr), iteV=values.begin(); iteS!=state_end(stageLastStr); ++iteS, ++iteV) {
+            w(iteS) = *iteV;
+        }
     }
 
 
@@ -1638,6 +1655,31 @@ private:
     void CheckTransitionWeightsAvailable(idx idxW) const;
 
     /**
+     * @brief Calculate expected total action weight under the current policy.
+     * @param idxW The action weight index.
+     * @param mean Vector storing expected total weights by state.
+     */
+    void CalcPolicyActionMean(idx idxW, vector<flt> &mean);
+
+    /**
+     * @brief Calculate expected total transition weight under the current policy.
+     * @param idxW The transition weight index.
+     * @param mean Vector storing expected total weights by state.
+     */
+    void CalcPolicyTransitionMean(idx idxW, vector<flt> &mean);
+
+    /**
+     * @brief Optimize a policy under the second-moment Bellman operator.
+     * @param op Bellman operator, expected to be BellmanOp::SecondMoment.
+     * @param sense Optimization direction.
+     * @param level Weight storage level.
+     * @param idxW Local weight index.
+     * @param mean Expected total weights by state, updated for selected actions.
+     * @return True if a new policy is found.
+     */
+    bool CalcOptPolicySecondMoment(BellmanOp op, OptSense sense, WeightLevel level, idx idxW, vector<flt> &mean);
+
+    /**
      * @brief Calculate RPO using action weights r(s,a).
      * @param iS Vector of state indices.
      * @param idxW The weight index.
@@ -1788,6 +1830,38 @@ private:
     bool CalcOptPolicyTransitionExpectedMin(idx idxW);
 
     /**
+     * @brief Optimize second moment using action weights; outer action choice maximizes.
+     * @param idxW The weight index.
+     * @param mean Expected total weights by state.
+     * @return True if a new policy is found.
+     */
+    bool CalcOptPolicyActionSecondMomentMax(idx idxW, vector<flt> &mean);
+
+    /**
+     * @brief Optimize second moment using action weights; outer action choice minimizes.
+     * @param idxW The weight index.
+     * @param mean Expected total weights by state.
+     * @return True if a new policy is found.
+     */
+    bool CalcOptPolicyActionSecondMomentMin(idx idxW, vector<flt> &mean);
+
+    /**
+     * @brief Optimize second moment using transition weights; outer action choice maximizes.
+     * @param idxW The weight index.
+     * @param mean Expected total weights by state.
+     * @return True if a new policy is found.
+     */
+    bool CalcOptPolicyTransitionSecondMomentMax(idx idxW, vector<flt> &mean);
+
+    /**
+     * @brief Optimize second moment using transition weights; outer action choice minimizes.
+     * @param idxW The weight index.
+     * @param mean Expected total weights by state.
+     * @return True if a new policy is found.
+     */
+    bool CalcOptPolicyTransitionSecondMomentMin(idx idxW, vector<flt> &mean);
+
+    /**
      * @brief Optimize a finite-stage policy using action-level average weights.
      * 
      * Specialized loop for the average weight criterion.
@@ -1924,6 +1998,30 @@ private:
      * @param idxW The weight index.
      */
     void CalcPolicyTransitionWeight(idx idxW);
+
+    /**
+     * @brief Evaluate the current policy using the second moment of action weights.
+     * @param idxW The weight index.
+     */
+    void CalcPolicyActionSecondMoment(idx idxW);
+
+    /**
+     * @brief Evaluate the current policy using the second moment of transition weights.
+     * @param idxW The weight index.
+     */
+    void CalcPolicyTransitionSecondMoment(idx idxW);
+
+    /**
+     * @brief Evaluate the current policy using the variance of action weights.
+     * @param idxW The weight index.
+     */
+    void CalcPolicyActionVariance(idx idxW);
+
+    /**
+     * @brief Evaluate the current policy using the variance of transition weights.
+     * @param idxW The weight index.
+     */
+    void CalcPolicyTransitionVariance(idx idxW);
 
     /**
      * @brief Evaluate the current policy using action-level average weights.

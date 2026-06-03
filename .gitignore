@@ -24,3 +24,5 @@ docs
 *.Rcheck
 AGENTS.html
 .antigravitycli
+Rplots.pdf
+instructions.md

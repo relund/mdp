@@ -16,7 +16,7 @@ runValueIte(
   termValues = NULL,
   g = NULL,
   objective = c("max", "min"),
-  bellmanOp = c("auto", "expected", "discount", "average", "min", "max"),
+  bellmanOp = c("auto", "expected", "discount", "average", "min", "max", "secondMoment"),
   getLog = TRUE,
   discountMethod = "continuous"
 )
@@ -44,7 +44,7 @@ runValueIte(
 
 \item{objective}{Optimize by maximizing (\code{"max"}) or minimizing (\code{"min"}) the Bellman value.}
 
-\item{bellmanOp}{Bellman operator. Use \code{"auto"} for existing behaviour, \code{"min"} for the minimum-successor operator, or \code{"max"} for the maximum-successor operator.}
+\item{bellmanOp}{Bellman operator. Use \code{"auto"} for existing behaviour, \code{"min"} for the minimum-successor operator, \code{"max"} for the maximum-successor operator, or \code{"secondMoment"} for the second moment of total accumulated weight.}
 
 \item{getLog}{Output the log messages.}
 

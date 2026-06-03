@@ -47,6 +47,11 @@
 #' @param connectedTo Optional vector of state ids. If supplied, plot only states
 #'   reachable from these states by following visible hyperarcs forward,
 #'   and trim hyperarcs and transition-level data to the remaining states.
+#' @param recalcGrid If `TRUE` and `connectedTo` is supplied, recalculate the
+#'   grid for the visible nodes. Nodes keep their original columns, but visible
+#'   nodes within each column are placed consecutively from the top and the
+#'   number of grid rows is reduced to the maximum number of visible nodes in
+#'   any column.
 #' @param mdp The MDP model. Required if `stateLabel` contains `"weight"`,
 #'   `actionColor = "policy"`, or `actionsVisible = "policy"`.
 #' @param ... Graphical parameters passed to `textempty`. 
@@ -76,6 +81,7 @@ plotHypergraph <-
             actionColor = c("", "label", "policy"),
             actionsVisible = c("all", "policy"),
             connectedTo = NULL,
+            recalcGrid = FALSE,
             mdp = NULL,
             ...) {
    normalizeLabelArg <- function(x, default, arg) {
@@ -261,6 +267,36 @@ plotHypergraph <-
 
    hgf <- filterConnectedHypergraph(hgf, connectedTo)
 
+   recalculateGrid <- function(hgf, gridDim) {
+      if (is.null(hgf$nodes) || nrow(hgf$nodes) == 0) return(list(hgf = hgf, gridDim = gridDim))
+      if (!"gId" %in% names(hgf$nodes)) {
+         stop("recalcGrid requires hgf$nodes to contain a gId column.", call. = FALSE)
+      }
+      originalCols <- (hgf$nodes$gId - 1) %/% gridDim[1] + 1
+      originalRows <- (hgf$nodes$gId - 1) %% gridDim[1] + 1
+      if (any(is.na(originalCols) | originalCols < 1 | originalCols > gridDim[2])) {
+         stop("recalcGrid requires node gId values to be inside gridDim.", call. = FALSE)
+      }
+      visibleCounts <- tabulate(originalCols, nbins = gridDim[2])
+      rowsNew <- max(visibleCounts)
+      if (rowsNew == 0) return(list(hgf = hgf, gridDim = c(1, gridDim[2])))
+      newRows <- integer(length(originalRows))
+      for (col in seq_len(gridDim[2])) {
+         idx <- which(originalCols == col)
+         if (length(idx) == 0) next
+         idx <- idx[order(originalRows[idx], hgf$nodes$sId[idx])]
+         newRows[idx] <- seq_along(idx)
+      }
+      hgf$nodes$gId <- (originalCols - 1) * rowsNew + newRows
+      list(hgf = hgf, gridDim = c(rowsNew, gridDim[2]))
+   }
+
+   if (!is.null(connectedTo) && isTRUE(recalcGrid)) {
+      gridRecalc <- recalculateGrid(hgf, gridDim)
+      hgf <- gridRecalc$hgf
+      gridDim <- gridRecalc$gridDim
+   }
+
    # Apply stateLabel logic to hgf$nodes$label
    if (!is.null(hgf$nodes)) {
       if (identical(stateLabelSpec, "custom")) {
@@ -357,6 +393,17 @@ plotHypergraph <-
    # internal functions
    gMap<-function(sId) return(hgf$nodes$gId[hgf$nodes$sId %in% sId])		# return gId given sId
    sMap<-function(gId) return(hgf$nodes$sId[hgf$nodes$gId %in% gId])		# return sId given gId
+   ellipseBoundaryPoint <- function(mid, toward) {
+      direction <- toward - mid
+      if (all(direction == 0)) return(mid)
+      scale <- 1 / sqrt((direction[1] / radx)^2 + (direction[2] / rady)^2)
+      mid + scale * direction
+   }
+   ellipseBoundaryPoints <- function(mid, toward) {
+      t(vapply(seq_len(nrow(mid)), function(i) {
+         ellipseBoundaryPoint(mid[i, ], toward)
+      }, numeric(2)))
+   }
    pos <- coordinates(rep(gridDim[2], gridDim[1]), hor = TRUE)  # coordinates of each point in the grid
    
    # reposition
@@ -371,7 +418,7 @@ plotHypergraph <-
    pos <- posN
 
    xlim <- c(min(pos[,1])-marX,max(pos[,1])+marX)
-   ylim <- c(0-marY,max(pos[,2])+marY)
+   ylim <- c(min(pos[,2])-marY,max(pos[,2])+marY)
    openplotmat(xlim = xlim, ylim = ylim)  #main = "State expanded hypergraph"
    if (drawBorder) {
       outsidePadding <- stats::setNames(graphics::par("mai"), c("bottom", "left", "top", "right"))
@@ -498,13 +545,20 @@ plotHypergraph <-
                centre <- baseCentre + actionOffsets[i] * actionOffset * perpendicular
             }
          }
+         splitCentre <- if (is.null(centre)) {
+            colMeans(fromPos) + 0.5 * (toPos - colMeans(fromPos))
+         } else {
+            centre
+         }
+         fromBoundary <- ellipseBoundaryPoints(fromPos, splitCentre)
+         toBoundary <- ellipseBoundaryPoint(toPos, splitCentre)
          #cat("i:",i,"highlight:",hgf$hyperarcs$highlight[i],"\n")
          # if (hgf$hyperarcs$highlight[i]) splitarrow(from = pos[gMap(trans), ], to = pos[gMap(hgf$hyperarcs[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=2, lty=1,
          #                                      arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol="gray")
          pt <-
             splitarrow(
-               from = fromPos,
-               to = toPos,
+               from = fromBoundary,
+               to = toBoundary,
                centre = centre,
                arr.side = 2,
                arr.pos = 0.1,
@@ -525,7 +579,7 @@ plotHypergraph <-
          )
          if ("actionWLabel" %in% names(hgf$hyperarcs) && !is.na(hgf$hyperarcs$actionWLabel[i]) && hgf$hyperarcs$actionWLabel[i] != "") {
             textempty(
-               (toPos + pt) / 2,
+               (toBoundary + pt) / 2,
                lab = hgf$hyperarcs$actionWLabel[i],
                adj = c(0.5, -0.6),
                cex = cex,
@@ -544,7 +598,8 @@ plotHypergraph <-
                stateIndex <- match(trans[j], hgf$nodes$sId)
                if (is.na(stateIndex) || is.na(labs[j])) next
                transPos <- pos[hgf$nodes$gId[stateIndex], ]
-               labelPos <- (pt + transPos) / 2
+               transBoundary <- ellipseBoundaryPoint(transPos, splitCentre)
+               labelPos <- (pt + transBoundary) / 2
                textempty(
                   labelPos,
                   lab = labs[j],

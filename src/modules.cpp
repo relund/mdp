@@ -5,7 +5,7 @@ using namespace Rcpp;
 
 // Convert the integer R API Bellman-operator code to a Bellman operator.
 inline HMDP::BellmanOp ToBellmanOp(idx op) {
-   if (op > 6) throw std::runtime_error("Invalid Bellman operator.");
+   if (op > 8) throw std::runtime_error("Invalid Bellman operator.");
    return static_cast<HMDP::BellmanOp>(op);
 }
 
@@ -151,6 +151,7 @@ RCPP_MODULE(HMDPModule){
    .method("getStateLabel", &HMDP::GetStateLabel)
    .method("getPolicyW", &HMDP::GetPolicyW)
    .method("setPolicy", &HMDP::SetPolicy)
+   .method("setTerminalW", &HMDP::SetTerminalW)
    .method("save2Binary", &HMDP::Save2Binary)
    ;
 }

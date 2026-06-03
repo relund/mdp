@@ -24,6 +24,7 @@ plotHypergraph(
   actionColor = c("", "label", "policy"),
   actionsVisible = c("all", "policy"),
   connectedTo = NULL,
+  recalcGrid = FALSE,
   mdp = NULL,
   ...
 )
@@ -89,6 +90,12 @@ column in \code{hgf$hyperarcs}).}
 \item{connectedTo}{Optional vector of state ids. If supplied, plot only states
 reachable from these states by following visible hyperarcs forward,
 and trim hyperarcs and transition-level data to the remaining states.}
+
+\item{recalcGrid}{If \code{TRUE} and \code{connectedTo} is supplied, recalculate the
+grid for the visible nodes. Nodes keep their original columns, but visible
+nodes within each column are placed consecutively from the top and the
+number of grid rows is reduced to the maximum number of visible nodes in
+any column.}
 
 \item{mdp}{The MDP model. Required if \code{stateLabel} contains \code{"weight"},
 \code{actionColor = "policy"}, or \code{actionsVisible = "policy"}.}

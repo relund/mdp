@@ -21,7 +21,7 @@ runCalcWeights(
 
 \item{wLbl}{The label of the weight we consider.}
 
-\item{criterion}{The Bellman operator shortcut. If \code{expected} use expected weights, if \code{discount} use discounted expected weights, if \code{average} use average expected weights, if \code{min} use minimum-successor weights, and if \code{max} use maximum-successor weights.}
+\item{criterion}{The Bellman operator shortcut. If \code{expected} use expected weights, if \code{discount} use discounted expected weights, if \code{average} use average expected weights, if \code{min} use minimum-successor weights, if \code{max} use maximum-successor weights, if \code{secondMoment} use the second moment of total accumulated weight, and if \code{variance} use the law-of-total-variance recursion under the current policy.}
 
 \item{durLbl}{The label of the duration/time such that discount rates can be calculated.}
 
