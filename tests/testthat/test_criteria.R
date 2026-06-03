@@ -417,6 +417,8 @@ test_that("Variance is not a value-iteration Bellman operator", {
 test_that("Long run average reward",{
    source("files/two_level_hmdp.R")
    mdp<-loadMDP("2lev_", getLog = FALSE)
+   expect_lt(mdp$ptr$policyIteFixedPolicy(1L, 0L, 1L, 1), -1e+15)
+   expect_match(mdp$ptr$getLog(), "valid fixed policy must be set")
    expect_equal(runPolicyIteAve(mdp,"Net reward","Duration", getLog = FALSE), 5.71428571428571441259691710001789033412933349609375)
    expect_equal(runPolicyIteAve(mdp,"Net reward","Items", getLog = FALSE), 4)
    expect_equal(runPolicyIteAve(mdp,"Items","Duration", getLog = FALSE), 2.71428571428571441259691710001789033412933349609375)

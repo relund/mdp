@@ -726,16 +726,14 @@ flt HMDP::PolicyIte(BellmanOp op, OptSense sense, uSInt maxIte, const idx idxW, 
             break;
         default: log << "Bellman operator not defined for policy iteration!" << endl; return -INF;
 	}
-	MatAlg matAlg; // Matrix routines
 	ExternalResetActions(idxW, idxD);
 	timer.StartTimer();
 	SetStateWStage("1", (flt)0);
 	int rows = GetStateSize("0");
-	MatSimple<double> r(rows,1),   // Matrix of founder weights
-				   w(rows,1),      // Matrix of weights (the unknown)
-				   d(rows,1),      // Matrix of denominator values
-				   P(rows,rows);   // Matrix of prob values
-	MatSimple<double> I(rows,true); // identity
+	arma::vec r(rows),   // Vector of founder weights
+              w(rows),   // Vector of weights (the unknown)
+              d(rows);   // Vector of denominator values
+	arma::mat P(rows, rows); // Matrix of prob values
 	flt g = 0;
 	okay = true;
 	bool newPred;
@@ -757,17 +755,18 @@ flt HMDP::PolicyIte(BellmanOp op, OptSense sense, uSInt maxIte, const idx idxW, 
         }
 		// If Average solve equations h = r - dg + Ph where r, d and P have been calculated for the founder. This is equivalent to solving (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equivalent to solving Qw = r (equation (8.6.8) in Puterman) where last col in (I-P) replaced with d.
 		// If Discounted solve equations w = r + Pw -> (I-P)w = r
-		matAlg.IMinusP(P);  // Set P := I-P
-		if (op==BellmanOp::Average) for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
-		if (matAlg.LASolve(P,w,r)) {g = -INF; log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; break;}
+		P *= -1.0;       // Set P := I-P
+        P.diag() += 1.0;
+		if (op==BellmanOp::Average) P.col(rows-1) = d;   // set implicit h_{rows-1}=0 and calc g here.
+		if (!arma::solve(w, P, r)) {g = -INF; log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; break;}
 		if (op==BellmanOp::Average) {
-            g = w(rows-1,0);
+            g = w(rows-1);
             log << "(" << g << ") "; if (verbose) log << endl; //cout << "g=" << g << endl;
 		} //cout << "w mat: " << w << endl;
 		state_iterator iteL; idx j;
 		for (iteL=state_begin("1"), j=0; iteL!=state_end("1"); ++iteL, ++j) {
-            if (j<(idx)rows-1 ) HMDP::w(iteL) = w(j,0);
-            else if (op==BellmanOp::Discounted) HMDP::w(iteL) = w(j,0);
+            if (j<(idx)rows-1 ) HMDP::w(iteL) = w(j);
+            else if (op==BellmanOp::Discounted) HMDP::w(iteL) = w(j);
 		}
 		// update policy
 		newPred = CalcOptPolicy(op, sense, idxW, g, idxD, discountF);
@@ -807,18 +806,23 @@ flt HMDP::PolicyIteFixedPolicy(BellmanOp op, const idx idxW, const idx idxD, con
             break;
         default: log << "Bellman operator not defined for policy iteration!" << endl; return -INF;
 	}
-	MatAlg matAlg; // Matrix routines
 	ExternalResetActions(idxW, idxD);
 	timer.StartTimer();
 	SetStateWStage("1", (flt)0);
 	int rows = GetStateSize("0");
-	MatSimple<double> r(rows,1),   // Matrix of founder weights
-				   w(rows,1),      // Matrix of weights (the unknown)
-				   d(rows,1),      // Matrix of denominator values
-				   P(rows,rows);   // Matrix of prob values
-	MatSimple<double> I(rows,true); // identity
+	arma::vec r(rows),   // Vector of founder weights
+              w(rows),   // Vector of weights (the unknown)
+              d(rows);   // Vector of denominator values
+	arma::mat P(rows, rows); // Matrix of prob values
 	flt g = 0;
 	okay = true;
+    for (state_iterator iteS = state_begin(); iteS!=state_end(); ++iteS) {
+        idx actionSize = GetActionSize(iteS);
+        if (actionSize>0 && (iteS->pred<0 || iteS->pred>=(int)actionSize)) {
+            log << "Error: a valid fixed policy must be set before policyIteFixedPolicy()." << endl;
+            return -INF;
+        }
+    }
 
     // find weights, dur, trans pr at founder given policy
     if (op==BellmanOp::Average) {
@@ -832,16 +836,17 @@ flt HMDP::PolicyIteFixedPolicy(BellmanOp op, const idx idxW, const idx idxD, con
     }
     // If Average solve equations h = r - dg + Ph where r, d and P have been calculated for the founder. This is equivalent to solving (I-P)h + dg = r -> (I-P,d)(h,g)' = r which is equivalent to solving Qw = r (equation (8.6.8) in Puterman) where last col in (I-P) replaced with d.
     // If Discounted solve equations w = r + Pw -> (I-P)w = r
-    matAlg.IMinusP(P);  // Set P := I-P
-    if (op==BellmanOp::Average) for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = d(j,0);   // set implicit h_{rows-1}=0 and calc g here.
-    if (matAlg.LASolve(P,w,r)) {g = -INF; log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; return -INF;}
+    P *= -1.0;       // Set P := I-P
+    P.diag() += 1.0;
+    if (op==BellmanOp::Average) P.col(rows-1) = d;   // set implicit h_{rows-1}=0 and calc g here.
+    if (!arma::solve(w, P, r)) {g = -INF; log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? "; return -INF;}
     if (op==BellmanOp::Average) {
-        g = w(rows-1,0);
+        g = w(rows-1);
     }
     state_iterator iteL; idx j;
     for (iteL=state_begin("1"), j=0; iteL!=state_end("1"); ++iteL, ++j) {
-        if (j<(idx)rows-1 ) HMDP::w(iteL) = w(j,0);
-        else if (op==BellmanOp::Discounted) HMDP::w(iteL) = w(j,0);
+        if (j<(idx)rows-1 ) HMDP::w(iteL) = w(j);
+        else if (op==BellmanOp::Discounted) HMDP::w(iteL) = w(j);
     }
     // calc weights policy
     CalcPolicy(op, idxW, g, idxD, discountF);
@@ -3001,12 +3006,9 @@ vector<flt> HMDP::CalcSteadyStatePr() {
 		log << "Stady state probabilities can only be done be calculated on infinite time-horizon HMDPs!" << endl;
 		return v;
 	}
-	MatAlg matAlg; // Matrix routines
-	multimap<string, int >::iterator ite, iteZ;
-	MatSimple<double> b(rows,1),    // Matrix left hand side
-				   w(rows,1),       // Matrix of weights (the unknown)
-				   P(rows,rows);    // Matrix of prob values
-	MatSimple<double> I(rows,true); // identity
+	arma::vec b(rows),    // Vector left hand side
+              w(rows);    // Vector of weights (the unknown)
+	arma::mat P(rows, rows); // Matrix of prob values
 
 	log << "Calculate steady state probabilities:";
 	FounderPr(BellmanOp::TransPr,P);
@@ -3015,12 +3017,12 @@ vector<flt> HMDP::CalcSteadyStatePr() {
     // calculated for the founder. This is equvivalent to solving
     // Qw=b where Q=(P-I)' and b=(0,...,0,1)' where last col in
     // (P-I) is replaced with 1.
-    matAlg.PMinusI(P);
-    for(idx j=0; j<(idx)rows; ++j) P(j,rows-1) = 1;
-    b.Set(0);
-    b(rows-1,0) = 1;
-    if (matAlg.LASolveT(P,w,b)) log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? " << endl;
-    v.assign(&w(0,0),&w(0,0)+rows);
+    P.diag() -= 1.0;
+    P.col(rows-1).ones();
+    b.zeros();
+    b(rows-1) = 1;
+    if (!arma::solve(w, P.t(), b)) log << " Error: can not solve system equations. Is the model fulfilling the model assumptions (e.g. unichain)? " << endl;
+    v.assign(w.memptr(), w.memptr()+rows);
     //cout << "r=" << endl << r << endl << "P=" << endl << P << endl << "w=" << endl << w << endl;
 	log << " finished." << endl;
     return v;

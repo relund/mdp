@@ -12,10 +12,9 @@
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
+#include <RcppArmadillo.h>
 #include "timer.h"
 #include "basicdt.h"
-#include "matrix.h"    // simple matrix class
-#include "matalg.h"    // linear equations solver using lapack
 
 #include <stdlib.h>     // For use of exit command
 // #include <stdio.h>      // For use of scanf
@@ -720,16 +719,16 @@ class HMDP
 
 
     /**
-     * @brief Set the values in matrix r to the weights of the stage.
-     * @note Matrix r must have dim (|S|,1) where |S| is the number of states.
-     * @param r The matrix.
+     * @brief Set the values in vector r to the weights of the stage.
+     * @note Vector r must have length |S| where |S| is the number of states.
+     * @param r The vector.
      * @param stageStr The stage string.
      */
-    void SetMatrixVal(MatSimple<double> &r, string stageStr) {
+    void SetMatrixVal(arma::vec &r, string stageStr) {
         idx i;
         state_iterator iteS;
         for (iteS = state_begin(stageStr), i=0; iteS!=state_end(stageStr); ++iteS, ++i) {
-            r(i,0) = w(iteS);
+            r(i) = w(iteS);
         }
     }
 
@@ -987,7 +986,7 @@ class HMDP
      * @param idxD The duration index.
      * @param discountF The discount factor.
      */
-    void FounderW(BellmanOp op, MatSimple<double> &w, const idx &idxW, flt g = 0, idx idxD = 0, flt discountF = 1)
+    void FounderW(BellmanOp op, arma::vec &w, const idx &idxW, flt g = 0, idx idxD = 0, flt discountF = 1)
     {
         //cout << "FounderW: idxW=" << idxW << " idxD=" << idxD << endl;
         SetStateWStage("1",0);
@@ -1004,7 +1003,7 @@ class HMDP
      * @param idxD The duration index.
      * @param discountF The discount factor.
      */
-    void FounderPr(BellmanOp op, MatSimple<double> &P, idx idxD = 0, flt discountF = 1) {
+    void FounderPr(BellmanOp op, arma::mat &P, idx idxD = 0, flt discountF = 1) {
         idx r,c;
         state_iterator iteS, iteZero;
         SetStateWStage("1", 0);
