@@ -4,37 +4,36 @@ template:
 reference:
 - title: Building an MDP model to a file
 - contents:
-  - binaryMDPWriter
-  - binaryActionWriter
-  - hmpMDPWriter
-  - memoryMDPWriter
-  - getBinInfoActions
-  - getBinInfoStates
-  - randomHMDP
+  - binary_mdp_writer
+  - binary_action_writer
+  - hmp_mdp_writer
+  - memory_mdp_writer
+  - get_bin_info_actions
+  - get_bin_info_states
+  - random_hmdp
 - title: Loading the MDP
 - contents:
-  - loadMDP
-  - saveMDP
+  - load_mdp
+  - save_mdp
 - title: Get info about the MDP
 - contents:
-  - getInfo
+  - get_info
   - plot.HMDP
-  - plotHypergraph
-  - getHypergraph
-  - getWIdx
+  - plot_hypergraph
+  - get_hypergraph
+  - get_w_idx
 - title: Finding the optimal policy
   contents:
-  - runPolicyIteAve
-  - runPolicyIteDiscount
-  - runValueIte
+  - run_policy_ite_ave
+  - run_policy_ite_discount
+  - run_value_ite
 - title: Get info about the current policy
   contents:
-  - setPolicy
-  - getPolicy
-  - runCalcWeights
-  - getSteadyStatePr
-  - getRPO
+  - set_policy
+  - get_policy
+  - run_calc_weights
+  - get_steady_state_pr
+  - get_rpo
 - title: Convert to different file formats
 - contents: 
   - matches("convert")
-
