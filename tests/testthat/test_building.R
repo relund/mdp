@@ -509,7 +509,16 @@ build_vignette_machine <- function(w) {
 }
 
 build_vignette_cow <- function(w) {
-   cowDf <- utils::read.csv("../../vignettes/vignette_files/cow.csv")
+   cowFile <- c(
+      file.path("files", "cow.csv"),
+      file.path("tests", "testthat", "files", "cow.csv"),
+      file.path("vignettes", "vignette_files", "cow.csv"),
+      file.path("..", "..", "vignettes", "vignette_files", "cow.csv"),
+      file.path("..", "vignettes", "vignette_files", "cow.csv")
+   )
+   cowFile <- cowFile[file.exists(cowFile)][1]
+   if (is.na(cowFile)) stop("Could not find cow.csv test fixture.", call. = FALSE)
+   cowDf <- utils::read.csv(cowFile)
    lev1W <- function(s0Idx, n1Idx, s1Idx, a1Lbl) {
       row <- cowDf[cowDf$s0 == s0Idx & cowDf$n1 == n1Idx & cowDf$s1 == s1Idx & cowDf$label == a1Lbl, ]
       as.numeric(row[c("Duration", "Reward", "Output")])
