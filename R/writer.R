@@ -127,6 +127,26 @@ binaryMDPWriter <-
             getLog = TRUE
    )
 {
+   pushContext <- function(value) {
+      writerContext <<- c(writerContext, value)
+      invisible(NULL)
+   }
+
+   popContext <- function() {
+      writerContext <<- writerContext[-length(writerContext)]
+      invisible(NULL)
+   }
+
+   currentContext <- function() {
+      if (length(writerContext) == 0) return(NULL)
+      writerContext[length(writerContext)]
+   }
+
+   requireContext <- function(expected, message) {
+      if (!identical(currentContext(), expected)) stop(message, call. = FALSE)
+      invisible(NULL)
+   }
+
    setWeights<-function(labels,...){
       if (wFixed) stop("Weights already added!")
       wCtr<<-length(labels)
@@ -143,9 +163,16 @@ binaryMDPWriter <-
       invisible(NULL)
    }
    
-   process<-function(P=NULL, R=NULL, D=NULL){
+   process<-function(P=NULL, R=NULL, D=NULL, .fromInclude = FALSE){
       if (!wFixed)
          stop("Weights must be added using 'setWeights' before starting building the HMDP!")
+      if (length(writerContext)>0 && !identical(currentContext(), "action")) {
+         stop("Cannot start a process before closing the current writer block.", call. = FALSE)
+      }
+      if (.fromInclude) {
+         requireContext("action", "Cannot start an included process unless an include-process action is open.")
+      }
+      pushContext("process")
       dCtr<<- -1  # reset stage ctr
       sIdx<<-c(sIdx,NA)
       if (!is.null(P) & !is.null(R)) { # MDP specified using MDPtoolbox style
@@ -167,15 +194,19 @@ binaryMDPWriter <-
    }
    
    endProcess<-function(){
+      requireContext("process", "Cannot end a process unless a process is open.")
       if (length(sIdx)>1) sIdx<<-sIdx[1:(length(sIdx)-1)] else sIdx<<-NULL
       # set ctr's for current level
       dCtr<<-idx[length(idx)-2]
       sCtr<<-idx[length(idx)-1]
       aCtr<<-idx[length(idx)]
+      popContext()
       invisible(NULL)
    }
    
    stage<-function(label=NULL){
+      requireContext("process", "Cannot start a stage outside an open process.")
+      pushContext("stage")
       dCtr<<-dCtr+1
       sCtr<<- -1  # reset state ctr
       idx<<-c(idx,dCtr)   # add stage idx
@@ -184,12 +215,17 @@ binaryMDPWriter <-
    }
    
    endStage<-function(){
+      requireContext("stage", "Cannot end a stage unless a stage is open.")
       if (length(idx)>1) idx<<-idx[1:(length(idx)-1)] else idx<<-NULL     # remove stage index
       #cat(paste("-d:(",paste(c(idx),collapse=","),"),",dCtr,"|",sep=""))
+      popContext()
       invisible(NULL)
    }
    
    state<-function(label=NULL, end=FALSE){
+      requireContext("stage", "Cannot start a state outside an open stage.")
+      lastAutoClosedAction <<- FALSE
+      pushContext("state")
       #cat("(",label,") ",sep="")
       sCtr<<-sCtr+1
       aCtr<<- -1  # reset action ctr
@@ -204,8 +240,10 @@ binaryMDPWriter <-
    }
    
    endState<-function(){
+      requireContext("state", "Cannot end a state while another writer block is open. Call endAction() or use action(..., end = TRUE) before endState().")
       idx<<-idx[1:(length(idx)-1)]    # remove state index
       #cat(paste("-s:(",paste(c(idx),collapse=","),")|",sep=""))
+      popContext()
       invisible(NULL)
    }
    
@@ -219,8 +257,11 @@ binaryMDPWriter <-
                label = NULL,
                end = FALSE,
                ...) {
+         requireContext("state", "Cannot start an action outside an open state.")
+         lastAutoClosedAction <<- FALSE
+         pushContext("action")
          # prop contain tripeles (scope,idx,prob)
-      #cat("action:\n")
+	      #cat("action:\n")
       #print(weights)
       #print(prob)
       #if (is.null(label) | label=="") stop("label = null");
@@ -255,17 +296,29 @@ binaryMDPWriter <-
       }
       writeBin(as.numeric(weights), fACost)
       if (!is.null(label)) writeBin(c(as.character(aRowId),label), fALbl)   # aRowId added before label
-      if (end) endAction()
+      if (end) {
+         endAction()
+         lastAutoClosedAction <<- TRUE
+      }
       invisible(NULL)
    }
    
    endAction<-function(){
+      if (!identical(currentContext(), "action") && identical(currentContext(), "state") && lastAutoClosedAction) {
+         lastAutoClosedAction <<- FALSE
+         return(invisible(NULL))
+      }
+      requireContext("action", "Cannot end an action unless an action is open.")
       idx<<-idx[1:(length(idx)-1)]    # remove action index
       #cat(paste("-a:(",paste(c(idx),collapse=","),")|",sep=""))
+      popContext()
+      lastAutoClosedAction <<- FALSE
       invisible(NULL)
    }
    
    includeProcess<-function(prefix, label=NULL, weights, prob, termStates, transWeights = NULL){     # prop contain tripeles (scope,idx,prob) - Here all scope must be 2!!
+      requireContext("state", "Cannot include a process outside an open state.")
+      pushContext("action")
       stateId<-NULL # to store state id's
       #cat("action:\n")
       #print(weights)
@@ -300,7 +353,7 @@ binaryMDPWriter <-
       writeBin(as.numeric(weights), fACost)
       #cat("end action\n")
       maxId<-max(scpIdx[2*(1:(length(scpIdx)/2))])  # number of states to create at the first stage of the child
-      process()  # start external subprocess
+      process(.fromInclude = TRUE)  # start external subprocess
       stage()  # first stage of the external process
       writeBin(c(paste(idx,collapse=","), prefix), fExt)  # store the external process' name
       pr<-as.numeric( t(matrix(c(rep(1,termStates), 1:termStates-1, rep(1/termStates,termStates)), ncol=3)) )
@@ -319,12 +372,21 @@ binaryMDPWriter <-
    
    endIncludeProcess<-function() {
       endProcess()   # end external subprocess
+      requireContext("action", "Cannot end an included process unless an include-process action is open.")
       idx<<-idx[1:(length(idx)-1)]    # remove action index
       #cat(paste("-a:(",paste(c(idx),collapse=","),")|",sep=""))
+      popContext()
+      lastAutoClosedAction <<- FALSE
       invisible(NULL)
    }
    
    closeWriter<-function(){
+      if (length(writerContext)>0) {
+         stop(
+            paste0("Cannot close writer while a ", currentContext(), " is still open."),
+            call. = FALSE
+         )
+      }
       if (getLog) {
          cat("\n  Statistics:\n")
          cat("    states :",sRowId+1,"\n")
@@ -367,6 +429,8 @@ binaryMDPWriter <-
    aRowId<- -1    # current row/line of action in actionIdx file
    wFixed<-FALSE  # TRUE if size of weights are fixed
    tWFixed<-FALSE  # TRUE if size of transition weights are fixed
+   writerContext<-character()
+   lastAutoClosedAction<-FALSE
    v <-
       list(
          setWeights = setWeights,
@@ -384,6 +448,299 @@ binaryMDPWriter <-
          closeWriter = closeWriter
       )
    class(v) <- c("binaryMDPWriter")
+   return(v)
+}
+
+#' Function for building an HMDP model directly in memory.
+#'
+#' `memoryMDPWriter()` defines the same main sub-functions as
+#' [binaryMDPWriter()], but stores states and actions directly in C++ memory
+#' instead of writing intermediate binary files. `closeWriter()` compiles the
+#' model and returns the loaded `"HMDP"` object.
+#'
+#' External or included processes are not supported by `memoryMDPWriter()`.
+#'
+#' @param prefix A character string kept for compatibility and stored in the
+#'   returned object metadata.
+#' @param eps The sum of transition probabilities must at most differ `eps`
+#'   from one when `check = TRUE`.
+#' @param check Check if the MDP seems correct before returning it.
+#' @param verbose More output when compiling and running algorithms.
+#' @param getLog Output the log messages.
+#' @return A list of functions. Calling `closeWriter()` returns an `"HMDP"`
+#'   object.
+#' @note Note all indexes are starting from zero (C/C++ style).
+#' @example inst/examples/memoryMDPWriter-ex.R
+#' @export
+memoryMDPWriter <- function(prefix = "",
+                            eps = 0.00001,
+                            check = TRUE,
+                            verbose = FALSE,
+                            getLog = TRUE) {
+   if (!is.logical(verbose)) verbose <- FALSE
+   builder <- methods::new(HMDPBuilder, verbose)
+   closed <- FALSE
+
+   assertOpen <- function() {
+      if (closed) stop("memoryMDPWriter is closed.", call. = FALSE)
+      invisible(NULL)
+   }
+
+   pushContext <- function(value) {
+      writerContext <<- c(writerContext, value)
+      invisible(NULL)
+   }
+
+   popContext <- function() {
+      writerContext <<- writerContext[-length(writerContext)]
+      invisible(NULL)
+   }
+
+   currentContext <- function() {
+      if (length(writerContext) == 0) return(NULL)
+      writerContext[length(writerContext)]
+   }
+
+   requireContext <- function(expected, message) {
+      if (!identical(currentContext(), expected)) stop(message, call. = FALSE)
+      invisible(NULL)
+   }
+
+   setWeights <- function(labels, ...) {
+      assertOpen()
+      if (wFixed) stop("Weights already added!")
+      wCtr <<- length(labels)
+      builder$setWeights(as.character(labels))
+      wFixed <<- TRUE
+      invisible(NULL)
+   }
+
+   setTransWeights <- function(labels, ...) {
+      assertOpen()
+      if (tWFixed) stop("Transition weights already added!")
+      tWCtr <<- length(labels)
+      builder$setTransWeights(as.character(labels))
+      tWFixed <<- TRUE
+      invisible(NULL)
+   }
+
+   process <- function(P = NULL, R = NULL, D = NULL, .fromInclude = FALSE) {
+      assertOpen()
+      if (!wFixed)
+         stop("Weights must be added using 'setWeights' before starting building the HMDP!")
+      if (.fromInclude) {
+         stop("memoryMDPWriter() does not support external processes.", call. = FALSE)
+      }
+      if (length(writerContext)>0 && !identical(currentContext(), "action")) {
+         stop("Cannot start a process before closing the current writer block.", call. = FALSE)
+      }
+      pushContext("process")
+      dCtr <<- -1
+      sIdx <<- c(sIdx, NA)
+      if (!is.null(P) & !is.null(R)) {
+         if (is.null(D)) D <- matrix(1, nrow = nrow(R), ncol = ncol(R))
+         stage()
+         for (i in 1:nrow(R)) {
+            state(label = i)
+            for (j in 1:ncol(R)) {
+               jIdx <- which(P[[j]][i,]>0)
+               if (length(jIdx)==0) next
+               action(label = j, pr = P[[j]][i,jIdx], id = jIdx-1,
+                      weights = c(D[i,j], R[i,j]), end = TRUE)
+            }
+            endState()
+         }
+         endStage()
+         endProcess()
+      }
+      invisible(NULL)
+   }
+
+   endProcess <- function() {
+      assertOpen()
+      requireContext("process", "Cannot end a process unless a process is open.")
+      if (length(sIdx)>1) sIdx <<- sIdx[1:(length(sIdx)-1)] else sIdx <<- NULL
+      dCtr <<- idx[length(idx)-2]
+      sCtr <<- idx[length(idx)-1]
+      aCtr <<- idx[length(idx)]
+      popContext()
+      invisible(NULL)
+   }
+
+   stage <- function(label = NULL) {
+      assertOpen()
+      requireContext("process", "Cannot start a stage outside an open process.")
+      pushContext("stage")
+      dCtr <<- dCtr+1
+      sCtr <<- -1
+      idx <<- c(idx, dCtr)
+      invisible(NULL)
+   }
+
+   endStage <- function() {
+      assertOpen()
+      requireContext("stage", "Cannot end a stage unless a stage is open.")
+      if (length(idx)>1) idx <<- idx[1:(length(idx)-1)] else idx <<- NULL
+      popContext()
+      invisible(NULL)
+   }
+
+   state <- function(label = NULL, end = FALSE) {
+      assertOpen()
+      requireContext("stage", "Cannot start a state outside an open stage.")
+      lastAutoClosedAction <<- FALSE
+      pushContext("state")
+      sCtr <<- sCtr+1
+      aCtr <<- -1
+      idx <<- c(idx, sCtr)
+      sRowId <<- builder$addState(as.integer(idx), if (is.null(label)) "" else as.character(label))
+      sIdx[length(sIdx)] <<- sRowId
+      if (end) endState()
+      invisible(sRowId)
+   }
+
+   endState <- function() {
+      assertOpen()
+      requireContext("state", "Cannot end a state while another writer block is open. Call endAction() or use action(..., end = TRUE) before endState().")
+      idx <<- idx[1:(length(idx)-1)]
+      popContext()
+      invisible(NULL)
+   }
+
+   action <- function(scope = NULL,
+                      id = NULL,
+                      pr = NULL,
+                      prob = NULL,
+                      weights,
+                      transWeights = NULL,
+                      label = NULL,
+                      end = FALSE,
+                      ...) {
+      assertOpen()
+      requireContext("state", "Cannot start an action outside an open state.")
+      lastAutoClosedAction <<- FALSE
+      pushContext("action")
+      aCtr <<- aCtr+1
+      idx <<- c(idx, aCtr)
+      aRowId <<- aRowId+1
+      scpIdx <- NULL
+      probs <- NULL
+      if (!is.null(prob)) {
+         for (i in 0:(length(prob)/3-1)) scpIdx <- c(scpIdx, prob[1:2+3*i])
+         probs <- prob[1:(length(prob)/3)*3]
+      } else if (!is.null(pr)) {
+         if (is.null(scope)) scope <- rep(1, length(pr))
+         i <- 1:length(pr)-1
+         scpIdx[1+i*2] <- scope
+         scpIdx[2+i*2] <- id
+         probs <- pr
+      } else {
+         stop("Either 'pr' or 'prob' must be provided.", call. = FALSE)
+      }
+      nTrans <- length(scpIdx)/2
+      if (nTrans == 0) stop("An action must define at least one transition.", call. = FALSE)
+      if (tWCtr>0) {
+         if (is.null(transWeights)) transWeights <- rep(0, nTrans * tWCtr)
+         if (length(transWeights) != nTrans * tWCtr)
+            stop("transWeights must have length number of transitions times number of transition weights.")
+      } else {
+         transWeights <- numeric()
+      }
+      builder$addAction(
+         as.integer(sIdx[length(sIdx)]),
+         as.integer(scpIdx[2*(1:nTrans)-1]),
+         as.integer(scpIdx[2*(1:nTrans)]),
+         as.numeric(probs),
+         as.numeric(weights),
+         as.numeric(transWeights),
+         if (is.null(label)) "" else as.character(label)
+      )
+      if (end) {
+         endAction()
+         lastAutoClosedAction <<- TRUE
+      }
+      invisible(NULL)
+   }
+
+   endAction <- function() {
+      assertOpen()
+      if (!identical(currentContext(), "action") && identical(currentContext(), "state") && lastAutoClosedAction) {
+         lastAutoClosedAction <<- FALSE
+         return(invisible(NULL))
+      }
+      requireContext("action", "Cannot end an action unless an action is open.")
+      idx <<- idx[1:(length(idx)-1)]
+      popContext()
+      lastAutoClosedAction <<- FALSE
+      invisible(NULL)
+   }
+
+   includeProcess <- function(...) {
+      assertOpen()
+      stop("memoryMDPWriter() does not support external processes.", call. = FALSE)
+   }
+
+   endIncludeProcess <- function(...) {
+      assertOpen()
+      stop("memoryMDPWriter() does not support external processes.", call. = FALSE)
+   }
+
+   closeWriter <- function() {
+      assertOpen()
+      if (length(writerContext)>0) {
+         stop(
+            paste0("Cannot close writer while a ", currentContext(), " is still open."),
+            call. = FALSE
+         )
+      }
+      mdpPtr <- builder$close()
+      closed <<- TRUE
+      builder <<- NULL
+      if (getLog) {
+         cat("\n  Statistics:\n")
+         cat("    states :", sRowId+1, "\n")
+         cat("    actions:", aRowId+1, "\n")
+         cat("    weights:", wCtr, "\n\n")
+         cat("  Closing memory MDP writer.\n\n")
+      }
+      .makeMDPList(
+         mdpPtr,
+         binNames = paste0(prefix, "<memory>"),
+         eps = eps,
+         check = check,
+         getLog = getLog
+      )
+   }
+
+   idx <- NULL
+   sIdx <- NULL
+   dCtr <- -1
+   sCtr <- -1
+   aCtr <- -1
+   wCtr <- 0
+   tWCtr <- 0
+   sRowId <- -1
+   aRowId <- -1
+   wFixed <- FALSE
+   tWFixed <- FALSE
+   writerContext <- character()
+   lastAutoClosedAction <- FALSE
+   v <- list(
+      setWeights = setWeights,
+      setTransWeights = setTransWeights,
+      stage = stage,
+      endStage = endStage,
+      state = state,
+      endState = endState,
+      action = action,
+      endAction = endAction,
+      includeProcess = includeProcess,
+      endIncludeProcess = endIncludeProcess,
+      process = process,
+      endProcess = endProcess,
+      closeWriter = closeWriter
+   )
+   class(v) <- c("memoryMDPWriter")
    return(v)
 }
 
@@ -674,4 +1031,220 @@ getBinInfoActions<-function(prefix="", labels = TRUE, fileA="actionIdx.bin",
       mat<-merge(mat,tmp,all.x=TRUE)
    }
    return(dplyr::as_tibble(mat))
+}
+
+
+
+#' Function for writing an HMDP model to a hmp file (XML). The function define
+#' sub-functions which can be used to define an HMDP model stored in a hmp file.
+#'
+#' HMP files are in XML format and human readable using e.g. a text editor.
+#' HMP files are not suitable for storing large HMDP models since text files are very
+#' verbose. Moreover, approximation of the weights and probabilities may occur since
+#' the parser writing the hmp file may no output all digits. If you consider large
+#' models then use the binary file format instead.
+#'
+#' The returned writer exposes these functions:
+#'
+#' * `setWeights(labels, duration)`: sets the labels of the weights used in the
+#'   actions. `labels` is a vector of label names. `duration` identifies which
+#'   label corresponds to duration or time. For example, if the first entry in
+#'   `labels` is time, then `duration = 1`. Call this before building the model.
+#' * `setTransWeights(labels)`: sets the labels of transition-level weights.
+#' * `process()`: starts a (sub)process.
+#' * `endProcess()`: ends a (sub)process.
+#' * `stage(label = NULL)`: starts a stage.
+#' * `endStage()`: ends a stage.
+#' * `state(label = NULL)`: starts a state and returns the state index `sIdx`.
+#' * `endState()`: ends a state.
+#' * `action(label = NULL, weights, prob, statesNext = NULL, transWeights = NULL)`: starts an
+#'   action. `weights` must be a vector of action weights, and `prob` must
+#'   contain triples `(scope, idx, pr)`. `scope` can take three values:
+#'
+#'   * `0`: a transition to the next stage in the father process.
+#'   * `1`: a transition to the next stage in the current process.
+#'   * `2`: a transition to a child process, at stage zero in the child process.
+#'
+#'   The `idx` value denotes the index of the state at the stage considered. For
+#'   example, if `scope = 1` and `idx = 2`, the transition is to state number 3
+#'   at the next stage in the current process, counting from zero. `scope = 3`
+#'   is not supported in the `hmp` file format. `statesNext` is the number of
+#'   states in the next stage of the process and is only needed when there is a
+#'   transition to the father.
+#' * `endAction()`: ends an action.
+#' * `closeWriter()`: closes the writer. Call this when the model description is
+#'   finished.
+#'
+#' @param file The name of the file storing the model (e.g. `r.hmp`).
+#' @param rate The interest rate (used if consider discounting).
+#' @param rateBase The time where the `rate` is taken over, e.g. if the `rate` is 0.1 and `rateBase` is 365 days
+#'   then we have an interest rate of 10 percent over the year.
+#' @param precision The precision used when checking if probabilities sum to one.
+#' @param desc Description of the model.
+#' @param getLog Output log text.
+#' @return A list of functions.
+#' @note Note all indexes are starting from zero (C/C++ style).
+#' @example inst/examples/hmpMDPWriter-ex.R
+#' @export
+hmpMDPWriter<-function(file="r.hmp", rate=0.1, rateBase=1, precision=0.00001, desc="HMP file created using hmpMDPWriter in R", getLog = TRUE) {
+   # addLevelRates<-function(rates){
+   # 	tr$addTag("i",paste(rates,collapse=" "))
+   #    xml2::xml_add_child(doc, "i", paste(rates,collapse=" "))
+   # 	invisible(NULL)
+   # }
+   
+   # setSources<-function(s){
+   # 	tr$addTag("sources",paste(s-1,collapse=" "))
+   #    xml2::xml_add_child(doc, "sources", paste(s-1,collapse=" "))
+   # 	invisible(NULL)
+   # }
+   
+   setWeights<-function(labels, duration) {
+      if (is.null(duration)) durIdx <<- -1  # no duration specified by negative number
+      else durIdx<<-duration
+      # tr$addTag("i",rate)
+      xml2::xml_add_child(doc, "i", rate)
+      
+      if (wFixed) stop("Weights already added!")
+      for (i in 1:length(labels)) {
+         if (i!=durIdx) {
+            # tr$addTag("quantities",attrs=c(l=labels[i]))
+            xml2::xml_add_child(doc, "quantities", l = labels[i])
+         }
+      }
+      wFixed<<-TRUE
+      # tr$addTag("sources","0 1")
+      xml2::xml_add_child(doc, "sources", "0 1")
+      invisible(NULL)
+   }
+   
+   setTransWeights<-function(labels) {
+      for (i in seq_along(labels)) {
+         xml2::xml_add_child(doc, "transQuantities", l = labels[i])
+      }
+      invisible(NULL)
+   }
+   
+   process<-function(){
+      if (!wFixed) stop("Weights must be added using 'setWeights' before starting building the HMDP!")
+      # tr$addTag("proc",close=FALSE)
+      n <<- xml2::xml_add_child(n, "proc")
+      invisible(NULL)
+   }
+   
+   endProcess<-function(){
+      # tr$closeTag()
+      n <<- xml2::xml_parent(n)
+      invisible(NULL)
+   }
+   
+   stage<-function(label=NULL){
+      if (is.null(label)) {
+         # tr$addTag("g",close=FALSE)
+         n <<- xml2::xml_add_child(n, "g")
+      } else {
+         # tr$addTag("g",attrs=c(l=label),close=FALSE)
+         n <<- xml2::xml_add_child(n, "g", l = label)
+      }
+      invisible(NULL)
+   }
+   
+   endStage<-function(){
+      # tr$closeTag()
+      n <<- xml2::xml_parent(n)
+      invisible(NULL)
+   }
+   
+   state<-function(label=NULL){
+      if (is.null(label)) {
+         # tr$addTag("s",close=FALSE)
+         n <<- xml2::xml_add_child(n, "s")
+      } else {
+         # tr$addTag("s",attrs=c(l=label),close=FALSE)
+         n <<- xml2::xml_add_child(n, "s", l = label)
+      }
+      invisible(NULL)
+   }
+   
+   endState<-function(){
+      # tr$closeTag()
+      n <<- xml2::xml_parent(n)
+      invisible(NULL)
+   }
+   
+   action<-function(label=NULL, weights, prob, statesNext=NULL, transWeights=NULL){  # prop contain tripeles (scope,idx,prob), statesNext: Number of states in the next stage of the process, only needed if have a transition to the father
+      scope<-prob[3*0:(length(prob)/3-1)+1]   # scopes we consider
+      if (any(scope==3)) {
+         stop("Scope = 3 is not supported in hmp files!")
+      }
+      term <- FALSE
+      if (any(scope==0)) {     # we have an prob that return to the father
+         if (is.null(statesNext)) stop("Number of states at the next stage must be specified!")
+         if (statesNext!=0) term<-TRUE
+         idx<-3*(which(scope==0)-1)+1            # index of scope==0
+         prob[idx+1]<-prob[idx+1]+statesNext     # add number of states at next stage to father idx
+      }
+      n <<- xml2::xml_add_child(n, "a")
+      tags<-NULL
+      if (!is.null(label)) tags<-c(tags,l=label)
+      if (term) tags<-c(tags,term='t')
+      if (is.null(tags)) {
+         # tr$addTag("a",close=FALSE)
+      } else {
+         # tr$addTag("a",attrs=tags,close=FALSE)
+         xml2::xml_attrs(n) <- tags
+      }
+      if (any(scope==2)) {    # we have an prob to a new child process
+         if (!all(prob==c(2,0,1))) stop("Only a deterministic transition to the dummy stage in the child process allowed (prop=(2,0,1))!")
+         return(invisible(NULL))   # only a deterministic transition with zero weights allowed in the hmp format
+      }
+      # tr$addTag("q",paste(weights[which(1:length(weights)!=durIdx)],collapse=" "))  # quantities
+      xml2::xml_add_child(n, "q", paste(weights[which(1:length(weights)!=durIdx)],collapse=" "))
+      if (!is.null(transWeights)) {
+         xml2::xml_add_child(n, "qt", paste(transWeights, collapse=" "))
+      }
+      probs<-prob[which((1:length(prob)-1)%%3!=0)]   # probs contain pairs (idx,prob)
+      if (length(probs)==2) { # deterministic transition
+         # tr$addTag("p",probs[1],attrs=c(t='d'))
+         xml2::xml_add_child(n, "p", probs[1], t='d')
+      } else {
+         # tr$addTag("p",paste(probs,collapse=" "),attrs=c(t='s'))
+         xml2::xml_add_child(n, "p", paste(probs,collapse=" "), t='s')
+      }
+      if (durIdx<0) {
+         # tr$addTag("d", 1)
+         xml2::xml_add_child(n, "d", 1)
+      }
+      else {
+         names(weights) <- NULL
+         # tr$addTag("d", weights[durIdx])
+         xml2::xml_add_child(n, "d", weights[durIdx])
+      }
+      invisible(NULL)
+   }
+   
+   endAction<-function(){
+      # tr$closeTag()
+      n <<- xml2::xml_parent(n)
+      invisible(NULL)
+   }
+   
+   closeWriter<-function(){
+      # saveXML(tr$value(),file="old.hmp",compression=0,prefix = NULL)
+      xml2::write_xml(doc, file)
+      if (getLog) cat("\nModel saved to file:",file,"\n")
+   }
+   
+   wFixed<-FALSE  # have weights been added
+   durIdx <- NULL   # index of weight storing the duration (number from 1)
+   # tr<-xmlTree("mlhmp",dtd=NULL,attrs=c(l=desc,b=rate,dsl=rateBase,precision=precision,version="1.1"))
+   doc <- xml2::xml_new_root("mlhmp", l=desc, b=rate, dsl=rateBase, precision=precision, version="1.1")
+   n <- doc  # current node
+   
+   v <- list(setWeights = setWeights, setTransWeights = setTransWeights,
+             stage = stage, endStage = endStage, state = state, endState = endState,
+             action = action, endAction = endAction, process = process, endProcess = endProcess,
+             closeWriter = closeWriter)
+   class(v) <- c("hmpMDPWriter")
+   return(v)
 }

@@ -155,4 +155,16 @@ RCPP_MODULE(HMDPModule){
    .method("setTerminalW", &HMDP::SetTerminalW)
    .method("save2Binary", &HMDP::Save2Binary)
    ;
+
+   class_<HMDPBuilder>( "HMDPBuilder" )
+
+   .constructor<bool>("Create an in-memory HMDP builder.")
+
+   .method("setWeights", &HMDPBuilder::SetWeights)
+   .method("setTransWeights", &HMDPBuilder::SetTransWeights)
+   .method("addState", &HMDPBuilder::AddState)
+   .method("addAction", &HMDPBuilder::AddAction)
+   .method("close", &HMDPBuilder::Close)
+   .method("getLog", &HMDPBuilder::GetLog)
+   ;
 }

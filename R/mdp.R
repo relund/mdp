@@ -41,7 +41,14 @@ loadMDP <-
 	binNames<-paste(prefix,binNames,sep="")
 	if (!is.logical(verbose)) verbose = FALSE
 	mdp<-methods::new(HMDP, binNames, verbose)
+   .makeMDPList(mdp, binNames, eps = eps, check = check, getLog = getLog)
+}
 
+.makeMDPList <- function(mdp,
+                         binNames = character(),
+                         eps = 0.00001,
+                         check = TRUE,
+                         getLog = TRUE) {
 	if (!mdp$okay) {
 		message(mdp$getLog())
 		rm(mdp)

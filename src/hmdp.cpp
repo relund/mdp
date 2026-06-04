@@ -35,6 +35,130 @@ void HMDP::LoadBin(string stateIdxFile, string stateIdxLblFile, string actionIdx
 
 // -----------------------------------------------------------------------------
 
+HMDPBuilder::HMDPBuilder(bool verbose_)
+{
+    pHMDP = new HMDP(verbose_);
+    reader.pHMDP = pHMDP;
+    reader.okay = true;
+    reader.foundScp3 = false;
+    closed = false;
+    released = false;
+}
+
+// -----------------------------------------------------------------------------
+
+HMDPBuilder::~HMDPBuilder()
+{
+    if (!released && pHMDP!=NULL) {
+        delete pHMDP;
+        pHMDP = NULL;
+    }
+}
+
+// -----------------------------------------------------------------------------
+
+void HMDPBuilder::SetWeights(vector<string> labels)
+{
+    if (closed) throw runtime_error("memoryMDPWriter is closed.");
+    pHMDP->SetActionWeightNames(labels);
+}
+
+// -----------------------------------------------------------------------------
+
+void HMDPBuilder::SetTransWeights(vector<string> labels)
+{
+    if (closed) throw runtime_error("memoryMDPWriter is closed.");
+    pHMDP->SetTransWeightNames(labels);
+}
+
+// -----------------------------------------------------------------------------
+
+idx HMDPBuilder::AddState(vector<idx> index, string label)
+{
+    if (closed) throw runtime_error("memoryMDPWriter is closed.");
+    if (index.empty()) throw runtime_error("State index must not be empty.");
+    HMDPReader::TmpState state;
+    state.iHMDP = index;
+    state.label = label;
+    reader.stateVec.push_back(state);
+    pHMDP->levels = MAX(pHMDP->levels, (int)(index.size()/3 + 1));
+    return reader.stateVec.size()-1;
+}
+
+// -----------------------------------------------------------------------------
+
+void HMDPBuilder::AddAction(idx stateRowId, vector<idx> scope, vector<idx> id,
+    vector<flt> pr, vector<flt> weights, vector<flt> transWeights, string label)
+{
+    if (closed) throw runtime_error("memoryMDPWriter is closed.");
+    if (stateRowId>=reader.stateVec.size()) throw runtime_error("Action state row id does not exist.");
+    if (scope.size()!=id.size()) throw runtime_error("Action scope and id vectors must have the same length.");
+    if (scope.size()!=pr.size()) throw runtime_error("Action transition probability length must match scope and id.");
+    if (weights.size()!=pHMDP->weightActionNames.size()) {
+        throw runtime_error("Action weight length must match the number of action weight labels.");
+    }
+    idx transWeightCount = pHMDP->weightTransNames.size();
+    if (transWeightCount>0 && transWeights.size()!=pr.size()*transWeightCount) {
+        throw runtime_error("Transition weight length must equal transitions times transition weight labels.");
+    }
+    if (transWeightCount==0 && transWeights.size()>0) {
+        throw runtime_error("Transition weights were supplied but no transition weight labels were set.");
+    }
+
+    HMDPReader::TmpAction action;
+    action.sId = stateRowId;
+    action.scp = scope;
+    action.index = id;
+    action.pr = pr;
+    action.w = weights;
+    action.label = label;
+    action.transW.resize(pr.size());
+    if (transWeightCount>0) {
+        for (idx i=0; i<pr.size(); ++i) {
+            for (idx j=0; j<transWeightCount; ++j) {
+                action.transW[i].push_back(transWeights[i*transWeightCount+j]);
+            }
+        }
+    }
+    reader.stateVec[stateRowId].actions.push_back(action);
+}
+
+// -----------------------------------------------------------------------------
+
+HMDP* HMDPBuilder::Close()
+{
+    if (closed) throw runtime_error("memoryMDPWriter is already closed.");
+    closed = true;
+    pHMDP->ResetLog();
+    pHMDP->okay = true;
+    pHMDP->externalProc = false;
+    reader.okay = true;
+    if (reader.stateVec.empty()) {
+        pHMDP->okay = false;
+        pHMDP->log << "No states have been added to the HMDP." << endl;
+    } else {
+        reader.timer.StartTimer();
+        reader.Compile();
+        reader.timer.StopTimer();
+        pHMDP->log << "Build the HMDP from memory (" << reader.timer.ElapsedTime("sec") << " sec.)" << endl;
+        if (!reader.okay) pHMDP->okay = false;
+    }
+    vector<HMDPReader::TmpState>().swap(reader.stateVec);
+    reader.stagesMap.clear();
+    released = true;
+    return pHMDP;
+}
+
+// -----------------------------------------------------------------------------
+
+string HMDPBuilder::GetLog()
+{
+    if (pHMDP==NULL) return string();
+    return pHMDP->GetLog();
+}
+
+// -----------------------------------------------------------------------------
+
 HMDPReader::HMDPReader(string stateIdxFile, string stateIdxLblFile, string actionIdxFile,
     string actionIdxLblFile, string actionWFile, string actionWLblFile,
     string transProbFile, string externalFile, string transWFile, string transWLblFile,
@@ -54,6 +178,15 @@ HMDPReader::HMDPReader(string stateIdxFile, string stateIdxLblFile, string actio
     Compile();
     timer.StopTimer();
     pHMDP->log << "Build the HMDP (" << timer.ElapsedTime("sec") << " sec.)" << endl;
+}
+
+// -----------------------------------------------------------------------------
+
+HMDPReader::HMDPReader()
+{
+    okay = true;
+    foundScp3 = false;
+    pHMDP = NULL;
 }
 
 // -----------------------------------------------------------------------------
@@ -378,7 +511,12 @@ void HMDPReader::Compile() {
     cpu.StartTimer();
     foundScp3 = false;
     for (idx sId=0; sId<stateVec.size(); ++sId) {
-        SetSIds(sId, foundScp3);
+        if (!SetSIds(sId, foundScp3)) {
+            okay = false;
+            cpu.StopTimer();
+            if (pHMDP->verbose) {pHMDP->log << "  Transform actions to internal data structure (" << cpu.ElapsedTime("sec") << " sec.)\n";}
+            return;
+        }
     }
     cpu.StopTimer();
     if (pHMDP->verbose) {pHMDP->log << "  Transform actions to internal data structure (" << cpu.ElapsedTime("sec") << " sec.)\n";}
@@ -442,7 +580,7 @@ void HMDPReader::Compile() {
 
 // -----------------------------------------------------------------------------
 
-void HMDPReader::SetSIds(const idx & iState, bool & findValidOdr) {
+bool HMDPReader::SetSIds(const idx & iState, bool & findValidOdr) {
 	bool up, next;    // where do the actions go
 	idx iS = 0;
 	int level = pHMDP->GetLevel(stateVec[iState].iHMDP);
@@ -476,31 +614,79 @@ void HMDPReader::SetSIds(const idx & iState, bool & findValidOdr) {
 		for (idx j=0; j<index.size(); j++) {
 			if (scp[j]==1) { // next stage
 				if (level==pHMDP->levels-1) {    // ASSUME states at a stage are defined in sequence. TODO: This may be dangerous does it always hold!!
+                    if (pairNext.first==pairNext.second) {
+                        pHMDP->log << "Error: State " << stateVec[iState].label << " (id = " << iState << "). Action "
+                            << stateVec[iState].actions[a].label << " (" << a << ") has a transition to a non-existing state "
+                            << "with scope " << scp[j] << " and id " << index[j] << "!" << endl;
+                        return false;
+                    }
                     iS = pairNext.first->second + index[j];
+                    if (iS>=stateVec.size() || pHMDP->GetStageStr(stateVec[iS].iHMDP)!=stageNext) {
+                        pHMDP->log << "Error: State " << stateVec[iState].label << " (id = " << iState << "). Action "
+                            << stateVec[iState].actions[a].label << " (" << a << ") has a transition to a non-existing state "
+                            << "with scope " << scp[j] << " and id " << index[j] << "!" << endl;
+                        return false;
+                    }
 				}
 				else {
                     ite = pairNext.first;
-                    for (idx i=0; i<index[j]; i++) ++ite;      // TODO This is very slow for stages with many states!! e.g. a ordinary big MDP. Current hack define your MDP using scp 3
+                    for (idx i=0; i<index[j] && ite!=pairNext.second; i++) ++ite;      // TODO This is very slow for stages with many states!! e.g. a ordinary big MDP. Current hack define your MDP using scp 3
+                    if (ite==pairNext.second) {
+                        pHMDP->log << "Error: State " << stateVec[iState].label << " (id = " << iState << "). Action "
+                            << stateVec[iState].actions[a].label << " (" << a << ") has a transition to a non-existing state "
+                            << "with scope " << scp[j] << " and id " << index[j] << "!" << endl;
+                        return false;
+                    }
                     iS = ite->second;
 				}
 			}
 			if (scp[j]==0) { // next father stage
 				ite = pairUp.first;
-				for (idx i=0; i<index[j]; i++) ++ite;
+				for (idx i=0; i<index[j] && ite!=pairUp.second; i++) ++ite;
+                if (ite==pairUp.second) {
+                    pHMDP->log << "Error: State " << stateVec[iState].label << " (id = " << iState << "). Action "
+                        << stateVec[iState].actions[a].label << " (" << a << ") has a transition to a non-existing state "
+                        << "with scope " << scp[j] << " and id " << index[j] << "!" << endl;
+                    return false;
+                }
 				iS = ite->second;
 			}
 			if (scp[j]==2) { // next child stage
                 stageNextChild = pHMDP->GetNextChildStageStr(stateVec[iState].iHMDP, a);
                 pair< multimap<string, int >::iterator, multimap<string, int >::iterator > pairDown = stagesMap.equal_range(stageNextChild);
                 if (level+1==pHMDP->levels-1) { // check if child stage at lowest level -> states at a stage are defined in sequence.
+                    if (pairDown.first==pairDown.second) {
+                        pHMDP->log << "Error: State " << stateVec[iState].label << " (id = " << iState << "). Action "
+                            << stateVec[iState].actions[a].label << " (" << a << ") has a transition to a non-existing state "
+                            << "with scope " << scp[j] << " and id " << index[j] << "!" << endl;
+                        return false;
+                    }
                     iS = pairDown.first->second + index[j];
+                    if (iS>=stateVec.size() || pHMDP->GetStageStr(stateVec[iS].iHMDP)!=stageNextChild) {
+                        pHMDP->log << "Error: State " << stateVec[iState].label << " (id = " << iState << "). Action "
+                            << stateVec[iState].actions[a].label << " (" << a << ") has a transition to a non-existing state "
+                            << "with scope " << scp[j] << " and id " << index[j] << "!" << endl;
+                        return false;
+                    }
                 } else {
                     ite = pairDown.first;
-                    for (idx i=0; i<index[j]; i++) ++ite;      // TODO This is very slow for stages with many states!! e.g. a ordinary big MDP. Current hack define your MDP using scope 3
+                    for (idx i=0; i<index[j] && ite!=pairDown.second; i++) ++ite;      // TODO This is very slow for stages with many states!! e.g. a ordinary big MDP. Current hack define your MDP using scope 3
+                    if (ite==pairDown.second) {
+                        pHMDP->log << "Error: State " << stateVec[iState].label << " (id = " << iState << "). Action "
+                            << stateVec[iState].actions[a].label << " (" << a << ") has a transition to a non-existing state "
+                            << "with scope " << scp[j] << " and id " << index[j] << "!" << endl;
+                        return false;
+                    }
                     iS = ite->second;
-				}
+                }
 			}
 			if (scp[j]==3) { // specify state index/id
+                if (index[j]>=stateVec.size()) {
+                    pHMDP->log << "Error: State " << stateVec[iState].label << " (id = " << iState << "). Action "
+                        << stateVec[iState].actions[a].label << " (" << a << ") has a transition to a non-existing state "
+                        << "with scope " << scp[j] << " and id " << index[j] << "!" << endl;
+                    return false;
+                }
 				iS = index[j];
 				findValidOdr = true;    // possible that have to create new valid ordering.
 			}
@@ -510,6 +696,7 @@ void HMDPReader::SetSIds(const idx & iState, bool & findValidOdr) {
         //cout << "(iS,iA) = (" << iState << "," << a << ") tails: " << vec2String(stateVec[iState].actions[a].index) << endl;
         stateVec[iState].actions[a].scp.clear();
 	}
+    return true;
 }
 
 // -----------------------------------------------------------------------------

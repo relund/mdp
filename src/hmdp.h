@@ -25,6 +25,8 @@ using namespace std;
 
 //-----------------------------------------------------------------------------
 
+class HMDPBuilder;
+
 /** 
  * @brief Transition in an action.
  * 
@@ -389,6 +391,31 @@ class HMDP
     stage_iterator stage_end() { return stages.end(); }
 
 
+
+    /**
+     * @brief Create an empty HMDP.
+     * @param verbose_ Verbose output.
+     */
+    HMDP(bool verbose_)
+    {
+        verbose = verbose_;
+        okay = true;
+        externalProc = false;
+        levels = 0;
+        timeHorizon = 0;
+    }
+
+    /**
+     * @brief Create an empty HMDP.
+     */
+    HMDP()
+    {
+        verbose = false;
+        okay = true;
+        externalProc = false;
+        levels = 0;
+        timeHorizon = 0;
+    }
 
     /**
      * @brief Create a HMDP from binary files.
@@ -2097,6 +2124,12 @@ private:
 class HMDPReader
 {
 public:
+    friend class HMDPBuilder;
+
+    /**
+     * @brief Create an empty reader used by in-memory builders.
+     */
+    HMDPReader();
 
     /**
      * @brief Set the pointer to the HMDP we want to read data to.
@@ -2174,8 +2207,9 @@ private:
      *
      * @param iState State index.
      * @param findValidOdr Set to true if a scope 3 transition is found.
+     * @return True if all transition targets were resolved.
      */
-    void SetSIds(const idx & iState, bool & findValidOdr);
+    bool SetSIds(const idx & iState, bool & findValidOdr);
 
 
     /**
@@ -2237,6 +2271,81 @@ private:
     HMDP * pHMDP;         ///< Pointer to the HMDP.
     Timer timer;
 
+};
+
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Streaming builder for HMDP models stored directly in C++ memory.
+ *
+ * The builder accepts the same flat rows written by the R binary writer, but
+ * stores them in the temporary compiler structure instead of binary files.
+ */
+class HMDPBuilder
+{
+public:
+    /**
+     * @brief Create an in-memory HMDP builder.
+     * @param verbose_ Verbose output.
+     */
+    HMDPBuilder(bool verbose_);
+
+    /**
+     * @brief Delete unfinished model memory.
+     */
+    ~HMDPBuilder();
+
+    /**
+     * @brief Set action-level weight names.
+     * @param labels Weight labels.
+     */
+    void SetWeights(vector<string> labels);
+
+    /**
+     * @brief Set transition-level weight names.
+     * @param labels Weight labels.
+     */
+    void SetTransWeights(vector<string> labels);
+
+    /**
+     * @brief Add one state row.
+     * @param index Hierarchical state index.
+     * @param label State label.
+     * @return Temporary state row id.
+     */
+    idx AddState(vector<idx> index, string label);
+
+    /**
+     * @brief Add one action row.
+     * @param stateRowId Temporary state row id where the action is defined.
+     * @param scope Transition scopes.
+     * @param id Transition ids.
+     * @param pr Transition probabilities.
+     * @param weights Action weights.
+     * @param transWeights Flat transition weights.
+     * @param label Action label.
+     */
+    void AddAction(idx stateRowId, vector<idx> scope, vector<idx> id,
+        vector<flt> pr, vector<flt> weights, vector<flt> transWeights,
+        string label);
+
+    /**
+     * @brief Compile and return the finished HMDP.
+     * @return Pointer to the finished HMDP.
+     */
+    HMDP* Close();
+
+    /**
+     * @brief Get builder log messages.
+     * @return Log text.
+     */
+    string GetLog();
+
+private:
+    HMDP *pHMDP;       ///< Model being built.
+    HMDPReader reader; ///< Temporary compiler state.
+    bool closed;       ///< True after Close has been called.
+    bool released;     ///< True after pHMDP ownership has been returned to R.
 };
 
 // -----------------------------------------------------------------------------
