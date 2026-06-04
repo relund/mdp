@@ -246,7 +246,7 @@ runPolicyIteDiscount<-function(mdp, w, dur, rate = 0, rateBase = 1, discountFact
 #' @param termValues The terminal values used (values of the last stage in the MDP).
 #' @param g Average weight. If specified then do a single iteration using the update equations under the average expected-weight Bellman operator with the specified g value.
 #' @param objective Optimize by maximizing (`"max"`) or minimizing (`"min"`) the Bellman value.
-#' @param bellmanOp Bellman operator. Use `"auto"` for existing behaviour, `"min"` for the minimum-successor operator, `"max"` for the maximum-successor operator, or `"secondMoment"` for the second moment of total accumulated weight.
+#' @param bellmanOp Bellman operator. Use `"auto"` for existing behavior, `"min"` for the minimum-successor operator, `"max"` for the maximum-successor operator, or `"secondMoment"` for the second moment of total accumulated weight.
 #' @param getLog Output the log messages.
 #' @param discountMethod Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rateBase)` or `1/(1 + rate/rateBase)`, respectively. Only used if `discountFactor` is `NULL`.
 #' 

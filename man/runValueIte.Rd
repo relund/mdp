@@ -44,7 +44,7 @@ runValueIte(
 
 \item{objective}{Optimize by maximizing (\code{"max"}) or minimizing (\code{"min"}) the Bellman value.}
 
-\item{bellmanOp}{Bellman operator. Use \code{"auto"} for existing behaviour, \code{"min"} for the minimum-successor operator, \code{"max"} for the maximum-successor operator, or \code{"secondMoment"} for the second moment of total accumulated weight.}
+\item{bellmanOp}{Bellman operator. Use \code{"auto"} for existing behavior, \code{"min"} for the minimum-successor operator, \code{"max"} for the maximum-successor operator, or \code{"secondMoment"} for the second moment of total accumulated weight.}
 
 \item{getLog}{Output the log messages.}
 

@@ -15,11 +15,16 @@ R CMD check results (local)
 
 ## Comments from last submission
 
+Submission to CRAN after a long period on not being there.
 
+* Bug fix when build model
+* Suppport for optimization sense (both min and max)
+* Various Bellman operators implemented
+* Support for transition weights
+* Build model directly to memory without writing to disk
 
 ## Downstream dependencies
 * None
-
 
 ## Steps done before releasing to CRAN
 ```r
