@@ -7,87 +7,87 @@ wd <- setwd(tempdir())
 
 ## Create the MDP using a dummy replacement node
 prefix<-"machine1_"
-w <- binaryMDPWriter(prefix)
-w$setWeights(c("Net reward"))
+w <- binary_mdp_writer(prefix)
+w$set_weights(c("Net reward"))
 w$process()
    w$stage()   # stage n=0
       w$state(label="Dummy")          # v=(0,0)
          w$action(label="buy", weights=-100, prob=c(1,0,0.7, 1,1,0.3), end=TRUE)
-      w$endState()
-   w$endStage()
+      w$end_state()
+   w$end_stage()
    w$stage()   # stage n=1
       w$state(label="good")           # v=(1,0)
          w$action(label="mt", weights=55, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=70, prob=c(1,0,0.6, 1,1,0.4), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="average")        # v=(1,1)
          w$action(label="mt", weights=40, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=50, prob=c(1,1,0.6, 1,2,0.4), end=TRUE)
-      w$endState()
-   w$endStage()
+      w$end_state()
+   w$end_stage()
    w$stage()   # stage n=2
       w$state(label="good")           # v=(2,0)
          w$action(label="mt", weights=55, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=70, prob=c(1,0,0.5, 1,1,0.5), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="average")        # v=(2,1)
          w$action(label="mt", weights=40, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=50, prob=c(1,1,0.5, 1,2,0.5), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="not working")    # v=(2,2)
          w$action(label="mt", weights=30, prob=c(1,0,1), end=TRUE)
          w$action(label="rep", weights=5, prob=c(1,3,1), end=TRUE)
-      w$endState()
-   w$endStage()
+      w$end_state()
+   w$end_stage()
    w$stage()   # stage n=3
       w$state(label="good")           # v=(3,0)
          w$action(label="mt", weights=55, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=70, prob=c(1,0,0.2, 1,1,0.8), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="average")        # v=(3,1)
          w$action(label="mt", weights=40, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=50, prob=c(1,1,0.2, 1,2,0.8), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="not working")    # v=(3,2)
          w$action(label="mt", weights=30, prob=c(1,0,1), end=TRUE)
          w$action(label="rep", weights=5, prob=c(1,3,1), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="replaced")       # v=(3,3)
          w$action(label="Dummy", weights=0, prob=c(1,3,1), end=TRUE)
-      w$endState()
-   w$endStage()
+      w$end_state()
+   w$end_stage()
    w$stage()   # stage n=4
       w$state(label="good", end=TRUE)        # v=(4,0)
       w$state(label="average", end=TRUE)     # v=(4,1)
       w$state(label="not working", end=TRUE) # v=(4,2)
       w$state(label="replaced", end=TRUE)    # v=(4,3)
-   w$endStage()
-w$endProcess()
-w$closeWriter()
+   w$end_stage()
+w$end_process()
+w$close_writer()
 
 ## Load the model into memory
-mdp<-loadMDP(prefix)
+mdp<-load_mdp(prefix)
 mdp
 plot(mdp)
 
-getInfo(mdp, withList = FALSE)
-getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
-getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = FALSE)
+get_info(mdp, with_list = FALSE)
+get_info(mdp, with_list = FALSE, df_level = "action", as_strings_actions = TRUE)
+get_info(mdp, with_list = FALSE, df_level = "action", as_strings_actions = FALSE)
 
 ## Perform value iteration
 w<-"Net reward"             # label of the weight we want to optimize
 scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 4)
-runValueIte(mdp, w, termValues=scrapValues)
-getPolicy(mdp)     # optimal policy
+run_value_ite(mdp, w, term_values=scrapValues)
+get_policy(mdp)     # optimal policy
 
 ## Calculate the weights of the policy always to maintain
 library(magrittr)
-policy <- getInfo(mdp, withList = FALSE, dfLevel = "action")$df %>% 
+policy <- get_info(mdp, with_list = FALSE, df_level = "action")$df %>% 
    dplyr::filter(label_action == "mt") %>% 
-   dplyr::select(sId, aIdx)
-setPolicy(mdp, policy)
-runCalcWeights(mdp, w, termValues=scrapValues)
-getPolicy(mdp)  
+   dplyr::select(s_id, a_idx)
+set_policy(mdp, policy)
+run_calc_weights(mdp, w, term_values=scrapValues)
+get_policy(mdp)  
 
 
 
@@ -99,91 +99,91 @@ getPolicy(mdp)
 
 ## Create the MDP using a single dummy node
 prefix<-"machine2_"
-w <- binaryMDPWriter(prefix)
-w$setWeights(c("Net reward"))
+w <- binary_mdp_writer(prefix)
+w$set_weights(c("Net reward"))
 w$process()
    w$stage()   # stage n=0
       w$state(label="Dummy")          # v=(0,0)
          w$action(label="buy", weights=-100, prob=c(1,0,0.7, 1,1,0.3), end=TRUE)
-      w$endState()
-   w$endStage()
+      w$end_state()
+   w$end_stage()
    w$stage()   # stage n=1
       w$state(label="good")           # v=(1,0)
          w$action(label="mt", weights=55, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=70, prob=c(1,0,0.6, 1,1,0.4), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="average")        # v=(1,1)
          w$action(label="mt", weights=40, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=50, prob=c(1,1,0.6, 1,2,0.4), end=TRUE)
-      w$endState()
-   w$endStage()
+      w$end_state()
+   w$end_stage()
    w$stage()   # stage n=2
       w$state(label="good")           # v=(2,0)
          w$action(label="mt", weights=55, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=70, prob=c(1,0,0.5, 1,1,0.5), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="average")        # v=(2,1)
          w$action(label="mt", weights=40, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=50, prob=c(1,1,0.5, 1,2,0.5), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="not working")    # v=(2,2)
          w$action(label="mt", weights=30, prob=c(1,0,1), end=TRUE)
-         w$action(label="rep", weights=5, prob=c(3,12,1), end=TRUE) # transition to sId=12 (Dummy)
-      w$endState()
-   w$endStage()
+         w$action(label="rep", weights=5, prob=c(3,12,1), end=TRUE) # transition to s_id=12 (Dummy)
+      w$end_state()
+   w$end_stage()
    w$stage()   # stage n=3
       w$state(label="good")           # v=(3,0)
          w$action(label="mt", weights=55, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=70, prob=c(1,0,0.2, 1,1,0.8), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="average")        # v=(3,1)
          w$action(label="mt", weights=40, prob=c(1,0,1), end=TRUE)
          w$action(label="nmt", weights=50, prob=c(1,1,0.2, 1,2,0.8), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="not working")    # v=(3,2)
          w$action(label="mt", weights=30, prob=c(1,0,1), end=TRUE)
          w$action(label="rep", weights=5, prob=c(3,12,1), end=TRUE)
-      w$endState()
-   w$endStage()
+      w$end_state()
+   w$end_stage()
    w$stage()   # stage n=4
       w$state(label="good")        # v=(4,0)
          w$action(label="rep", weights=30, prob=c(1,0,1), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="average")     # v=(4,1)
          w$action(label="rep", weights=10, prob=c(1,0,1), end=TRUE)
-      w$endState()
+      w$end_state()
       w$state(label="not working") # v=(4,2)
          w$action(label="rep", weights=5, prob=c(1,0,1), end=TRUE)
-      w$endState()
-   w$endStage()
+      w$end_state()
+   w$end_stage()
    w$stage()   # stage n=5
       w$state(label="Dummy", end=TRUE)        # v=(5,0)
-   w$endStage()
-w$endProcess()
-w$closeWriter()
+   w$end_stage()
+w$end_process()
+w$close_writer()
 
 ## Have a look at the state-expanded hypergraph
-mdp<-loadMDP(prefix)
+mdp<-load_mdp(prefix)
 mdp
 plot(mdp)
 
-getInfo(mdp, withList = FALSE)
-getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = TRUE)
-getInfo(mdp, withList = FALSE, dfLevel = "action", asStringsActions = FALSE)
+get_info(mdp, with_list = FALSE)
+get_info(mdp, with_list = FALSE, df_level = "action", as_strings_actions = TRUE)
+get_info(mdp, with_list = FALSE, df_level = "action", as_strings_actions = FALSE)
 
 ## Perform value iteration
 w<-"Net reward"             # label of the weight we want to optimize
-runValueIte(mdp, w, termValues = 0)
-getPolicy(mdp)     # optimal policy
+run_value_ite(mdp, w, term_values = 0)
+get_policy(mdp)     # optimal policy
 
 ## Calculate the weights of the policy always to maintain
 library(magrittr)
-policy <- getInfo(mdp, withList = FALSE, dfLevel = "action")$df %>% 
+policy <- get_info(mdp, with_list = FALSE, df_level = "action")$df %>% 
    dplyr::filter(label_action == "mt") %>% 
-   dplyr::select(sId, aIdx)
-setPolicy(mdp, policy)
-runCalcWeights(mdp, w, termValues=scrapValues)
-getPolicy(mdp)  
+   dplyr::select(s_id, a_idx)
+set_policy(mdp, policy)
+run_calc_weights(mdp, w, term_values=scrapValues)
+get_policy(mdp)  
 
 
 ## Reset working dir

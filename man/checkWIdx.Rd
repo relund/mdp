@@ -2,15 +2,15 @@
 % Please edit documentation in R/mdp.R
 \name{checkWIdx}
 \alias{checkWIdx}
-\alias{.checkWIdx}
+\alias{.check_w_idx}
 \title{Internal function. Check if the index of the weight is okay. Should not be used except you know what you are doing}
 \usage{
-.checkWIdx(iW, wLth)
+.check_w_idx(i_w, w_lth)
 }
 \arguments{
-\item{iW}{Index of the weight we want to optimize.}
+\item{i_w}{Index of the weight we want to optimize.}
 
-\item{wLth}{Number of weights in the model.}
+\item{w_lth}{Number of weights in the model.}
 }
 \value{
 Nothing.

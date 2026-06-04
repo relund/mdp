@@ -2,17 +2,17 @@
 % Please edit documentation in R/mdp.R
 \name{checkWDurIdx}
 \alias{checkWDurIdx}
-\alias{.checkWDurIdx}
+\alias{.check_w_dur_idx}
 \title{Internal function. Check if the indexes given are okay. Should not be used except you know what you are doing}
 \usage{
-.checkWDurIdx(iW, iDur, wLth)
+.check_w_dur_idx(i_w, i_dur, w_lth)
 }
 \arguments{
-\item{iW}{Index of the weight we want to optimize.}
+\item{i_w}{Index of the weight we want to optimize.}
 
-\item{iDur}{Index of the duration/time.}
+\item{i_dur}{Index of the duration/time.}
 
-\item{wLth}{Number of weights in the model.}
+\item{w_lth}{Number of weights in the model.}
 }
 \value{
 Nothing.

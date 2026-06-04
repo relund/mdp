@@ -36,32 +36,38 @@ img {
 
 ```{r setup, include=FALSE}
 library(knitr)
-options(rmarkdown.html_vignette.check_title = FALSE,
-        # formatR.arrow = TRUE, 
-        # scipen=999, 
-        # digits=5,
-        width=90) 
-#thm <- knit_theme$get("edit-kwrite")   # whitengrey, bright, print, edit-flashdevelop, edit-kwrite
-#knit_theme$set(thm)
+options(
+  rmarkdown.html_vignette.check_title = FALSE,
+  # formatR.arrow = TRUE,
+  # scipen=999,
+  # digits=5,
+  width = 90
+)
+# thm <- knit_theme$get("edit-kwrite")   # whitengrey, bright, print, edit-flashdevelop, edit-kwrite
+# knit_theme$set(thm)
 knit_hooks$set(
-   par = function(before, options, envir) {
-      if (before && options$fig.show != 'none')
-         par(mar = c(0, 0, 0, 0), # bottom, left, top, and right
-             oma = c(0, 0, 0, 0))}
+  par = function(before, options, envir) {
+    if (before && options$fig.show != "none") {
+      par(
+        mar = c(0, 0, 0, 0), # bottom, left, top, and right
+        oma = c(0, 0, 0, 0)
+      )
+    }
+  }
 )
 knitr::opts_chunk$set(
-   # collapse = TRUE,
-   comment = "#>",
-   fig.align = 'center',
-   fig.width = 9,
-   fig.height = 5,
-   fig.show = 'hold',
-   out.extra = 'style="max-width:100%;"',
-   # tidy = TRUE,
-   # prompt=T,
-   # comment=NA,
-   cache = F
-   # background = "red"
+  # collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 9,
+  fig.height = 5,
+  fig.show = "hold",
+  out.extra = 'style="max-width:100%;"',
+  # tidy = TRUE,
+  # prompt=T,
+  # comment=NA,
+  cache = F
+  # background = "red"
 )
 library(magrittr)
 library(dplyr)
@@ -132,15 +138,15 @@ Let us try to load the model and get some info:
 
 ```{r, par=TRUE}
 prefix <- paste0(system.file("models", package = "MDP2"), "/machine1_")
-mdp <- loadMDP(prefix)
-getInfo(mdp, withList = F, dfLevel = "action", asStringsActions = TRUE)  
+mdp <- load_mdp(prefix)
+get_info(mdp, with_list = F, df_level = "action", as_strings_actions = TRUE)
 ```
 
 The state-expanded hypergraph representing the semi-MDP with finite time-horizon can be plotted 
 using
 
 ```{r, par=TRUE}
-plot(mdp, actionColor = "label", radx = 0.06, marX = 0.065, marY = 0.055)
+plot(mdp, action_color = "label", radx = 0.06, mar_x = 0.065, mar_y = 0.055)
 ```
 
 Each node corresponds to a specific state
@@ -153,39 +159,41 @@ the machine in stage 1 and may choose to replace the machine.
 Let us use value iteration to find the optimal policy maximizing the expected total reward:
 
 ```{r solve3}
-scrapValues <- c(30, 10, 5, 0)   # scrap values (the values of the 4 states at the last stage)
-runValueIte(mdp, "Net reward", termValues = scrapValues)
+scrapValues <- c(30, 10, 5, 0) # scrap values (the values of the 4 states at the last stage)
+run_value_ite(mdp, "Net reward", term_values = scrapValues)
 ```
 
 The optimal policy is:
 
 ```{r, par=TRUE}
-pol <- getPolicy(mdp)
+pol <- get_policy(mdp)
 tail(pol)
-plot(mdp, actionsVisible = "policy", stateLabel = "weight", 
-     radx = 0.06, marX = 0.065, marY = 0.055)
+plot(mdp,
+  actions_visible = "policy", state_label = "weight",
+  radx = 0.06, mar_x = 0.065, mar_y = 0.055
+)
 ```
 
 Note given the optimal policy the total expected reward is 
-`r pol %>% filter(stateStr == "0,0") %>% pull(weight)` and the machine will never make a transition 
+`r pol %>% filter(state_str == "0,0") %>% pull(weight)` and the machine will never make a transition 
 to states `not working` and `replaced`.
 
 We may evaluate a certain policy, e.g. the policy always to maintain the machine:
 
 ```{r Set policy (machine rep),echo=TRUE,eval=TRUE}
-policy<-data.frame(sId=c(8,11), aIdx=c(0,0)) # set the policy for sId 8 and 11 to mt
-setPolicy(mdp, policy)
-getPolicy(mdp)
+policy <- data.frame(s_id = c(8, 11), a_idx = c(0, 0)) # set the policy for s_id 8 and 11 to mt
+set_policy(mdp, policy)
+get_policy(mdp)
 ```
 
-If the policy specified in `setPolicy` does not contain all states then the actions from the
+If the policy specified in `set_policy` does not contain all states then the actions from the
 previous optimal policy are used. In the output above we can see that the policy now is to maintain
 always. However, the reward of the policy has not been updated. Let us calculate the expected
 reward:
 
 ```{r Calc reward (machine rep),echo=TRUE}
-runCalcWeights(mdp, "Net reward", termValues = scrapValues)
-tail(getPolicy(mdp))    
+run_calc_weights(mdp, "Net reward", term_values = scrapValues)
+tail(get_policy(mdp))
 ```
 
 That is, the expected reward is 90.5 compared to 102.2 which was the reward of the optimal policy.

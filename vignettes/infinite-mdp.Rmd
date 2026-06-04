@@ -36,32 +36,38 @@ img {
 
 ```{r setup, include=FALSE}
 library(knitr)
-options(rmarkdown.html_vignette.check_title = FALSE,
-        # formatR.arrow = TRUE, 
-        # scipen=999, 
-        # digits=5,
-        width=90) 
-#thm <- knit_theme$get("edit-kwrite")   # whitengrey, bright, print, edit-flashdevelop, edit-kwrite
-#knit_theme$set(thm)
+options(
+  rmarkdown.html_vignette.check_title = FALSE,
+  # formatR.arrow = TRUE,
+  # scipen=999,
+  # digits=5,
+  width = 90
+)
+# thm <- knit_theme$get("edit-kwrite")   # whitengrey, bright, print, edit-flashdevelop, edit-kwrite
+# knit_theme$set(thm)
 knit_hooks$set(
-   par = function(before, options, envir) {
-      if (before && options$fig.show != 'none')
-         par(mar = c(0, 0, 0, 0), # bottom, left, top, and right
-             oma = c(0, 0, 0, 0))}
+  par = function(before, options, envir) {
+    if (before && options$fig.show != "none") {
+      par(
+        mar = c(0, 0, 0, 0), # bottom, left, top, and right
+        oma = c(0, 0, 0, 0)
+      )
+    }
+  }
 )
 knitr::opts_chunk$set(
-   # collapse = TRUE,
-   comment = "#>",
-   fig.align = 'center',
-   fig.width = 9,
-   fig.height = 5,
-   fig.show = 'hold',
-   out.extra = 'style="max-width:100%;"',
-   # tidy = TRUE,
-   # prompt=T,
-   # comment=NA,
-   cache = F
-   # background = "red"
+  # collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 9,
+  fig.height = 5,
+  fig.show = "hold",
+  out.extra = 'style="max-width:100%;"',
+  # tidy = TRUE,
+  # prompt=T,
+  # comment=NA,
+  cache = F
+  # background = "red"
 )
 library(magrittr)
 library(dplyr)
@@ -142,17 +148,20 @@ until next decision epoch are $\tau(i,a) = 1, 0\leq i < N$ and $\tau(N,a) = 2$.
 Assume that the number of possible working conditions equals $N=5$. The repair costs are given by $C_{f}=10,\ C_{p}(2)=7,\ C_{p}(3)=7$ and $C_{p}(4)=5$. The deterioration probabilities $q_{ij}$ are given by
 
 ```{r parameters,  include=FALSE}
-N<-5; Cf<- -10; Cp<-c(0,-7,-7,-5) # use negative numbers since the MDP optimize based on rewards
+N <- 5
+Cf <- -10
+Cp <- c(0, -7, -7, -5) # use negative numbers since the MDP optimize based on rewards
 Q <- matrix(c(
-   0.90, 0.10, 0, 0, 0,
-   0, 0.80, 0.10, 0.05, 0.05,
-   0, 0, 0.70, 0.10, 0.20,
-   0, 0, 0, 0.50, 0.50), nrow=4, byrow=T) 
+  0.90, 0.10, 0, 0, 0,
+  0, 0.80, 0.10, 0.05, 0.05,
+  0, 0, 0.70, 0.10, 0.20,
+  0, 0, 0, 0.50, 0.50
+), nrow = 4, byrow = T)
 ```
 
 ```{r Qtable, results='asis', echo=FALSE}
-rownames(Q)<-1:4
-colnames(Q)<-1:5
+rownames(Q) <- 1:4
+colnames(Q) <- 1:5
 knitr::kable(Q, row.names = T)
 ```
 
@@ -160,7 +169,7 @@ For building and saving the model see the `vignette("building")`. We load the mo
 
 ```{r}
 prefix <- paste0(system.file("models", package = "MDP2"), "/hct611-1_")
-mdp <- loadMDP(prefix)
+mdp <- load_mdp(prefix)
 ```
 
 The variable `mdp` is a list with a pointer to the MDP object stored in memory. 
@@ -171,10 +180,10 @@ mdp
 
 For instance the total number of actions is `r mdp$actions` and the model use two weights applied 
 to each action "Duration" and "Net reward". Information about the MDP can be retrieved using 
-`getInfo()`:
+`get_info()`:
 
 ```{r}
-getInfo(mdp, withList = F, dfLevel = "action", asStringsActions = TRUE)  
+get_info(mdp, with_list = F, df_level = "action", as_strings_actions = TRUE)
 ```
 
 Here the tibble has a row for each state and action. For instance the weight "Duration" equals 1 day 
@@ -185,14 +194,14 @@ The state-expanded hypergraph representing the semi-MDP with infinite time-horiz
 using
 
 ```{r plotHgf, par=TRUE}
-plot(mdp, actionColor = "label", stateLabel = "sId|label")
+plot(mdp, action_color = "label", state_label = "s_id|label")
 ```
 
-Each node corresponds to a specific state in the MDP and is a *unique id* (`sId`) such that you can
+Each node corresponds to a specific state in the MDP and is a *unique id* (`s_id`) such that you can
 identify all the states (**id always start from zero**). These ids are not equal to the ids used
 when you built the model, since the order of the nodes in the hypergraph data structure is
 optimized! A directed hyperarc is defined for each possible action. For
-instance, the state/node with `sId = 6` corresponds to working condition $i=2$ and the two hyperarcs
+instance, the state/node with `s_id = 6` corresponds to working condition $i=2$ and the two hyperarcs
 with head in this node corresponds to the two actions preventive and no repair. Note the tails of a
 hyperarc represent a possible transition ($p_{ij}(a)>0$).
 
@@ -200,26 +209,26 @@ Given the model in memory, we now can find the optimal policy under various poli
 try to optimize the average reward per time unit.
 
 ```{r solve1_ave, par=TRUE}
-runPolicyIteAve(mdp,"Net reward","Duration")
-getPolicy(mdp)
-plot(mdp, actionsVisible = "policy")
+run_policy_ite_ave(mdp, "Net reward", "Duration")
+get_policy(mdp)
+plot(mdp, actions_visible = "policy")
 ```
 
 Note it is optimal to do a preventive repair in state $i=4$. Let us try to optimize the expected 
 total discounted reward with a discount factor of 0.5 using policy iteration:
 
 ```{r, par=TRUE}
-runPolicyIteDiscount(mdp,"Net reward","Duration", discountFactor = 0.5)
-getPolicy(mdp)
-plot(mdp, actionsVisible = "policy")
+run_policy_ite_discount(mdp, "Net reward", "Duration", discount_factor = 0.5)
+get_policy(mdp)
+plot(mdp, actions_visible = "policy")
 ```
 
 Note given a discount factor of 0.5, it is optimal to not do a preventive repair in state $i=4$. 
 The same results can be found using value iteration:
 
 ```{r}
-runValueIte(mdp,"Net reward","Duration", discountFactor = 0.5, eps = 1e-10, maxIte = 1000)
-getPolicy(mdp)
+run_value_ite(mdp, "Net reward", "Duration", discount_factor = 0.5, eps = 1e-10, max_ite = 1000)
+get_policy(mdp)
 ```
 
 
