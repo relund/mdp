@@ -82,10 +82,10 @@ prefix <- paste0(system.file("models", package = "MDP2"), "/machine1_")
 mdp <- loadMDP(prefix)
 ```
 
-    #> Read binary files (0.000158254 sec.)
-    #> Build the HMDP (3.7831e-05 sec.)
+    #> Read binary files (0.000162732 sec.)
+    #> Build the HMDP (3.5506e-05 sec.)
 
-    #> Checking MDP and found no errors (3.737e-06 sec.)
+    #> Checking MDP and found no errors (3.456e-06 sec.)
 
 ``` r
 
@@ -143,7 +143,7 @@ runValueIte(mdp, "Net reward", termValues = scrapValues)
 
     #> Run value iteration with epsilon = 0 at most 1 time(s)
     #> using weight 'Net reward' under expected-weight Bellman operator.
-    #>  Finished. Cpu time 7.935e-06 sec.
+    #>  Finished. Cpu time 8.065e-06 sec.
 
 The optimal policy is:
 

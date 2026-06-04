@@ -67,7 +67,7 @@ convertBinary2HMP(prefix1, duration = NULL, out = "machine1_converted.hmp")
 #> Model saved to file: machine1_converted.hmp 
 #> Converted binary files to hmp format.
 #>    user  system elapsed 
-#>   0.020   0.002   0.021 
+#>   0.021   0.000   0.021 
 # have a look at the hmp file
 cat(readr::read_file("machine1_converted.hmp"))
 #> <?xml version="1.0" encoding="UTF-8"?>
