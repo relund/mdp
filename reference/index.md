@@ -21,6 +21,9 @@
   define sub-functions which can be used to define an HMDP model stored
   in a hmp file.
 
+- [`memoryMDPWriter()`](http://relund.github.io/mdp/reference/memoryMDPWriter.md)
+  : Function for building an HMDP model directly in memory.
+
 - [`getBinInfoActions()`](http://relund.github.io/mdp/reference/getBinInfoActions.md)
   : Info about the actions in the HMDP model under consideration.
 
