@@ -110,10 +110,10 @@ prefix <- paste0(system.file("models", package = "MDP2"), "/cow_")
 mdp <- loadMDP(prefix)
 ```
 
-    #> Read binary files (0.000283952 sec.)
-    #> Build the HMDP (0.00018832 sec.)
+    #> Read binary files (0.000291779 sec.)
+    #> Build the HMDP (0.000187302 sec.)
 
-    #> Checking MDP and found no errors (4.597e-06 sec.)
+    #> Checking MDP and found no errors (4.517e-06 sec.)
 
 ``` r
 
@@ -157,7 +157,7 @@ mdp
     #> character(0)
     #> 
     #> $ptr
-    #> C++ object <0x55771a827320> of class 'HMDP' <0x55771addaa30>
+    #> C++ object <0x559a02bb1400> of class 'HMDP' <0x559a03164a90>
     #> 
     #> attr(,"class")
     #> [1] "HMDP" "list"
@@ -238,7 +238,7 @@ runPolicyIteDiscount(mdp, wLbl, durLbl, rate = 0.1)
 
     #> Run policy iteration using weight 'Net reward' under discounted expected-weight Bellman operator 
     #> with 'Duration' as duration using discount factor 0.904837. 
-    #> Iteration(s): 1 2 3 4 finished. Cpu time: 4.597e-06 sec.
+    #> Iteration(s): 1 2 3 4 finished. Cpu time: 4.517e-06 sec.
 
 The optimal policy is:
 
@@ -262,7 +262,7 @@ runPolicyIteAve(mdp, wLbl, durLbl)
 
     #> Run policy iteration under average expected-weight Bellman operator using 
     #> weight 'Net reward' over 'Duration'. Iterations (g): 
-    #> 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 4.597e-06 sec.
+    #> 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 4.517e-06 sec.
 
     #> [1] 11543.83
 

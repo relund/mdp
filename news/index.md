@@ -1,5 +1,13 @@
 # Changelog
 
+## MDP2 v2.2.2.0
+
+- Bug fix when build model
+- Support for optimization sense (both min and max)
+- Various Bellman operators implemented
+- Support for transition weights
+- Build model directly to memory without writing to disk
+
 ## MDP2 v2.1.3
 
 - Fix bug writing files outside the temporary directory.
