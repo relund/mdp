@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MDP2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -300,15 +300,15 @@ are given by</p>
 <code><a href="../articles/building.html">vignette("building")</a></code>. We load the model using</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prefix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"models"</span>, package <span class="op">=</span> <span class="st">"MDP2"</span><span class="op">)</span>, <span class="st">"/hct611-1_"</span><span class="op">)</span></span>
-<span><span class="va">mdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Read binary files (0.000142335 sec.)</span></span>
-<span><span class="co">#&gt; Build the HMDP (2.662e-05 sec.)</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (3.456e-06 sec.)</span></span></code></pre>
+<span><span class="va">mdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_mdp.html">load_mdp</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; Read binary files (0.000140663 sec.)</span></span>
+<span><span class="co">#&gt; Build the HMDP (2.8733e-05 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (3.575e-06 sec.)</span></span></code></pre>
 <p>The variable <code>mdp</code> is a list with a pointer to the MDP
 object stored in memory.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mdp</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; $binNames</span></span>
+<pre><code><span><span class="co">#&gt; $bin_names</span></span>
 <span><span class="co">#&gt;  [1] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_stateIdx.bin"         </span></span>
 <span><span class="co">#&gt;  [2] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_stateIdxLbl.bin"      </span></span>
 <span><span class="co">#&gt;  [3] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionIdx.bin"        </span></span>
@@ -320,13 +320,13 @@ object stored in memory.</p>
 <span><span class="co">#&gt;  [9] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_transWeight.bin"      </span></span>
 <span><span class="co">#&gt; [10] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_transWeightLbl.bin"   </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $timeHorizon</span></span>
+<span><span class="co">#&gt; $time_horizon</span></span>
 <span><span class="co">#&gt; [1] Inf</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $states</span></span>
 <span><span class="co">#&gt; [1] 5</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $founderStatesLast</span></span>
+<span><span class="co">#&gt; $founder_states_last</span></span>
 <span><span class="co">#&gt; [1] 5</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $actions</span></span>
@@ -335,37 +335,37 @@ object stored in memory.</p>
 <span><span class="co">#&gt; $levels</span></span>
 <span><span class="co">#&gt; [1] 1</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $weightNames</span></span>
+<span><span class="co">#&gt; $weight_names</span></span>
 <span><span class="co">#&gt; [1] "Duration"   "Net reward"</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $weightActionNames</span></span>
+<span><span class="co">#&gt; $weight_action_names</span></span>
 <span><span class="co">#&gt; [1] "Duration"   "Net reward"</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $weightTransNames</span></span>
+<span><span class="co">#&gt; $weight_trans_names</span></span>
 <span><span class="co">#&gt; character(0)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $ptr</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x555927c1d370&gt; of class 'HMDP' &lt;0x5559231a86e0&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x556879cea9b0&gt; of class 'HMDP' &lt;0x556878df6ab0&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "HMDP" "list"</span></span></code></pre>
 <p>For instance the total number of actions is 8 and the model use two
 weights applied to each action “Duration” and “Net reward”. Information
-about the MDP can be retrieved using <code><a href="../reference/getInfo.html">getInfo()</a></code>:</p>
+about the MDP can be retrieved using <code><a href="../reference/get_info.html">get_info()</a></code>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/getInfo.html">getInfo</a></span><span class="op">(</span><span class="va">mdp</span>, withList <span class="op">=</span> <span class="cn">F</span>, dfLevel <span class="op">=</span> <span class="st">"action"</span>, asStringsActions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_info.html">get_info</a></span><span class="op">(</span><span class="va">mdp</span>, with_list <span class="op">=</span> <span class="cn">F</span>, df_level <span class="op">=</span> <span class="st">"action"</span>, as_strings_actions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; $df</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8 × 9</span></span></span>
-<span><span class="co">#&gt;     sId stateStr label  aIdx label_action      weights transWeights trans   pr            </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     5 0,0      i=1       0 no repair         1,0     <span style="color: #BB0000;">NA</span>           0,1     0.9,0.1       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     6 0,1      i=2       0 no repair         1,0     <span style="color: #BB0000;">NA</span>           1,2,3,4 0.8,0.1,0.05,…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     6 0,1      i=2       1 preventive repair 1,-7    <span style="color: #BB0000;">NA</span>           0       1             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     7 0,2      i=3       0 no repair         1,0     <span style="color: #BB0000;">NA</span>           2,3,4   0.7,0.1,0.2   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     7 0,2      i=3       1 preventive repair 1,-7    <span style="color: #BB0000;">NA</span>           0       1             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>     8 0,3      i=4       0 no repair         1,0     <span style="color: #BB0000;">NA</span>           3,4     0.5,0.5       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span>     8 0,3      i=4       1 preventive repair 1,-5    <span style="color: #BB0000;">NA</span>           0       1             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span>     9 0,4      i=5       0 forced repair     2,-10   <span style="color: #BB0000;">NA</span>           0       1</span></span></code></pre>
+<span><span class="co">#&gt;    s_id state_str label a_idx label_action      weights trans_weights trans   pr          </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     5 0,0       i=1       0 no repair         1,0     <span style="color: #BB0000;">NA</span>            0,1     0.9,0.1     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     6 0,1       i=2       0 no repair         1,0     <span style="color: #BB0000;">NA</span>            1,2,3,4 0.8,0.1,0.0…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     6 0,1       i=2       1 preventive repair 1,-7    <span style="color: #BB0000;">NA</span>            0       1           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     7 0,2       i=3       0 no repair         1,0     <span style="color: #BB0000;">NA</span>            2,3,4   0.7,0.1,0.2 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     7 0,2       i=3       1 preventive repair 1,-7    <span style="color: #BB0000;">NA</span>            0       1           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>     8 0,3       i=4       0 no repair         1,0     <span style="color: #BB0000;">NA</span>            3,4     0.5,0.5     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span>     8 0,3       i=4       1 preventive repair 1,-5    <span style="color: #BB0000;">NA</span>            0       1           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span>     9 0,4       i=5       0 forced repair     2,-10   <span style="color: #BB0000;">NA</span>            0       1</span></span></code></pre>
 <p>Here the tibble has a row for each state and action. For instance the
 weight “Duration” equals 1 day except in state
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">i=5</annotation></semantics></math>
@@ -374,15 +374,15 @@ also given.</p>
 <p>The state-expanded hypergraph representing the semi-MDP with infinite
 time-horizon can be plotted using</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionColor <span class="op">=</span> <span class="st">"label"</span>, stateLabel <span class="op">=</span> <span class="st">"sId|label"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, action_color <span class="op">=</span> <span class="st">"label"</span>, state_label <span class="op">=</span> <span class="st">"s_id|label"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="infinite-mdp_files/figure-html/plotHgf-1.png" class="r-plt" alt="" width="864" style="max-width:100%;"></p>
 <p>Each node corresponds to a specific state in the MDP and is a
-<em>unique id</em> (<code>sId</code>) such that you can identify all the
-states (<strong>id always start from zero</strong>). These ids are not
-equal to the ids used when you built the model, since the order of the
-nodes in the hypergraph data structure is optimized! A directed hyperarc
-is defined for each possible action. For instance, the state/node with
-<code>sId = 6</code> corresponds to working condition
+<em>unique id</em> (<code>s_id</code>) such that you can identify all
+the states (<strong>id always start from zero</strong>). These ids are
+not equal to the ids used when you built the model, since the order of
+the nodes in the hypergraph data structure is optimized! A directed
+hyperarc is defined for each possible action. For instance, the
+state/node with <code>s_id = 6</code> corresponds to working condition
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">i=2</annotation></semantics></math>
 and the two hyperarcs with head in this node corresponds to the two
 actions preventive and no repair. Note the tails of a hyperarc represent
@@ -392,66 +392,66 @@ a possible transition
 various policies. Let us first try to optimize the average reward per
 time unit.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/runPolicyIteAve.html">runPolicyIteAve</a></span><span class="op">(</span><span class="va">mdp</span>,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/run_policy_ite_ave.html">run_policy_ite_ave</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="st">"Net reward"</span>, <span class="st">"Duration"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration under average expected-weight Bellman operator using </span></span>
 <span><span class="co">#&gt; weight 'Net reward' over 'Duration'. Iterations (g): </span></span>
-<span><span class="co">#&gt; 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 3.456e-06 sec.</span></span></code></pre>
+<span><span class="co">#&gt; 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 3.575e-06 sec.</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; [1] -0.43379</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_policy.html">get_policy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
-<span><span class="co">#&gt;     sId stateStr stateLabel  aIdx actionLabel       weight</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     5 0,0      i=1            0 no repair           9.13</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     6 0,1      i=2            0 no repair           4.79</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     7 0,2      i=3            0 no repair           2.97</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     8 0,3      i=4            1 preventive repair   4.57</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     9 0,4      i=5            0 forced repair       0</span></span></code></pre>
+<span><span class="co">#&gt;    s_id state_str state_label a_idx action_label      weight</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     5 0,0       i=1             0 no repair           9.13</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     6 0,1       i=2             0 no repair           4.79</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     7 0,2       i=3             0 no repair           2.97</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     8 0,3       i=4             1 preventive repair   4.57</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     9 0,4       i=5             0 forced repair       0</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionsVisible <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actions_visible <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="infinite-mdp_files/figure-html/solve1_ave-1.png" class="r-plt" alt="" width="864" style="max-width:100%;"></p>
 <p>Note it is optimal to do a preventive repair in state
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">i=4</annotation></semantics></math>.
 Let us try to optimize the expected total discounted reward with a
 discount factor of 0.5 using policy iteration:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/runPolicyIteDiscount.html">runPolicyIteDiscount</a></span><span class="op">(</span><span class="va">mdp</span>,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>, discountFactor <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/run_policy_ite_discount.html">run_policy_ite_discount</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="st">"Net reward"</span>, <span class="st">"Duration"</span>, discount_factor <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration using weight 'Net reward' under discounted expected-weight Bellman operator </span></span>
 <span><span class="co">#&gt; with 'Duration' as duration using discount factor 0.5. </span></span>
-<span><span class="co">#&gt; Iteration(s): 1 2 finished. Cpu time: 3.456e-06 sec.</span></span></code></pre>
+<span><span class="co">#&gt; Iteration(s): 1 2 finished. Cpu time: 3.575e-06 sec.</span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_policy.html">get_policy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
-<span><span class="co">#&gt;     sId stateStr stateLabel  aIdx actionLabel     weight</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     5 0,0      i=1            0 no repair      -<span style="color: #BB0000;">0.064</span><span style="color: #BB0000; text-decoration: underline;">2</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     6 0,1      i=2            0 no repair      -<span style="color: #BB0000;">0.706</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     7 0,2      i=3            0 no repair      -<span style="color: #BB0000;">1.80</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     8 0,3      i=4            0 no repair      -<span style="color: #BB0000;">3.34</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     9 0,4      i=5            0 forced repair -<span style="color: #BB0000;">10.0</span></span></span></code></pre>
+<span><span class="co">#&gt;    s_id state_str state_label a_idx action_label    weight</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     5 0,0       i=1             0 no repair      -<span style="color: #BB0000;">0.064</span><span style="color: #BB0000; text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     6 0,1       i=2             0 no repair      -<span style="color: #BB0000;">0.706</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     7 0,2       i=3             0 no repair      -<span style="color: #BB0000;">1.80</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     8 0,3       i=4             0 no repair      -<span style="color: #BB0000;">3.34</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     9 0,4       i=5             0 forced repair -<span style="color: #BB0000;">10.0</span></span></span></code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actionsVisible <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mdp</span>, actions_visible <span class="op">=</span> <span class="st">"policy"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="infinite-mdp_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="864" style="max-width:100%;"></p>
 <p>Note given a discount factor of 0.5, it is optimal to not do a
 preventive repair in state
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">i=4</annotation></semantics></math>.
 The same results can be found using value iteration:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/runValueIte.html">runValueIte</a></span><span class="op">(</span><span class="va">mdp</span>,<span class="st">"Net reward"</span>,<span class="st">"Duration"</span>, discountFactor <span class="op">=</span> <span class="fl">0.5</span>, eps <span class="op">=</span> <span class="fl">1e-10</span>, maxIte <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/run_value_ite.html">run_value_ite</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="st">"Net reward"</span>, <span class="st">"Duration"</span>, discount_factor <span class="op">=</span> <span class="fl">0.5</span>, eps <span class="op">=</span> <span class="fl">1e-10</span>, max_ite <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run value iteration with epsilon = 1e-10 at most 1000 time(s)</span></span>
 <span><span class="co">#&gt; using weight 'Net reward' under discounted expected-weight Bellman operator </span></span>
 <span><span class="co">#&gt; with 'Duration' as duration using discount factor 0.5.</span></span>
-<span><span class="co">#&gt; Iterations: 33 Finished. Cpu time 2.1199e-05 sec.</span></span></code></pre>
+<span><span class="co">#&gt; Iterations: 33 Finished. Cpu time 1.7948e-05 sec.</span></span></code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_policy.html">get_policy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
-<span><span class="co">#&gt;     sId stateStr stateLabel  aIdx actionLabel     weight</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     5 0,0      i=1            0 no repair      -<span style="color: #BB0000;">0.064</span><span style="color: #BB0000; text-decoration: underline;">2</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     6 0,1      i=2            0 no repair      -<span style="color: #BB0000;">0.706</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     7 0,2      i=3            0 no repair      -<span style="color: #BB0000;">1.80</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     8 0,3      i=4            0 no repair      -<span style="color: #BB0000;">3.34</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     9 0,4      i=5            0 forced repair -<span style="color: #BB0000;">10.0</span></span></span></code></pre>
+<span><span class="co">#&gt;    s_id state_str state_label a_idx action_label    weight</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     5 0,0       i=1             0 no repair      -<span style="color: #BB0000;">0.064</span><span style="color: #BB0000; text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     6 0,1       i=2             0 no repair      -<span style="color: #BB0000;">0.706</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     7 0,2       i=3             0 no repair      -<span style="color: #BB0000;">1.80</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     8 0,3       i=4             0 no repair      -<span style="color: #BB0000;">3.34</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     9 0,4       i=5             0 forced repair -<span style="color: #BB0000;">10.0</span></span></span></code></pre>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

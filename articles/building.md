@@ -76,12 +76,12 @@ i.e. the number of states are:
 
 ``` r
 
-   N <- 5
-   states <- tibble::tibble(
-         idx = 1:N - 1,
-         label = paste0("i = ", 1:N)
-      )
-   states
+N <- 5
+states <- tibble::tibble(
+  idx = 1:N - 1,
+  label = paste0("i = ", 1:N)
+)
+states
 ```
 
     #> # A tibble: 5 × 2
@@ -107,12 +107,15 @@ The deterioration probabilities $`q_{ij}`$ are
 
 ``` r
 
-Q <- matrix(c(
-   0.90, 0.10, 0, 0, 0,
-   0, 0.80, 0.10, 0.05, 0.05,
-   0, 0, 0.70, 0.10, 0.20,
-   0, 0, 0, 0.50, 0.50), 
-   nrow=4, byrow=T) 
+Q <- matrix(
+  c(
+    0.90, 0.10, 0, 0, 0,
+    0, 0.80, 0.10, 0.05, 0.05,
+    0, 0, 0.70, 0.10, 0.20,
+    0, 0, 0, 0.50, 0.50
+  ),
+  nrow = 4, byrow = T
+)
 ```
 
 To build the model we need transition probabilities and the state index
@@ -121,23 +124,23 @@ for the corresponding transitions. We may define function:
 ``` r
 
 #' Transition probabilities
-#' @param i State (1 <= i <= N). 
+#' @param i State (1 <= i <= N).
 #' @param a Action (`nr`, `pr` or `fr`).
 #' @return A list with non-zero transition probabilities and state index of the transitions.
-transPr <- function(i, a) {
-   pr <- NULL
-   idx <- NULL
-   if (a == "nr") {
-      pr <- Q[i, ]
-      idx <- which(pr > 0)  # only consider trans pr > 0
-      pr <- pr[idx]
-      idx <- idx - 1  # since state index is state-1
-   }
-   if (a == "pr" | a == "fr") {
-      pr <- 1
-      idx <- 0
-   }
-   return(list(pr = pr, idx = idx))
+trans_pr <- function(i, a) {
+  pr <- NULL
+  idx <- NULL
+  if (a == "nr") {
+    pr <- Q[i, ]
+    idx <- which(pr > 0) # only consider trans pr > 0
+    pr <- pr[idx]
+    idx <- idx - 1 # since state index is state-1
+  }
+  if (a == "pr" | a == "fr") {
+    pr <- 1
+    idx <- 0
+  }
+  return(list(pr = pr, idx = idx))
 }
 ```
 
@@ -146,7 +149,7 @@ now:
 
 ``` r
 
-transPr(1, "nr") 
+trans_pr(1, "nr")
 ```
 
     #> $pr
@@ -174,36 +177,36 @@ semi-MDP.](building_files/figure-html/semi-mdp-1.png)
 
 Figure 1: The state-expanded hypergraph for the semi-MDP.
 
-To build the semi-MDP, we use the `binaryMDPWriter` where the model can
-be built using either matrices or an hierarchical structure. We first
-illustrate how to use the hierarchical structure.
+To build the semi-MDP, we use the `binary_mdp_writer` where the model
+can be built using either matrices or an hierarchical structure. We
+first illustrate how to use the hierarchical structure.
 
 ``` r
 
 labels <- states$label
-w<-binaryMDPWriter("hct611-1_") # use prefix hct611-1_ to the files
-w$setWeights(c("Duration", "Net reward"))
+w <- binary_mdp_writer("hct611-1_") # use prefix hct611-1_ to the files
+w$set_weights(c("Duration", "Net reward"))
 w$process() # founder process
-   w$stage() # a stage with states
-      w$state(label = labels[1]) # state 1
-         lst <- transPr(1, "nr")
-         w$action(label = "nr", weights = c(1, 0), pr = lst$pr, id = lst$id, end = TRUE)
-      w$endState() # end state 1
-      for (i in 2:(N-1)) { # states 2 to N-1
-         w$state(label = labels[i])
-            lst <- transPr(i, "nr")
-            w$action(label = "nr", weights = c(1, 0), pr = lst$pr, id = lst$id, end = TRUE)
-            lst<-transPr(i, "pr")
-            w$action(label = "pr", weights = c(1, Cp[i]), pr = lst$pr, id = lst$id, end = TRUE)
-         w$endState()
-      }
-      w$state(label = labels[N])
-         lst<-transPr(N, "fr")
-         w$action(label = "fr", weights = c(2, Cf), pr = lst$pr, id = lst$id, end = TRUE)
-      w$endState()
-   w$endStage() # end stage
-w$endProcess() # end process
-w$closeWriter() # close the binary files
+w$stage() # a stage with states
+w$state(label = labels[1]) # state 1
+lst <- trans_pr(1, "nr")
+w$action(label = "nr", weights = c(1, 0), pr = lst$pr, id = lst$id, end = TRUE)
+w$end_state() # end state 1
+for (i in 2:(N - 1)) { # states 2 to N-1
+  w$state(label = labels[i])
+  lst <- trans_pr(i, "nr")
+  w$action(label = "nr", weights = c(1, 0), pr = lst$pr, id = lst$id, end = TRUE)
+  lst <- trans_pr(i, "pr")
+  w$action(label = "pr", weights = c(1, Cp[i]), pr = lst$pr, id = lst$id, end = TRUE)
+  w$end_state()
+}
+w$state(label = labels[N])
+lst <- trans_pr(N, "fr")
+w$action(label = "fr", weights = c(2, Cf), pr = lst$pr, id = lst$id, end = TRUE)
+w$end_state()
+w$end_stage() # end stage
+w$end_process() # end process
+w$close_writer() # close the binary files
 ```
 
     #> 
@@ -230,32 +233,32 @@ Observe that
 - The model is saved in a set of binary files with prefix `hct611-1_`.
 
 Building the model may be error prone and you may use
-[`getBinInfoStates()`](http://relund.github.io/mdp/reference/getBinInfoStates.md)
+[`get_bin_info_states()`](http://relund.github.io/mdp/reference/get_bin_info_states.md)
 and
-[`getBinInfoActions()`](http://relund.github.io/mdp/reference/getBinInfoActions.md)
+[`get_bin_info_actions()`](http://relund.github.io/mdp/reference/get_bin_info_actions.md)
 to retrieve info about the content of the binary files:
 
 ``` r
 
-getBinInfoStates("hct611-1_")
+get_bin_info_states("hct611-1_")
 ```
 
     #> # A tibble: 5 × 3
-    #>     sId stageStr label
-    #>   <dbl> <chr>    <chr>
-    #> 1     0 0,0      i = 1
-    #> 2     1 0,1      i = 2
-    #> 3     2 0,2      i = 3
-    #> 4     3 0,3      i = 4
-    #> 5     4 0,4      i = 5
+    #>    s_id stage_str label
+    #>   <dbl> <chr>     <chr>
+    #> 1     0 0,0       i = 1
+    #> 2     1 0,1       i = 2
+    #> 3     2 0,2       i = 3
+    #> 4     3 0,3       i = 4
+    #> 5     4 0,4       i = 5
 
 ``` r
 
-getBinInfoActions("hct611-1_")
+get_bin_info_actions("hct611-1_")
 ```
 
     #> # A tibble: 8 × 8
-    #>     aId   sId scope   index   pr                Duration `Net reward` label
+    #>     aId  s_id scope   index   pr                Duration `Net reward` label
     #>   <dbl> <int> <chr>   <chr>   <chr>                <dbl>        <dbl> <chr>
     #> 1     0     0 1,1     0,1     0.9,0.1                  1            0 nr   
     #> 2     1     1 1,1,1,1 1,2,3,4 0.8,0.1,0.05,0.05        1            0 nr   
@@ -267,7 +270,7 @@ getBinInfoActions("hct611-1_")
     #> 8     7     4 1       0       1                        2          -10 fr
 
 The model can be loaded using the
-[`loadMDP()`](http://relund.github.io/mdp/reference/loadMDP.md)
+[`load_mdp()`](http://relund.github.io/mdp/reference/load_mdp.md)
 function.
 
 The model can also be built by specifying a set of matrices. Note this
@@ -305,10 +308,10 @@ D <- matrix(1, nrow = N, ncol = 3)
 D[5, 3] <- 2
 
 ## Build model using the matrix specification
-w <- binaryMDPWriter("hct611-2_")
-w$setWeights(c("Duration", "Net reward"))
+w <- binary_mdp_writer("hct611-2_")
+w$set_weights(c("Duration", "Net reward"))
 w$process(P, R, D)
-w$closeWriter()
+w$close_writer()
 ```
 
     #> 
@@ -365,69 +368,69 @@ given action $`a=`$`nmt` are given by:
 | $`p_{ij}(a,n)`$ | $`\{0.6,0.4\}`$ | $`\{0.6,0.4\}`$ | $`\{0.5,0.5\}`$ | $`\{0.5,0.5\}`$ | $`\{0.2,0.8\}`$ | $`\{0.2,0.8\}`$ |
 
 We build the MDP (all actions have same length) using the
-[`binaryMDPWriter()`](http://relund.github.io/mdp/reference/binaryMDPWriter.md)
+[`binary_mdp_writer()`](http://relund.github.io/mdp/reference/binary_mdp_writer.md)
 function:
 
 ``` r
 
-prefix<-"machine1_"
-w <- binaryMDPWriter(prefix)
-w$setWeights(c("Net reward"))
+prefix <- "machine1_"
+w <- binary_mdp_writer(prefix)
+w$set_weights(c("Net reward"))
 w$process()
-    w$stage()   # stage n=0
-        w$state(label="dummy")       
-            w$action(label="buy", weights=-100, pr=c(0.7,0.3), id=c(0,1), end=TRUE)
-        w$endState()
-    w$endStage()
-    w$stage()   # stage n=1
-        w$state(label="good")           
-            w$action(label="mt", weights=55, pr=1, id=0, end=TRUE)
-            w$action(label="nmt", weights=70, pr=c(0.6,0.4), id=c(0,1), end=TRUE)
-        w$endState()
-        w$state(label="average")        
-            w$action(label="mt", weights=40, pr=1, id=0, end=TRUE)
-            w$action(label="nmt", weights=50, pr=c(0.6,0.4), id=c(1,2), end=TRUE)
-        w$endState()
-    w$endStage()
-    w$stage()   # stage n=2
-        w$state(label="good")          
-            w$action(label="mt", weights=55, pr=1, id=0, end=TRUE)
-            w$action(label="nmt", weights=70, pr=c(0.5,0.5), id=c(0,1), end=TRUE)
-        w$endState()
-        w$state(label="average")       
-            w$action(label="mt", weights=40, pr=1, id=0, end=TRUE)
-            w$action(label="nmt", weights=50, pr=c(0.5,0.5), id=c(1,2), end=TRUE)
-        w$endState()
-        w$state(label="not working")    
-            w$action(label="mt", weights=30, pr=1, id=0, end=TRUE)
-            w$action(label="rep", weights=5, pr=1, id=3, end=TRUE)
-        w$endState()
-    w$endStage()
-    w$stage()   # stage n=3
-        w$state(label="good")           
-            w$action(label="mt", weights=55, pr=1, id=0, end=TRUE)
-            w$action(label="nmt", weights=70, pr=c(0.2,0.8), id=c(0,1), end=TRUE)
-        w$endState()
-        w$state(label="average")       
-            w$action(label="mt", weights=40, pr=1, id=0, end=TRUE)
-            w$action(label="nmt", weights=50, pr=c(0.2,0.8), id=c(1,2), end=TRUE)
-        w$endState()
-        w$state(label="not working")    
-            w$action(label="mt", weights=30, pr=1, id=0, end=TRUE)
-            w$action(label="rep", weights=5, pr=1, id=3, end=TRUE)
-        w$endState()
-        w$state(label="replaced")       
-            w$action(label="dummy", weights=0, pr=1, id=3, end=TRUE)
-        w$endState()
-    w$endStage()
-    w$stage()   # stage n=4
-        w$state(label="good", end=TRUE)        
-        w$state(label="average", end=TRUE)     
-        w$state(label="not working", end=TRUE) 
-        w$state(label="replaced", end=TRUE)   
-    w$endStage()
-w$endProcess()
-w$closeWriter()
+w$stage() # stage n=0
+w$state(label = "dummy")
+w$action(label = "buy", weights = -100, pr = c(0.7, 0.3), id = c(0, 1), end = TRUE)
+w$end_state()
+w$end_stage()
+w$stage() # stage n=1
+w$state(label = "good")
+w$action(label = "mt", weights = 55, pr = 1, id = 0, end = TRUE)
+w$action(label = "nmt", weights = 70, pr = c(0.6, 0.4), id = c(0, 1), end = TRUE)
+w$end_state()
+w$state(label = "average")
+w$action(label = "mt", weights = 40, pr = 1, id = 0, end = TRUE)
+w$action(label = "nmt", weights = 50, pr = c(0.6, 0.4), id = c(1, 2), end = TRUE)
+w$end_state()
+w$end_stage()
+w$stage() # stage n=2
+w$state(label = "good")
+w$action(label = "mt", weights = 55, pr = 1, id = 0, end = TRUE)
+w$action(label = "nmt", weights = 70, pr = c(0.5, 0.5), id = c(0, 1), end = TRUE)
+w$end_state()
+w$state(label = "average")
+w$action(label = "mt", weights = 40, pr = 1, id = 0, end = TRUE)
+w$action(label = "nmt", weights = 50, pr = c(0.5, 0.5), id = c(1, 2), end = TRUE)
+w$end_state()
+w$state(label = "not working")
+w$action(label = "mt", weights = 30, pr = 1, id = 0, end = TRUE)
+w$action(label = "rep", weights = 5, pr = 1, id = 3, end = TRUE)
+w$end_state()
+w$end_stage()
+w$stage() # stage n=3
+w$state(label = "good")
+w$action(label = "mt", weights = 55, pr = 1, id = 0, end = TRUE)
+w$action(label = "nmt", weights = 70, pr = c(0.2, 0.8), id = c(0, 1), end = TRUE)
+w$end_state()
+w$state(label = "average")
+w$action(label = "mt", weights = 40, pr = 1, id = 0, end = TRUE)
+w$action(label = "nmt", weights = 50, pr = c(0.2, 0.8), id = c(1, 2), end = TRUE)
+w$end_state()
+w$state(label = "not working")
+w$action(label = "mt", weights = 30, pr = 1, id = 0, end = TRUE)
+w$action(label = "rep", weights = 5, pr = 1, id = 3, end = TRUE)
+w$end_state()
+w$state(label = "replaced")
+w$action(label = "dummy", weights = 0, pr = 1, id = 3, end = TRUE)
+w$end_state()
+w$end_stage()
+w$stage() # stage n=4
+w$state(label = "good", end = TRUE)
+w$state(label = "average", end = TRUE)
+w$state(label = "not working", end = TRUE)
+w$state(label = "replaced", end = TRUE)
+w$end_stage()
+w$end_process()
+w$close_writer()
 ```
 
     #> 
@@ -537,7 +540,7 @@ understanding we provide 2 functions for reading from the CSV:
 ``` r
 
 library(magrittr)
-cowDf <- readr::read_csv("vignette_files/cow.csv")
+cow_df <- readr::read_csv("vignette_files/cow.csv")
 ```
 
     #> Rows: 66 Columns: 16
@@ -551,7 +554,7 @@ cowDf <- readr::read_csv("vignette_files/cow.csv")
 
 ``` r
 
-cowDf
+cow_df
 ```
 
     #> # A tibble: 66 × 16
@@ -573,13 +576,12 @@ cowDf
 ``` r
 
 # Weights given a state at level 2
-lev1W <- function(s0Idx, n1Idx, s1Idx, a1Lbl) {
-   return(cowDf %>% 
-      dplyr::filter(s0 == s0Idx & n1 == n1Idx & s1 == s1Idx & label == a1Lbl) %>% 
-      dplyr::select(Duration, Reward, Output) %>% as.numeric()
-   )
+lev1_w <- function(s0Idx, n1Idx, s1Idx, a1Lbl) {
+  return(cow_df %>%
+    dplyr::filter(s0 == s0Idx & n1 == n1Idx & s1 == s1Idx & label == a1Lbl) %>%
+    dplyr::select(Duration, Reward, Output) %>% as.numeric())
 }
-lev1W(2, 2, 1, 'Keep')     # good genetic merit, lactation 2, avg yield, keep action
+lev1_w(2, 2, 1, "Keep") # good genetic merit, lactation 2, avg yield, keep action
 ```
 
     #> [1]     1 14000  7000
@@ -587,13 +589,12 @@ lev1W(2, 2, 1, 'Keep')     # good genetic merit, lactation 2, avg yield, keep ac
 ``` r
 
 # Trans pr given a state at level 2
-lev1Pr <- function(s0Idx, n1Idx, s1Idx, a1Lbl) {
-   return(cowDf %>% 
-      dplyr::filter(s0 == s0Idx & n1 == n1Idx & s1 == s1Idx & label == a1Lbl) %>% 
-      dplyr::select(scp0:last_col()) %>% as.numeric()
-   )
+lev1_pr <- function(s0Idx, n1Idx, s1Idx, a1Lbl) {
+  return(cow_df %>%
+    dplyr::filter(s0 == s0Idx & n1 == n1Idx & s1 == s1Idx & label == a1Lbl) %>%
+    dplyr::select(scp0:last_col()) %>% as.numeric())
 }
-lev1Pr(2, 2, 1, 'Replace') # good genetic merit, lactation 2, avg yield, replace action
+lev1_pr(2, 2, 1, "Replace") # good genetic merit, lactation 2, avg yield, replace action
 ```
 
     #> [1] 0.0000000 0.0000000 0.3333333 0.0000000 1.0000000 0.3333333 0.0000000 2.0000000
@@ -606,8 +607,8 @@ We can now generate the model with three weights
 lblS0 <- c('Bad genetic level', 'Avg genetic level', 'Good genetic level')
 lblS1 <- c('Low yield', 'Avg yield', 'High yield')
 prefix<-"cow_"
-w<-binaryMDPWriter(prefix)
-w$setWeights(c("Duration", "Net reward", "Yield"))
+w<-binary_mdp_writer(prefix)
+w$set_weights(c("Duration", "Net reward", "Yield"))
 w$process()
   w$stage()   # stage 0 at founder level
     for (s0 in 0:2) {
@@ -618,29 +619,29 @@ w$process()
                w$state(label="Dummy")
                  w$action(label="Dummy", weights=c(0,0,0), 
                           prob=c(1,0,1/3, 1,1,1/3, 1,2,1/3), end=TRUE)
-               w$endState()
-            w$endStage()
+               w$end_state()
+            w$end_stage()
             for (d1 in 1:4) {
               w$stage()   # stage at level 1
                 for (s1 in 0:2) {
                   w$state(label=lblS1[s1+1])
                     if (d1!=4) {
-                      w$action(label="Keep", weights=lev1W(s0,d1,s1,"Keep"), 
-                               prob=lev1Pr(s0,d1,s1,"Keep"), end=TRUE)
+                      w$action(label="Keep", weights=lev1_w(s0,d1,s1,"Keep"), 
+                               prob=lev1_pr(s0,d1,s1,"Keep"), end=TRUE)
                     }
-                    w$action(label="Replace", weights=lev1W(s0,d1,s1,"Replace"), 
-                             prob=lev1Pr(s0,d1,s1,"Replace"), end=TRUE)
-                  w$endState()
+                    w$action(label="Replace", weights=lev1_w(s0,d1,s1,"Replace"), 
+                             prob=lev1_pr(s0,d1,s1,"Replace"), end=TRUE)
+                  w$end_state()
                 }
-              w$endStage()
+              w$end_stage()
             }
-          w$endProcess()
-        w$endAction()
-      w$endState()
+          w$end_process()
+        w$end_action()
+      w$end_state()
     }
-  w$endStage()
-w$endProcess()
-w$closeWriter()
+  w$end_stage()
+w$end_process()
+w$close_writer()
 ```
 
     #> 

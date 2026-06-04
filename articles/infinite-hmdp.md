@@ -107,20 +107,20 @@ Let us try to load the model and get some info:
 ``` r
 
 prefix <- paste0(system.file("models", package = "MDP2"), "/cow_")
-mdp <- loadMDP(prefix)
+mdp <- load_mdp(prefix)
 ```
 
-    #> Read binary files (0.000503095 sec.)
-    #> Build the HMDP (0.000284589 sec.)
+    #> Read binary files (0.000236298 sec.)
+    #> Build the HMDP (0.000160212 sec.)
 
-    #> Checking MDP and found no errors (3.848e-06 sec.)
+    #> Checking MDP and found no errors (4.377e-06 sec.)
 
 ``` r
 
-mdp 
+mdp
 ```
 
-    #> $binNames
+    #> $bin_names
     #>  [1] "/home/runner/work/_temp/Library/MDP2/models/cow_stateIdx.bin"         
     #>  [2] "/home/runner/work/_temp/Library/MDP2/models/cow_stateIdxLbl.bin"      
     #>  [3] "/home/runner/work/_temp/Library/MDP2/models/cow_actionIdx.bin"        
@@ -132,13 +132,13 @@ mdp
     #>  [9] "/home/runner/work/_temp/Library/MDP2/models/cow_transWeight.bin"      
     #> [10] "/home/runner/work/_temp/Library/MDP2/models/cow_transWeightLbl.bin"   
     #> 
-    #> $timeHorizon
+    #> $time_horizon
     #> [1] Inf
     #> 
     #> $states
     #> [1] 42
     #> 
-    #> $founderStatesLast
+    #> $founder_states_last
     #> [1] 3
     #> 
     #> $actions
@@ -147,17 +147,17 @@ mdp
     #> $levels
     #> [1] 2
     #> 
-    #> $weightNames
+    #> $weight_names
     #> [1] "Duration"   "Net reward" "Yield"     
     #> 
-    #> $weightActionNames
+    #> $weight_action_names
     #> [1] "Duration"   "Net reward" "Yield"     
     #> 
-    #> $weightTransNames
+    #> $weight_trans_names
     #> character(0)
     #> 
     #> $ptr
-    #> C++ object <0x562dce1e6430> of class 'HMDP' <0x562dca9edcf0>
+    #> C++ object <0x55b7a0699ef0> of class 'HMDP' <0x55b79e2b56c0>
     #> 
     #> attr(,"class")
     #> [1] "HMDP" "list"
@@ -167,58 +167,61 @@ time-horizon can be plotted using
 
 ``` r
 
-hgf <- getHypergraph(mdp)
+hgf <- get_hypergraph(mdp)
 ## Rename labels
-dat <- hgf$nodes %>% 
-   dplyr::mutate(label = dplyr::case_when(
-      label == "Low yield" ~ "L",
-      label == "Avg yield" ~ "A",
-      label == "High yield" ~ "H",
-      label == "Dummy" ~ "D",
-      label == "Bad genetic level" ~ "Bad",
-      label == "Avg genetic level" ~ "Avg",
-      label == "Good genetic level" ~ "Good",
-      TRUE ~ "Error"
-   ))
+dat <- hgf$nodes %>%
+  dplyr::mutate(label = dplyr::case_when(
+    label == "Low yield" ~ "L",
+    label == "Avg yield" ~ "A",
+    label == "High yield" ~ "H",
+    label == "Dummy" ~ "D",
+    label == "Bad genetic level" ~ "Bad",
+    label == "Avg genetic level" ~ "Avg",
+    label == "Good genetic level" ~ "Good",
+    TRUE ~ "Error"
+  ))
 ## Set grid id
-dat$gId[1:3]<-85:87
-dat$gId[43:45]<-1:3
-getGId<-function(process,stage,state) {
-   if (process==0) start=18
-   if (process==1) start=22
-   if (process==2) start=26
-   return(start + 14 * stage + state)
+dat$g_id[1:3] <- 85:87
+dat$g_id[43:45] <- 1:3
+get_g_id <- function(process, stage, state) {
+  if (process == 0) start <- 18
+  if (process == 1) start <- 22
+  if (process == 2) start <- 26
+  return(start + 14 * stage + state)
 }
-idx<-43
-for (process in 0:2)
-   for (stage in 0:4)
-      for (state in 0:2) {
-         if (stage==0 & state>0) break
-         idx<-idx-1
-         #cat(idx,process,stage,state,getGId(process,stage,state),"\n")
-         dat$gId[idx]<-getGId(process,stage,state)
-      }
+idx <- 43
+for (process in 0:2) {
+  for (stage in 0:4) {
+    for (state in 0:2) {
+      if (stage == 0 & state > 0) break
+      idx <- idx - 1
+      # cat(idx,process,stage,state,get_g_id(process,stage,state),"\n")
+      dat$g_id[idx] <- get_g_id(process, stage, state)
+    }
+  }
+}
 hgf$nodes <- dat
 ## Rename labels
-dat <- hgf$hyperarcs %>% 
-   dplyr::mutate(label = dplyr::case_when(
+dat <- hgf$hyperarcs %>%
+  dplyr::mutate(
+    label = dplyr::case_when(
       label == "Replace" ~ "R",
       label == "Keep" ~ "K",
       label == "Dummy" ~ "D",
       TRUE ~ "Error"
-      ),
-      col = dplyr::case_when(
-         label == "R" ~ "deepskyblue3",
-         label == "K" ~ "darkorange1",
-         label == "D" ~ "black",
-         TRUE ~ "Error"
-      ),
-      lwd = 0.5,
-      label = ""
-   ) 
+    ),
+    col = dplyr::case_when(
+      label == "R" ~ "deepskyblue3",
+      label == "K" ~ "darkorange1",
+      label == "D" ~ "black",
+      TRUE ~ "Error"
+    ),
+    lwd = 0.5,
+    label = ""
+  )
 hgf$hyperarcs <- dat
 ## Make the plot
-plotHypergraph(hgf, gridDim = c(14, 7), cex = 0.8, radx = 0.02, rady = 0.03)
+plot_hypergraph(hgf, grid_dim = c(14, 7), cex = 0.8, radx = 0.02, rady = 0.03)
 ```
 
 ![](infinite-hmdp_files/figure-html/plotHMDP-1.png)
@@ -231,21 +234,21 @@ criterion using policy iteration with an interest rate of 10%:
 
 ``` r
 
-wLbl<-"Net reward"         # the weight we want to optimize (net reward)
-durLbl<-"Duration"         # the duration/time label
-runPolicyIteDiscount(mdp, wLbl, durLbl, rate = 0.1)
+w_lbl <- "Net reward" # the weight we want to optimize (net reward)
+dur_lbl <- "Duration" # the duration/time label
+run_policy_ite_discount(mdp, w_lbl, dur_lbl, rate = 0.1)
 ```
 
     #> Run policy iteration using weight 'Net reward' under discounted expected-weight Bellman operator 
     #> with 'Duration' as duration using discount factor 0.904837. 
-    #> Iteration(s): 1 2 3 4 finished. Cpu time: 3.848e-06 sec.
+    #> Iteration(s): 1 2 3 4 finished. Cpu time: 4.377e-06 sec.
 
 The optimal policy is:
 
 ``` r
 
-hgf$hyperarcs <- right_join(hgf$hyperarcs, getPolicy(mdp), by = c("sId", "aIdx"))
-plotHypergraph(hgf, gridDim = c(14, 7), cex = 0.8, radx = 0.02, rady = 0.03)
+hgf$hyperarcs <- right_join(hgf$hyperarcs, get_policy(mdp), by = c("s_id", "a_idx"))
+plot_hypergraph(hgf, grid_dim = c(14, 7), cex = 0.8, radx = 0.02, rady = 0.03)
 ```
 
 ![](infinite-hmdp_files/figure-html/plotPolicy-1.png)
@@ -255,35 +258,35 @@ lactation:
 
 ``` r
 
-wLbl<-"Net reward"         # the weight we want to optimize (net reward)
-durLbl<-"Duration"         # the duration/time label
-runPolicyIteAve(mdp, wLbl, durLbl)
+w_lbl <- "Net reward" # the weight we want to optimize (net reward)
+dur_lbl <- "Duration" # the duration/time label
+run_policy_ite_ave(mdp, w_lbl, dur_lbl)
 ```
 
     #> Run policy iteration under average expected-weight Bellman operator using 
     #> weight 'Net reward' over 'Duration'. Iterations (g): 
-    #> 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 3.848e-06 sec.
+    #> 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 4.377e-06 sec.
 
     #> [1] 11543.83
 
 ``` r
 
-getPolicy(mdp)
+get_policy(mdp)
 ```
 
     #> # A tibble: 42 × 6
-    #>      sId stateStr  stateLabel  aIdx actionLabel  weight
-    #>    <dbl> <chr>     <chr>      <int> <chr>         <dbl>
-    #>  1     3 0,2,0,4,0 Low yield      0 Replace     -7369. 
-    #>  2     4 0,2,0,4,1 Avg yield      0 Replace     -5369. 
-    #>  3     5 0,2,0,4,2 High yield     0 Replace     -3369. 
-    #>  4     6 0,2,0,3,0 Low yield      0 Keep        -5912. 
-    #>  5     7 0,2,0,3,1 Avg yield      0 Keep        -2912. 
-    #>  6     8 0,2,0,3,2 High yield     0 Keep           87.7
-    #>  7     9 0,2,0,2,0 Low yield      0 Keep        -3956. 
-    #>  8    10 0,2,0,2,1 Avg yield      0 Keep         -456. 
-    #>  9    11 0,2,0,2,2 High yield     0 Keep         3044. 
-    #> 10    12 0,2,0,1,0 Low yield      0 Keep        -3750. 
+    #>     s_id state_str state_label a_idx action_label  weight
+    #>    <dbl> <chr>     <chr>       <int> <chr>          <dbl>
+    #>  1     3 0,2,0,4,0 Low yield       0 Replace      -7369. 
+    #>  2     4 0,2,0,4,1 Avg yield       0 Replace      -5369. 
+    #>  3     5 0,2,0,4,2 High yield      0 Replace      -3369. 
+    #>  4     6 0,2,0,3,0 Low yield       0 Keep         -5912. 
+    #>  5     7 0,2,0,3,1 Avg yield       0 Keep         -2912. 
+    #>  6     8 0,2,0,3,2 High yield      0 Keep            87.7
+    #>  7     9 0,2,0,2,0 Low yield       0 Keep         -3956. 
+    #>  8    10 0,2,0,2,1 Avg yield       0 Keep          -456. 
+    #>  9    11 0,2,0,2,2 High yield      0 Keep          3044. 
+    #> 10    12 0,2,0,1,0 Low yield       0 Keep         -3750  
     #> # ℹ 32 more rows
 
 Since other weights are defined for each action we can calculate the
@@ -291,7 +294,7 @@ average reward per litre milk under the optimal policy:
 
 ``` r
 
-runCalcWeights(mdp, w=wLbl, criterion="average", dur = "Yield")
+run_calc_weights(mdp, w = w_lbl, criterion = "average", dur = "Yield")
 ```
 
     #> [1] 1.932615
@@ -300,7 +303,7 @@ or the average yield per lactation:
 
 ``` r
 
-runCalcWeights(mdp, w="Yield", criterion="average", dur = durLbl)
+run_calc_weights(mdp, w = "Yield", criterion = "average", dur = dur_lbl)
 ```
 
     #> [1] 5973.166

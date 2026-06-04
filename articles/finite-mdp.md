@@ -79,48 +79,48 @@ Let us try to load the model and get some info:
 ``` r
 
 prefix <- paste0(system.file("models", package = "MDP2"), "/machine1_")
-mdp <- loadMDP(prefix)
+mdp <- load_mdp(prefix)
 ```
 
-    #> Read binary files (0.000162732 sec.)
-    #> Build the HMDP (3.5506e-05 sec.)
+    #> Read binary files (0.000162616 sec.)
+    #> Build the HMDP (4.7802e-05 sec.)
 
-    #> Checking MDP and found no errors (3.456e-06 sec.)
+    #> Checking MDP and found no errors (3.776e-06 sec.)
 
 ``` r
 
-getInfo(mdp, withList = F, dfLevel = "action", asStringsActions = TRUE)  
+get_info(mdp, with_list = F, df_level = "action", as_strings_actions = TRUE)
 ```
 
     #> $df
     #> # A tibble: 18 × 9
-    #>      sId stateStr label        aIdx label_action weights transWeights trans pr     
-    #>    <dbl> <chr>    <chr>       <dbl> <chr>        <chr>   <lgl>        <chr> <chr>  
-    #>  1     4 3,0      good            0 mt           55      NA           0     1      
-    #>  2     4 3,0      good            1 nmt          70      NA           0,1   0.2,0.8
-    #>  3     5 3,1      average         0 mt           40      NA           0     1      
-    #>  4     5 3,1      average         1 nmt          50      NA           1,2   0.2,0.8
-    #>  5     6 3,2      not working     0 mt           30      NA           0     1      
-    #>  6     6 3,2      not working     1 rep          5       NA           3     1      
-    #>  7     7 3,3      replaced        0 Dummy        0       NA           3     1      
-    #>  8     8 2,0      good            0 mt           55      NA           4     1      
-    #>  9     8 2,0      good            1 nmt          70      NA           4,5   0.5,0.5
-    #> 10     9 2,1      average         0 mt           40      NA           4     1      
-    #> 11     9 2,1      average         1 nmt          50      NA           5,6   0.5,0.5
-    #> 12    10 2,2      not working     0 mt           30      NA           4     1      
-    #> 13    10 2,2      not working     1 rep          5       NA           7     1      
-    #> 14    11 1,0      good            0 mt           55      NA           8     1      
-    #> 15    11 1,0      good            1 nmt          70      NA           8,9   0.6,0.4
-    #> 16    12 1,1      average         0 mt           40      NA           8     1      
-    #> 17    12 1,1      average         1 nmt          50      NA           9,10  0.6,0.4
-    #> 18    13 0,0      Dummy           0 buy          -100    NA           11,12 0.7,0.3
+    #>     s_id state_str label       a_idx label_action weights trans_weights trans pr     
+    #>    <dbl> <chr>     <chr>       <dbl> <chr>        <chr>   <lgl>         <chr> <chr>  
+    #>  1     4 3,0       good            0 mt           55      NA            0     1      
+    #>  2     4 3,0       good            1 nmt          70      NA            0,1   0.2,0.8
+    #>  3     5 3,1       average         0 mt           40      NA            0     1      
+    #>  4     5 3,1       average         1 nmt          50      NA            1,2   0.2,0.8
+    #>  5     6 3,2       not working     0 mt           30      NA            0     1      
+    #>  6     6 3,2       not working     1 rep          5       NA            3     1      
+    #>  7     7 3,3       replaced        0 Dummy        0       NA            3     1      
+    #>  8     8 2,0       good            0 mt           55      NA            4     1      
+    #>  9     8 2,0       good            1 nmt          70      NA            4,5   0.5,0.5
+    #> 10     9 2,1       average         0 mt           40      NA            4     1      
+    #> 11     9 2,1       average         1 nmt          50      NA            5,6   0.5,0.5
+    #> 12    10 2,2       not working     0 mt           30      NA            4     1      
+    #> 13    10 2,2       not working     1 rep          5       NA            7     1      
+    #> 14    11 1,0       good            0 mt           55      NA            8     1      
+    #> 15    11 1,0       good            1 nmt          70      NA            8,9   0.6,0.4
+    #> 16    12 1,1       average         0 mt           40      NA            8     1      
+    #> 17    12 1,1       average         1 nmt          50      NA            9,10  0.6,0.4
+    #> 18    13 0,0       Dummy           0 buy          -100    NA            11,12 0.7,0.3
 
 The state-expanded hypergraph representing the semi-MDP with finite
 time-horizon can be plotted using
 
 ``` r
 
-plot(mdp, actionColor = "label", radx = 0.06, marX = 0.065, marY = 0.055)
+plot(mdp, action_color = "label", radx = 0.06, mar_x = 0.065, mar_y = 0.055)
 ```
 
 ![](finite-mdp_files/figure-html/unnamed-chunk-3-1.png)
@@ -137,36 +137,38 @@ expected total reward:
 
 ``` r
 
-scrapValues <- c(30, 10, 5, 0)   # scrap values (the values of the 4 states at the last stage)
-runValueIte(mdp, "Net reward", termValues = scrapValues)
+scrapValues <- c(30, 10, 5, 0) # scrap values (the values of the 4 states at the last stage)
+run_value_ite(mdp, "Net reward", term_values = scrapValues)
 ```
 
     #> Run value iteration with epsilon = 0 at most 1 time(s)
     #> using weight 'Net reward' under expected-weight Bellman operator.
-    #>  Finished. Cpu time 8.065e-06 sec.
+    #>  Finished. Cpu time 8.502e-06 sec.
 
 The optimal policy is:
 
 ``` r
 
-pol <- getPolicy(mdp)
+pol <- get_policy(mdp)
 tail(pol)
 ```
 
     #> # A tibble: 6 × 6
-    #>     sId stateStr stateLabel   aIdx actionLabel weight
-    #>   <dbl> <chr>    <chr>       <int> <chr>        <dbl>
-    #> 1     8 2,0      good            1 nmt           148.
-    #> 2     9 2,1      average         0 mt            125 
-    #> 3    10 2,2      not working     0 mt            115 
-    #> 4    11 1,0      good            1 nmt           208.
-    #> 5    12 1,1      average         0 mt            188.
-    #> 6    13 0,0      Dummy           0 buy           102.
+    #>    s_id state_str state_label a_idx action_label weight
+    #>   <dbl> <chr>     <chr>       <int> <chr>         <dbl>
+    #> 1     8 2,0       good            1 nmt            148.
+    #> 2     9 2,1       average         0 mt             125 
+    #> 3    10 2,2       not working     0 mt             115 
+    #> 4    11 1,0       good            1 nmt            208.
+    #> 5    12 1,1       average         0 mt             188.
+    #> 6    13 0,0       Dummy           0 buy            102.
 
 ``` r
 
-plot(mdp, actionsVisible = "policy", stateLabel = "weight", 
-     radx = 0.06, marX = 0.065, marY = 0.055)
+plot(mdp,
+  actions_visible = "policy", state_label = "weight",
+  radx = 0.06, mar_x = 0.065, mar_y = 0.055
+)
 ```
 
 ![](finite-mdp_files/figure-html/unnamed-chunk-4-1.png)
@@ -180,30 +182,30 @@ machine:
 
 ``` r
 
-policy<-data.frame(sId=c(8,11), aIdx=c(0,0)) # set the policy for sId 8 and 11 to mt
-setPolicy(mdp, policy)
-getPolicy(mdp)
+policy <- data.frame(s_id = c(8, 11), a_idx = c(0, 0)) # set the policy for s_id 8 and 11 to mt
+set_policy(mdp, policy)
+get_policy(mdp)
 ```
 
     #> # A tibble: 14 × 6
-    #>      sId stateStr stateLabel   aIdx actionLabel weight
-    #>    <dbl> <chr>    <chr>       <int> <chr>        <dbl>
-    #>  1     0 4,0      good           -1 ""             30 
-    #>  2     1 4,1      average        -1 ""             10 
-    #>  3     2 4,2      not working    -1 ""              5 
-    #>  4     3 4,3      replaced       -1 ""              0 
-    #>  5     4 3,0      good            0 "mt"           85 
-    #>  6     5 3,1      average         0 "mt"           70 
-    #>  7     6 3,2      not working     0 "mt"           60 
-    #>  8     7 3,3      replaced        0 "Dummy"         0 
-    #>  9     8 2,0      good            0 "mt"          148.
-    #> 10     9 2,1      average         0 "mt"          125 
-    #> 11    10 2,2      not working     0 "mt"          115 
-    #> 12    11 1,0      good            0 "mt"          208.
-    #> 13    12 1,1      average         0 "mt"          188.
-    #> 14    13 0,0      Dummy           0 "buy"         102.
+    #>     s_id state_str state_label a_idx action_label weight
+    #>    <dbl> <chr>     <chr>       <int> <chr>         <dbl>
+    #>  1     0 4,0       good           -1 ""              30 
+    #>  2     1 4,1       average        -1 ""              10 
+    #>  3     2 4,2       not working    -1 ""               5 
+    #>  4     3 4,3       replaced       -1 ""               0 
+    #>  5     4 3,0       good            0 "mt"            85 
+    #>  6     5 3,1       average         0 "mt"            70 
+    #>  7     6 3,2       not working     0 "mt"            60 
+    #>  8     7 3,3       replaced        0 "Dummy"          0 
+    #>  9     8 2,0       good            0 "mt"           148.
+    #> 10     9 2,1       average         0 "mt"           125 
+    #> 11    10 2,2       not working     0 "mt"           115 
+    #> 12    11 1,0       good            0 "mt"           208.
+    #> 13    12 1,1       average         0 "mt"           188.
+    #> 14    13 0,0       Dummy           0 "buy"          102.
 
-If the policy specified in `setPolicy` does not contain all states then
+If the policy specified in `set_policy` does not contain all states then
 the actions from the previous optimal policy are used. In the output
 above we can see that the policy now is to maintain always. However, the
 reward of the policy has not been updated. Let us calculate the expected
@@ -211,19 +213,19 @@ reward:
 
 ``` r
 
-runCalcWeights(mdp, "Net reward", termValues = scrapValues)
-tail(getPolicy(mdp))    
+run_calc_weights(mdp, "Net reward", term_values = scrapValues)
+tail(get_policy(mdp))
 ```
 
     #> # A tibble: 6 × 6
-    #>     sId stateStr stateLabel   aIdx actionLabel weight
-    #>   <dbl> <chr>    <chr>       <int> <chr>        <dbl>
-    #> 1     8 2,0      good            0 mt           140  
-    #> 2     9 2,1      average         0 mt           125  
-    #> 3    10 2,2      not working     0 mt           115  
-    #> 4    11 1,0      good            0 mt           195  
-    #> 5    12 1,1      average         0 mt           180  
-    #> 6    13 0,0      Dummy           0 buy           90.5
+    #>    s_id state_str state_label a_idx action_label weight
+    #>   <dbl> <chr>     <chr>       <int> <chr>         <dbl>
+    #> 1     8 2,0       good            0 mt            140  
+    #> 2     9 2,1       average         0 mt            125  
+    #> 3    10 2,2       not working     0 mt            115  
+    #> 4    11 1,0       good            0 mt            195  
+    #> 5    12 1,1       average         0 mt            180  
+    #> 6    13 0,0       Dummy           0 buy            90.5
 
 That is, the expected reward is 90.5 compared to 102.2 which was the
 reward of the optimal policy.

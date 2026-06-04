@@ -24,6 +24,26 @@ via `Rcpp`.
 - Change package version when make package changes using the 4th digit
   e.g. 2.1.3.1. to 2.1.3.2.
 
+## R API naming
+
+- Use `snake_case` for the new R API.
+- Rename exported and internal R functions, function arguments, local
+  helper functions, variables, list fields, returned data frame columns,
+  tests, examples, vignettes, README code, roxygen documentation, and
+  other R-facing identifiers to `snake_case` when they are part of the R
+  API or user-visible R workflow.
+- Do not preserve backwards compatibility for old camelCase names. Do
+  not add aliases, wrappers, soft-deprecation layers, or lifecycle
+  compatibility shims unless explicitly requested.
+- Update all call sites in R code, tests, documentation, examples, and
+  vignettes in the same change so the package is internally consistent.
+- Keep S3 method names only where R requires the generic/class
+  convention, for example `plot.HMDP`, unless the class name or method
+  system is explicitly changed.
+- Do not rename C++ identifiers or refactor C++ implementation code
+  solely for snake-case migration. Only update the minimal R-to-C++
+  interface names needed for the R API to work.
+
 ## C++ Code
 
 - Use modern C++ (C++11 or newer if already enabled).
@@ -89,3 +109,4 @@ EndAI in R/Rmd/qmd files.
 - `roxygen2`
 - `Rcpp`
 - `ggplot`
+- `styler`

@@ -105,13 +105,13 @@ We load the model using
 ``` r
 
 prefix <- paste0(system.file("models", package = "MDP2"), "/hct611-1_")
-mdp <- loadMDP(prefix)
+mdp <- load_mdp(prefix)
 ```
 
-    #> Read binary files (0.000142335 sec.)
-    #> Build the HMDP (2.662e-05 sec.)
+    #> Read binary files (0.000140663 sec.)
+    #> Build the HMDP (2.8733e-05 sec.)
 
-    #> Checking MDP and found no errors (3.456e-06 sec.)
+    #> Checking MDP and found no errors (3.575e-06 sec.)
 
 The variable `mdp` is a list with a pointer to the MDP object stored in
 memory.
@@ -121,7 +121,7 @@ memory.
 mdp
 ```
 
-    #> $binNames
+    #> $bin_names
     #>  [1] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_stateIdx.bin"         
     #>  [2] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_stateIdxLbl.bin"      
     #>  [3] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_actionIdx.bin"        
@@ -133,13 +133,13 @@ mdp
     #>  [9] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_transWeight.bin"      
     #> [10] "/home/runner/work/_temp/Library/MDP2/models/hct611-1_transWeightLbl.bin"   
     #> 
-    #> $timeHorizon
+    #> $time_horizon
     #> [1] Inf
     #> 
     #> $states
     #> [1] 5
     #> 
-    #> $founderStatesLast
+    #> $founder_states_last
     #> [1] 5
     #> 
     #> $actions
@@ -148,17 +148,17 @@ mdp
     #> $levels
     #> [1] 1
     #> 
-    #> $weightNames
+    #> $weight_names
     #> [1] "Duration"   "Net reward"
     #> 
-    #> $weightActionNames
+    #> $weight_action_names
     #> [1] "Duration"   "Net reward"
     #> 
-    #> $weightTransNames
+    #> $weight_trans_names
     #> character(0)
     #> 
     #> $ptr
-    #> C++ object <0x555927c1d370> of class 'HMDP' <0x5559231a86e0>
+    #> C++ object <0x556879cea9b0> of class 'HMDP' <0x556878df6ab0>
     #> 
     #> attr(,"class")
     #> [1] "HMDP" "list"
@@ -166,25 +166,25 @@ mdp
 For instance the total number of actions is 8 and the model use two
 weights applied to each action “Duration” and “Net reward”. Information
 about the MDP can be retrieved using
-[`getInfo()`](http://relund.github.io/mdp/reference/getInfo.md):
+[`get_info()`](http://relund.github.io/mdp/reference/get_info.md):
 
 ``` r
 
-getInfo(mdp, withList = F, dfLevel = "action", asStringsActions = TRUE)  
+get_info(mdp, with_list = F, df_level = "action", as_strings_actions = TRUE)
 ```
 
     #> $df
     #> # A tibble: 8 × 9
-    #>     sId stateStr label  aIdx label_action      weights transWeights trans   pr            
-    #>   <dbl> <chr>    <chr> <dbl> <chr>             <chr>   <lgl>        <chr>   <chr>         
-    #> 1     5 0,0      i=1       0 no repair         1,0     NA           0,1     0.9,0.1       
-    #> 2     6 0,1      i=2       0 no repair         1,0     NA           1,2,3,4 0.8,0.1,0.05,…
-    #> 3     6 0,1      i=2       1 preventive repair 1,-7    NA           0       1             
-    #> 4     7 0,2      i=3       0 no repair         1,0     NA           2,3,4   0.7,0.1,0.2   
-    #> 5     7 0,2      i=3       1 preventive repair 1,-7    NA           0       1             
-    #> 6     8 0,3      i=4       0 no repair         1,0     NA           3,4     0.5,0.5       
-    #> 7     8 0,3      i=4       1 preventive repair 1,-5    NA           0       1             
-    #> 8     9 0,4      i=5       0 forced repair     2,-10   NA           0       1
+    #>    s_id state_str label a_idx label_action      weights trans_weights trans   pr          
+    #>   <dbl> <chr>     <chr> <dbl> <chr>             <chr>   <lgl>         <chr>   <chr>       
+    #> 1     5 0,0       i=1       0 no repair         1,0     NA            0,1     0.9,0.1     
+    #> 2     6 0,1       i=2       0 no repair         1,0     NA            1,2,3,4 0.8,0.1,0.0…
+    #> 3     6 0,1       i=2       1 preventive repair 1,-7    NA            0       1           
+    #> 4     7 0,2       i=3       0 no repair         1,0     NA            2,3,4   0.7,0.1,0.2 
+    #> 5     7 0,2       i=3       1 preventive repair 1,-7    NA            0       1           
+    #> 6     8 0,3       i=4       0 no repair         1,0     NA            3,4     0.5,0.5     
+    #> 7     8 0,3       i=4       1 preventive repair 1,-5    NA            0       1           
+    #> 8     9 0,4       i=5       0 forced repair     2,-10   NA            0       1
 
 Here the tibble has a row for each state and action. For instance the
 weight “Duration” equals 1 day except in state $`i=5`$ where a forced
@@ -195,20 +195,20 @@ time-horizon can be plotted using
 
 ``` r
 
-plot(mdp, actionColor = "label", stateLabel = "sId|label")
+plot(mdp, action_color = "label", state_label = "s_id|label")
 ```
 
 ![](infinite-mdp_files/figure-html/plotHgf-1.png)
 
 Each node corresponds to a specific state in the MDP and is a *unique
-id* (`sId`) such that you can identify all the states (**id always start
-from zero**). These ids are not equal to the ids used when you built the
-model, since the order of the nodes in the hypergraph data structure is
-optimized! A directed hyperarc is defined for each possible action. For
-instance, the state/node with `sId = 6` corresponds to working condition
-$`i=2`$ and the two hyperarcs with head in this node corresponds to the
-two actions preventive and no repair. Note the tails of a hyperarc
-represent a possible transition ($`p_{ij}(a)>0`$).
+id* (`s_id`) such that you can identify all the states (**id always
+start from zero**). These ids are not equal to the ids used when you
+built the model, since the order of the nodes in the hypergraph data
+structure is optimized! A directed hyperarc is defined for each possible
+action. For instance, the state/node with `s_id = 6` corresponds to
+working condition $`i=2`$ and the two hyperarcs with head in this node
+corresponds to the two actions preventive and no repair. Note the tails
+of a hyperarc represent a possible transition ($`p_{ij}(a)>0`$).
 
 Given the model in memory, we now can find the optimal policy under
 various policies. Let us first try to optimize the average reward per
@@ -216,32 +216,32 @@ time unit.
 
 ``` r
 
-runPolicyIteAve(mdp,"Net reward","Duration")
+run_policy_ite_ave(mdp, "Net reward", "Duration")
 ```
 
     #> Run policy iteration under average expected-weight Bellman operator using 
     #> weight 'Net reward' over 'Duration'. Iterations (g): 
-    #> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 3.456e-06 sec.
+    #> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 3.575e-06 sec.
 
     #> [1] -0.43379
 
 ``` r
 
-getPolicy(mdp)
+get_policy(mdp)
 ```
 
     #> # A tibble: 5 × 6
-    #>     sId stateStr stateLabel  aIdx actionLabel       weight
-    #>   <dbl> <chr>    <chr>      <int> <chr>              <dbl>
-    #> 1     5 0,0      i=1            0 no repair           9.13
-    #> 2     6 0,1      i=2            0 no repair           4.79
-    #> 3     7 0,2      i=3            0 no repair           2.97
-    #> 4     8 0,3      i=4            1 preventive repair   4.57
-    #> 5     9 0,4      i=5            0 forced repair       0
+    #>    s_id state_str state_label a_idx action_label      weight
+    #>   <dbl> <chr>     <chr>       <int> <chr>              <dbl>
+    #> 1     5 0,0       i=1             0 no repair           9.13
+    #> 2     6 0,1       i=2             0 no repair           4.79
+    #> 3     7 0,2       i=3             0 no repair           2.97
+    #> 4     8 0,3       i=4             1 preventive repair   4.57
+    #> 5     9 0,4       i=5             0 forced repair       0
 
 ``` r
 
-plot(mdp, actionsVisible = "policy")
+plot(mdp, actions_visible = "policy")
 ```
 
 ![](infinite-mdp_files/figure-html/solve1_ave-1.png)
@@ -252,30 +252,30 @@ factor of 0.5 using policy iteration:
 
 ``` r
 
-runPolicyIteDiscount(mdp,"Net reward","Duration", discountFactor = 0.5)
+run_policy_ite_discount(mdp, "Net reward", "Duration", discount_factor = 0.5)
 ```
 
     #> Run policy iteration using weight 'Net reward' under discounted expected-weight Bellman operator 
     #> with 'Duration' as duration using discount factor 0.5. 
-    #> Iteration(s): 1 2 finished. Cpu time: 3.456e-06 sec.
+    #> Iteration(s): 1 2 finished. Cpu time: 3.575e-06 sec.
 
 ``` r
 
-getPolicy(mdp)
+get_policy(mdp)
 ```
 
     #> # A tibble: 5 × 6
-    #>     sId stateStr stateLabel  aIdx actionLabel     weight
-    #>   <dbl> <chr>    <chr>      <int> <chr>            <dbl>
-    #> 1     5 0,0      i=1            0 no repair      -0.0642
-    #> 2     6 0,1      i=2            0 no repair      -0.706 
-    #> 3     7 0,2      i=3            0 no repair      -1.80  
-    #> 4     8 0,3      i=4            0 no repair      -3.34  
-    #> 5     9 0,4      i=5            0 forced repair -10.0
+    #>    s_id state_str state_label a_idx action_label    weight
+    #>   <dbl> <chr>     <chr>       <int> <chr>            <dbl>
+    #> 1     5 0,0       i=1             0 no repair      -0.0642
+    #> 2     6 0,1       i=2             0 no repair      -0.706 
+    #> 3     7 0,2       i=3             0 no repair      -1.80  
+    #> 4     8 0,3       i=4             0 no repair      -3.34  
+    #> 5     9 0,4       i=5             0 forced repair -10.0
 
 ``` r
 
-plot(mdp, actionsVisible = "policy")
+plot(mdp, actions_visible = "policy")
 ```
 
 ![](infinite-mdp_files/figure-html/unnamed-chunk-5-1.png)
@@ -286,27 +286,27 @@ value iteration:
 
 ``` r
 
-runValueIte(mdp,"Net reward","Duration", discountFactor = 0.5, eps = 1e-10, maxIte = 1000)
+run_value_ite(mdp, "Net reward", "Duration", discount_factor = 0.5, eps = 1e-10, max_ite = 1000)
 ```
 
     #> Run value iteration with epsilon = 1e-10 at most 1000 time(s)
     #> using weight 'Net reward' under discounted expected-weight Bellman operator 
     #> with 'Duration' as duration using discount factor 0.5.
-    #> Iterations: 33 Finished. Cpu time 2.1199e-05 sec.
+    #> Iterations: 33 Finished. Cpu time 1.7948e-05 sec.
 
 ``` r
 
-getPolicy(mdp)
+get_policy(mdp)
 ```
 
     #> # A tibble: 5 × 6
-    #>     sId stateStr stateLabel  aIdx actionLabel     weight
-    #>   <dbl> <chr>    <chr>      <int> <chr>            <dbl>
-    #> 1     5 0,0      i=1            0 no repair      -0.0642
-    #> 2     6 0,1      i=2            0 no repair      -0.706 
-    #> 3     7 0,2      i=3            0 no repair      -1.80  
-    #> 4     8 0,3      i=4            0 no repair      -3.34  
-    #> 5     9 0,4      i=5            0 forced repair -10.0
+    #>    s_id state_str state_label a_idx action_label    weight
+    #>   <dbl> <chr>     <chr>       <int> <chr>            <dbl>
+    #> 1     5 0,0       i=1             0 no repair      -0.0642
+    #> 2     6 0,1       i=2             0 no repair      -0.706 
+    #> 3     7 0,2       i=3             0 no repair      -1.80  
+    #> 4     8 0,3       i=4             0 no repair      -3.34  
+    #> 5     9 0,4       i=5             0 forced repair -10.0
 
 ## References
 

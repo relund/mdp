@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MDP2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,49 +51,49 @@
 
       <dl><dt>
 
-          <code><a href="binaryMDPWriter.html">binaryMDPWriter()</a></code>
+          <code><a href="binary_mdp_writer.html">binary_mdp_writer()</a></code>
 
         </dt>
         <dd>Function for writing an HMDP model to binary files. The function defines sub-functions which can be used to define an HMDP model saved in a set of binary files.</dd>
 
         <dt>
 
-          <code><a href="binaryActionWriter.html">binaryActionWriter()</a></code>
+          <code><a href="binary_action_writer.html">binary_action_writer()</a></code>
 
         </dt>
-        <dd>Function for writing actions of a HMDP model to binary files. The function defines sub-functions which can be used to define actions saved in a set of binary files. It is assumed that the states have been defined using <code>binaryMDPWriter</code> and that the id of the states is known (can be retrieved using e.g. <code>stateIdxDf</code>).</dd>
+        <dd>Function for writing actions of a HMDP model to binary files. The function defines sub-functions which can be used to define actions saved in a set of binary files. It is assumed that the states have been defined using <code>binary_mdp_writer</code> and that the id of the states is known (can be retrieved using e.g. <code>state_idx_df</code>).</dd>
 
         <dt>
 
-          <code><a href="hmpMDPWriter.html">hmpMDPWriter()</a></code>
+          <code><a href="hmp_mdp_writer.html">hmp_mdp_writer()</a></code>
 
         </dt>
         <dd>Function for writing an HMDP model to a hmp file (XML). The function define sub-functions which can be used to define an HMDP model stored in a hmp file.</dd>
 
         <dt>
 
-          <code><a href="memoryMDPWriter.html">memoryMDPWriter()</a></code>
+          <code><a href="memory_mdp_writer.html">memory_mdp_writer()</a></code>
 
         </dt>
         <dd>Function for building an HMDP model directly in memory.</dd>
 
         <dt>
 
-          <code><a href="getBinInfoActions.html">getBinInfoActions()</a></code>
+          <code><a href="get_bin_info_actions.html">get_bin_info_actions()</a></code>
 
         </dt>
         <dd>Info about the actions in the HMDP model under consideration.</dd>
 
         <dt>
 
-          <code><a href="getBinInfoStates.html">getBinInfoStates()</a></code>
+          <code><a href="get_bin_info_states.html">get_bin_info_states()</a></code>
 
         </dt>
         <dd>Info about the states in the binary files of the HMDP model under consideration.</dd>
 
         <dt>
 
-          <code><a href="randomHMDP.html">randomHMDP()</a></code>
+          <code><a href="random_hmdp.html">random_hmdp()</a></code>
 
         </dt>
         <dd>Generate a "random" HMDP stored in a set of binary files.</dd>
@@ -109,14 +109,14 @@
 
       <dl><dt>
 
-          <code><a href="loadMDP.html">loadMDP()</a></code>
+          <code><a href="load_mdp.html">load_mdp()</a></code>
 
         </dt>
         <dd>Load the HMDP model defined in the binary files. The model are created in memory using the external C++ library.</dd>
 
         <dt>
 
-          <code><a href="saveMDP.html">saveMDP()</a></code>
+          <code><a href="save_mdp.html">save_mdp()</a></code>
 
         </dt>
         <dd>Save the MDP to binary files</dd>
@@ -132,7 +132,7 @@
 
       <dl><dt>
 
-          <code><a href="getInfo.html">getInfo()</a></code>
+          <code><a href="get_info.html">get_info()</a></code>
 
         </dt>
         <dd>Information about the MDP</dd>
@@ -146,21 +146,21 @@
 
         <dt>
 
-          <code><a href="plotHypergraph.html">plotHypergraph()</a></code>
+          <code><a href="plot_hypergraph.html">plot_hypergraph()</a></code>
 
         </dt>
         <dd>Plot parts of the state expanded hypergraph.</dd>
 
         <dt>
 
-          <code><a href="getHypergraph.html">getHypergraph()</a></code>
+          <code><a href="get_hypergraph.html">get_hypergraph()</a></code>
 
         </dt>
         <dd>Return the (parts of) state-expanded hypergraph</dd>
 
         <dt>
 
-          <code><a href="getWIdx.html">getWIdx()</a></code>
+          <code><a href="get_w_idx.html">get_w_idx()</a></code>
 
         </dt>
         <dd>Return the index of a weight in the model. Note that index always start from zero (C++ style), i.e. the first weight, the first state at a stage etc has index 0.</dd>
@@ -176,21 +176,21 @@
 
       <dl><dt>
 
-          <code><a href="runPolicyIteAve.html">runPolicyIteAve()</a></code>
+          <code><a href="run_policy_ite_ave.html">run_policy_ite_ave()</a></code>
 
         </dt>
         <dd>Perform policy iteration using the average expected-weight Bellman operator on the MDP.</dd>
 
         <dt>
 
-          <code><a href="runPolicyIteDiscount.html">runPolicyIteDiscount()</a></code>
+          <code><a href="run_policy_ite_discount.html">run_policy_ite_discount()</a></code>
 
         </dt>
         <dd>Perform policy iteration using the discounted expected-weight Bellman operator on the MDP.</dd>
 
         <dt>
 
-          <code><a href="runValueIte.html">runValueIte()</a></code>
+          <code><a href="run_value_ite.html">run_value_ite()</a></code>
 
         </dt>
         <dd>Perform value iteration on the MDP.</dd>
@@ -206,35 +206,35 @@
 
       <dl><dt>
 
-          <code><a href="setPolicy.html">setPolicy()</a></code>
+          <code><a href="set_policy.html">set_policy()</a></code>
 
         </dt>
         <dd>Modify the current policy by setting policy action of states.</dd>
 
         <dt>
 
-          <code><a href="getPolicy.html">getPolicy()</a></code>
+          <code><a href="get_policy.html">get_policy()</a></code>
 
         </dt>
         <dd>Get parts of the optimal policy.</dd>
 
         <dt>
 
-          <code><a href="runCalcWeights.html">runCalcWeights()</a></code>
+          <code><a href="run_calc_weights.html">run_calc_weights()</a></code>
 
         </dt>
         <dd>Calculate weights based on current policy. Normally run after an optimal policy has been found.</dd>
 
         <dt>
 
-          <code><a href="getSteadyStatePr.html">getSteadyStatePr()</a></code>
+          <code><a href="get_steady_state_pr.html">get_steady_state_pr()</a></code>
 
         </dt>
         <dd>Calculate the steady state transition probabilities for the founder process (level 0).</dd>
 
         <dt>
 
-          <code><a href="getRPO.html">getRPO()</a></code>
+          <code><a href="get_rpo.html">get_rpo()</a></code>
 
         </dt>
         <dd>Calculate the retention pay-off (RPO) or opportunity cost for some states.</dd>
@@ -250,14 +250,14 @@
 
       <dl><dt>
 
-          <code><a href="convertBinary2HMP.html">convertBinary2HMP()</a></code>
+          <code><a href="convert_binary_to_hmp.html">convert_binary_to_hmp()</a></code>
 
         </dt>
-        <dd>Convert a HMDP model stored in binary format to a <code>hmp</code> (XML) file. The function simply parse the binary files and create <code>hmp</code> files using the <code><a href="../reference/hmpMDPWriter.html">hmpMDPWriter()</a></code>.</dd>
+        <dd>Convert a HMDP model stored in binary format to a <code>hmp</code> (XML) file. The function simply parse the binary files and create <code>hmp</code> files using the <code><a href="../reference/hmp_mdp_writer.html">hmp_mdp_writer()</a></code>.</dd>
 
         <dt>
 
-          <code><a href="convertHMP2Binary.html">convertHMP2Binary()</a></code>
+          <code><a href="convert_hmp_to_binary.html">convert_hmp_to_binary()</a></code>
 
         </dt>
         <dd>Convert a HMDP model stored in a hmp (xml) file to binary file format.</dd>

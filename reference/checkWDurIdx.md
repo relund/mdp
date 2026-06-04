@@ -6,20 +6,20 @@ used except you know what you are doing
 ## Usage
 
 ``` r
-.checkWDurIdx(iW, iDur, wLth)
+.check_w_dur_idx(i_w, i_dur, w_lth)
 ```
 
 ## Arguments
 
-- iW:
+- i_w:
 
   Index of the weight we want to optimize.
 
-- iDur:
+- i_dur:
 
   Index of the duration/time.
 
-- wLth:
+- w_lth:
 
   Number of weights in the model.
 

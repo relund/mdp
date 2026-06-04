@@ -5,7 +5,7 @@ space. Both hierarchical and ordinary-traditional MDPs can be modeled.
 
 ## See also
 
-[`loadMDP()`](http://relund.github.io/mdp/reference/loadMDP.md).
+[`load_mdp()`](http://relund.github.io/mdp/reference/load_mdp.md).
 
 ## Author
 

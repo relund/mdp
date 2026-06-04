@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MDP2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -212,13 +212,13 @@ lactations.</p>
 <p>Let us try to load the model and get some info:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prefix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"models"</span>, package <span class="op">=</span> <span class="st">"MDP2"</span><span class="op">)</span>, <span class="st">"/cow_"</span><span class="op">)</span></span>
-<span><span class="va">mdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadMDP.html">loadMDP</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Read binary files (0.000503095 sec.)</span></span>
-<span><span class="co">#&gt; Build the HMDP (0.000284589 sec.)</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (3.848e-06 sec.)</span></span></code></pre>
+<span><span class="va">mdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_mdp.html">load_mdp</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; Read binary files (0.000236298 sec.)</span></span>
+<span><span class="co">#&gt; Build the HMDP (0.000160212 sec.)</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Checking MDP and found no errors (4.377e-06 sec.)</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mdp</span> </span></code></pre></div>
-<pre><code><span><span class="co">#&gt; $binNames</span></span>
+<code class="sourceCode R"><span><span class="va">mdp</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; $bin_names</span></span>
 <span><span class="co">#&gt;  [1] "/home/runner/work/_temp/Library/MDP2/models/cow_stateIdx.bin"         </span></span>
 <span><span class="co">#&gt;  [2] "/home/runner/work/_temp/Library/MDP2/models/cow_stateIdxLbl.bin"      </span></span>
 <span><span class="co">#&gt;  [3] "/home/runner/work/_temp/Library/MDP2/models/cow_actionIdx.bin"        </span></span>
@@ -230,13 +230,13 @@ lactations.</p>
 <span><span class="co">#&gt;  [9] "/home/runner/work/_temp/Library/MDP2/models/cow_transWeight.bin"      </span></span>
 <span><span class="co">#&gt; [10] "/home/runner/work/_temp/Library/MDP2/models/cow_transWeightLbl.bin"   </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $timeHorizon</span></span>
+<span><span class="co">#&gt; $time_horizon</span></span>
 <span><span class="co">#&gt; [1] Inf</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $states</span></span>
 <span><span class="co">#&gt; [1] 42</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $founderStatesLast</span></span>
+<span><span class="co">#&gt; $founder_states_last</span></span>
 <span><span class="co">#&gt; [1] 3</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $actions</span></span>
@@ -245,126 +245,129 @@ lactations.</p>
 <span><span class="co">#&gt; $levels</span></span>
 <span><span class="co">#&gt; [1] 2</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $weightNames</span></span>
+<span><span class="co">#&gt; $weight_names</span></span>
 <span><span class="co">#&gt; [1] "Duration"   "Net reward" "Yield"     </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $weightActionNames</span></span>
+<span><span class="co">#&gt; $weight_action_names</span></span>
 <span><span class="co">#&gt; [1] "Duration"   "Net reward" "Yield"     </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $weightTransNames</span></span>
+<span><span class="co">#&gt; $weight_trans_names</span></span>
 <span><span class="co">#&gt; character(0)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $ptr</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x562dce1e6430&gt; of class 'HMDP' &lt;0x562dca9edcf0&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x55b7a0699ef0&gt; of class 'HMDP' &lt;0x55b79e2b56c0&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "HMDP" "list"</span></span></code></pre>
 <p>The state-expanded hypergraph representing the HMDP with infinite
 time-horizon can be plotted using</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hgf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getHypergraph.html">getHypergraph</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">hgf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_hypergraph.html">get_hypergraph</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span>
 <span><span class="co">## Rename labels</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">hgf</span><span class="op">$</span><span class="va">nodes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"Low yield"</span> <span class="op">~</span> <span class="st">"L"</span>,</span>
-<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"Avg yield"</span> <span class="op">~</span> <span class="st">"A"</span>,</span>
-<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"High yield"</span> <span class="op">~</span> <span class="st">"H"</span>,</span>
-<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"Dummy"</span> <span class="op">~</span> <span class="st">"D"</span>,</span>
-<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"Bad genetic level"</span> <span class="op">~</span> <span class="st">"Bad"</span>,</span>
-<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"Avg genetic level"</span> <span class="op">~</span> <span class="st">"Avg"</span>,</span>
-<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"Good genetic level"</span> <span class="op">~</span> <span class="st">"Good"</span>,</span>
-<span>      <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Error"</span></span>
-<span>   <span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">hgf</span><span class="op">$</span><span class="va">nodes</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>    <span class="va">label</span> <span class="op">==</span> <span class="st">"Low yield"</span> <span class="op">~</span> <span class="st">"L"</span>,</span>
+<span>    <span class="va">label</span> <span class="op">==</span> <span class="st">"Avg yield"</span> <span class="op">~</span> <span class="st">"A"</span>,</span>
+<span>    <span class="va">label</span> <span class="op">==</span> <span class="st">"High yield"</span> <span class="op">~</span> <span class="st">"H"</span>,</span>
+<span>    <span class="va">label</span> <span class="op">==</span> <span class="st">"Dummy"</span> <span class="op">~</span> <span class="st">"D"</span>,</span>
+<span>    <span class="va">label</span> <span class="op">==</span> <span class="st">"Bad genetic level"</span> <span class="op">~</span> <span class="st">"Bad"</span>,</span>
+<span>    <span class="va">label</span> <span class="op">==</span> <span class="st">"Avg genetic level"</span> <span class="op">~</span> <span class="st">"Avg"</span>,</span>
+<span>    <span class="va">label</span> <span class="op">==</span> <span class="st">"Good genetic level"</span> <span class="op">~</span> <span class="st">"Good"</span>,</span>
+<span>    <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Error"</span></span>
+<span>  <span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## Set grid id</span></span>
-<span><span class="va">dat</span><span class="op">$</span><span class="va">gId</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">&lt;-</span><span class="fl">85</span><span class="op">:</span><span class="fl">87</span></span>
-<span><span class="va">dat</span><span class="op">$</span><span class="va">gId</span><span class="op">[</span><span class="fl">43</span><span class="op">:</span><span class="fl">45</span><span class="op">]</span><span class="op">&lt;-</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
-<span><span class="va">getGId</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">process</span>,<span class="va">stage</span>,<span class="va">state</span><span class="op">)</span> <span class="op">{</span></span>
-<span>   <span class="kw">if</span> <span class="op">(</span><span class="va">process</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="va">start</span><span class="op">=</span><span class="fl">18</span></span>
-<span>   <span class="kw">if</span> <span class="op">(</span><span class="va">process</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="va">start</span><span class="op">=</span><span class="fl">22</span></span>
-<span>   <span class="kw">if</span> <span class="op">(</span><span class="va">process</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="va">start</span><span class="op">=</span><span class="fl">26</span></span>
-<span>   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">start</span> <span class="op">+</span> <span class="fl">14</span> <span class="op">*</span> <span class="va">stage</span> <span class="op">+</span> <span class="va">state</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">g_id</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">85</span><span class="op">:</span><span class="fl">87</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">g_id</span><span class="op">[</span><span class="fl">43</span><span class="op">:</span><span class="fl">45</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
+<span><span class="va">get_g_id</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">process</span>, <span class="va">stage</span>, <span class="va">state</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">process</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="va">start</span> <span class="op">&lt;-</span> <span class="fl">18</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">process</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="va">start</span> <span class="op">&lt;-</span> <span class="fl">22</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">process</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="va">start</span> <span class="op">&lt;-</span> <span class="fl">26</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">start</span> <span class="op">+</span> <span class="fl">14</span> <span class="op">*</span> <span class="va">stage</span> <span class="op">+</span> <span class="va">state</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="va">idx</span><span class="op">&lt;-</span><span class="fl">43</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">process</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
-<span>   <span class="kw">for</span> <span class="op">(</span><span class="va">stage</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span>
-<span>      <span class="kw">for</span> <span class="op">(</span><span class="va">state</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span>
-<span>         <span class="kw">if</span> <span class="op">(</span><span class="va">stage</span><span class="op">==</span><span class="fl">0</span> <span class="op">&amp;</span> <span class="va">state</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span> <span class="kw">break</span></span>
-<span>         <span class="va">idx</span><span class="op">&lt;-</span><span class="va">idx</span><span class="op">-</span><span class="fl">1</span></span>
-<span>         <span class="co">#cat(idx,process,stage,state,getGId(process,stage,state),"\n")</span></span>
-<span>         <span class="va">dat</span><span class="op">$</span><span class="va">gId</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span><span class="op">&lt;-</span><span class="fu">getGId</span><span class="op">(</span><span class="va">process</span>,<span class="va">stage</span>,<span class="va">state</span><span class="op">)</span></span>
-<span>      <span class="op">}</span></span>
+<span><span class="va">idx</span> <span class="op">&lt;-</span> <span class="fl">43</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">process</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">stage</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">for</span> <span class="op">(</span><span class="va">state</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="va">stage</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">&amp;</span> <span class="va">state</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="kw">break</span></span>
+<span>      <span class="va">idx</span> <span class="op">&lt;-</span> <span class="va">idx</span> <span class="op">-</span> <span class="fl">1</span></span>
+<span>      <span class="co"># cat(idx,process,stage,state,get_g_id(process,stage,state),"\n")</span></span>
+<span>      <span class="va">dat</span><span class="op">$</span><span class="va">g_id</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">get_g_id</span><span class="op">(</span><span class="va">process</span>, <span class="va">stage</span>, <span class="va">state</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
 <span><span class="va">hgf</span><span class="op">$</span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">dat</span></span>
 <span><span class="co">## Rename labels</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    label <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
 <span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"Replace"</span> <span class="op">~</span> <span class="st">"R"</span>,</span>
 <span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"Keep"</span> <span class="op">~</span> <span class="st">"K"</span>,</span>
 <span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"Dummy"</span> <span class="op">~</span> <span class="st">"D"</span>,</span>
 <span>      <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Error"</span></span>
-<span>      <span class="op">)</span>,</span>
-<span>      col <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>         <span class="va">label</span> <span class="op">==</span> <span class="st">"R"</span> <span class="op">~</span> <span class="st">"deepskyblue3"</span>,</span>
-<span>         <span class="va">label</span> <span class="op">==</span> <span class="st">"K"</span> <span class="op">~</span> <span class="st">"darkorange1"</span>,</span>
-<span>         <span class="va">label</span> <span class="op">==</span> <span class="st">"D"</span> <span class="op">~</span> <span class="st">"black"</span>,</span>
-<span>         <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Error"</span></span>
-<span>      <span class="op">)</span>,</span>
-<span>      lwd <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>      label <span class="op">=</span> <span class="st">""</span></span>
-<span>   <span class="op">)</span> </span>
+<span>    <span class="op">)</span>,</span>
+<span>    col <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"R"</span> <span class="op">~</span> <span class="st">"deepskyblue3"</span>,</span>
+<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"K"</span> <span class="op">~</span> <span class="st">"darkorange1"</span>,</span>
+<span>      <span class="va">label</span> <span class="op">==</span> <span class="st">"D"</span> <span class="op">~</span> <span class="st">"black"</span>,</span>
+<span>      <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Error"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    lwd <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>    label <span class="op">=</span> <span class="st">""</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span> <span class="op">&lt;-</span> <span class="va">dat</span></span>
 <span><span class="co">## Make the plot</span></span>
-<span><span class="fu"><a href="../reference/plotHypergraph.html">plotHypergraph</a></span><span class="op">(</span><span class="va">hgf</span>, gridDim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">7</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span>, radx <span class="op">=</span> <span class="fl">0.02</span>, rady <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plot_hypergraph.html">plot_hypergraph</a></span><span class="op">(</span><span class="va">hgf</span>, grid_dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">7</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span>, radx <span class="op">=</span> <span class="fl">0.02</span>, rady <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></span></code></pre></div>
 <p><img src="infinite-hmdp_files/figure-html/plotHMDP-1.png" class="r-plt" alt="" width="864" style="max-width:100%;"></p>
 <p>Note action <code>keep</code> is drawn with orange color and action
 <code>replace</code> with blue color.</p>
 <p>We find the optimal policy under the expected discounted reward
 criterion using policy iteration with an interest rate of 10%:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wLbl</span><span class="op">&lt;-</span><span class="st">"Net reward"</span>         <span class="co"># the weight we want to optimize (net reward)</span></span>
-<span><span class="va">durLbl</span><span class="op">&lt;-</span><span class="st">"Duration"</span>         <span class="co"># the duration/time label</span></span>
-<span><span class="fu"><a href="../reference/runPolicyIteDiscount.html">runPolicyIteDiscount</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">wLbl</span>, <span class="va">durLbl</span>, rate <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">w_lbl</span> <span class="op">&lt;-</span> <span class="st">"Net reward"</span> <span class="co"># the weight we want to optimize (net reward)</span></span>
+<span><span class="va">dur_lbl</span> <span class="op">&lt;-</span> <span class="st">"Duration"</span> <span class="co"># the duration/time label</span></span>
+<span><span class="fu"><a href="../reference/run_policy_ite_discount.html">run_policy_ite_discount</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w_lbl</span>, <span class="va">dur_lbl</span>, rate <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration using weight 'Net reward' under discounted expected-weight Bellman operator </span></span>
 <span><span class="co">#&gt; with 'Duration' as duration using discount factor 0.904837. </span></span>
-<span><span class="co">#&gt; Iteration(s): 1 2 3 4 finished. Cpu time: 3.848e-06 sec.</span></span></code></pre>
+<span><span class="co">#&gt; Iteration(s): 1 2 3 4 finished. Cpu time: 4.377e-06 sec.</span></span></code></pre>
 <p>The optimal policy is:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span> <span class="op">&lt;-</span> <span class="fu">right_join</span><span class="op">(</span><span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span>, <span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sId"</span>, <span class="st">"aIdx"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plotHypergraph.html">plotHypergraph</a></span><span class="op">(</span><span class="va">hgf</span>, gridDim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">7</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span>, radx <span class="op">=</span> <span class="fl">0.02</span>, rady <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span> <span class="op">&lt;-</span> <span class="fu">right_join</span><span class="op">(</span><span class="va">hgf</span><span class="op">$</span><span class="va">hyperarcs</span>, <span class="fu"><a href="../reference/get_policy.html">get_policy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"s_id"</span>, <span class="st">"a_idx"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_hypergraph.html">plot_hypergraph</a></span><span class="op">(</span><span class="va">hgf</span>, grid_dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">7</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span>, radx <span class="op">=</span> <span class="fl">0.02</span>, rady <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></span></code></pre></div>
 <p><img src="infinite-hmdp_files/figure-html/plotPolicy-1.png" class="r-plt" alt="" width="864" style="max-width:100%;"></p>
 <p>We may also find the policy which maximize the average reward per
 lactation:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wLbl</span><span class="op">&lt;-</span><span class="st">"Net reward"</span>         <span class="co"># the weight we want to optimize (net reward)</span></span>
-<span><span class="va">durLbl</span><span class="op">&lt;-</span><span class="st">"Duration"</span>         <span class="co"># the duration/time label</span></span>
-<span><span class="fu"><a href="../reference/runPolicyIteAve.html">runPolicyIteAve</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">wLbl</span>, <span class="va">durLbl</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">w_lbl</span> <span class="op">&lt;-</span> <span class="st">"Net reward"</span> <span class="co"># the weight we want to optimize (net reward)</span></span>
+<span><span class="va">dur_lbl</span> <span class="op">&lt;-</span> <span class="st">"Duration"</span> <span class="co"># the duration/time label</span></span>
+<span><span class="fu"><a href="../reference/run_policy_ite_ave.html">run_policy_ite_ave</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w_lbl</span>, <span class="va">dur_lbl</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Run policy iteration under average expected-weight Bellman operator using </span></span>
 <span><span class="co">#&gt; weight 'Net reward' over 'Duration'. Iterations (g): </span></span>
-<span><span class="co">#&gt; 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 3.848e-06 sec.</span></span></code></pre>
+<span><span class="co">#&gt; 1 (11000) 2 (11517.5) 3 (11543.8) 4 (11543.8) finished. Cpu time: 4.377e-06 sec.</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; [1] 11543.83</span></span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/getPolicy.html">getPolicy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_policy.html">get_policy</a></span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 42 × 6</span></span></span>
-<span><span class="co">#&gt;      sId stateStr  stateLabel  aIdx actionLabel  weight</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     3 0,2,0,4,0 Low yield      0 Replace     -<span style="color: #BB0000; text-decoration: underline;">7</span><span style="color: #BB0000;">369.</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     4 0,2,0,4,1 Avg yield      0 Replace     -<span style="color: #BB0000; text-decoration: underline;">5</span><span style="color: #BB0000;">369.</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     5 0,2,0,4,2 High yield     0 Replace     -<span style="color: #BB0000; text-decoration: underline;">3</span><span style="color: #BB0000;">369.</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     6 0,2,0,3,0 Low yield      0 Keep        -<span style="color: #BB0000; text-decoration: underline;">5</span><span style="color: #BB0000;">912.</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     7 0,2,0,3,1 Avg yield      0 Keep        -<span style="color: #BB0000; text-decoration: underline;">2</span><span style="color: #BB0000;">912.</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     8 0,2,0,3,2 High yield     0 Keep           87.7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     9 0,2,0,2,0 Low yield      0 Keep        -<span style="color: #BB0000; text-decoration: underline;">3</span><span style="color: #BB0000;">956.</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    10 0,2,0,2,1 Avg yield      0 Keep         -<span style="color: #BB0000;">456.</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    11 0,2,0,2,2 High yield     0 Keep         <span style="text-decoration: underline;">3</span>044. </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    12 0,2,0,1,0 Low yield      0 Keep        -<span style="color: #BB0000; text-decoration: underline;">3</span><span style="color: #BB0000;">750.</span> </span></span>
+<span><span class="co">#&gt;     s_id state_str state_label a_idx action_label  weight</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     3 0,2,0,4,0 Low yield       0 Replace      -<span style="color: #BB0000; text-decoration: underline;">7</span><span style="color: #BB0000;">369.</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     4 0,2,0,4,1 Avg yield       0 Replace      -<span style="color: #BB0000; text-decoration: underline;">5</span><span style="color: #BB0000;">369.</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     5 0,2,0,4,2 High yield      0 Replace      -<span style="color: #BB0000; text-decoration: underline;">3</span><span style="color: #BB0000;">369.</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     6 0,2,0,3,0 Low yield       0 Keep         -<span style="color: #BB0000; text-decoration: underline;">5</span><span style="color: #BB0000;">912.</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     7 0,2,0,3,1 Avg yield       0 Keep         -<span style="color: #BB0000; text-decoration: underline;">2</span><span style="color: #BB0000;">912.</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     8 0,2,0,3,2 High yield      0 Keep            87.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     9 0,2,0,2,0 Low yield       0 Keep         -<span style="color: #BB0000; text-decoration: underline;">3</span><span style="color: #BB0000;">956.</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    10 0,2,0,2,1 Avg yield       0 Keep          -<span style="color: #BB0000;">456.</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    11 0,2,0,2,2 High yield      0 Keep          <span style="text-decoration: underline;">3</span>044. </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    12 0,2,0,1,0 Low yield       0 Keep         -<span style="color: #BB0000; text-decoration: underline;">3</span><span style="color: #BB0000;">750</span>  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 32 more rows</span></span></span></code></pre>
 <p>Since other weights are defined for each action we can calculate the
 average reward per litre milk under the optimal policy:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/runCalcWeights.html">runCalcWeights</a></span><span class="op">(</span><span class="va">mdp</span>, w<span class="op">=</span><span class="va">wLbl</span>, criterion<span class="op">=</span><span class="st">"average"</span>, dur <span class="op">=</span> <span class="st">"Yield"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/run_calc_weights.html">run_calc_weights</a></span><span class="op">(</span><span class="va">mdp</span>, w <span class="op">=</span> <span class="va">w_lbl</span>, criterion <span class="op">=</span> <span class="st">"average"</span>, dur <span class="op">=</span> <span class="st">"Yield"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] 1.932615</span></span></code></pre>
 <p>or the average yield per lactation:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/runCalcWeights.html">runCalcWeights</a></span><span class="op">(</span><span class="va">mdp</span>, w<span class="op">=</span><span class="st">"Yield"</span>, criterion<span class="op">=</span><span class="st">"average"</span>, dur <span class="op">=</span> <span class="va">durLbl</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/run_calc_weights.html">run_calc_weights</a></span><span class="op">(</span><span class="va">mdp</span>, w <span class="op">=</span> <span class="st">"Yield"</span>, criterion <span class="op">=</span> <span class="st">"average"</span>, dur <span class="op">=</span> <span class="va">dur_lbl</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] 5973.166</span></span></code></pre>
 </div>
 <div class="section level2 unnumbered">
