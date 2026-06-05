@@ -176,8 +176,8 @@ w$close_writer()
 #> 
 #>   Closing memory MDP writer.
 #> 
-#> Build the HMDP from memory (7.6606e-05 sec.)
-#> Checking MDP and found no errors (1.432e-06 sec.)
+#> Build the HMDP from memory (9.8398e-05 sec.)
+#> Checking MDP and found no errors (1.382e-06 sec.)
 #> $bin_names
 #> [1] "<memory>"
 #> 
@@ -206,7 +206,7 @@ w$close_writer()
 #> character(0)
 #> 
 #> $ptr
-#> C++ object <0x5643934d2c20> of class 'HMDP' <0x5643940938b0>
+#> C++ object <0x5624be0498b0> of class 'HMDP' <0x5624bad18460>
 #> 
 #> attr(,"class")
 #> [1] "HMDP" "list"

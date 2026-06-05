@@ -157,9 +157,9 @@ w$close_writer()
 
 ## Load the model into memory
 mdp<-load_mdp(prefix)
-#> Read binary files (0.000135504 sec.)
-#> Build the HMDP (3.0756e-05 sec.)
-#> Checking MDP and found no errors (1.492e-06 sec.)
+#> Read binary files (0.000150186 sec.)
+#> Build the HMDP (3.9139e-05 sec.)
+#> Checking MDP and found no errors (1.322e-06 sec.)
 mdp
 #> $bin_names
 #>  [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      
@@ -193,7 +193,7 @@ mdp
 #> character(0)
 #> 
 #> $ptr
-#> C++ object <0x56439a294540> of class 'HMDP' <0x5643940938b0>
+#> C++ object <0x5624bc4675d0> of class 'HMDP' <0x5624bad18460>
 #> 
 #> attr(,"class")
 #> [1] "HMDP" "list"
@@ -275,7 +275,7 @@ scrapValues<-c(30,10,5,0)   # scrap values (the values of the 4 states at stage 
 run_value_ite(mdp, w, term_values=scrapValues)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
 #> using weight 'Net reward' under expected-weight Bellman operator.
-#>  Finished. Cpu time 6.871e-06 sec.
+#>  Finished. Cpu time 8.522e-06 sec.
 get_policy(mdp)     # optimal policy
 #> # A tibble: 14 × 6
 #>     s_id state_str state_label a_idx action_label weight
@@ -404,9 +404,9 @@ w$close_writer()
 
 ## Have a look at the state-expanded hypergraph
 mdp<-load_mdp(prefix)
-#> Read binary files (0.000127963 sec.)
-#> Build the HMDP (3.1637e-05 sec.)
-#> Checking MDP and found no errors (1.422e-06 sec.)
+#> Read binary files (0.000152891 sec.)
+#> Build the HMDP (3.5062e-05 sec.)
+#> Checking MDP and found no errors (1.513e-06 sec.)
 mdp
 #> $bin_names
 #>  [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      
@@ -440,7 +440,7 @@ mdp
 #> character(0)
 #> 
 #> $ptr
-#> C++ object <0x5643934d2c20> of class 'HMDP' <0x5643940938b0>
+#> C++ object <0x5624be0498b0> of class 'HMDP' <0x5624bad18460>
 #> 
 #> attr(,"class")
 #> [1] "HMDP" "list"
@@ -524,7 +524,7 @@ w<-"Net reward"             # label of the weight we want to optimize
 run_value_ite(mdp, w, term_values = 0)
 #> Run value iteration with epsilon = 0 at most 1 time(s)
 #> using weight 'Net reward' under expected-weight Bellman operator.
-#>  Finished. Cpu time 1.8518e-05 sec.
+#>  Finished. Cpu time 8.313e-06 sec.
 get_policy(mdp)     # optimal policy
 #> # A tibble: 13 × 6
 #>     s_id state_str state_label a_idx action_label weight

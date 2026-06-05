@@ -1,5 +1,10 @@
 # Changelog
 
+## MDP2 v2.3.0.0
+
+- New R API using snake_case naming convention
+- Code styled using styler
+
 ## MDP2 v2.2.2.0
 
 - Bug fix when build model

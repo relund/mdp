@@ -108,10 +108,10 @@ prefix <- paste0(system.file("models", package = "MDP2"), "/hct611-1_")
 mdp <- load_mdp(prefix)
 ```
 
-    #> Read binary files (0.000140663 sec.)
-    #> Build the HMDP (2.8733e-05 sec.)
+    #> Read binary files (0.000162145 sec.)
+    #> Build the HMDP (2.7582e-05 sec.)
 
-    #> Checking MDP and found no errors (3.575e-06 sec.)
+    #> Checking MDP and found no errors (4.046e-06 sec.)
 
 The variable `mdp` is a list with a pointer to the MDP object stored in
 memory.
@@ -158,7 +158,7 @@ mdp
     #> character(0)
     #> 
     #> $ptr
-    #> C++ object <0x556879cea9b0> of class 'HMDP' <0x556878df6ab0>
+    #> C++ object <0x5626517814d0> of class 'HMDP' <0x562651d36c30>
     #> 
     #> attr(,"class")
     #> [1] "HMDP" "list"
@@ -221,7 +221,7 @@ run_policy_ite_ave(mdp, "Net reward", "Duration")
 
     #> Run policy iteration under average expected-weight Bellman operator using 
     #> weight 'Net reward' over 'Duration'. Iterations (g): 
-    #> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 3.575e-06 sec.
+    #> 1 (-0.512821) 2 (-0.446154) 3 (-0.43379) 4 (-0.43379) finished. Cpu time: 4.046e-06 sec.
 
     #> [1] -0.43379
 
@@ -257,7 +257,7 @@ run_policy_ite_discount(mdp, "Net reward", "Duration", discount_factor = 0.5)
 
     #> Run policy iteration using weight 'Net reward' under discounted expected-weight Bellman operator 
     #> with 'Duration' as duration using discount factor 0.5. 
-    #> Iteration(s): 1 2 finished. Cpu time: 3.575e-06 sec.
+    #> Iteration(s): 1 2 finished. Cpu time: 4.046e-06 sec.
 
 ``` r
 
@@ -292,7 +292,7 @@ run_value_ite(mdp, "Net reward", "Duration", discount_factor = 0.5, eps = 1e-10,
     #> Run value iteration with epsilon = 1e-10 at most 1000 time(s)
     #> using weight 'Net reward' under discounted expected-weight Bellman operator 
     #> with 'Duration' as duration using discount factor 0.5.
-    #> Iterations: 33 Finished. Cpu time 1.7948e-05 sec.
+    #> Iterations: 33 Finished. Cpu time 1.992e-05 sec.
 
 ``` r
 
