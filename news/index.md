@@ -7,6 +7,8 @@
 
 ## MDP2 v2.2.2.0
 
+CRAN release: 2026-06-12
+
 - Bug fix when build model
 - Support for optimization sense (both min and max)
 - Various Bellman operators implemented

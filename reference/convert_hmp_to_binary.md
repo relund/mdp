@@ -67,7 +67,7 @@ convert_binary_to_hmp(prefix1, duration = NULL, out = "machine1_converted.hmp")
 #> Model saved to file: machine1_converted.hmp 
 #> Converted binary files to hmp format.
 #>    user  system elapsed 
-#>   0.016   0.001   0.018 
+#>   0.018   0.000   0.018 
 # have a look at the hmp file
 cat(readr::read_file("machine1_converted.hmp"))
 #> <?xml version="1.0" encoding="UTF-8"?>
@@ -216,7 +216,7 @@ convert_hmp_to_binary(file = paste0(fDir,"/machine1.hmp"), prefix = "machine_cov
 #> Converted /home/runner/work/_temp/Library/MDP2/models/machine1.hmp to binary format.
 #> 
 #>    user  system elapsed 
-#>   0.009   0.001   0.010 
+#>    0.01    0.00    0.01 
 get_bin_info_states(prefix = "machine_cov_")
 #> # A tibble: 14 × 3
 #>     s_id stage_str label      
