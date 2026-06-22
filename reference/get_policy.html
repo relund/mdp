@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MDP2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Get parts of the optimal policy.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/relund/mdp/blob/HEAD/R/mdp.R" class="external-link"><code>R/mdp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/relund/mdp/blob/master/R/mdp.R" class="external-link"><code>R/mdp.R</code></a></small>
       <div class="d-none name"><code>get_policy.Rd</code></div>
     </div>
 
@@ -194,9 +194,9 @@ the g value and the label for weight and duration. See the vignette about extern
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load the model into memory</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="load_mdp.html">load_mdp</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.0001631 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.116e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (2.423e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.00018319 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.2573e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.482e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $bin_names</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "machine1_stateIdx.bin"          "machine1_stateIdxLbl.bin"      </span>
@@ -230,7 +230,7 @@ the g value and the label for weight and duration. See the vignette about extern
 <span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x556226165b60&gt; of class 'HMDP' &lt;0x55622202d5e0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x557d796e1cd0&gt; of class 'HMDP' &lt;0x557d77f7bab0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "HMDP" "list"</span>
@@ -312,7 +312,7 @@ the g value and the label for weight and duration. See the vignette about extern
 <span class="r-in"><span><span class="fu"><a href="run_value_ite.html">run_value_ite</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w</span>, term_values<span class="op">=</span><span class="va">scrapValues</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> using weight 'Net reward' under expected-weight Bellman operator.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 8.883e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 9.944e-06 sec.</span>
 <span class="r-in"><span><span class="fu">get_policy</span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>     <span class="co"># optimal policy</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     s_id state_str state_label a_idx action_label weight</span>
@@ -441,9 +441,9 @@ the g value and the label for weight and duration. See the vignette about extern
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Have a look at the state-expanded hypergraph</span></span></span>
 <span class="r-in"><span><span class="va">mdp</span><span class="op">&lt;-</span><span class="fu"><a href="load_mdp.html">load_mdp</a></span><span class="op">(</span><span class="va">prefix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000172473 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.5197e-05 sec.)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.733e-06 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Read binary files (0.000172685 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Build the HMDP (4.2673e-05 sec.)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking MDP and found no errors (1.593e-06 sec.)</span>
 <span class="r-in"><span><span class="va">mdp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $bin_names</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "machine2_stateIdx.bin"          "machine2_stateIdxLbl.bin"      </span>
@@ -477,7 +477,7 @@ the g value and the label for weight and duration. See the vignette about extern
 <span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ptr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x556226d3fc80&gt; of class 'HMDP' &lt;0x55622202d5e0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x557d77c12020&gt; of class 'HMDP' &lt;0x557d77f7bab0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "HMDP" "list"</span>
@@ -561,7 +561,7 @@ the g value and the label for weight and duration. See the vignette about extern
 <span class="r-in"><span><span class="fu"><a href="run_value_ite.html">run_value_ite</a></span><span class="op">(</span><span class="va">mdp</span>, <span class="va">w</span>, term_values <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Run value iteration with epsilon = 0 at most 1 time(s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> using weight 'Net reward' under expected-weight Bellman operator.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 9.874e-06 sec.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Finished. Cpu time 9.765e-06 sec.</span>
 <span class="r-in"><span><span class="fu">get_policy</span><span class="op">(</span><span class="va">mdp</span><span class="op">)</span>     <span class="co"># optimal policy</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 13 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     s_id state_str state_label a_idx action_label weight</span>

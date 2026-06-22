@@ -233,7 +233,7 @@ convert_hmp_to_binary(file = paste0(fDir,"/machine1.hmp"), prefix = "machine_cov
 #> Converted /home/runner/work/_temp/Library/MDP2/models/machine1.hmp to binary format.
 #> 
 #>    user  system elapsed 
-#>   0.009   0.001   0.011 
+#>   0.011   0.000   0.011 
 get_bin_info_states(prefix = "machine_cov_")
 #> # A tibble: 14 × 3
 #>     s_id stage_str label      

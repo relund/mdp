@@ -8,15 +8,15 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/relund/mdp/blob/HEAD/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/relund/mdp/blob/master/DESCRIPTION)
 
 Relund Nielsen L (2026). *MDP2: Markov Decision Processes (MDPs)*. R
-package version 2.3.0.0, <https://relund.github.io/mdp/>.
+package version 3.0.0, <https://relund.github.io/mdp/>.
 
     @Manual{,
       title = {MDP2: Markov Decision Processes (MDPs)},
       author = {Lars {Relund Nielsen}},
       year = {2026},
-      note = {R package version 2.3.0.0},
+      note = {R package version 3.0.0},
       url = {https://relund.github.io/mdp/},
     }
