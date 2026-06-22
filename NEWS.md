@@ -1,5 +1,5 @@
 
-# MDP2 v2.3.0.0
+# MDP2 v3.0.0
 
 * New R API using snake_case naming convention
 * Code styled using styler
