@@ -17,6 +17,11 @@
 #' @param show_grid If true show the grid points (good for debugging).
 #' @param radx Horizontal radius of the box.
 #' @param rady Vertical radius of the box.
+#' @param state_lwd Line width of the state/node border, or `"custom"` to read
+#'   per-node values from `hgf$nodes$state_lwd`.
+#' @param state_lty Line type of the state/node border, using base R line type
+#'   conventions, or `"custom"` to read per-node values from
+#'   `hgf$nodes$state_lty`.
 #' @param cex Relative size of text.
 #' @param mar_x Horizontal margin.
 #' @param mar_y Vertical margin.
@@ -44,6 +49,9 @@
 #'   column in `hgf$hyperarcs`).
 #' @param action_color Action coloring scheme. Default `""` uses black lines. `"label"` uses different colors based on the action labels. `"policy"` highlights the current policy.
 #' @param actions_visible Action visibility mode. `"all"` (default) shows all actions. `"policy"` only shows actions in the current policy.
+#' @param arrow Arrow direction in time. `"backward"` (default) keeps the
+#'   current arrow direction, `"forward"` reverses arrowheads, and `"none"`
+#'   draws hyperarc lines without arrowheads.
 #' @param connected_to Optional vector of state ids. If supplied, plot only states
 #'   reachable from these states by following visible hyperarcs forward,
 #'   and trim hyperarcs and transition-level data to the remaining states.
@@ -52,6 +60,10 @@
 #'   nodes within each column are placed consecutively from the top and the
 #'   number of grid rows is reduced to the maximum number of visible nodes in
 #'   any column.
+#' @param draw_time_index Where to draw time/stage labels. `"none"` (default)
+#'   draws no labels, `"top"` draws labels above each column, and `"bottom"`
+#'   draws labels below each column. Finite-horizon MDPs are labelled `t=0`,
+#'   `1`, `2`, ...; infinite-horizon MDPs are labelled `t`, `t+1`, ...
 #' @param mdp The MDP model. Required if `state_label` contains `"weight"`,
 #'   `action_color = "policy"`, or `actions_visible = "policy"`.
 #' @param ... Graphical parameters passed to `textempty`.
@@ -60,6 +72,7 @@
 #' @seealso [get_hypergraph()] and [plot.HMDP()].
 #' @example inst/examples/plot-ex.R
 #' @import diagram
+#' @importFrom shape Arrows
 #' @export
 plot_hypergraph <-
   function(hgf,
@@ -67,6 +80,8 @@ plot_hypergraph <-
            show_grid = FALSE,
            radx = 0.03,
            rady = 0.05,
+           state_lwd = 0.5,
+           state_lty = 1,
            cex = 1,
            mar_x = 0.035,
            mar_y = 0.15,
@@ -80,8 +95,10 @@ plot_hypergraph <-
            action_w_label = "none",
            action_color = c("", "label", "policy"),
            actions_visible = c("all", "policy"),
+           arrow = c("backward", "forward", "none"),
            connected_to = NULL,
            recalc_grid = FALSE,
+           draw_time_index = c("none", "top", "bottom"),
            mdp = NULL,
            ...) {
     normalize_label_arg <- function(x, default, arg) {
@@ -162,7 +179,14 @@ plot_hypergraph <-
     )
     action_color <- match.arg(action_color)
     actions_visible <- match.arg(actions_visible)
-
+    arrow <- match.arg(arrow)
+    draw_time_index <- match.arg(draw_time_index)
+    if (identical(state_lwd, "custom") && (is.null(hgf$nodes) || !"state_lwd" %in% names(hgf$nodes))) {
+      stop("state_lwd = \"custom\" requires a state_lwd column in hgf$nodes.", call. = FALSE)
+    }
+    if (identical(state_lty, "custom") && (is.null(hgf$nodes) || !"state_lty" %in% names(hgf$nodes))) {
+      stop("state_lty = \"custom\" requires a state_lty column in hgf$nodes.", call. = FALSE)
+    }
     # Apply actions_visible and action_color logic to hgf$hyperarcs
     if (!is.null(hgf$hyperarcs)) {
       if (actions_visible == "policy") {
@@ -428,6 +452,27 @@ plot_hypergraph <-
         ellipse_boundary_point(mid[i, ], toward)
       }, numeric(2)))
     }
+    draw_state_node <- function(mid, lab, lwd, lty) {
+      angle <- seq(0, 2 * pi, length.out = 121)
+      x <- mid[1] + radx * cos(angle)
+      y <- mid[2] + rady * sin(angle)
+
+      graphics::polygon(x, y, col = "white", border = NA)
+      graphics::lines(x, y, col = "black", lwd = lwd, lty = lty)
+      textplain(mid = mid, height = rady, lab = lab, adj = c(0.5, 0.5), cex = cex, ...)
+    }
+    time_index_labels <- function() {
+      if (!is.null(mdp) && !is.null(mdp$time_horizon) && is.infinite(mdp$time_horizon)) {
+        if (grid_dim[2] == 1) {
+          return("italic(t)")
+        }
+        return(c("italic(t)", paste0("italic(t)+", seq_len(grid_dim[2] - 1))))
+      }
+      if (grid_dim[2] == 1) {
+        return("italic(t)==0")
+      }
+      c("italic(t)==0", as.character(seq_len(grid_dim[2] - 1)))
+    }
     pos <- coordinates(rep(grid_dim[2], grid_dim[1]), hor = TRUE) # coordinates of each point in the grid
 
     # reposition
@@ -443,6 +488,12 @@ plot_hypergraph <-
 
     xlim <- c(min(pos[, 1]) - mar_x, max(pos[, 1]) + mar_x)
     ylim <- c(min(pos[, 2]) - mar_y, max(pos[, 2]) + mar_y)
+    timeIndexPad <- if (draw_time_index == "none") 0 else max(mar_y, 0.04)
+    if (draw_time_index == "top") {
+      ylim[2] <- max(pos[, 2]) + 2 * timeIndexPad
+    } else if (draw_time_index == "bottom") {
+      ylim[1] <- min(pos[, 2]) - 2 * timeIndexPad
+    }
     openplotmat(xlim = xlim, ylim = ylim) # main = "State expanded hypergraph"
     if (draw_border) {
       outsidePadding <- stats::setNames(graphics::par("mai"), c("bottom", "left", "top", "right"))
@@ -463,13 +514,25 @@ plot_hypergraph <-
       )
     }
 
-    # plot time index
-    # if (addTime) {
-    #    posT <- matrix(c(unique(pos[,1]), rep(0, grid_dim[2])), ncol = 2)  # coordinates for time index
-    #    colnames(posT) <- colnames(pos)
-    #    for (i in 1:grid_dim[2] - 1) textempty(posT[i+1, ], lab = parse(text = str_c("italic(t == ", i, ")")), cex=cex)
-    # }
-
+    if (draw_time_index != "none") {
+      colX <- vapply(seq_len(grid_dim[2]), function(col) {
+        pos[(col - 1) * grid_dim[1] + 1, 1]
+      }, numeric(1))
+      timeY <- if (draw_time_index == "top") {
+        max(pos[, 2]) + timeIndexPad
+      } else {
+        min(pos[, 2]) - timeIndexPad
+      }
+      timeLabels <- parse(text = time_index_labels())
+      for (i in seq_along(colX)) {
+        textempty(
+          c(colX[i], timeY),
+          lab = timeLabels[i],
+          cex = cex,
+          ...
+        )
+      }
+    }
 
     # plot actions
     if (!is.null(hgf$hyperarcs)) {
@@ -575,26 +638,47 @@ plot_hypergraph <-
         }
         fromBoundary <- ellipse_boundary_points(fromPos, splitCentre)
         toBoundary <- ellipse_boundary_point(toPos, splitCentre)
+        splitCentre <- if (is.null(centre)) {
+          colMeans(fromBoundary) + 0.5 * (toBoundary - colMeans(fromBoundary))
+        } else {
+          centre
+        }
         # cat("i:",i,"highlight:",hgf$hyperarcs$highlight[i],"\n")
         # if (hgf$hyperarcs$highlight[i]) splitarrow(from = pos[g_map(trans), ], to = pos[g_map(hgf$hyperarcs[i,1]),], arr.side = 2, arr.pos = 0.1, lwd=2, lty=1,
         #                                      arr.type="curved", arr.lwd = 0.5, arr.length = 0.1, arr.width = 0.08, lcol="gray")
-        pt <-
-          splitarrow(
-            from = fromBoundary,
-            to = toBoundary,
-            centre = centre,
-            arr.side = 2,
-            arr.pos = 0.1,
-            lwd = hgf$hyperarcs$lwd[i],
-            lty = hgf$hyperarcs$lty[i],
+        splitarrow(
+          from = fromBoundary,
+          to = toBoundary,
+          centre = splitCentre,
+          arr.side = integer(0),
+          arr.pos = 0.1,
+          lwd = hgf$hyperarcs$lwd[i],
+          lty = hgf$hyperarcs$lty[i],
+          arr.type = "curved",
+          arr.lwd = 0.5,
+          arr.length = 0.1,
+          arr.width = 0.08,
+          lcol = hgf$hyperarcs$col[i]
+        )
+        if (arrow != "none") {
+          arrowPoint <- 0.1 * toBoundary + 0.9 * splitCentre
+          arrowFrom <- if (arrow == "backward") splitCentre else toBoundary
+          shape::Arrows(
+            x0 = arrowFrom[1],
+            y0 = arrowFrom[2],
+            x1 = arrowPoint[1],
+            y1 = arrowPoint[2],
+            segment = FALSE,
             arr.type = "curved",
             arr.lwd = 0.5,
             arr.length = 0.1,
             arr.width = 0.08,
-            lcol = hgf$hyperarcs$col[i]
+            lcol = hgf$hyperarcs$col[i],
+            arr.col = hgf$hyperarcs$col[i]
           )
+        }
         textempty(
-          pt,
+          splitCentre,
           lab = hgf$hyperarcs$label[i],
           adj = c(-0.1, 0.1),
           cex = cex,
@@ -602,7 +686,7 @@ plot_hypergraph <-
         )
         if ("action_w_label" %in% names(hgf$hyperarcs) && !is.na(hgf$hyperarcs$action_w_label[i]) && hgf$hyperarcs$action_w_label[i] != "") {
           textempty(
-            (toBoundary + pt) / 2,
+            (toBoundary + splitCentre) / 2,
             lab = hgf$hyperarcs$action_w_label[i],
             adj = c(0.5, -0.6),
             cex = cex,
@@ -622,7 +706,7 @@ plot_hypergraph <-
             if (is.na(stateIndex) || is.na(labs[j])) next
             transPos <- pos[hgf$nodes$g_id[stateIndex], ]
             transBoundary <- ellipse_boundary_point(transPos, splitCentre)
-            labelPos <- (pt + transBoundary) / 2
+            labelPos <- (splitCentre + transBoundary) / 2
             textempty(
               labelPos,
               lab = labs[j],
@@ -638,7 +722,9 @@ plot_hypergraph <-
     # plot states
     if (!is.null(hgf$nodes)) {
       for (i in seq_len(nrow(hgf$nodes))) {
-        textellipse(pos[hgf$nodes$g_id[i], ], lab = hgf$nodes$label[i], radx = radx, rady = rady, shadow.size = 0, lwd = 0.5, cex = cex)
+        node_lwd <- if (identical(state_lwd, "custom")) hgf$nodes$state_lwd[i] else state_lwd
+        node_lty <- if (identical(state_lty, "custom")) hgf$nodes$state_lty[i] else state_lty
+        draw_state_node(pos[hgf$nodes$g_id[i], ], lab = hgf$nodes$label[i], lwd = node_lwd, lty = node_lty)
       }
     }
 
@@ -767,8 +853,8 @@ get_hypergraph <- function(mdp, ...) {
     dplyr::select(-"state_str", -"state_label", -"weights", -"label1")
 
   states <- dat$df %>%
-    dplyr::mutate(g_id = NA_integer_) %>%
-    dplyr::select("s_id", "state_str", "label", "g_id")
+    dplyr::mutate(g_id = NA_integer_, state_lwd = 0.5, state_lty = 1) %>%
+    dplyr::select("s_id", "state_str", "label", "g_id", "state_lwd", "state_lty")
   if (mdp$time_horizon == Inf) {
     states$label[1:mdp$founder_states_last] <- states$label[(nrow(states) - mdp$founder_states_last + 1):nrow(states)]
   }

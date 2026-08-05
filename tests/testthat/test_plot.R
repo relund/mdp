@@ -31,6 +31,26 @@ test_that("plot_hypergraph draws optional trans labels", {
   expect_invisible(plot_hypergraph(hgf, c(2, 2), trans_labels = "weights"))
   expect_invisible(plot_hypergraph(hgf, c(2, 2), trans_labels = "label|prob|weights"))
   expect_invisible(plot_hypergraph(hgf, c(2, 2), trans_labels = "custom"))
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), arrow = "backward"))
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), arrow = "forward"))
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), arrow = "forward", trans_labels = "weights"))
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), arrow = "none"))
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), draw_time_index = "top"))
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), draw_time_index = "bottom"))
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), draw_time_index = "top", mdp = list(time_horizon = Inf)))
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), state_lwd = 2, state_lty = 2))
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), state_lwd = 2, state_lty = "dashed"))
+  hgf$nodes$state_lwd <- c(1, 2, 3)
+  hgf$nodes$state_lty <- c("solid", "dashed", "dotted")
+  expect_invisible(plot_hypergraph(hgf, c(2, 2), state_lwd = "custom", state_lty = "custom"))
+  expect_error(
+    plot_hypergraph(list(nodes = dplyr::select(hgf$nodes, -state_lwd), hyperarcs = hgf$hyperarcs), c(2, 2), state_lwd = "custom"),
+    'state_lwd = "custom" requires a state_lwd column'
+  )
+  expect_error(
+    plot_hypergraph(list(nodes = dplyr::select(hgf$nodes, -state_lty), hyperarcs = hgf$hyperarcs), c(2, 2), state_lty = "custom"),
+    'state_lty = "custom" requires a state_lty column'
+  )
 })
 
 test_that("plot_hypergraph ignores missing trans and validates label columns", {
@@ -125,6 +145,7 @@ test_that("get_hypergraph returns nested weight and transition columns", {
   hgf <- get_hypergraph(mdp)
 
   expect_true(all(c("action_weights", "trans", "pr", "trans_weights") %in% names(hgf$hyperarcs)))
+  expect_true(all(c("state_lwd", "state_lty") %in% names(hgf$nodes)))
   expect_false(any(grepl("^trans[0-9]+$|^pr[0-9]+$", names(hgf$hyperarcs))))
   expect_equal(hgf$hyperarcs$action_weights[[1]], 5)
   expect_equal(hgf$hyperarcs$trans[[1]], c(0, 1))

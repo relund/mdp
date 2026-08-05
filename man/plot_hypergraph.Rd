@@ -10,6 +10,8 @@ plot_hypergraph(
   show_grid = FALSE,
   radx = 0.03,
   rady = 0.05,
+  state_lwd = 0.5,
+  state_lty = 1,
   cex = 1,
   mar_x = 0.035,
   mar_y = 0.15,
@@ -23,8 +25,10 @@ plot_hypergraph(
   action_w_label = "none",
   action_color = c("", "label", "policy"),
   actions_visible = c("all", "policy"),
+  arrow = c("backward", "forward", "none"),
   connected_to = NULL,
   recalc_grid = FALSE,
+  draw_time_index = c("none", "top", "bottom"),
   mdp = NULL,
   ...
 )
@@ -46,6 +50,13 @@ probabilities), \code{action_weights} (a list-column of action weights),
 \item{radx}{Horizontal radius of the box.}
 
 \item{rady}{Vertical radius of the box.}
+
+\item{state_lwd}{Line width of the state/node border, or \code{"custom"} to read
+per-node values from \code{hgf$nodes$state_lwd}.}
+
+\item{state_lty}{Line type of the state/node border, using base R line type
+conventions, or \code{"custom"} to read per-node values from
+\code{hgf$nodes$state_lty}.}
 
 \item{cex}{Relative size of text.}
 
@@ -87,6 +98,10 @@ column in \code{hgf$hyperarcs}).}
 
 \item{actions_visible}{Action visibility mode. \code{"all"} (default) shows all actions. \code{"policy"} only shows actions in the current policy.}
 
+\item{arrow}{Arrow direction in time. \code{"backward"} (default) keeps the
+current arrow direction, \code{"forward"} reverses arrowheads, and \code{"none"}
+draws hyperarc lines without arrowheads.}
+
 \item{connected_to}{Optional vector of state ids. If supplied, plot only states
 reachable from these states by following visible hyperarcs forward,
 and trim hyperarcs and transition-level data to the remaining states.}
@@ -96,6 +111,11 @@ grid for the visible nodes. Nodes keep their original columns, but visible
 nodes within each column are placed consecutively from the top and the
 number of grid rows is reduced to the maximum number of visible nodes in
 any column.}
+
+\item{draw_time_index}{Where to draw time/stage labels. \code{"none"} (default)
+draws no labels, \code{"top"} draws labels above each column, and \code{"bottom"}
+draws labels below each column. Finite-horizon MDPs are labelled \code{t=0},
+\code{1}, \code{2}, ...; infinite-horizon MDPs are labelled \code{t}, \code{t+1}, ...}
 
 \item{mdp}{The MDP model. Required if \code{state_label} contains \code{"weight"},
 \code{action_color = "policy"}, or \code{actions_visible = "policy"}.}

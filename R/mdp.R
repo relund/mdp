@@ -681,6 +681,123 @@ save_mdp <- function(mdp, prefix = "", get_log = TRUE) {
 }
 
 
+#' Set an action weight in a loaded MDP
+#'
+#' Modifies one action-level weight in the in-memory model. Use [save_mdp()] if
+#' the modified model should be written to binary files.
+#'
+#' @param mdp The MDP loaded using [load_mdp()] or created using
+#'   [memory_mdp_writer()].
+#' @param weight A finite numeric scalar with the new action weight.
+#' @param s_id Zero-based state index.
+#' @param a_idx Zero-based action index within the state.
+#' @param weight_name The name of an action-level weight.
+#'
+#' @return `NULL`, invisibly.
+#' @export
+set_action_weight <- function(mdp, weight, s_id, a_idx, weight_name) {
+  if (!inherits(mdp, "HMDP")) {
+    stop("`mdp` must be an HMDP model.", call. = FALSE)
+  }
+  if (!is.numeric(weight) || is.logical(weight) || length(weight) != 1L ||
+      is.na(weight) || !is.finite(weight)) {
+    stop("`weight` must be one finite numeric value.", call. = FALSE)
+  }
+  is_scalar_index <- function(x) {
+    is.numeric(x) && !is.logical(x) && length(x) == 1L && !is.na(x) &&
+      is.finite(x) && x >= 0 && x <= .Machine$integer.max && x == floor(x)
+  }
+  if (!is_scalar_index(s_id)) {
+    stop("`s_id` must be one non-negative whole number.", call. = FALSE)
+  }
+  if (!is_scalar_index(a_idx)) {
+    stop("`a_idx` must be one non-negative whole number.", call. = FALSE)
+  }
+  if (!is.character(weight_name) || length(weight_name) != 1L ||
+      is.na(weight_name) || !nzchar(weight_name)) {
+    stop("`weight_name` must be one non-empty string.", call. = FALSE)
+  }
+
+  weight_idx <- which(mdp$weight_action_names == weight_name)
+  if (length(weight_idx) == 0L) {
+    weight_idx <- which(grepl(weight_name, mdp$weight_action_names, fixed = TRUE))
+  }
+  if (length(weight_idx) == 0L) {
+    stop("The action weight name does not exist.", call. = FALSE)
+  }
+  if (length(weight_idx) > 1L) {
+    stop("The action weight name is ambiguous.", call. = FALSE)
+  }
+
+  mdp$ptr$setActionW(
+    as.numeric(weight), as.integer(s_id), as.integer(a_idx),
+    as.integer(weight_idx - 1L)
+  )
+  invisible(NULL)
+}
+
+
+#' Set a transition weight in a loaded MDP
+#'
+#' Modifies one transition-level weight in the in-memory model. Use
+#' [get_info()] to inspect the transition ordering within an action, and use
+#' [save_mdp()] if the modified model should be written to binary files.
+#'
+#' @param mdp The MDP loaded using [load_mdp()] or created using
+#'   [memory_mdp_writer()].
+#' @param weight A finite numeric scalar with the new transition weight.
+#' @param s_id Zero-based state index.
+#' @param a_idx Zero-based action index within the state.
+#' @param transition_idx Zero-based transition index within the action.
+#' @param weight_name The name of a transition-level weight.
+#'
+#' @return `NULL`, invisibly.
+#' @export
+set_transition_weight <- function(mdp, weight, s_id, a_idx, transition_idx, weight_name) {
+  if (!inherits(mdp, "HMDP")) {
+    stop("`mdp` must be an HMDP model.", call. = FALSE)
+  }
+  if (!is.numeric(weight) || is.logical(weight) || length(weight) != 1L ||
+      is.na(weight) || !is.finite(weight)) {
+    stop("`weight` must be one finite numeric value.", call. = FALSE)
+  }
+  is_scalar_index <- function(x) {
+    is.numeric(x) && !is.logical(x) && length(x) == 1L && !is.na(x) &&
+      is.finite(x) && x >= 0 && x <= .Machine$integer.max && x == floor(x)
+  }
+  if (!is_scalar_index(s_id)) {
+    stop("`s_id` must be one non-negative whole number.", call. = FALSE)
+  }
+  if (!is_scalar_index(a_idx)) {
+    stop("`a_idx` must be one non-negative whole number.", call. = FALSE)
+  }
+  if (!is_scalar_index(transition_idx)) {
+    stop("`transition_idx` must be one non-negative whole number.", call. = FALSE)
+  }
+  if (!is.character(weight_name) || length(weight_name) != 1L ||
+      is.na(weight_name) || !nzchar(weight_name)) {
+    stop("`weight_name` must be one non-empty string.", call. = FALSE)
+  }
+
+  weight_idx <- which(mdp$weight_trans_names == weight_name)
+  if (length(weight_idx) == 0L) {
+    weight_idx <- which(grepl(weight_name, mdp$weight_trans_names, fixed = TRUE))
+  }
+  if (length(weight_idx) == 0L) {
+    stop("The transition weight name does not exist.", call. = FALSE)
+  }
+  if (length(weight_idx) > 1L) {
+    stop("The transition weight name is ambiguous.", call. = FALSE)
+  }
+
+  mdp$ptr$setTransitionW(
+    as.numeric(weight), as.integer(s_id), as.integer(a_idx),
+    as.integer(transition_idx), as.integer(weight_idx - 1L)
+  )
+  invisible(NULL)
+}
+
+
 #' Calculate the steady state transition probabilities for the founder process (level 0).
 #'
 #' Assume that we consider an ergodic/irreducible time-homogeneous Markov chain specified using a policy in the MDP.
@@ -695,25 +812,6 @@ get_steady_state_pr <- function(mdp, get_log = FALSE) {
   if (get_log) message(mdp$ptr$getLog())
   return(pr)
 }
-
-
-# #' Set the weight of an action.
-# #'
-# #' @param mdp The MDP loaded using \link{load_mdp}.
-# #' @param w The weight.
-# #' @param s_id The state id of the state.
-# #' @param idxA The action index.
-# #' @param w_lbl The label of the weight we consider.
-# #' @return Nothing.
-# #' @example inst/examples/machine.R
-# #' @export
-# setActionWeight<-function(mdp, w, s_id, i_a, w_lbl) {
-# 	i_w<-get_w_idx(mdp,w_lbl)
-#
-# 	.Call("MDP_SetActionW", mdp$ptr, as.numeric(w), as.integer(s_id), as.integer(i_a), as.integer(i_w), PACKAGE="MDP")
-# 	invisible(NULL)
-# }
-#
 
 
 #

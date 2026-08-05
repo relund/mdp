@@ -728,10 +728,35 @@ class HMDP
      * @param iS The index of the state.
      * @param iA The index of the action.
      * @param iW The weight index.
+     * @throw runtime_error If any index is out of range or the action does not
+     * contain the requested weight.
      */
-    void SetActionW(const flt & w, const idx & iS, const idx & iA, const idx & iW) {
+    void SetActionW(flt w, idx iS, idx iA, idx iW) {
+        if (iS >= states.size()) throw runtime_error("State index out of range.");
+        if (iA >= states[iS].actions.size()) throw runtime_error("Action index out of range.");
         CheckActionWIdx(iW);
+        if (iW >= states[iS].actions[iA].w.size()) throw runtime_error("Action weight is not available for this action.");
         states[iS].actions[iA].w[iW] = w;
+    }
+
+
+    /**
+     * @brief Set a transition-level weight.
+     * @param w The weight to set.
+     * @param iS The index of the state.
+     * @param iA The index of the action.
+     * @param iT The index of the transition within the action.
+     * @param iW The transition weight index.
+     * @throw runtime_error If any index is out of range or the transition does
+     * not contain the requested weight.
+     */
+    void SetTransitionW(flt w, idx iS, idx iA, idx iT, idx iW) {
+        if (iS >= states.size()) throw runtime_error("State index out of range.");
+        if (iA >= states[iS].actions.size()) throw runtime_error("Action index out of range.");
+        if (iT >= states[iS].actions[iA].trans.size()) throw runtime_error("Transition index out of range.");
+        CheckTransWIdx(iW);
+        if (iW >= states[iS].actions[iA].trans[iT].w.size()) throw runtime_error("Transition weight is not available for this transition.");
+        states[iS].actions[iA].trans[iT].w[iW] = w;
     }
 
 
