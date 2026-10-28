@@ -229,7 +229,7 @@ policy <- get_info(mdp, with_list = FALSE, df_level = "action")$df \%>\%
    dplyr::filter(label_action == "mt") \%>\% 
    dplyr::select(s_id, a_idx)
 set_policy(mdp, policy)
-run_calc_weights(mdp, w, term_values=scrapValues)
+run_calc_weights(mdp, w, term_values=0)
 get_policy(mdp)  
 
 

@@ -31,7 +31,7 @@ run_calc_weights(
 
 \item{discount_factor}{The discount rate for one time unit. If specified \code{rate} and \code{rate_base} are not used to calculate the discount rate.}
 
-\item{term_values}{The terminal values used (values of the last stage in the MDP).}
+\item{term_values}{Terminal payoffs for the states in the last founder stage, required for a finite horizon. For \code{second_moment} and \code{variance}, these are deterministic payoffs, not squared values or variances.}
 
 \item{discount_method}{Either 'continuous' or 'discrete', corresponding to discount factor \code{exp(-rate/rate_base)} or \code{1/(1 + rate/rate_base)}, respectively. Only used if \code{discount_factor} is \code{NULL}.}
 }
@@ -226,7 +226,7 @@ policy <- get_info(mdp, with_list = FALSE, df_level = "action")$df \%>\%
    dplyr::filter(label_action == "mt") \%>\% 
    dplyr::select(s_id, a_idx)
 set_policy(mdp, policy)
-run_calc_weights(mdp, w, term_values=scrapValues)
+run_calc_weights(mdp, w, term_values=0)
 get_policy(mdp)  
 
 

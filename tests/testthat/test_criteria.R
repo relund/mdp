@@ -273,6 +273,59 @@ test_that("SecondMoment value iteration is finite-horizon only", {
   expect_match(mdp$ptr$getLog(), "SecondMoment value iteration is currently only supported for finite time-horizon HMDPs")
 })
 
+test_that("Finite-horizon policy evaluation uses supplied terminal payoffs", {
+  w <- binary_mdp_writer(prefix = "policy_terminal_", get_log = FALSE)
+  w$set_weights(c("Weight", "Duration"))
+  w$set_trans_weights("Trans weight")
+  w$process()
+  w$stage()
+  w$state()
+  w$action(
+    weights = c(1, 1), prob = c(1, 0, 0.5, 1, 1, 0.5),
+    trans_weights = c(1, 3), end = TRUE
+  )
+  w$end_action()
+  w$end_state()
+  w$end_stage()
+  w$stage()
+  w$state()
+  w$end_state()
+  w$state()
+  w$end_state()
+  w$end_stage()
+  w$end_process()
+  w$close_writer()
+
+  mdp <- load_mdp("policy_terminal_", get_log = FALSE)
+  run_value_ite(mdp, "Weight", term_values = c(20, 30), get_log = FALSE)
+
+  cases <- list(
+    expected = c(5, 6), min = c(3, 3), max = c(7, 9),
+    second_moment = c(29, 45), variance = c(4, 9)
+  )
+  for (criterion in names(cases)) {
+    for (i in seq_along(c("Weight", "Trans weight"))) {
+      label <- c("Weight", "Trans weight")[i]
+      run_calc_weights(mdp, label, criterion = criterion, term_values = c(2, 6))
+      policy <- get_policy(mdp)
+      expect_equal(policy$weight[policy$state_str == "0,0"], cases[[criterion]][i])
+      run_calc_weights(mdp, label, criterion = criterion, term_values = c(2, 6))
+      policy <- get_policy(mdp)
+      expect_equal(policy$weight[policy$state_str == "0,0"], cases[[criterion]][i])
+    }
+  }
+
+  run_calc_weights(mdp, "Weight", criterion = "expected", term_values = c(4, 8))
+  policy <- get_policy(mdp)
+  expect_equal(policy$weight[policy$state_str == "0,0"], 7)
+  run_calc_weights(mdp, "Weight", criterion = "discount", dur_lbl = "Duration",
+                   discount_factor = 0.5, term_values = c(2, 6))
+  policy <- get_policy(mdp)
+  expect_equal(policy$weight[policy$state_str == "0,0"], 3)
+  expect_error(run_calc_weights(mdp, "Weight"), "Terminal values must be specified")
+  expect_error(run_calc_weights(mdp, "Weight", term_values = 1), "vector length")
+})
+
 test_that("Variance supports action-level fixed-policy evaluation", {
   w <- binary_mdp_writer(prefix = "variance_action_", get_log = FALSE)
   w$set_weights("Weight")
@@ -303,11 +356,9 @@ test_that("Variance supports action-level fixed-policy evaluation", {
   mdp <- load_mdp("variance_action_", get_log = FALSE)
   run_value_ite(mdp, "Weight", term_values = 0, get_log = FALSE)
 
-  mdp$ptr$setTerminalW(0)
   run_calc_weights(mdp, "Weight", criterion = "expected", term_values = 0)
   expected <- get_policy(mdp)$weight
 
-  mdp$ptr$setTerminalW(0)
   run_calc_weights(mdp, "Weight", criterion = "second_moment", term_values = 0)
   second_moment <- get_policy(mdp)$weight
 
@@ -359,11 +410,9 @@ test_that("Variance supports transition-level fixed-policy evaluation", {
   mdp <- load_mdp("variance_transition_", get_log = FALSE)
   run_value_ite(mdp, "Weight", term_values = 0, get_log = FALSE)
 
-  mdp$ptr$setTerminalW(0)
   run_calc_weights(mdp, "Weight", criterion = "expected", term_values = 0)
   expected <- get_policy(mdp)$weight
 
-  mdp$ptr$setTerminalW(0)
   run_calc_weights(mdp, "Weight", criterion = "second_moment", term_values = 0)
   second_moment <- get_policy(mdp)$weight
 

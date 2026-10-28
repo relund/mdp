@@ -570,7 +570,7 @@ set_policy <- function(mdp, policy) {
 #' @param rate The interest rate.
 #' @param rate_base The time-horizon the rate is valid over.
 #' @param discount_factor The discount rate for one time unit. If specified `rate` and `rate_base` are not used to calculate the discount rate.
-#' @param term_values The terminal values used (values of the last stage in the MDP).
+#' @param term_values Terminal payoffs for the states in the last founder stage, required for a finite horizon. For `second_moment` and `variance`, these are deterministic payoffs, not squared values or variances.
 #' @param discount_method Either 'continuous' or 'discrete', corresponding to discount factor `exp(-rate/rate_base)` or `1/(1 + rate/rate_base)`, respectively. Only used if `discount_factor` is `NULL`.
 #'
 #' @return Nothing.
@@ -587,14 +587,12 @@ run_calc_weights <- function(mdp, w_lbl, criterion = "expected", dur_lbl = NULL,
   }
   if (mdp$time_horizon < Inf) {
     if (is.null(term_values)) stop("Terminal values must be specified under finite time-horizon!")
+    mdp$ptr$setTerminalW(as.numeric(term_values))
     if (criterion == "expected") mdp$ptr$calcPolicy(2, i_w, 0, 1, discount_factor)
     if (criterion == "min") mdp$ptr$calcPolicy(5, i_w, 0, 1, discount_factor)
     if (criterion == "max") mdp$ptr$calcPolicy(6, i_w, 0, 1, discount_factor)
     if (criterion == "second_moment") mdp$ptr$calcPolicy(7, i_w, 0, 1, discount_factor)
-    if (criterion == "variance") {
-      mdp$ptr$setTerminalW(as.numeric(term_values))
-      mdp$ptr$calcPolicy(8, i_w, 0, 1, discount_factor)
-    }
+    if (criterion == "variance") mdp$ptr$calcPolicy(8, i_w, 0, 1, discount_factor)
     if (criterion == "discount") mdp$ptr$calcPolicy(0, i_w, 0, i_dur, discount_factor)
   } else {
     if (criterion == "discount") mdp$ptr$policyIteFixedPolicy(0, i_w, i_dur, discount_factor)
